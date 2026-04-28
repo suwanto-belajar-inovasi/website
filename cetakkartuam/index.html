@@ -8,8 +8,15 @@
     <style>
         body { background: #f4f7f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         .footer { background: #2c3e50; color: #fff; padding: 20px 0; margin-top: 50px; }
-        #dashboard-section { display: none; } /* Disembunyikan sampai user login */
+        .footer a { color: #f1c40f; text-decoration: none; font-weight: bold; }
+        .footer a:hover { color: #fff; text-decoration: underline; }
+        
+        #dashboard-section { display: none; }
         .loading-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.8); z-index:9999; text-align:center; padding-top:20%; }
+        
+        /* Desain Login Card */
+        .login-card { max-width: 400px; margin: auto; }
+        .logo-login { max-width: 100px; margin-bottom: 15px; }
         
         /* Desain Cetak Kartu */
         .card-ujian { width: 380px; border: 3px solid #2c3e50; padding: 15px; background: #fff; border-radius: 8px; display: inline-block; margin: 10px; vertical-align: top; position: relative; }
@@ -32,24 +39,38 @@
     <h4 class="mt-2" id="loading-text">Memproses Data...</h4>
 </div>
 
-<!-- BAGIAN LOGIN & DAFTAR -->
-<div id="login-section" class="container mt-5 no-print">
-    <div class="row justify-content-center">
-        <div class="col-md-5">
-            <div class="card p-4 shadow-sm">
-                <h3 class="text-center mb-3">Login Madrasah</h3>
-                <input type="text" id="log-user" class="form-control mb-2" placeholder="Username">
-                <input type="password" id="log-pass" class="form-control mb-3" placeholder="Password">
-                <button onclick="prosesLogin()" class="btn btn-primary w-100">Masuk Aplikasi</button>
-                <hr>
-                <h5 class="text-center">Belum punya akun? Daftar Gratis</h5>
-                <input type="text" id="reg-user" class="form-control mb-2" placeholder="Buat Username">
-                <input type="email" id="reg-email" class="form-control mb-2" placeholder="Email Aktif">
-                <input type="text" id="reg-wa" class="form-control mb-2" placeholder="Nomor WhatsApp">
-                <input type="password" id="reg-pass" class="form-control mb-3" placeholder="Buat Password">
-                <button onclick="prosesDaftar()" class="btn btn-success w-100">Buat Database Mandiri</button>
+<!-- BAGIAN AUTENTIKASI -->
+<div id="auth-section" class="container mt-5 no-print">
+    <div class="card p-4 shadow-sm login-card text-center">
+        
+        <!-- LOGO DARI GOOGLE DRIVE (Ganti ID File Drive Anda) -->
+        <!-- Format yang benar: https://drive.google.com/uc?export=view&id=ID_FILE_ANDA -->
+        <img src="https://drive.google.com/uc?export=view&id=MASUKKAN_ID_FILE_GAMBAR_DISINI" alt="Logo Aplikasi" class="logo-login mx-auto">
+        
+        <!-- FORM LOGIN (Tampil Default) -->
+        <div id="form-login">
+            <h4 class="mb-3">Login Madrasah</h4>
+            <input type="text" id="log-user" class="form-control mb-2" placeholder="Username">
+            <input type="password" id="log-pass" class="form-control mb-3" placeholder="Password">
+            <button onclick="prosesLogin()" class="btn btn-primary w-100">Masuk Aplikasi</button>
+            <div class="mt-3">
+                <small>Apabila belum memiliki akun silahkan <a href="javascript:void(0)" onclick="toggleAuth('register')">daftar disini</a></small>
             </div>
         </div>
+
+        <!-- FORM DAFTAR (Sembunyi Default) -->
+        <div id="form-register" style="display: none;">
+            <h4 class="mb-3">Daftar Akun Baru</h4>
+            <input type="text" id="reg-user" class="form-control mb-2" placeholder="Buat Username">
+            <input type="email" id="reg-email" class="form-control mb-2" placeholder="Email Aktif">
+            <input type="text" id="reg-wa" class="form-control mb-2" placeholder="Nomor WhatsApp">
+            <input type="password" id="reg-pass" class="form-control mb-3" placeholder="Buat Password">
+            <button onclick="prosesDaftar()" class="btn btn-success w-100">Buat Database Mandiri</button>
+            <div class="mt-3">
+                <small>Sudah memiliki akun? <a href="javascript:void(0)" onclick="toggleAuth('login')">Masuk disini</a></small>
+            </div>
+        </div>
+        
     </div>
 </div>
 
@@ -60,7 +81,7 @@
         <button onclick="logout()" class="btn btn-danger">Keluar</button>
     </div>
 
-    <!-- Area Kontrol (Hanya terlihat di layar) -->
+    <!-- Area Kontrol -->
     <div class="row no-print">
         <div class="col-md-4">
             <div class="card p-3 shadow-sm mb-3">
@@ -77,7 +98,7 @@
         <div class="col-md-8">
             <div class="card p-3 shadow-sm mb-3">
                 <h5>2. Upload Data Siswa & Cetak</h5>
-                <p class="text-muted small">Fitur upload menyusul. Saat ini, sistem membaca langsung dari Database Sheet Anda.</p>
+                <p class="text-muted small">Saat ini, sistem membaca langsung dari Database Sheet Anda.</p>
                 <button onclick="muatKartu()" class="btn btn-success mb-2">Tampilkan Kartu Peserta</button>
                 <button onclick="window.print()" class="btn btn-outline-dark mb-2">Cetak Kartu Ujian (PDF/Printer)</button>
             </div>
@@ -85,14 +106,14 @@
     </div>
 
     <!-- Area Cetak Kartu -->
-    <div id="area-cetak" class="text-center mt-4">
-        <!-- Kartu akan dimunculkan di sini oleh JavaScript -->
-    </div>
+    <div id="area-cetak" class="text-center mt-4"></div>
 </div>
 
 <footer class="footer text-center no-print">
     <p>&copy; 2026 <strong>Belajar Inovasi</strong> - Solusi Aplikasi Administrasi Sekolah</p>
-    <small>Jika aplikasi ini bermanfaat untuk madrasah Anda, silakan dukung Channel YouTube: <strong>Belajar Inovasi</strong></small>
+    <small>Jika aplikasi ini bermanfaat untuk madrasah Anda, silakan dukung Channel YouTube: 
+        <a href="https://m.youtube.com/@suwanto_pakwanto" target="_blank">Suwanto Pakwanto</a>
+    </small>
 </footer>
 
 <script>
@@ -102,7 +123,6 @@
     let currentUser = localStorage.getItem('bi_user') || null;
     let currentDbId = localStorage.getItem('bi_dbId') || null;
 
-    // Cek status login saat halaman dibuka
     window.onload = () => {
         if (currentUser && currentDbId) {
             tampilDashboard();
@@ -113,8 +133,17 @@
         document.getElementById('loading-text').innerText = text;
         document.getElementById('loading').style.display = 'block';
     }
-    function hideLoading() {
-        document.getElementById('loading').style.display = 'none';
+    function hideLoading() { document.getElementById('loading').style.display = 'none'; }
+
+    // Fungsi Navigasi Login dan Daftar
+    function toggleAuth(view) {
+        if(view === 'register') {
+            document.getElementById('form-login').style.display = 'none';
+            document.getElementById('form-register').style.display = 'block';
+        } else {
+            document.getElementById('form-register').style.display = 'none';
+            document.getElementById('form-login').style.display = 'block';
+        }
     }
 
     // FUNGSI DAFTAR
@@ -136,6 +165,7 @@
             
             if(result.status === 'success') {
                 alert('Pendaftaran Berhasil! Database telah dibuat. Silakan Login.');
+                toggleAuth('login'); // Otomatis kembali ke form login
             } else {
                 alert('Gagal: ' + result.message);
             }
@@ -161,7 +191,6 @@
             const result = await response.json();
             
             if(result.status === 'success') {
-                // Simpan sesi di browser
                 localStorage.setItem('bi_user', result.user);
                 localStorage.setItem('bi_dbId', result.dbId);
                 currentUser = result.user;
@@ -182,9 +211,9 @@
         location.reload();
     }
 
-    // FUNGSI MENAMPILKAN DASHBOARD DAN MENGAMBIL PENGATURAN
+    // FUNGSI MENAMPILKAN DASHBOARD
     async function tampilDashboard() {
-        document.getElementById('login-section').style.display = 'none';
+        document.getElementById('auth-section').style.display = 'none';
         document.getElementById('dashboard-section').style.display = 'block';
         document.getElementById('nama-user-aktif').innerText = currentUser;
 
@@ -197,20 +226,15 @@
             const result = await response.json();
             
             if(result.status === 'success') {
-                // Isi form dari database
                 document.getElementById('set-nama').value = result.settings.nama_madrasah || '';
                 document.getElementById('set-jenis').value = result.settings.jenis_ujian || '';
                 document.getElementById('set-tahun').value = result.settings.tahun_pelajaran || '';
                 document.getElementById('set-tempat').value = result.settings.tempat_tanggal || '';
                 document.getElementById('set-kepala').value = result.settings.nama_kepala || '';
                 document.getElementById('set-logo').value = result.settings.url_logo || '';
-                
-                // Simpan data siswa global untuk dipakai mencetak kartu
                 window.dataSiswa = result.students;
             }
-        } catch (error) {
-            console.error(error);
-        }
+        } catch (error) { console.error(error); }
         hideLoading();
     }
 
@@ -225,8 +249,7 @@
             tahun_pelajaran: document.getElementById('set-tahun').value,
             tempat_tanggal: document.getElementById('set-tempat').value,
             nama_kepala: document.getElementById('set-kepala').value,
-            url_logo: document.getElementById('set-logo').value,
-            url_stempel: '' // Bisa ditambahkan inputnya di HTML jika perlu
+            url_logo: document.getElementById('set-logo').value
         };
 
         try {
@@ -235,19 +258,15 @@
                 body: JSON.stringify(payload)
             });
             const result = await response.json();
-            if(result.status === 'success') {
-                alert('Pengaturan Berhasil Disimpan di Database Anda!');
-            }
-        } catch(e) {
-            alert('Gagal menyimpan.');
-        }
+            if(result.status === 'success') alert('Pengaturan Berhasil Disimpan!');
+        } catch(e) { alert('Gagal menyimpan.'); }
         hideLoading();
     }
 
     // FUNGSI RENDER CETAK KARTU
     function muatKartu() {
         if(!window.dataSiswa || window.dataSiswa.length === 0) {
-            return alert('Data Siswa di Spreadsheet Anda masih kosong! Silakan isi data di Sheet "Students" terlebih dahulu.');
+            return alert('Data Siswa di Spreadsheet Anda masih kosong!');
         }
 
         const namaMadrasah = document.getElementById('set-nama').value;
@@ -258,12 +277,10 @@
         const logo = document.getElementById('set-logo').value;
 
         const container = document.getElementById('area-cetak');
-        container.innerHTML = ''; // Bersihkan area cetak
+        container.innerHTML = '';
 
         window.dataSiswa.forEach(siswa => {
-            // Asumsi struktur data: [Nama, NISN, NISM, TTL, L/P, No.Peserta]
             const logoHtml = logo ? `<img src="${logo}" alt="Logo">` : '';
-            
             const kartuHTML = `
             <div class="card-ujian text-start">
                 <div class="header-kartu">
