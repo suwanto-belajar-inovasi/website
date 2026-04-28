@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Belajar Inovasi | Solusi Digital Pendidikan & Administrasi</title>
+    
+    <meta name="description" content="Pusat pengembangan aplikasi web profesional oleh Suwanto. Spesialis sistem manajemen sekolah, SIPENDEKAR Posyandu, dan ekspedisi tanpa biaya hosting bulanan.">
+    <meta name="keywords" content="Belajar Inovasi, Suwanto Pakwanto, Aplikasi Sekolah Surabaya, MIS Baiturrahman Digital, SIPENDEKAR, Express Nusantara v2, Google Apps Script">
+    <meta name="author" content="Suwanto">
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --dark: #0f172a;
+            --accent: #f59e0b;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #fdfbf7;
+            color: var(--dark);
+        }
+
+        /* Navbar Style */
+        .navbar {
+            background: rgba(255, 255, 255, 0.8) !important;
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        /* Hero Section */
+        .hero-gradient {
+            background: radial-gradient(circle at top right, #dbeafe, #fdfbf7);
+            padding: 160px 0 100px;
+        }
+
+        .hero-title {
+            font-weight: 800;
+            font-size: 3.5rem;
+            line-height: 1.1;
+            background: linear-gradient(to right, #1e40af, #2563eb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Glass Card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 24px;
+            padding: 30px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            height: 100%;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-12px);
+            background: #ffffff;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+        }
+
+        .icon-box {
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            color: white;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        /* Floating WA */
+        .btn-float-wa {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #25d366;
+            color: white;
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            box-shadow: 0 10px 20px rgba(37,211,102,0.3);
+            z-index: 1000;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .btn-float-wa:hover {
+            transform: scale(1.1);
+            color: white;
+        }
+
+        .footer {
+            background: var(--dark);
+            color: rgba(255,255,255,0.6);
+            padding: 60px 0 30px;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg fixed-top py-3">
+<div class="container"><a class="navbar-brand fw-bolder fs-4" href="#"> <span class="text-primary">BELAJAR</span> INOVASI </a> <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"> <span class="navbar-toggler-icon"></span> </button>
+<div class="collapse navbar-collapse" id="navMenu">
+<ul class="navbar-nav ms-auto gap-lg-3">
+<li class="nav-item"><a class="nav-link fw-semibold" href="#katalog">Katalog Sistem</a></li>
+<li class="nav-item"><a class="nav-link fw-semibold" href="https://www.youtube.com/@suwanto_pakwanto">Tutorial YouTube</a></li>
+<li class="nav-item"><a onclick="hubungiWA('Umum')" class="btn btn-primary rounded-pill px-4">Konsultasi Gratis</a></li>
+</ul>
+</div>
+</div>
+</nav><header class="hero-gradient">
+<div class="container text-center">
+<div class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2 mb-4 fw-bold" data-aos="fade-down">Inovasi Digital No-Hosting Terpercaya</div>
+<h1 class="hero-title mb-4" data-aos="fade-up">Digitalisasi Instansi Anda<br />Tanpa Biaya Server Bulanan</h1>
+<p class="lead text-secondary mb-5 px-lg-5" data-aos="fade-up" data-aos-delay="100">Membangun ekosistem administrasi yang cerdas, mobile-friendly, dan profesional menggunakan teknologi Google Apps Script untuk Madrasah, Desa, dan Bisnis.</p>
+<div data-aos="fade-up" data-aos-delay="200"><a href="#katalog" class="btn btn-dark btn-lg rounded-pill px-5 py-3 fw-bold shadow-lg">Lihat Etalase Produk</a></div>
+</div>
+</header>
+<section id="katalog" class="py-5">
+<div class="container py-5">
+<div class="row align-items-center mb-5">
+<div class="col-lg-6" data-aos="fade-right">
+<h2 class="fw-bold display-6">Produk Unggulan Kami</h2>
+<p class="text-muted">Setiap aplikasi dirancang berdasarkan pengalaman nyata di lapangan.</p>
+</div>
+</div>
+<div class="row g-4">
+<div class="col-lg-4" data-aos="fade-up">
+<div class="glass-card">
+<div class="icon-box bg-primary"><i class="bi bi-mortarboard-fill"></i></div>
+<h4 class="fw-bold">MIS Digital School</h4>
+<p class="text-muted small">Sistem manajemen Madrasah Ibtidaiyah terpadu: PPDB Online, Tabungan Siswa, dan CBT Anti-Cheat canggih.</p>
+<hr /><button onclick="hubungiWA('MIS Digital School')" class="btn btn-outline-primary w-100 rounded-pill">Detail &amp; Pemesanan</button></div>
+</div>
+<div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+<div class="glass-card">
+<div class="icon-box bg-danger"><i class="bi bi-heart-pulse-fill"></i></div>
+<h4 class="fw-bold">SIPENDEKAR</h4>
+<p class="text-muted small">Solusi digital Posyandu untuk monitoring gizi balita. Perhitungan otomatis Z-Score sesuai standar kesehatan.</p>
+<hr /><button onclick="hubungiWA('SIPENDEKAR')" class="btn btn-outline-primary w-100 rounded-pill">Detail &amp; Pemesanan</button></div>
+</div>
+<div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+<div class="glass-card">
+<div class="icon-box bg-warning text-dark"><i class="bi bi-truck"></i></div>
+<h4 class="fw-bold">Express Nusantara v2</h4>
+<p class="text-muted small">Manajemen ekspedisi profesional: Tracking kurir via GPS, logistik real-time, dan sistem barcode otomatis.</p>
+<hr /><button onclick="hubungiWA('Express Nusantara v2')" class="btn btn-outline-primary w-100 rounded-pill">Detail &amp; Pemesanan</button></div>
+</div>
+</div>
+</div>
+</section>
+<footer class="footer">
+<div class="container text-center">
+<h4 class="text-white fw-bold mb-4">BELAJAR INOVASI</h4>
+<p class="mb-4">Membawa teknologi tepat guna untuk efisiensi administrasi di seluruh Indonesia.</p>
+<div class="d-flex justify-content-center gap-3 mb-5"><a href="https://www.youtube.com/@suwanto_pakwanto" class="fs-3 text-white"><i class="bi bi-youtube"></i></a> <a href="#" class="fs-3 text-white"><i class="bi bi-github"></i></a></div>
+<p class="small">© 2026 Suwanto (Pak Wanto). Surabaya, Indonesia. Powered by InfinityFree.</p>
+</div>
+</footer>
+<p><a onclick="hubungiWA('Floating Button')" class="btn-float-wa"> <i class="bi bi-whatsapp"></i> </a></p>
+<p>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+        AOS.init({ duration: 1000, once: true });
+
+        function hubungiWA(source) {
+            const noWA = "6285895283075"; // GANTI DENGAN NOMOR ANDA
+            const msg = `Halo Belajar Inovasi, saya tertarik dengan layanan Anda setelah melihat website suwanto-belajarinovasi.my.id. Saya ingin bertanya tentang [${source}].`;
+            window.open(`https://wa.me/${noWA}?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+    </script>
+</p>
+</body>
+</html>
