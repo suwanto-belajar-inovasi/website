@@ -23,7 +23,6 @@
         .panel-box { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; }
         .img-preview { max-width: 80px; max-height: 80px; object-fit: contain; margin-top: 5px; border: 1px dashed #ccc; padding: 2px; }
         
-        /* Desain Kartu Tampilan Web */
         .card-ujian { width: 380px; border: 2px solid #000; padding: 10px; background: #fff; border-radius: 0; display: inline-block; margin: 10px; vertical-align: top; box-sizing: border-box; }
         .kop-surat { display: flex; align-items: center; justify-content: space-between; border-bottom: 3px solid #000; padding-bottom: 5px; margin-bottom: 8px; }
         .kop-logo { width: 50px; height: 50px; object-fit: contain; }
@@ -47,15 +46,12 @@
         .stempel-img { position: absolute; left: -25px; top: 10px; width: 60px; opacity: 0.8; z-index: 1; mix-blend-mode: multiply; }
         .ttd-img { max-width: 80px; max-height: 40px; position: relative; z-index: 2; mix-blend-mode: multiply; margin: 2px 0; }
         
-        /* Modifikasi Kepala dan NIP */
         .nama-kepala { font-weight: bold; text-decoration: underline; display: block; }
         .nip-kepala { display: block; margin-top: -2px; }
 
-        /* Modal Print */
         #printModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center; }
         .print-content { background: white; padding: 20px; border-radius: 8px; text-align: center; max-width: 400px; }
         
-        /* CSS Khusus Cetak A4 (10 Kartu per Halaman) */
         @media print { 
             @page { size: A4 portrait; margin: 5mm; }
             body { background: #fff; font-size: 10pt; margin: 0; padding: 0; }
@@ -216,7 +212,6 @@
         </div>
     </div>
 
-    <!-- Container Utama untuk Cetak -->
     <div id="area-cetak" class="mt-4 pb-5"></div>
 </div>
 
@@ -236,7 +231,7 @@
     // ==========================================
     // MASUKKAN URL NEW DEPLOY APPS SCRIPT ANDA
     // ==========================================
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyX-1NjN-JDf_ZdjI-qIwSfDOxO4kSVp7CFVwu0M7nlFBUMs6jPHSGJ0JOjrjN1H_RHwQ/exec'; 
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxrEtwcd0byrtPFcon8-xe_DB67ekk9U_N2mHlSv6Qk3wkHoB-rLw0_qez-f4-JyAS_Xw/exec'; 
 
     let currentUser = localStorage.getItem('bi_user') || null;
     let currentDbId = localStorage.getItem('bi_dbId') || null;
@@ -535,7 +530,6 @@
         const ttdHtml = window.appSettings.url_ttd ? `<img src="${window.appSettings.url_ttd}" class="ttd-img">` : '<div style="height:40px;"></div>';
         const stempelHtml = window.appSettings.url_stempel ? `<img src="${window.appSettings.url_stempel}" class="stempel-img">` : '';
 
-        // Tampilkan NIP hanya jika diisi
         const nipHtml = kNip.trim() !== '' ? `<span class="nip-kepala">NIP. ${kNip}</span>` : '';
 
         const container = document.getElementById('area-cetak');
