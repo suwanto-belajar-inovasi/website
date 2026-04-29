@@ -43,10 +43,13 @@
         .foto-siswa { width: 2.5cm; height: 3.5cm; object-fit: cover; border: 1px solid #000; background: #eee; }
         
         .ttd-container { display: flex; justify-content: flex-end; margin-top: 5px; }
-        .ttd-box { text-align: center; font-size: 0.75rem; position: relative; width: 150px; }
-        .stempel-img { position: absolute; left: -20px; top: 10px; width: 60px; opacity: 0.8; z-index: 1; mix-blend-mode: multiply; }
+        .ttd-box { text-align: center; font-size: 0.75rem; position: relative; width: 160px; }
+        .stempel-img { position: absolute; left: -25px; top: 10px; width: 60px; opacity: 0.8; z-index: 1; mix-blend-mode: multiply; }
         .ttd-img { max-width: 80px; max-height: 40px; position: relative; z-index: 2; mix-blend-mode: multiply; margin: 2px 0; }
-        .nama-kepala { font-weight: bold; text-decoration: underline; margin-top: 2px; }
+        
+        /* Modifikasi Kepala dan NIP */
+        .nama-kepala { font-weight: bold; text-decoration: underline; display: block; }
+        .nip-kepala { display: block; margin-top: -2px; }
 
         /* Modal Print */
         #printModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center; }
@@ -60,13 +63,13 @@
             
             #area-cetak { 
                 display: grid; 
-                grid-template-columns: 1fr 1fr; /* 2 Kolom */
+                grid-template-columns: 1fr 1fr; 
                 gap: 5mm; 
                 width: 100%;
             }
             
             .card-ujian { 
-                width: 100%; /* Memenuhi kolom grid */
+                width: 100%; 
                 height: auto; 
                 margin: 0; 
                 padding: 8px;
@@ -75,13 +78,12 @@
                 box-sizing: border-box;
             }
             
-            /* Penyesuaian ukuran font untuk cetak agar muat */
             .kop-text h6 { font-size: 9pt; }
             .kop-text h5 { font-size: 11pt; }
             .nama-ujian { font-size: 9pt; margin-bottom: 5px; }
             .data-siswa { font-size: 8pt; }
-            .foto-siswa { width: 2cm; height: 3cm; } /* Perkecil foto sedikit */
-            .ttd-box { font-size: 8pt; width: 130px; }
+            .foto-siswa { width: 2cm; height: 3cm; } 
+            .ttd-box { font-size: 8pt; width: 140px; }
             .stempel-img { width: 50px; left: -15px; }
             .ttd-img { max-width: 70px; max-height: 35px; }
         }
@@ -140,6 +142,7 @@
                 <label class="small fw-bold mt-2">Data Kepala Madrasah</label>
                 <input type="text" id="set-tempat" class="form-control form-control-sm mb-2" placeholder="Tempat, Tanggal (Misal: Surabaya, 4 Mei 2026)">
                 <input type="text" id="set-kepala" class="form-control form-control-sm mb-2" placeholder="Nama Kepala Madrasah">
+                <input type="text" id="set-nip" class="form-control form-control-sm mb-2" placeholder="NIP Kepala (Kosongkan jika tidak ada)">
                 
                 <hr>
                 <label class="small fw-bold">Unggah Berkas (Otomatis Tersimpan)</label>
@@ -233,7 +236,7 @@
     // ==========================================
     // MASUKKAN URL NEW DEPLOY APPS SCRIPT ANDA
     // ==========================================
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyYLcBDev-q_IhCzRDbGW4WxB9Q5IOoUqSDKllgbMxEbV7zu8fJoRcbLeW284vyY-3NWQ/exec'; 
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyX-1NjN-JDf_ZdjI-qIwSfDOxO4kSVp7CFVwu0M7nlFBUMs6jPHSGJ0JOjrjN1H_RHwQ/exec'; 
 
     let currentUser = localStorage.getItem('bi_user') || null;
     let currentDbId = localStorage.getItem('bi_dbId') || null;
@@ -303,6 +306,7 @@
                 document.getElementById('set-tahun').value = result.settings.tahun_pelajaran || '';
                 document.getElementById('set-tempat').value = result.settings.tempat_tanggal || '';
                 document.getElementById('set-kepala').value = result.settings.nama_kepala || '';
+                document.getElementById('set-nip').value = result.settings.nip_kepala || '';
                 
                 if(result.settings.url_logo_dinas) document.getElementById('preview-dinas').src = result.settings.url_logo_dinas;
                 if(result.settings.url_logo_madrasah) document.getElementById('preview-madrasah').src = result.settings.url_logo_madrasah;
@@ -331,6 +335,7 @@
             tahun_pelajaran: document.getElementById('set-tahun').value,
             tempat_tanggal: document.getElementById('set-tempat').value,
             nama_kepala: document.getElementById('set-kepala').value,
+            nip_kepala: document.getElementById('set-nip').value,
             url_logo_dinas: window.appSettings.url_logo_dinas || '',
             url_logo_madrasah: window.appSettings.url_logo_madrasah || '',
             url_ttd: window.appSettings.url_ttd || '',
@@ -522,12 +527,16 @@
         const kThn = document.getElementById('set-tahun').value || '2025/2026';
         const kTmp = document.getElementById('set-tempat').value || 'Surabaya, 4 Mei 2026';
         const kKepala = document.getElementById('set-kepala').value || 'Nama Kepala, S.Pd';
+        const kNip = document.getElementById('set-nip').value || '';
         
         const lDinas = window.appSettings.url_logo_dinas ? `<img src="${window.appSettings.url_logo_dinas}" class="kop-logo">` : '<div style="width:50px;"></div>';
         const lMadrasah = window.appSettings.url_logo_madrasah ? `<img src="${window.appSettings.url_logo_madrasah}" class="kop-logo">` : '<div style="width:50px;"></div>';
         
         const ttdHtml = window.appSettings.url_ttd ? `<img src="${window.appSettings.url_ttd}" class="ttd-img">` : '<div style="height:40px;"></div>';
         const stempelHtml = window.appSettings.url_stempel ? `<img src="${window.appSettings.url_stempel}" class="stempel-img">` : '';
+
+        // Tampilkan NIP hanya jika diisi
+        const nipHtml = kNip.trim() !== '' ? `<span class="nip-kepala">NIP. ${kNip}</span>` : '';
 
         const container = document.getElementById('area-cetak');
         container.innerHTML = '';
@@ -574,7 +583,8 @@
                             ${stempelHtml}
                             ${ttdHtml}
                         </div>
-                        <div class="nama-kepala">${kKepala}</div>
+                        <span class="nama-kepala">${kKepala}</span>
+                        ${nipHtml}
                     </div>
                 </div>
             </div>`;
