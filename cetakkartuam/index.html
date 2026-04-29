@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistem Cetak Kartu AM - Belajar Inovasi</title>
     
-    <!-- Favicon (Ganti dengan ID Logo Drive Anda) -->
     <link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/d/1cVKB34hs3aHdIr5OkNhcaZ9OmFHZKR70">
-    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
@@ -19,15 +17,12 @@
         
         #dashboard-section { display: none; }
         
-        /* Desain Login Card */
         .login-card { max-width: 400px; margin: auto; }
         .logo-login { max-width: 120px; margin-bottom: 15px; border-radius: 10px; }
         
-        /* Layout Tabel & Panel (Mobile Friendly) */
         .panel-box { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; }
         .img-preview { max-width: 80px; max-height: 80px; object-fit: contain; margin-top: 5px; border: 1px dashed #ccc; padding: 2px; }
         
-        /* Desain Cetak Kartu Formal */
         .card-ujian { width: 400px; border: 2px solid #000; padding: 15px; background: #fff; border-radius: 0; display: inline-block; margin: 10px; vertical-align: top; position: relative; }
         .kop-surat { display: flex; align-items: center; justify-content: space-between; border-bottom: 3px solid #000; padding-bottom: 5px; margin-bottom: 10px; }
         .kop-logo { width: 50px; height: 50px; object-fit: contain; }
@@ -54,24 +49,16 @@
 </head>
 <body>
 
-<!-- BAGIAN AUTENTIKASI -->
 <div id="auth-section" class="container mt-5 no-print">
     <div class="card p-4 shadow-sm login-card text-center">
-        <!-- Logo Login -->
         <img src="https://lh3.googleusercontent.com/d/1cVKB34hs3aHdIr5OkNhcaZ9OmFHZKR70" alt="Logo Aplikasi" class="logo-login mx-auto">
-        
-        <!-- FORM LOGIN -->
         <div id="form-login">
             <h4 class="mb-3">Login Aplikasi</h4>
             <input type="text" id="log-user" class="form-control mb-2" placeholder="Username">
             <input type="password" id="log-pass" class="form-control mb-3" placeholder="Password">
             <button onclick="prosesLogin()" class="btn btn-primary w-100"><i class="fa-solid fa-right-to-bracket"></i> Masuk Aplikasi</button>
-            <div class="mt-3">
-                <small>Apabila belum memiliki akun silahkan <a href="javascript:void(0)" onclick="toggleAuth('register')">daftar disini</a></small>
-            </div>
+            <div class="mt-3"><small>Apabila belum memiliki akun silahkan <a href="javascript:void(0)" onclick="toggleAuth('register')">daftar disini</a></small></div>
         </div>
-
-        <!-- FORM DAFTAR -->
         <div id="form-register" style="display: none;">
             <h4 class="mb-3">Daftar Akun Baru</h4>
             <input type="text" id="reg-user" class="form-control mb-2" placeholder="Buat Username">
@@ -79,14 +66,11 @@
             <input type="text" id="reg-wa" class="form-control mb-2" placeholder="Nomor WhatsApp">
             <input type="password" id="reg-pass" class="form-control mb-3" placeholder="Buat Password">
             <button onclick="prosesDaftar()" class="btn btn-success w-100"><i class="fa-solid fa-user-plus"></i> Buat Akun Mandiri</button>
-            <div class="mt-3">
-                <small>Sudah memiliki akun? <a href="javascript:void(0)" onclick="toggleAuth('login')">Masuk disini</a></small>
-            </div>
+            <div class="mt-3"><small>Sudah memiliki akun? <a href="javascript:void(0)" onclick="toggleAuth('login')">Masuk disini</a></small></div>
         </div>
     </div>
 </div>
 
-<!-- BAGIAN DASHBOARD -->
 <div id="dashboard-section" class="container-fluid mt-4 px-4">
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 no-print border-bottom pb-2">
         <h3 class="m-0"><i class="fa-solid fa-school text-primary"></i> Panel: <span id="nama-user-aktif" class="text-dark fw-bold"></span></h3>
@@ -94,7 +78,6 @@
     </div>
 
     <div class="row no-print">
-        <!-- PENGATURAN IDENTITAS -->
         <div class="col-lg-4">
             <div class="panel-box">
                 <h5 class="border-bottom pb-2 mb-3"><i class="fa-solid fa-sliders"></i> 1. Pengaturan Identitas</h5>
@@ -131,18 +114,15 @@
                     </div>
                 </div>
                 
-                <button onclick="simpanPengaturan()" class="btn btn-primary w-100 mt-3"><i class="fa-solid fa-save"></i> Simpan Pengaturan</button>
+                <button onclick="simpanPengaturan()" class="btn btn-primary w-100 mt-3"><i class="fa-solid fa-save"></i> Simpan Data Manual</button>
             </div>
         </div>
 
-        <!-- MANAJEMEN DATA SISWA -->
         <div class="col-lg-8">
             <div class="panel-box">
                 <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
                     <h5 class="m-0"><i class="fa-solid fa-users"></i> 2. Data Peserta Ujian</h5>
-                    <div>
-                        <button onclick="downloadTemplate()" class="btn btn-outline-success btn-sm"><i class="fa-solid fa-download"></i> Template Excel</button>
-                    </div>
+                    <button onclick="downloadTemplate()" class="btn btn-outline-success btn-sm"><i class="fa-solid fa-download"></i> Template Excel</button>
                 </div>
                 
                 <div class="row mb-3">
@@ -169,9 +149,7 @@
                                 <th>Aksi</th>
                             </tr>
                         </thead>
-                        <tbody id="tabel-siswa">
-                            <!-- Data akan dimuat disini -->
-                        </tbody>
+                        <tbody id="tabel-siswa"></tbody>
                     </table>
                 </div>
 
@@ -183,7 +161,6 @@
         </div>
     </div>
 
-    <!-- AREA CETAK KARTU -->
     <div id="area-cetak" class="mt-4 pb-5"></div>
 </div>
 
@@ -195,38 +172,33 @@
     </a>
 </footer>
 
-<!-- External Libraries -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <script>
     // ==========================================
-    // KONFIGURASI URL APPS SCRIPT ANDA DI SINI
+    // MASUKKAN URL NEW DEPLOY APPS SCRIPT ANDA
     // ==========================================
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx37feg4h5Dk9U1wrf5Kp1n8n96j5VBrUtiEJVaT5-Zh4hJ2-rEEw4pFs2iCUu8n9HT/exec'; 
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyYLcBDev-q_IhCzRDbGW4WxB9Q5IOoUqSDKllgbMxEbV7zu8fJoRcbLeW284vyY-3NWQ/exec'; 
 
     let currentUser = localStorage.getItem('bi_user') || null;
     let currentDbId = localStorage.getItem('bi_dbId') || null;
     window.dataSiswa = [];
     window.appSettings = {};
 
-    window.onload = () => {
-        if (currentUser && currentDbId) tampilDashboard();
-    };
+    window.onload = () => { if (currentUser && currentDbId) tampilDashboard(); };
 
     function toggleAuth(view) {
         document.getElementById('form-login').style.display = view === 'login' ? 'block' : 'none';
         document.getElementById('form-register').style.display = view === 'register' ? 'block' : 'none';
     }
 
-    // --- AUTENTIKASI ---
     async function prosesDaftar() {
         const u = document.getElementById('reg-user').value;
         const e = document.getElementById('reg-email').value;
         const w = document.getElementById('reg-wa').value;
         const p = document.getElementById('reg-pass').value;
-
         if(!u || !p) return Swal.fire('Error', 'Username dan Password wajib diisi!', 'warning');
 
         Swal.fire({title: 'Membuat Database', text: 'Mohon tunggu...', allowOutsideClick: false, didOpen: () => Swal.showLoading()});
@@ -243,7 +215,6 @@
     async function prosesLogin() {
         const u = document.getElementById('log-user').value;
         const p = document.getElementById('log-pass').value;
-
         if(!u || !p) return Swal.fire('Peringatan', 'Isi Username dan Password!', 'warning');
 
         Swal.fire({title: 'Masuk Sistem', allowOutsideClick: false, didOpen: () => Swal.showLoading()});
@@ -261,12 +232,8 @@
         } catch (err) { Swal.fire('Error', 'Server tidak merespon', 'error'); }
     }
 
-    function logout() {
-        localStorage.clear();
-        location.reload();
-    }
+    function logout() { localStorage.clear(); location.reload(); }
 
-    // --- MANAJEMEN DASBOR & PENGATURAN ---
     async function tampilDashboard() {
         document.getElementById('auth-section').style.display = 'none';
         document.getElementById('dashboard-section').style.display = 'block';
@@ -289,15 +256,23 @@
                 if(result.settings.url_ttd) document.getElementById('preview-ttd').src = result.settings.url_ttd;
                 if(result.settings.url_stempel) document.getElementById('preview-stempel').src = result.settings.url_stempel;
 
-                window.dataSiswa = result.students;
+                // PERBAIKAN: Paksa setiap baris memiliki 7 elemen, dan stringify NISN untuk tahan angka 0
+                window.dataSiswa = result.students.map(s => {
+                    while(s.length < 7) s.push(''); // Padding jika URL foto kosong
+                    s[1] = String(s[1]); // NISN 
+                    s[2] = String(s[2]); // NISM
+                    s[5] = String(s[5]); // No Peserta
+                    return s;
+                });
                 renderTabelSiswa();
                 Swal.close();
             }
         } catch (error) { Swal.fire('Error', 'Gagal memuat data', 'error'); }
     }
 
-    async function simpanPengaturan() {
-        Swal.fire({title: 'Menyimpan...', allowOutsideClick: false, didOpen: () => Swal.showLoading()});
+    // Fungsi ini ditambahkan parameter 'silent' agar auto-save gambar tidak memunculkan 2 popup
+    async function simpanPengaturan(silent = false) {
+        if(!silent) Swal.fire({title: 'Menyimpan...', allowOutsideClick: false, didOpen: () => Swal.showLoading()});
         const payload = {
             action: 'saveSettings', dbId: currentDbId,
             nama_madrasah: document.getElementById('set-nama').value,
@@ -312,11 +287,12 @@
         };
         try {
             await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
-            Swal.fire('Tersimpan!', 'Identitas Madrasah diperbarui.', 'success');
-        } catch(e) { Swal.fire('Error', 'Gagal menyimpan', 'error'); }
+            if(!silent) Swal.fire('Tersimpan!', 'Identitas Madrasah diperbarui.', 'success');
+        } catch(e) {
+            if(!silent) Swal.fire('Error', 'Gagal menyimpan', 'error');
+        }
     }
 
-    // --- UPLOAD GAMBAR (DRIVE) ---
     function getBase64(file) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -335,21 +311,21 @@
         
         try {
             const res = await fetch(SCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify({ action: 'uploadFile', base64: base64, filename: file.name, mimeType: file.type })
+                method: 'POST', body: JSON.stringify({ action: 'uploadFile', base64: base64, filename: file.name, mimeType: file.type })
             });
             const result = await res.json();
             if(result.status === 'success') {
                 window.appSettings[settingKey] = result.url;
                 document.getElementById(previewId).src = result.url;
-                Swal.fire('Berhasil', 'Berkas berhasil diunggah', 'success');
+                // PERBAIKAN: Langsung simpan diam-diam (silent mode) agar database langsung terupdate
+                await simpanPengaturan(true); 
+                Swal.fire('Berhasil', 'Berkas berhasil diunggah & otomatis tersimpan', 'success');
             } else {
                 Swal.fire('Gagal', result.message, 'error');
             }
         } catch(e) { Swal.fire('Error', 'Gagal mengunggah ke Drive', 'error'); }
     }
 
-    // --- MANAJEMEN SISWA & EXCEL ---
     function downloadTemplate() {
         const ws = XLSX.utils.aoa_to_sheet([["Nama Lengkap", "NISN", "NISM", "Tempat, Tanggal Lahir", "L/P", "Nomor Peserta"]]);
         const wb = XLSX.utils.book_new();
@@ -365,15 +341,20 @@
             const data = new Uint8Array(e.target.result);
             const workbook = XLSX.read(data, {type: 'array'});
             const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-            const excelRows = XLSX.utils.sheet_to_json(firstSheet, {header: 1});
+            // PERBAIKAN: Atribut raw: false sangat vital untuk membaca sel sebagai Teks agar 0 di depan NISN tidak lenyap
+            const excelRows = XLSX.utils.sheet_to_json(firstSheet, {header: 1, raw: false, defval: ''});
             
-            // Format Array: Nama, NISN, NISM, TTL, JK, NoPeserta, FotoURL
             let newData = [];
-            for(let i=1; i<excelRows.length; i++) { // Skip header
-                if(excelRows[i].length > 0) {
+            for(let i=1; i<excelRows.length; i++) {
+                if(excelRows[i].join('').trim() !== '') { 
                     newData.push([
-                        excelRows[i][0] || '', excelRows[i][1] || '', excelRows[i][2] || '', 
-                        excelRows[i][3] || '', excelRows[i][4] || '', excelRows[i][5] || '', ''
+                        String(excelRows[i][0]).trim(),
+                        String(excelRows[i][1]).trim(), // NISN kini dibaca sebagai string utuh
+                        String(excelRows[i][2]).trim(),
+                        String(excelRows[i][3]).trim(),
+                        String(excelRows[i][4]).trim(),
+                        String(excelRows[i][5]).trim(),
+                        '' // Siapkan tempat pas untuk Foto (Kolom ke-7)
                     ]);
                 }
             }
@@ -387,8 +368,7 @@
         Swal.fire({title: 'Sinkronisasi Database...', allowOutsideClick: false, didOpen: () => Swal.showLoading()});
         try {
             await fetch(SCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify({ action: 'uploadStudents', dbId: currentDbId, students: window.dataSiswa })
+                method: 'POST', body: JSON.stringify({ action: 'uploadStudents', dbId: currentDbId, students: window.dataSiswa })
             });
             renderTabelSiswa();
             Swal.fire('Berhasil', 'Data Siswa tersimpan di Database', 'success');
@@ -418,9 +398,8 @@
     }
 
     function hapusSiswa(index) {
-        Swal.fire({
-            title: 'Hapus data ini?', icon: 'warning', showCancelButton: true, confirmButtonText: 'Ya, Hapus!'
-        }).then((result) => {
+        Swal.fire({ title: 'Hapus data ini?', icon: 'warning', showCancelButton: true, confirmButtonText: 'Ya, Hapus!' })
+        .then((result) => {
             if (result.isConfirmed) {
                 window.dataSiswa.splice(index, 1);
                 simpanDataSiswaKeServer();
@@ -450,39 +429,37 @@
         }
     }
 
-    // --- UPLOAD FOTO MASSAL (AUTO MATCH NISN) ---
     async function uploadMassalFoto(event) {
         const files = event.target.files;
         if(files.length === 0) return;
         
-        Swal.fire({title: 'Memproses Foto...', text: 'Tergantung jumlah foto dan koneksi internet', allowOutsideClick: false, didOpen: () => Swal.showLoading()});
+        Swal.fire({title: 'Memproses Foto...', text: 'Mencocokkan nama file dengan NISN', allowOutsideClick: false, didOpen: () => Swal.showLoading()});
         
         let successCount = 0;
         for(let i=0; i<files.length; i++) {
             let file = files[i];
-            let nisn = file.name.split('.')[0]; // Ekstrak nama file tanpa format (misal 0123456789.jpg -> 0123456789)
+            let nisn = file.name.split('.')[0];
             
-            let studentIndex = window.dataSiswa.findIndex(s => s[1] == nisn); // Cari NISN di array
+            // PERBAIKAN: Kini pencocokan dipastikan berhasil karena NISN tidak kehilangan angka 0 lagi
+            let studentIndex = window.dataSiswa.findIndex(s => s[1] == nisn); 
             
             if(studentIndex !== -1) {
                 let base64 = await getBase64(file);
                 let res = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({action: 'uploadFile', base64: base64, filename: file.name, mimeType: file.type})
+                    method: 'POST', body: JSON.stringify({action: 'uploadFile', base64: base64, filename: file.name, mimeType: file.type})
                 });
                 let result = await res.json();
                 if(result.status === 'success') {
-                    window.dataSiswa[studentIndex][6] = result.url; // Update Foto URL
+                    window.dataSiswa[studentIndex][6] = result.url;
                     successCount++;
                 }
             }
         }
         
         await simpanDataSiswaKeServer();
-        Swal.fire('Selesai', `${successCount} Foto berhasil diunggah & dipasangkan sesuai NISN.`, 'success');
+        Swal.fire('Selesai', `${successCount} Foto berhasil diunggah & dipasangkan.`, 'success');
     }
 
-    // --- CETAK KARTU ---
     function muatKartu() {
         if(window.dataSiswa.length === 0) return Swal.fire('Kosong', 'Data siswa belum ada.', 'warning');
 
@@ -543,9 +520,7 @@
             </div>`;
         });
         
-        Swal.fire({
-            title: 'Kartu Siap', text: 'Silakan scroll ke bawah dan klik Cetak PDF', icon: 'success', toast: true, position: 'top-end', showConfirmButton: false, timer: 3000
-        });
+        Swal.fire({ title: 'Kartu Siap', text: 'Silakan scroll ke bawah dan klik Cetak PDF', icon: 'success', toast: true, position: 'top-end', showConfirmButton: false, timer: 3000 });
     }
 </script>
 </body>
