@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Ujian Online (CBT) & LMS Tanpa Server | Belajar Inovasi</title>
+    
+    <!-- SEO META TAGS -->
+    <meta name="description" content="Aplikasi Ujian Online CBT dan LMS berbasis Google Spreadsheet. Tanpa biaya hosting, anti-lemot, support token & timer. Cocok untuk SD, SMP, SMA.">
+    <meta name="keywords" content="Aplikasi CBT Online, Ujian Online Spreadsheet, Google Apps Script, Belajar Inovasi, Suwanto, Aplikasi Sekolah, LMS Sekolah">
+    <meta name="author" content="Suwanto">
+
+    <!-- FONT & FRAMEWORK -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #1e40af;
+            --primary-light: #3b82f6;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --accent: #f59e0b;
+        }
+
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--light); color: var(--dark); }
+
+        /* Navbar */
+        .navbar { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); border-bottom: 1px solid #e2e8f0; }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            padding: 140px 0 80px;
+            overflow: hidden;
+        }
+        .hero-title { font-weight: 800; font-size: 3.5rem; line-height: 1.2; letter-spacing: -1px; }
+        .hero-title span { color: var(--primary); }
+        
+        /* Mockup Placeholder */
+        .mockup-container {
+            position: relative;
+            background: white;
+            border-radius: 12px;
+            padding: 10px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
+            border: 1px solid #e2e8f0;
+            transform: perspective(1000px) rotateY(-5deg) rotateX(5deg);
+            transition: 0.5s;
+        }
+        .mockup-container:hover { transform: perspective(1000px) rotateY(0deg) rotateX(0deg); }
+        .mockup-img { width: 100%; border-radius: 8px; background: #cbd5e1; height: 350px; display: flex; align-items: center; justify-content: center; color: #64748b; font-weight: bold; }
+
+        /* Fitur Grid */
+        .feature-box {
+            background: white; padding: 30px; border-radius: 20px;
+            border: 1px solid #e2e8f0; height: 100%; transition: 0.3s;
+        }
+        .feature-box:hover { box-shadow: 0 20px 25px -5px rgba(0,0,0,0.05); transform: translateY(-5px); border-color: var(--primary-light); }
+        .icon-feat { width: 60px; height: 60px; background: #eff6ff; color: var(--primary); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin-bottom: 20px; }
+
+        /* Pricing Table */
+        .pricing-card { background: white; border-radius: 24px; padding: 40px; border: 1px solid #e2e8f0; position: relative; overflow: hidden; }
+        .pricing-card.popular { border: 2px solid var(--primary); box-shadow: 0 20px 40px rgba(30,64,175,0.1); transform: scale(1.05); }
+        .badge-popular { position: absolute; top: 20px; right: -30px; background: var(--accent); color: white; padding: 5px 40px; transform: rotate(45deg); font-weight: bold; font-size: 0.8rem; }
+        .price-text { font-size: 3rem; font-weight: 800; color: var(--dark); }
+        .price-text span { font-size: 1rem; color: #64748b; font-weight: 500; }
+        
+        .list-check li { margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px; color: #475569; }
+        .list-check li i { color: #10b981; font-size: 1.2rem; }
+        .list-cross li i { color: #ef4444; }
+
+        /* Accordion FAQ */
+        .accordion-button:not(.collapsed) { background-color: #eff6ff; color: var(--primary); font-weight: bold; }
+        .accordion-button:focus { box-shadow: none; border-color: rgba(0,0,0,.125); }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg fixed-top py-3">
+    <div class="container">
+        <a class="navbar-brand fw-bolder fs-4" href="#"><i class="bi bi-layers-fill text-primary"></i> Belajar Inovasi</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navMenu">
+            <ul class="navbar-nav ms-auto gap-3 align-items-center">
+                <li class="nav-item"><a class="nav-link fw-semibold" href="#fitur">Fitur Unggulan</a></li>
+                <li class="nav-item"><a class="nav-link fw-semibold" href="#harga">Paket Harga</a></li>
+                <li class="nav-item"><a class="nav-link fw-semibold" href="#faq">FAQ</a></li>
+                <li class="nav-item ms-lg-3"><a href="https://www.youtube.com/@suwanto_pakwanto" target="_blank" class="btn btn-outline-danger rounded-pill px-4 fw-bold"><i class="bi bi-youtube"></i> Demo Video</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6" data-aos="fade-right">
+                <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2 mb-3 fw-bold border border-primary-subtle">Revolusi Ujian Digital #1</span>
+                <h1 class="hero-title mb-4">Aplikasi Ujian CBT <span>Tanpa Biaya Hosting</span> Seumur Hidup.</h1>
+                <p class="lead text-secondary mb-4">Ubah Google Spreadsheet Anda menjadi mesin ujian CBT profesional. Anti-lemot saat diakses ribuan siswa, nilai keluar otomatis, dan dilengkapi sistem Token Keamanan.</p>
+                <div class="d-flex gap-3">
+                    <a href="#harga" class="btn btn-primary btn-lg rounded-pill px-5 fw-bold shadow-sm">Beli Sekarang</a>
+                    <a href="#fitur" class="btn btn-outline-dark btn-lg rounded-pill px-4 fw-bold">Pelajari Fitur</a>
+                </div>
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                <div class="mockup-container">
+                    <!-- Ganti background ini dengan URL gambar screenshot aplikasi ujian Anda nantinya -->
+                    <div class="mockup-img" style="background-image: url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'); background-size: cover; background-position: center;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Mengapa Memilih Sistem Kami -->
+<section class="py-5" style="background: white;">
+    <div class="container py-5 text-center">
+        <h2 class="fw-bold mb-5" data-aos="fade-up">Mengapa Meninggalkan Web Hosting Biasa?</h2>
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-4" data-aos="fade-up" data-delay="100">
+                <h1 class="display-4 text-primary fw-bold"><i class="bi bi-server"></i></h1>
+                <h4 class="fw-bold mt-3">Rp 0 Biaya Server</h4>
+                <p class="text-muted">Aplikasi berjalan di infrastruktur Google Workspace. Anda tidak perlu membayar tagihan hosting/cPanel bulanan.</p>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-delay="200">
+                <h1 class="display-4 text-danger fw-bold"><i class="bi bi-speedometer2"></i></h1>
+                <h4 class="fw-bold mt-3">Anti-Lemot (Down)</h4>
+                <p class="text-muted">Ditenagai oleh server Google. Tetap stabil meski diakses oleh ratusan hingga ribuan siswa secara bersamaan.</p>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-delay="300">
+                <h1 class="display-4 text-success fw-bold"><i class="bi bi-file-earmark-spreadsheet"></i></h1>
+                <h4 class="fw-bold mt-3">100% Database Spreadsheet</h4>
+                <p class="text-muted">Tidak perlu paham bahasa SQL. Kelola soal, data siswa, dan nilai semudah mengetik di Microsoft Excel.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Fitur Lengkap -->
+<section id="fitur" class="py-5 bg-light">
+    <div class="container py-5">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="fw-bold">Fitur CBT Kelas Profesional</h2>
+            <p class="text-muted">Semua yang dibutuhkan sekolah Anda ada di sini.</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6" data-aos="fade-up">
+                <div class="feature-box">
+                    <div class="icon-feat"><i class="bi bi-shield-lock"></i></div>
+                    <h5 class="fw-bold">Sistem Keamanan Token</h5>
+                    <p class="text-muted small">Siswa tidak bisa mulai ujian tanpa token/PIN unik yang digenerate oleh proktor.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-box">
+                    <div class="icon-feat"><i class="bi bi-stopwatch"></i></div>
+                    <h5 class="fw-bold">Timer Ujian Otomatis</h5>
+                    <p class="text-muted small">Waktu ujian berjalan *real-time*. Jawaban akan tersubmit otomatis ketika waktu habis.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-box">
+                    <div class="icon-feat"><i class="bi bi-bar-chart-line"></i></div>
+                    <h5 class="fw-bold">Kalkulasi Nilai Otomatis</h5>
+                    <p class="text-muted small">Selesai ujian, guru langsung bisa mendownload rekap nilai tanpa harus mengoreksi manual.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="feature-box">
+                    <div class="icon-feat"><i class="bi bi-file-image"></i></div>
+                    <h5 class="fw-bold">Dukung Soal Gambar & Audio</h5>
+                    <p class="text-muted small">Sangat mendukung soal Matematika (rumus) atau Bahasa Inggris (Listening) dengan integrasi Google Drive.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
+                <div class="feature-box">
+                    <div class="icon-feat"><i class="bi bi-phone"></i></div>
+                    <h5 class="fw-bold">Responsive Mobile Friendly</h5>
+                    <p class="text-muted small">Tampilan aplikasi sangat rapi saat dibuka melalui Smartphone Android, iPhone, maupun Laptop.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
+                <div class="feature-box">
+                    <div class="icon-feat"><i class="bi bi-file-arrow-up"></i></div>
+                    <h5 class="fw-bold">Import Soal Sangat Cepat</h5>
+                    <p class="text-muted small">Cukup *copy-paste* soal Anda dari Word ke Spreadsheet, aplikasi akan merendernya seketika.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Paket Harga -->
+<section id="harga" class="py-5" style="background: white;">
+    <div class="container py-5">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="fw-bold">Investasi Sekali, Pakai Selamanya</h2>
+            <p class="text-muted">Pilih paket lisensi sesuai kebutuhan operasional sekolah Anda.</p>
+        </div>
+        
+        <div class="row justify-content-center g-4">
+            <!-- Paket Basic -->
+            <div class="col-lg-5" data-aos="fade-right">
+                <div class="pricing-card">
+                    <h4 class="fw-bold text-primary mb-3">Paket Mandiri</h4>
+                    <p class="text-muted small mb-4">Cocok untuk proktor / operator sekolah yang sudah terbiasa dengan Google Apps Script.</p>
+                    <div class="price-text mb-4">Rp 750.000<span> / 1 ID Sekolah</span></div>
+                    
+                    <ul class="list-unstyled list-check mb-4">
+                        <li><i class="bi bi-check-circle-fill"></i> Source Code Lengkap CBT</li>
+                        <li><i class="bi bi-check-circle-fill"></i> Template Database Spreadsheet</li>
+                        <li><i class="bi bi-check-circle-fill"></i> Panduan Instalasi (PDF/Video)</li>
+                        <li><i class="bi bi-check-circle-fill"></i> Bebas Tambah Siswa (Unlimited)</li>
+                        <li class="list-cross"><i class="bi bi-x-circle-fill text-muted"></i> Bantuan Setup oleh Developer</li>
+                        <li class="list-cross"><i class="bi bi-x-circle-fill text-muted"></i> Modifikasi Fitur Custom</li>
+                    </ul>
+                    <a href="https://wa.me/6285895283075?text=Halo%20Pak%20Wanto,%20saya%20ingin%20membeli%20Aplikasi%20CBT%20Paket%20Mandiri." target="_blank" class="btn btn-outline-primary w-100 py-3 fw-bold rounded-pill">Pesan Paket Mandiri</a>
+                </div>
+            </div>
+
+            <!-- Paket Setup (Popular) -->
+            <div class="col-lg-5" data-aos="fade-left">
+                <div class="pricing-card popular">
+                    <div class="badge-popular">TERLARIS</div>
+                    <h4 class="fw-bold text-primary mb-3">Paket Terima Beres</h4>
+                    <p class="text-muted small mb-4">Sistem langsung kami instalkan ke akun Google Sekolah Anda. Anda tinggal pakai.</p>
+                    <div class="price-text mb-4">Rp 1.200.000<span> / 1 ID Sekolah</span></div>
+                    
+                    <ul class="list-unstyled list-check mb-4">
+                        <li><i class="bi bi-check-circle-fill"></i> Source Code Lengkap CBT</li>
+                        <li><i class="bi bi-check-circle-fill"></i> Template Database Spreadsheet</li>
+                        <li><i class="bi bi-check-circle-fill"></i> Bebas Tambah Siswa (Unlimited)</li>
+                        <li><i class="bi bi-check-circle-fill"></i> <b>Setup & Instalasi 100% oleh Developer</b></li>
+                        <li><i class="bi bi-check-circle-fill"></i> <b>Bimbingan Penggunaan via WA (1 Bulan)</b></li>
+                        <li><i class="bi bi-check-circle-fill"></i> Free Update Bug Minor</li>
+                    </ul>
+                    <a href="https://wa.me/6285895283075?text=Halo%20Pak%20Wanto,%20saya%20ingin%20membeli%20Aplikasi%20CBT%20Paket%20Terima%20Beres." target="_blank" class="btn btn-primary w-100 py-3 fw-bold rounded-pill shadow">Pesan Paket Terima Beres</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section id="faq" class="py-5 bg-light">
+    <div class="container py-5">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="fw-bold">Pertanyaan Sering Diajukan (FAQ)</h2>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-lg-8" data-aos="fade-up">
+                <div class="accordion" id="faqCBT">
+                    <div class="accordion-item border-0 mb-3 rounded-4 overflow-hidden shadow-sm">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                Apakah benar tidak ada biaya bulanan sama sekali?
+                            </button>
+                        </h2>
+                        <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqCBT">
+                            <div class="accordion-body text-muted">
+                                Benar 100%. Karena kita menumpang pada server Google (Google Drive & Spreadsheet), selama akun Gmail/Google Workspace Anda aktif, aplikasi akan terus berjalan tanpa biaya server sepeserpun.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item border-0 mb-3 rounded-4 overflow-hidden shadow-sm">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                Apakah bisa diakses 500 siswa bersamaan?
+                            </button>
+                        </h2>
+                        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqCBT">
+                            <div class="accordion-body text-muted">
+                                Sangat bisa. Server Google dirancang untuk menangani beban tinggi. Berbeda dengan hosting sekolah biasa yang sering down saat diakses ratusan siswa, sistem berbasis Apps Script ini jauh lebih kuat menahan <i>traffic</i> massal.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item border-0 mb-3 rounded-4 overflow-hidden shadow-sm">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                Apakah soal matematika dan gambar didukung?
+                            </button>
+                        </h2>
+                        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqCBT">
+                            <div class="accordion-body text-muted">
+                                Tentu. Anda cukup mengunggah gambar soal ke Google Drive, lalu meletakkan link gambar/ID gambar tersebut ke dalam kolom Spreadsheet. Aplikasi otomatis merendernya menjadi gambar saat siswa ujian.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-dark text-white py-5">
+    <div class="container text-center">
+        <h4 class="fw-bold mb-3">BELAJAR INOVASI</h4>
+        <p class="mb-4 text-white-50">Menghadirkan solusi administrasi digital masa depan untuk Instansi & Pendidikan.</p>
+        <p class="small text-white-50">© 2026 Suwanto (Pak Wanto). Spesialis Google Apps Script. Surabaya.</p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        AOS.init({ duration: 800, once: true, offset: 50 });
+    });
+</script>
+
+</body>
+</html>
