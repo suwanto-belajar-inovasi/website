@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Belajar Inovasi | Store Resmi Aplikasi Administrasi Tanpa Server</title>
     
-    <meta name="description" content="Toko aplikasi web serverless oleh Suwanto. Beli dan gunakan langsung sistem MIS Sekolah, SIPENDEKAR Posyandu, Ekspedisi, dan Kalkulator Matematika. Tanpa biaya hosting bulanan.">
-    <meta name="keywords" content="Belajar Inovasi, Aplikasi Sekolah Surabaya, Jual Source Code Aplikasi, SIPENDEKAR, Express Nusantara, Google Apps Script, Toko Aplikasi Digital">
+    <meta name="description" content="Toko aplikasi web serverless oleh Suwanto. Beli dan gunakan langsung sistem MIS Sekolah, CBT Online, Keuangan, SIPENDEKAR, dan Ekspedisi. Tanpa biaya hosting bulanan.">
+    <meta name="keywords" content="Belajar Inovasi, Suwanto Pakwanto, Aplikasi Sekolah Surabaya, Jual Source Code Aplikasi, CBT Online Spreadsheet, LMS Apps Script, Toko Aplikasi Digital">
     <meta name="author" content="Suwanto">
 
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;800&display=swap" rel="stylesheet">
@@ -20,6 +20,7 @@
             --primary-light: #3b82f6;
             --dark: #0f172a;
             --bg-color: #f8fafc;
+            --accent: #f59e0b;
         }
 
         body {
@@ -68,6 +69,16 @@
             border-color: var(--primary-light);
         }
 
+        .product-card.custom-order {
+            background: linear-gradient(145deg, #1e40af, #3b82f6);
+            color: white;
+            border: none;
+        }
+
+        .product-card.custom-order:hover {
+            box-shadow: 0 20px 30px -5px rgba(59, 130, 246, 0.4);
+        }
+
         .icon-wrapper {
             width: 56px;
             height: 56px;
@@ -81,15 +92,34 @@
             margin-bottom: 24px;
         }
 
+        .custom-order .icon-wrapper {
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+
         .price-tag {
             font-size: 1.75rem;
             font-weight: 800;
             color: var(--dark);
         }
+
+        .custom-order .price-tag {
+            color: white;
+            font-size: 1.5rem;
+        }
+
         .price-period {
             font-size: 0.875rem;
             color: #64748b;
             font-weight: 500;
+        }
+
+        .custom-order .price-period {
+            color: rgba(255,255,255,0.8);
+        }
+
+        .custom-order .text-muted {
+            color: rgba(255,255,255,0.9) !important;
         }
 
         /* Checkout Modal Settings */
@@ -119,6 +149,20 @@
             border-radius: 20px;
             font-weight: 600;
         }
+
+        /* YouTube Badge */
+        .yt-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.7rem;
+            background: #fee2e2;
+            color: #dc2626;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
@@ -134,7 +178,7 @@
         <div class="collapse navbar-collapse" id="navMenu">
             <ul class="navbar-nav ms-auto gap-lg-3 align-items-center">
                 <li class="nav-item"><a class="nav-link fw-semibold" href="#katalog">Katalog Produk</a></li>
-                <li class="nav-item"><a class="nav-link fw-semibold" href="https://www.youtube.com/@suwanto_pakwanto" target="_blank">Tutorial YouTube</a></li>
+                <li class="nav-item"><a class="nav-link fw-semibold text-danger" href="https://www.youtube.com/@suwanto_pakwanto" target="_blank"><i class="bi bi-youtube"></i> Tutorial YouTube</a></li>
                 <li class="nav-item ms-lg-2"><a href="#katalog" class="btn btn-primary rounded-pill px-4 fw-semibold">Beli Aplikasi</a></li>
             </ul>
         </div>
@@ -143,52 +187,76 @@
 
 <header class="hero-section text-center">
     <div class="container">
-        <span class="secure-badge mb-4" data-aos="fade-down"><i class="bi bi-shield-lock-fill"></i> Serverless License System</span>
-        <h1 class="hero-title mb-4" data-aos="fade-up">Toko Aplikasi Instansi<br /><span class="text-primary">Tanpa Biaya Server</span></h1>
-        <p class="lead text-secondary mb-5 px-lg-5 mx-auto" style="max-width: 800px;" data-aos="fade-up" data-aos-delay="100">Solusi digitalisasi berbasis Google Apps Script. Beli source code, copy ke drive Anda, dan aplikasi akan aktif otomatis setelah ID Spreadsheet diverifikasi oleh sistem pusat kami.</p>
+        <span class="secure-badge mb-4" data-aos="fade-down"><i class="bi bi-shield-lock-fill"></i> Google Apps Script Serverless License</span>
+        <h1 class="hero-title mb-4" data-aos="fade-up">Ekosistem Digital Instansi<br /><span class="text-primary">Terintegrasi & Bebas Hosting</span></h1>
+        <p class="lead text-secondary mb-5 px-lg-5 mx-auto" style="max-width: 800px;" data-aos="fade-up" data-aos-delay="100">Solusi cerdas berbasis Google Spreadsheet. Sistem berjalan cepat, responsif di HP, dan akan aktif otomatis setelah ID Spreadsheet Anda diverifikasi oleh *database* pusat kami.</p>
     </div>
 </header>
 
 <section id="katalog" class="py-5">
     <div class="container py-5">
         <div class="text-center mb-5" data-aos="fade-up">
-            <h2 class="fw-bold mb-3">Pilih Solusi Digital Anda</h2>
-            <p class="text-muted">Lisensi seumur hidup per instansi. Sudah termasuk panduan instalasi.</p>
+            <h2 class="fw-bold mb-3">Katalog Aplikasi Utama</h2>
+            <p class="text-muted">Lisensi seumur hidup per instansi. Langsung duplikasi dan gunakan!</p>
         </div>
         
-        <div class="row g-4">
-            <!-- Produk 1 -->
-            <div class="col-lg-3 col-md-6" data-aos="fade-up">
+        <div class="row g-4 mb-5">
+            <div class="col-lg-4 col-md-6" data-aos="fade-up">
                 <div class="product-card">
-                    <div class="icon-wrapper"><i class="bi bi-mortarboard-fill"></i></div>
-                    <h5 class="fw-bold mb-2">MIS Digital School</h5>
-                    <p class="text-muted small mb-4">Sistem manajemen Madrasah komplit: PPDB, Tabungan, & CBT Online.</p>
+                    <span class="yt-badge"><i class="bi bi-play-circle-fill"></i> As Seen on YouTube</span>
+                    <div class="icon-wrapper"><i class="bi bi-laptop"></i></div>
+                    <h5 class="fw-bold mb-2">LMS & CBT Online Sekolah</h5>
+                    <p class="text-muted small mb-4">Aplikasi ujian dan *Learning Management System* berbasis Spreadsheet & Apps Script. Lengkap dengan sertifikat otomatis.</p>
                     <div class="mt-auto">
                         <div class="price-tag mb-4">Rp 750.000<span class="price-period">/lisensi</span></div>
-                        <button onclick="bukaCheckout('MIS Digital School', 750000)" class="btn btn-outline-primary w-100 rounded-pill fw-bold py-2">Pesan Sekarang</button>
+                        <button onclick="bukaCheckout('LMS & CBT Online Sekolah', 750000)" class="btn btn-outline-primary w-100 rounded-pill fw-bold py-2">Pesan Sekarang</button>
                     </div>
                 </div>
             </div>
 
-            <!-- Produk 2 -->
-            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
                 <div class="product-card">
-                    <div class="icon-wrapper text-danger bg-danger-subtle"><i class="bi bi-heart-pulse-fill"></i></div>
-                    <h5 class="fw-bold mb-2">SIPENDEKAR</h5>
-                    <p class="text-muted small mb-4">Aplikasi Posyandu cerdas. Hitung Z-Score balita otomatis & cetak laporan PDF.</p>
+                    <span class="yt-badge"><i class="bi bi-play-circle-fill"></i> As Seen on YouTube</span>
+                    <div class="icon-wrapper text-success bg-success-subtle"><i class="bi bi-wallet2"></i></div>
+                    <h5 class="fw-bold mb-2">Aplikasi Keuangan Sekolah</h5>
+                    <p class="text-muted small mb-4">Sistem pencatatan kas, SPP, dan tabungan siswa yang otomatis terekap dalam Google Sheets tanpa butuh *server*.</p>
                     <div class="mt-auto">
                         <div class="price-tag mb-4">Rp 500.000<span class="price-period">/lisensi</span></div>
-                        <button onclick="bukaCheckout('SIPENDEKAR', 500000)" class="btn btn-outline-primary w-100 rounded-pill fw-bold py-2">Pesan Sekarang</button>
+                        <button onclick="bukaCheckout('Aplikasi Keuangan Sekolah', 500000)" class="btn btn-outline-primary w-100 rounded-pill fw-bold py-2">Pesan Sekarang</button>
                     </div>
                 </div>
             </div>
 
-            <!-- Produk 3 -->
-            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="product-card">
+                    <span class="yt-badge"><i class="bi bi-play-circle-fill"></i> As Seen on YouTube</span>
+                    <div class="icon-wrapper text-info bg-info-subtle"><i class="bi bi-envelope-paper"></i></div>
+                    <h5 class="fw-bold mb-2">Administrasi Surat Menyurat</h5>
+                    <p class="text-muted small mb-4">Arsip digital surat masuk/keluar sekolah dengan fitur pencarian cepat dan pembuatan *template* surat dinamis.</p>
+                    <div class="mt-auto">
+                        <div class="price-tag mb-4">Rp 450.000<span class="price-period">/lisensi</span></div>
+                        <button onclick="bukaCheckout('Aplikasi Administrasi Surat', 450000)" class="btn btn-outline-primary w-100 rounded-pill fw-bold py-2">Pesan Sekarang</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="product-card">
+                    <div class="icon-wrapper text-danger bg-danger-subtle"><i class="bi bi-heart-pulse-fill"></i></div>
+                    <h5 class="fw-bold mb-2">SIPENDEKAR Posyandu</h5>
+                    <p class="text-muted small mb-4">Aplikasi Posyandu cerdas. Hitung Z-Score balita otomatis & cetak laporan PDF langsung dari *database* Spreadsheet.</p>
+                    <div class="mt-auto">
+                        <div class="price-tag mb-4">Rp 600.000<span class="price-period">/lisensi</span></div>
+                        <button onclick="bukaCheckout('SIPENDEKAR Posyandu', 600000)" class="btn btn-outline-primary w-100 rounded-pill fw-bold py-2">Pesan Sekarang</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
                 <div class="product-card">
                     <div class="icon-wrapper text-warning bg-warning-subtle"><i class="bi bi-truck"></i></div>
                     <h5 class="fw-bold mb-2">Express Nusantara v2</h5>
-                    <p class="text-muted small mb-4">Manajemen ekspedisi dengan GPS tracking kurir & integrasi Barcode.</p>
+                    <p class="text-muted small mb-4">Sistem logistik dan ekspedisi. *Tracking* kurir GPS *real-time* dan integrasi sistem *barcode* resi.</p>
                     <div class="mt-auto">
                         <div class="price-tag mb-4">Rp 1.200.000<span class="price-period">/lisensi</span></div>
                         <button onclick="bukaCheckout('Express Nusantara v2', 1200000)" class="btn btn-outline-primary w-100 rounded-pill fw-bold py-2">Pesan Sekarang</button>
@@ -196,15 +264,14 @@
                 </div>
             </div>
 
-            <!-- Produk 4 -->
-            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
-                <div class="product-card">
-                    <div class="icon-wrapper text-success bg-success-subtle"><i class="bi bi-calculator"></i></div>
-                    <h5 class="fw-bold mb-2">Kalkulator Matematika</h5>
-                    <p class="text-muted small mb-4">26 Modul penyelesaian matematika terpadu untuk alat bantu mengajar.</p>
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
+                <div class="product-card custom-order">
+                    <div class="icon-wrapper"><i class="bi bi-code-square"></i></div>
+                    <h5 class="fw-bold mb-2">Buat Aplikasi Custom</h5>
+                    <p class="text-muted small mb-4">Punya *logic* spesifik? Kami bisa bangun aplikasi web responsif menggunakan Bootstrap & Google Apps Script sesuai alur kerja instansi Anda.</p>
                     <div class="mt-auto">
-                        <div class="price-tag mb-4">Rp 350.000<span class="price-period">/lisensi</span></div>
-                        <button onclick="bukaCheckout('Kalkulator Matematika', 350000)" class="btn btn-outline-primary w-100 rounded-pill fw-bold py-2">Pesan Sekarang</button>
+                        <div class="price-tag mb-4">Konsultasi<span class="price-period"> / Negosiasi</span></div>
+                        <button onclick="bukaCheckoutCustom()" class="btn btn-light text-primary w-100 rounded-pill fw-bold py-2">Diskusi via WhatsApp</button>
                     </div>
                 </div>
             </div>
@@ -212,55 +279,52 @@
     </div>
 </section>
 
-<!-- Modal Checkout Profesional (Split Layout) -->
 <div class="modal fade checkout-modal" id="checkoutModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
             <div class="row g-0">
-                <!-- Kiri: Order Summary -->
                 <div class="col-lg-5 order-summary-bg p-5 d-none d-lg-block">
                     <div class="mb-5">
-                        <span class="secure-badge"><i class="bi bi-lock-fill"></i> Checkout Aman</span>
+                        <span class="secure-badge" id="badgeTitle"><i class="bi bi-lock-fill"></i> Checkout Aman</span>
                     </div>
-                    <h4 class="fw-bold mb-4">Ringkasan Pesanan</h4>
+                    <h4 class="fw-bold mb-4" id="summaryTitle">Ringkasan Pesanan</h4>
                     
-                    <div class="card border-0 shadow-sm mb-4">
+                    <div class="card border-0 shadow-sm mb-4" id="summaryCard">
                         <div class="card-body p-4">
-                            <p class="text-muted small mb-1">Nomor Invoice:</p>
+                            <p class="text-muted small mb-1">Nomor Referensi:</p>
                             <h6 class="fw-bold text-primary mb-3" id="displayInvoiceID">INV-WAIT...</h6>
                             
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="fw-semibold" id="displayNamaProduk">Nama Produk</span>
                                 <span class="fw-bold" id="displayHarga">Rp 0</span>
                             </div>
-                            <div class="d-flex justify-content-between text-muted small pb-3 border-bottom mb-3">
+                            <div class="d-flex justify-content-between text-muted small pb-3 border-bottom mb-3" id="lisensiRow">
                                 <span>Lisensi</span>
                                 <span>1 Instansi / Spreadsheet ID</span>
                             </div>
                             <div class="d-flex justify-content-between align-items-center">
-                                <span class="fw-bold fs-5">Total Pembayaran</span>
+                                <span class="fw-bold fs-5" id="totalLabel">Total Pembayaran</span>
                                 <span class="fw-bolder fs-4 text-primary" id="displayTotal">Rp 0</span>
                             </div>
                         </div>
                     </div>
-                    <div class="text-muted small">
-                        <i class="bi bi-info-circle me-1"></i> Setelah konfirmasi pembayaran, Anda akan menerima link master file untuk diduplikasi.
+                    <div class="text-muted small" id="infoText">
+                        <i class="bi bi-info-circle me-1"></i> Setelah konfirmasi pembayaran, Anda akan menerima *link* master *file* untuk diduplikasi ke Google Drive Anda.
                     </div>
                 </div>
 
-                <!-- Kanan: Form Pembeli -->
                 <div class="col-lg-7 p-4 p-lg-5">
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h4 class="fw-bold mb-0">Data Lisensi & Pembeli</h4>
+                        <h4 class="fw-bold mb-0">Data Diri & Instansi</h4>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <p class="text-muted small mb-4">Email Google (Gmail) yang Anda masukkan akan digunakan sebagai kunci otorisasi pada database kami agar script bisa berjalan di Drive Anda.</p>
+                    <p class="text-muted small mb-4" id="descForm">Email Google (Gmail) yang Anda masukkan akan digunakan sebagai kunci otorisasi pada *database* kami agar *script* bisa berjalan.</p>
                     
                     <form id="formCheckout">
-                        <!-- Hidden Inputs -->
                         <input type="hidden" id="valProduk">
                         <input type="hidden" id="valHarga">
                         <input type="hidden" id="valInvoice">
+                        <input type="hidden" id="isCustom" value="0">
 
                         <div class="row g-3 mb-3">
                             <div class="col-md-12">
@@ -281,17 +345,23 @@
                                     <label for="inputWA">Nomor WhatsApp Aktif</label>
                                 </div>
                             </div>
+                            <div class="col-md-12 d-none" id="customInputBox">
+                                <div class="form-floating">
+                                    <textarea class="form-control" id="inputCustomReq" placeholder="Ceritakan alur aplikasi yang diinginkan..." style="height: 100px"></textarea>
+                                    <label for="inputCustomReq">Garis Besar Fitur yang Diinginkan</label>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="form-check mb-4 mt-4">
-                            <input class="form-check-input" type="checkbox" id="checkTerms" required>
+                        <div class="form-check mb-4 mt-4" id="termsBox">
+                            <input class="form-check-input" type="checkbox" id="checkTerms">
                             <label class="form-check-label small text-muted" for="checkTerms">
-                                Saya setuju bahwa aplikasi ini bersifat *single-license* (hanya untuk 1 ID Spreadsheet yang disetujui) dan tidak untuk diperjualbelikan ulang.
+                                Saya setuju bahwa aplikasi *ready-stock* bersifat *single-license* (hanya untuk 1 ID Spreadsheet yang disetujui).
                             </label>
                         </div>
 
                         <button type="button" onclick="prosesCheckout()" class="btn btn-primary w-100 rounded-pill fw-bold py-3 fs-5 d-flex align-items-center justify-content-center gap-2">
-                            <i class="bi bi-whatsapp"></i> Konfirmasi Pesanan via WA
+                            <i class="bi bi-whatsapp"></i> <span id="btnText">Konfirmasi Pesanan via WA</span>
                         </button>
                     </form>
                 </div>
@@ -300,83 +370,109 @@
     </div>
 </div>
 
+<footer class="bg-dark text-white pt-5 pb-4 mt-5">
+    <div class="container text-center">
+        <h4 class="fw-bold mb-3">BELAJAR INOVASI</h4>
+        <p class="mb-4 text-white-50">Membawa teknologi tepat guna berbasis Google Workspace untuk efisiensi administrasi.</p>
+        <div class="d-flex justify-content-center gap-3 mb-4">
+            <a href="https://www.youtube.com/@suwanto_pakwanto" class="fs-4 text-danger"><i class="bi bi-youtube"></i></a>
+        </div>
+        <p class="small text-white-50 m-0">© 2026 Suwanto (Pak Wanto). Surabaya, Indonesia.</p>
+    </div>
+</footer>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
     AOS.init({ duration: 800, once: true });
     const modalCheckout = new bootstrap.Modal(document.getElementById('checkoutModal'));
 
-    // Fungsi Format Rupiah
     function formatRupiah(angka) {
         return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
     }
 
-    // Fungsi Generate Order ID (Invoice)
-    function generateInvoice() {
+    function generateInvoice(prefix) {
         const date = new Date();
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, '0');
         const random = Math.floor(1000 + Math.random() * 9000);
-        return `INV-${year}${month}-${random}`;
+        return `${prefix}-${year}${month}-${random}`;
     }
 
+    // Fungsi Beli Produk Ready Stock
     function bukaCheckout(namaProduk, hargaProduk) {
-        const invoiceID = generateInvoice();
+        document.getElementById('isCustom').value = "0";
+        const invoiceID = generateInvoice("INV");
         const hargaFormatted = formatRupiah(hargaProduk);
 
-        // Set ke UI Modal
         document.getElementById('displayInvoiceID').innerText = invoiceID;
         document.getElementById('displayNamaProduk').innerText = namaProduk;
         document.getElementById('displayHarga').innerText = hargaFormatted;
         document.getElementById('displayTotal').innerText = hargaFormatted;
-
-        // Set ke Hidden Input untuk Data
+        document.getElementById('totalLabel').innerText = "Total Pembayaran";
+        
         document.getElementById('valProduk').value = namaProduk;
         document.getElementById('valHarga').value = hargaFormatted;
         document.getElementById('valInvoice').value = invoiceID;
 
+        // UI Adjustments
+        document.getElementById('customInputBox').classList.add('d-none');
+        document.getElementById('termsBox').classList.remove('d-none');
+        document.getElementById('btnText').innerText = "Konfirmasi Pesanan via WA";
+        document.getElementById('lisensiRow').classList.remove('d-none');
+        document.getElementById('infoText').innerHTML = "<i class='bi bi-info-circle me-1'></i> Setelah konfirmasi pembayaran, Anda akan menerima *link* master *file* untuk diduplikasi ke Google Drive Anda.";
+        
         modalCheckout.show();
     }
 
+    // Fungsi Pesan Aplikasi Custom
+    function bukaCheckoutCustom() {
+        document.getElementById('isCustom').value = "1";
+        const reqID = generateInvoice("REQ");
+
+        document.getElementById('displayInvoiceID').innerText = reqID;
+        document.getElementById('displayNamaProduk').innerText = "Pengembangan Aplikasi Custom";
+        document.getElementById('displayHarga').innerText = "Sesuai Kerumitan";
+        document.getElementById('displayTotal').innerText = "Diskusi Harga";
+        document.getElementById('totalLabel').innerText = "Estimasi Biaya";
+        
+        document.getElementById('valProduk').value = "Aplikasi Custom";
+        document.getElementById('valHarga').value = "Diskusi";
+        document.getElementById('valInvoice').value = reqID;
+
+        // UI Adjustments
+        document.getElementById('customInputBox').classList.remove('d-none');
+        document.getElementById('termsBox').classList.add('d-none'); // Hilangkan check term lisensi
+        document.getElementById('btnText').innerText = "Mulai Diskusi via WA";
+        document.getElementById('lisensiRow').classList.add('d-none');
+        document.getElementById('infoText').innerHTML = "<i class='bi bi-info-circle me-1'></i> Tim kami akan menghubungi Anda untuk mendiskusikan *flow* aplikasi, *database* yang dibutuhkan, dan penawaran harga pengerjaan.";
+        
+        modalCheckout.show();
+    }
+
+    // Fungsi Kirim ke WA
     function prosesCheckout() {
+        const isCustom = document.getElementById('isCustom').value;
         const nama = document.getElementById('inputNama').value;
         const email = document.getElementById('inputEmail').value;
         const wa = document.getElementById('inputWA').value;
-        const terms = document.getElementById('checkTerms').checked;
         
-        const produk = document.getElementById('valProduk').value;
-        const harga = document.getElementById('valHarga').value;
-        const invoice = document.getElementById('valInvoice').value;
-
         if(!nama || !email || !wa) {
-            alert("Harap lengkapi semua kolom form pembeli.");
-            return;
-        }
-        if(!terms) {
-            alert("Anda harus menyetujui syarat & ketentuan lisensi.");
+            alert("Harap lengkapi Nama, Email, dan No WhatsApp Anda.");
             return;
         }
 
-        const noAdmin = "6285895283075"; // Nomor Admin Anda
-        
-        // Template Pesan WA yang Terstruktur Rapi
-        let pesan = `*INVOICE PEMBELIAN - BELAJAR INOVASI*\n`;
-        pesan += `===============================\n`;
-        pesan += `*No. Invoice:* ${invoice}\n\n`;
-        pesan += `Halo Pak Wanto, saya ingin melakukan konfirmasi pembelian aplikasi dengan detail:\n\n`;
-        pesan += `*📝 DATA PRODUK*\n`;
-        pesan += `- Aplikasi: ${produk}\n`;
-        pesan += `- Total Tagihan: *${harga}*\n\n`;
-        pesan += `*👤 DATA LISENSI (PEMBELI)*\n`;
-        pesan += `- Nama/Instansi: ${nama}\n`;
-        pesan += `- Email Google: ${email}\n`;
-        pesan += `- No. WA: ${wa}\n\n`;
-        pesan += `Saya setuju dengan syarat lisensi. Mohon instruksi pembayaran dan link master file aplikasinya. Terima kasih!`;
+        const noAdmin = "6285895283075"; 
+        let pesan = "";
 
-        window.open(`https://wa.me/${noAdmin}?text=${encodeURIComponent(pesan)}`, '_blank');
-        modalCheckout.hide();
-    }
-</script>
+        if (isCustom === "0") {
+            const terms = document.getElementById('checkTerms').checked;
+            if(!terms) {
+                alert("Anda harus menyetujui syarat & ketentuan lisensi.");
+                return;
+            }
+            const produk = document.getElementById('valProduk').value;
+            const harga = document.getElementById('valHarga').value;
+            const invoice = document.getElementById('valInvoice').value;
 
-</body>
-</html>
+            pesan = `*INVOICE PEMBELIAN - BELAJAR INOVASI*\n================
