@@ -3,27 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard | E-Ujian Clone Belajar Inovasi</title>
+    <title>Platform Ujian Online | Belajar Inovasi CBT</title>
     
-    <!-- Bootstrap & Icons -->
+    <!-- Bootstrap, Icons, Font, Editor & MathJax -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
     <style>
-        /* BASE & VARIABLES (E-Ujian Style) */
-        :root {
-            --primary: #0d6efd;
-            --sidebar-bg: #ffffff;
-            --sidebar-text: #4b5563;
-            --sidebar-hover-bg: #eff6ff;
-            --sidebar-active-border: #0d6efd;
-            --bg-light: #f4f6f9;
-        }
-
+        /* BASE E-UJIAN CLONE STYLE */
+        :root { --primary: #0d6efd; --sidebar-bg: #ffffff; --sidebar-text: #4b5563; --sidebar-hover-bg: #eff6ff; --bg-light: #f4f6f9; }
         body { font-family: 'Inter', sans-serif; background-color: var(--bg-light); color: #333; overflow-x: hidden; }
         .hidden { display: none !important; }
+        
+        /* --- LANDING PAGE PROMO --- */
+        #view-landing { background: white; min-height: 100vh; display: flex; flex-direction: column; }
+        .navbar-landing { padding: 15px 5%; border-bottom: 1px solid #e5e7eb; background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); position: fixed; width: 100%; z-index: 1000; }
+        .hero { padding: 160px 5% 100px; background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%); text-align: center; }
+        .hero h1 { font-weight: 800; font-size: 3.5rem; color: #111827; letter-spacing: -1px; margin-bottom: 20px; }
+        .hero h1 span { color: var(--primary); }
+        .hero p { font-size: 1.2rem; color: #6b7280; max-width: 700px; margin: 0 auto 40px; }
+        .ft-card { border: 1px solid #e5e7eb; border-radius: 12px; padding: 30px; transition: 0.3s; height: 100%; }
+        .ft-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); border-color: var(--primary); }
+        .ft-icon { font-size: 2.5rem; color: var(--primary); margin-bottom: 20px; }
 
         /* --- AUTH VIEW (LOGIN/REGISTER) --- */
         .auth-wrapper { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #e0f2fe; }
@@ -31,8 +37,6 @@
         
         /* --- DASHBOARD LAYOUT --- */
         .app-container { display: flex; width: 100%; min-height: 100vh; }
-        
-        /* Sidebar */
         #sidebar { min-width: 250px; max-width: 250px; background: var(--sidebar-bg); border-right: 1px solid #e5e7eb; transition: all 0.3s; display: flex; flex-direction: column; }
         .sidebar-brand { padding: 15px 20px; font-size: 1.25rem; font-weight: 700; color: var(--primary); display: flex; align-items: center; border-bottom: 1px solid #f3f4f6; }
         .sidebar-brand i { font-size: 1.5rem; margin-right: 10px; }
@@ -42,43 +46,91 @@
         .nav-item:hover, .nav-item.active { background: var(--sidebar-hover-bg); color: var(--primary); border-left-color: var(--primary); }
         .nav-item.active i { color: var(--primary); }
         
-        /* Main Content */
-        #main-content { flex-grow: 1; transition: all 0.3s; display: flex; flex-direction: column; }
-        
-        /* Top Navbar */
+        #main-content { flex-grow: 1; transition: all 0.3s; display: flex; flex-direction: column; width: 100%; overflow: hidden; }
         .topbar { background: #ffffff; border-bottom: 1px solid #e5e7eb; padding: 12px 25px; display: flex; justify-content: space-between; align-items: center; }
         .btn-toggle { background: transparent; border: none; font-size: 1.2rem; color: #6b7280; cursor: pointer; }
         .user-profile { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; font-weight: 500; color: #374151; }
         .user-avatar { width: 35px; height: 35px; background: #e0f2fe; color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
-
-        /* Page Content Area */
-        .page-content { padding: 25px; flex-grow: 1; }
-        .page-header { margin-bottom: 25px; }
-        .page-header h4 { font-weight: 700; color: #111827; margin-bottom: 5px; }
-        .page-header p { color: #6b7280; font-size: 0.9rem; margin: 0; }
-
-        /* E-Ujian Specific Components */
-        .banner-telegram { background: var(--primary); color: white; border-radius: 8px; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; box-shadow: 0 4px 6px -1px rgba(13, 110, 253, 0.2); }
+        
+        .page-content { padding: 25px; flex-grow: 1; overflow-y: auto; }
         .stat-card { background: white; border-radius: 10px; padding: 20px; border: 1px solid #e5e7eb; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; height: 100%; }
         .stat-icon { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 15px; }
-        .stat-icon.bg-light-primary { background: #eff6ff; color: var(--primary); }
-        .stat-icon.bg-light-success { background: #f0fdf4; color: #10b981; }
-        .stat-icon.bg-light-warning { background: #fffbeb; color: #f59e0b; }
-        .stat-icon.bg-light-purple { background: #f5f3ff; color: #8b5cf6; }
-        .stat-icon.bg-light-danger { background: #fef2f2; color: #ef4444; }
         .stat-value { font-size: 1.8rem; font-weight: 700; color: #111827; line-height: 1; margin-bottom: 5px; }
         .stat-label { font-size: 0.8rem; color: #6b7280; font-weight: 600; text-transform: uppercase; }
 
-        .spinner { width: 1rem; height: 1rem; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: white; animation: spin 1s ease-in-out infinite; display: inline-block; margin-right: 5px; }
+        /* --- EXAM MODE --- */
+        body.exam-mode { overflow: hidden; user-select: none; }
+        #view-exam { position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100vw; height: 100vh; z-index: 9999; background: #f8fafc; overflow: hidden; display: flex; flex-direction: column; }
+        .exam-header { flex-shrink: 0; height: 60px; background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; border-bottom: 3px solid var(--primary); }
+        .exam-container-split { flex-grow: 1; display: flex; gap: 20px; padding: 20px; overflow: hidden; }
+        .q-main-area { flex: 3; background: white; border-radius: 12px; padding: 30px; display: flex; flex-direction: column; overflow-y: auto; height: 100%; border: 1px solid #e5e7eb; }
+        #q-slides-container { flex-grow: 1; overflow-y: auto; font-size: 1.1rem; }
+        .q-nav-area { flex: 1; background: white; border-radius: 12px; padding: 20px; overflow-y: auto; height: 100%; border: 1px solid #e5e7eb; }
+        .q-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(45px, 1fr)); gap: 10px; margin-top: 15px; }
+        .q-nav-btn { aspect-ratio: 1; border: 1px solid #e5e7eb; background: #ffffff; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9rem; color: #4b5563; }
+        .q-nav-btn.active-q { background: var(--primary); color: white; border-color: var(--primary); }
+        .q-nav-btn.answered { background: #10b981; color: white; border-color: #10b981; }
+        .clickable-opt { border: 1px solid #e5e7eb; padding: 15px; border-radius: 8px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; }
+        .clickable-opt:hover { background: #f8fafc; border-color: #93c5fd; }
+        .clickable-opt input { transform: scale(1.3); margin-right: 15px; }
+
+        .spinner { width: 1.2rem; height: 1.2rem; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: white; animation: spin 1s ease-in-out infinite; display: inline-block; }
         @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
 <!-- ========================================== -->
+<!-- 0. LANDING PAGE (TOKO/PROMOSI)             -->
+<!-- ========================================== -->
+<div id="view-landing">
+    <nav class="navbar-landing d-flex justify-content-between align-items-center shadow-sm">
+        <div class="fw-bold fs-4 text-primary"><i class="fas fa-laptop-code me-2"></i>Belajar Inovasi</div>
+        <div>
+            <button class="btn btn-outline-primary fw-bold px-4 me-2 rounded-pill" onclick="switchView('view-auth', 'card-login')">Login Aplikasi</button>
+            <button class="btn btn-primary fw-bold px-4 rounded-pill" onclick="switchView('view-auth', 'card-register')">Daftar Lembaga</button>
+        </div>
+    </nav>
+    <section class="hero">
+        <h1>Platform Ujian Online <br><span>Tanpa Biaya Server</span></h1>
+        <p>Gunakan Google Workspace sebagai database ujian sekolah Anda. Kuat menampung ribuan siswa, anti-lemot, dan hemat anggaran hingga 100% selamanya.</p>
+        <button class="btn btn-primary btn-lg rounded-pill px-5 fw-bold shadow-sm" onclick="switchView('view-auth', 'card-register')">Buat Sistem Anda Sekarang</button>
+    </section>
+    <section class="container py-5 mt-4 mb-5">
+        <h2 class="text-center fw-bold mb-5">Keunggulan Sistem Kami</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="ft-card text-center">
+                    <i class="fas fa-database ft-icon"></i>
+                    <h5 class="fw-bold">Database Spreadsheet</h5>
+                    <p class="text-muted small">Guru tidak perlu repot belajar bahasa SQL. Input soal dan tarik nilai semudah mengetik di Microsoft Excel.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="ft-card text-center">
+                    <i class="fas fa-server ft-icon text-danger"></i>
+                    <h5 class="fw-bold">Bebas Tagihan Hosting</h5>
+                    <p class="text-muted small">Cukup satu kali bayar (Lisensi/Koin). Server ditenagai oleh infrastruktur Google yang nyaris tidak pernah Down.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="ft-card text-center">
+                    <i class="fas fa-shield-alt ft-icon text-success"></i>
+                    <h5 class="fw-bold">Fitur Anti Kecurangan</h5>
+                    <p class="text-muted small">Siswa diwajibkan menggunakan mode layar penuh. Berpindah Tab akan terekam sebagai pelanggaran dan jawaban dikirim otomatis.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <footer class="bg-dark text-white text-center py-4 mt-auto">
+        <p class="mb-0 small">© 2026 Belajar Inovasi. Hak Cipta Dilindungi.</p>
+    </footer>
+</div>
+
+<!-- ========================================== -->
 <!-- 1. AUTHENTICATION VIEW                     -->
 <!-- ========================================== -->
-<div id="view-auth" class="auth-wrapper">
+<div id="view-auth" class="auth-wrapper hidden">
     <!-- Kotak Login -->
     <div class="auth-card" id="card-login">
         <div class="text-center mb-4">
@@ -86,20 +138,14 @@
             <p class="text-muted small mt-2">Login dengan Kode Instansi Anda</p>
         </div>
         <form onsubmit="handleLogin(event)">
-            <div class="mb-3">
-                <label class="form-label small fw-bold text-muted">Kode Lembaga</label>
-                <input type="text" id="log-kode" class="form-control" placeholder="CBT1234" required>
+            <div class="mb-3"><label class="form-label small fw-bold text-muted">Kode Lembaga</label><input type="text" id="log-kode" class="form-control" placeholder="CBT1234" required></div>
+            <div class="mb-3"><label class="form-label small fw-bold text-muted">Username</label><input type="text" id="log-user" class="form-control" required></div>
+            <div class="mb-4"><label class="form-label small fw-bold text-muted">Password</label><input type="password" id="log-pass" class="form-control" required></div>
+            <button type="submit" id="btn-login" class="btn btn-primary w-100 py-2 fw-bold">Masuk Dashboard</button>
+            <div class="text-center mt-3 d-flex justify-content-between">
+                <a href="#" onclick="switchView('view-landing')" class="text-decoration-none text-muted small"><i class="fas fa-arrow-left"></i> Home</a>
+                <a href="#" onclick="toggleAuthCard()" class="text-decoration-none fw-bold small">Daftar Lembaga Baru</a>
             </div>
-            <div class="mb-3">
-                <label class="form-label small fw-bold text-muted">Username</label>
-                <input type="text" id="log-user" class="form-control" required>
-            </div>
-            <div class="mb-4">
-                <label class="form-label small fw-bold text-muted">Password</label>
-                <input type="password" id="log-pass" class="form-control" required>
-            </div>
-            <button type="submit" id="btn-login" class="btn btn-primary w-100 py-2 fw-bold">Login</button>
-            <div class="text-center mt-3"><a href="#" onclick="toggleAuthView()" class="text-decoration-none small">Daftar Lembaga Baru</a></div>
         </form>
     </div>
 
@@ -110,254 +156,353 @@
             <p class="text-muted small mt-1">Akses akan dikirim ke WhatsApp</p>
         </div>
         <form onsubmit="handleRegister(event)">
-            <div class="mb-3">
-                <input type="text" id="reg-nama" class="form-control" placeholder="Nama Sekolah/Lembaga" required>
-            </div>
-            <div class="mb-3">
-                <input type="number" id="reg-wa" class="form-control" placeholder="No. WA Aktif (08xxx)" required>
-            </div>
-            <div class="mb-3">
-                <input type="text" id="reg-user" class="form-control" placeholder="Buat Username Admin" required>
-            </div>
-            <div class="mb-4">
-                <input type="password" id="reg-pass" class="form-control" placeholder="Buat Password Admin" required>
-            </div>
-            <button type="submit" id="btn-reg" class="btn btn-success w-100 py-2 fw-bold">Daftar Sekarang</button>
-            <div class="text-center mt-3"><a href="#" onclick="toggleAuthView()" class="text-decoration-none text-muted small">Kembali ke Login</a></div>
+            <div class="mb-3"><input type="text" id="reg-nama" class="form-control" placeholder="Nama Sekolah/Lembaga" required></div>
+            <div class="mb-3"><input type="number" id="reg-wa" class="form-control" placeholder="No. WA Aktif (08xxx)" required></div>
+            <div class="mb-3"><input type="text" id="reg-user" class="form-control" placeholder="Buat Username Admin" required></div>
+            <div class="mb-4"><input type="password" id="reg-pass" class="form-control" placeholder="Buat Password Admin" required></div>
+            <button type="submit" id="btn-reg" class="btn btn-success w-100 py-2 fw-bold">Daftar & Buat Database</button>
+            <div class="text-center mt-3"><a href="#" onclick="toggleAuthCard()" class="text-decoration-none text-muted small">Kembali ke Login</a></div>
         </form>
     </div>
 </div>
 
 <!-- ========================================== -->
-<!-- 2. DASHBOARD E-UJIAN CLONE                 -->
+<!-- 2. DASHBOARD APLIKASI                      -->
 <!-- ========================================== -->
 <div id="view-dashboard" class="app-container hidden">
-    <!-- Sidebar Kiri -->
     <aside id="sidebar">
         <div class="sidebar-brand">
-            <i class="fas fa-laptop-code"></i> e-ujian
+            <img src="https://e-ujian.com/assets/img/logo.png" id="sidebar-logo" width="30" height="30" class="me-2" style="border-radius: 50%;"> 
+            <span style="font-size: 1.1rem;" id="sidebar-title">e-ujian</span>
         </div>
         <div style="overflow-y: auto; flex-grow: 1; padding-bottom: 20px;">
-            <a class="nav-item active" onclick="loadPage('dashboard')"><i class="fas fa-home"></i> Dashboard</a>
-            
-            <div class="nav-title">Persiapan</div>
-            <a class="nav-item" onclick="comingSoon()"><i class="fas fa-folder-open"></i> Bank Soal</a>
-            <a class="nav-item" onclick="comingSoon()"><i class="fas fa-book"></i> Materi</a>
-            <a class="nav-item" onclick="comingSoon()"><i class="fas fa-box"></i> Paket Soal</a>
-            
-            <div class="nav-title">Peserta & Pengguna</div>
-            <a class="nav-item" onclick="comingSoon()"><i class="fas fa-user-tie"></i> Pengguna</a>
-            <a class="nav-item" onclick="comingSoon()"><i class="fas fa-users"></i> Peserta</a>
-            <a class="nav-item" onclick="comingSoon()"><i class="fas fa-th-large"></i> Modul</a>
-
-            <div class="nav-title">Pelaksanaan</div>
-            <a class="nav-item" onclick="comingSoon()"><i class="fas fa-play-circle"></i> Sesi Ujian</a>
-            <a class="nav-item" onclick="comingSoon()"><i class="fas fa-calendar-alt"></i> Timeline Jadwal</a>
-            <a class="nav-item" onclick="comingSoon()"><i class="fas fa-desktop"></i> Monitoring Event</a>
-            
-            <div class="nav-title">Evaluasi</div>
-            <a class="nav-item" onclick="comingSoon()"><i class="fas fa-check-double"></i> Koreksi Ujian</a>
-            <a class="nav-item" onclick="comingSoon()"><i class="fas fa-chart-bar"></i> Laporan</a>
+            <!-- Menu Admin & Guru -->
+            <div id="menu-admin-guru" class="hidden">
+                <a class="nav-item active" onclick="loadPage('admin-home')"><i class="fas fa-home"></i> Dashboard</a>
+                <div class="nav-title">Persiapan</div>
+                <a class="nav-item" onclick="loadPage('admin-ujian')"><i class="fas fa-folder-open"></i> Bank Soal & Materi</a>
+                <div class="nav-title">Peserta</div>
+                <a class="nav-item" onclick="loadPage('admin-users')"><i class="fas fa-users"></i> Data Pengguna</a>
+                <div class="nav-title">Pelaksanaan</div>
+                <a class="nav-item" onclick="loadPage('guru-monitoring')"><i class="fas fa-desktop"></i> Monitoring Event</a>
+                <div class="nav-title">Evaluasi & Cetak</div>
+                <a class="nav-item" onclick="loadPage('hasil-rekap')"><i class="fas fa-chart-bar"></i> Laporan Nilai</a>
+                <a class="nav-item" onclick="loadPage('admin-administrasi')"><i class="fas fa-print"></i> Cetak Administrasi</a>
+            </div>
+            <!-- Menu Siswa -->
+            <div id="menu-siswa" class="hidden">
+                <a class="nav-item active" onclick="loadPage('siswa-home')"><i class="fas fa-pencil-alt"></i> Ujian Saya</a>
+            </div>
         </div>
     </aside>
 
-    <!-- Konten Utama Kanan -->
     <main id="main-content">
-        <!-- Top Navigation -->
         <header class="topbar">
-            <button class="btn-toggle" onclick="document.getElementById('sidebar').classList.toggle('hidden')">
-                <i class="fas fa-bars"></i>
-            </button>
+            <button class="btn-toggle" onclick="document.getElementById('sidebar').classList.toggle('hidden')"><i class="fas fa-bars"></i></button>
             <div class="user-profile dropdown">
+                <button class="btn btn-warning btn-sm rounded-pill fw-bold px-3 me-3 border border-dark" onclick="topUpKoin()"><i class="fas fa-coins text-dark"></i> Top Up Koin</button>
                 <div class="user-avatar" id="avatar-icon">A</div>
                 <div class="d-none d-md-block" style="line-height: 1.2;">
-                    <div id="top-user-name">User Name</div>
-                    <small class="text-muted" id="top-role" style="font-size: 0.75rem;">Admin Lembaga</small>
+                    <div id="top-user-name" class="fw-bold">User Name</div>
+                    <small class="text-muted" id="top-role" style="font-size: 0.75rem;">Role</small>
                 </div>
-                <button class="btn btn-sm btn-light ms-3 border" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                <button class="btn btn-sm btn-outline-danger ms-3" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
             </div>
         </header>
-
-        <!-- Area Konten Dinamis -->
-        <div class="page-content" id="dynamic-content">
-            <!-- Halaman Dashboard (Default) -->
-            <div class="page-header">
-                <h4 id="dash-welcome">Dashboard</h4>
-                <p id="dash-instansi">Admin Lembaga - Nama Sekolah</p>
-            </div>
-
-            <!-- Banner Telegram Persis E-Ujian -->
-            <div class="banner-telegram">
-                <div class="d-flex align-items-center">
-                    <i class="fab fa-telegram-plane fs-2 me-3"></i>
-                    <div>
-                        <h6 class="fw-bold mb-1">Gabung Grup Telegram E-Ujian</h6>
-                        <small style="opacity: 0.9;">Dapatkan info terbaru, tips, dan bantuan dari komunitas</small>
-                    </div>
-                </div>
-                <button class="btn btn-light text-primary fw-bold px-4 rounded-pill">Gabung</button>
-            </div>
-
-            <!-- Kartu Statistik -->
-            <div class="row g-3 mb-4">
-                <div class="col-6 col-md-2">
-                    <div class="stat-card">
-                        <div class="stat-icon bg-light-primary"><i class="fas fa-user-tie"></i></div>
-                        <div class="stat-label">Users</div>
-                        <div class="stat-value">0</div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-2">
-                    <div class="stat-card">
-                        <div class="stat-icon bg-light-purple"><i class="fas fa-users"></i></div>
-                        <div class="stat-label">Peserta</div>
-                        <div class="stat-value">0</div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-2">
-                    <div class="stat-card">
-                        <div class="stat-icon bg-light-success"><i class="fas fa-box"></i></div>
-                        <div class="stat-label">Paket Soal</div>
-                        <div class="stat-value">0</div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-2">
-                    <div class="stat-card">
-                        <div class="stat-icon bg-light-danger"><i class="fas fa-file-alt"></i></div>
-                        <div class="stat-label">Soal</div>
-                        <div class="stat-value">0</div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-2">
-                    <div class="stat-card border-warning">
-                        <div class="stat-icon bg-light-warning"><i class="fas fa-coins"></i></div>
-                        <div class="stat-label text-warning">Saldo Poin</div>
-                        <div class="stat-value" id="disp-koin">0</div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-2">
-                    <div class="stat-card">
-                        <div class="stat-icon bg-light-success"><i class="fas fa-play-circle"></i></div>
-                        <div class="stat-label">Sesi Aktif</div>
-                        <div class="stat-value">0</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Placeholder Chart -->
-            <div class="card border-0 shadow-sm mt-2">
-                <div class="card-body">
-                    <h6 class="fw-bold mb-4">Statistik Ujian (6 Bulan Terakhir)</h6>
-                    <div style="height: 250px; background: #f9fafb; border: 1px dashed #d1d5db; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #9ca3af;">
-                        <i class="fas fa-chart-line me-2"></i> Grafik Aktivitas Ujian Akan Muncul Di Sini
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!-- Area Dynamic Konten -->
+        <div class="page-content" id="content-area"></div>
     </main>
 </div>
 
+<!-- ========================================== -->
+<!-- 3. VIEW PELAKSANAAN UJIAN (LAYAR PENUH)    -->
+<!-- ========================================== -->
+<div id="view-exam" class="hidden">
+    <div class="exam-header">
+        <div class="d-flex align-items-center"><i class="fas fa-laptop-code text-primary me-2 fs-4"></i><h5 class="fw-bold m-0" id="do-exam-title">Judul Ujian</h5></div>
+        <div class="d-flex align-items-center gap-2"><div class="badge bg-danger fs-5 p-2 font-monospace px-4 shadow-sm border border-light"><i class="fas fa-clock me-2"></i><span id="timer-disp">00:00</span></div></div>
+    </div>
+    <div class="exam-container-split">
+        <div class="q-main-area shadow-sm">
+            <div id="q-slides-container"></div>
+            <div class="d-flex justify-content-between mt-4 pt-4 border-top">
+                <button class="btn btn-outline-secondary px-4 fw-bold" id="btn-prev" onclick="navSlide(-1)"><i class="fas fa-chevron-left"></i> SEBELUMNYA</button>
+                <button class="btn btn-primary px-4 fw-bold" id="btn-next" onclick="navSlide(1)">SELANJUTNYA <i class="fas fa-chevron-right"></i></button>
+                <button class="btn btn-success px-4 fw-bold" id="btn-finish" onclick="submitExamButton(false)"><i class="fas fa-check-circle me-1"></i> SELESAI UJIAN</button>
+            </div>
+        </div>
+        <div class="q-nav-area shadow-sm">
+            <h6 class="fw-bold border-bottom pb-3 mb-3 text-center text-primary">NAVIGASI SOAL</h6>
+            <div id="nav-grid" class="q-grid"></div>
+            <div class="mt-4 pt-3 border-top text-center">
+                <span class="badge bg-success w-100 p-2 mb-2">Terjawab</span>
+                <span class="badge bg-white text-dark border w-100 p-2">Belum Terjawab</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL TAMBAH/EDIT JADWAL -->
+<div class="modal fade" id="modalExam" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header bg-primary text-white"><h5 class="modal-title fw-bold">Konfigurasi Jadwal Ujian</h5><button class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="frm-exam" onsubmit="event.preventDefault(); saveExam(); return false;"><input type="hidden" id="ex-id" name="examId"><div class="mb-3"><label class="small fw-bold text-muted">Judul Ujian</label><input type="text" name="judul" id="ex-judul" class="form-control" placeholder="Contoh: Penilaian Akhir Semester (PAS)" required></div><div class="row g-3 mb-3"><div class="col-md-6"><label class="small fw-bold text-muted">Mata Pelajaran</label><input type="text" name="mapel" id="ex-mapel" class="form-control" required></div><div class="col-md-6"><label class="small fw-bold text-muted">Durasi (Menit)</label><input type="number" name="durasi" id="ex-durasi" class="form-control" required></div></div><div class="row g-3 mb-3"><div class="col-md-6"><label class="small fw-bold text-muted">Waktu Mulai</label><input type="datetime-local" name="start" id="ex-start" class="form-control" required></div><div class="col-md-6"><label class="small fw-bold text-muted">Waktu Selesai (Kadaluarsa)</label><input type="datetime-local" name="end" id="ex-end" class="form-control" required></div></div><div class="row g-3 mb-3"><div class="col-md-4"><label class="small fw-bold text-muted">Target Kelas</label><input type="text" name="targetKelas" id="ex-kelas" class="form-control" placeholder="Contoh: 7A, 7B, atau All" required></div><div class="col-md-4"><label class="small fw-bold text-muted">Batas Mengerjakan</label><input type="number" name="limit" id="ex-limit" class="form-control" value="1" title="Berapa kali siswa boleh mengulang"></div><div class="col-md-4"><label class="small fw-bold text-muted">Token Keamanan</label><input type="text" name="token" id="ex-token" class="form-control" placeholder="Kosongkan jika tidak ada"></div></div><div class="d-flex gap-4 mb-4 border p-3 rounded bg-light"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" name="showStats" id="ex-showStats" value="Yes"><label class="small fw-bold">Tampilkan Nilai ke Siswa</label></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" name="randomQ" id="ex-randomQ" value="Yes"><label class="small fw-bold">Acak Nomor Soal</label></div></div><button type="submit" class="btn btn-primary w-100 fw-bold py-2">SIMPAN JADWAL</button></form></div></div></div></div>
+
+<!-- MODAL EDITOR SOAL -->
+<div class="modal fade" id="modalQ" tabindex="-1"><div class="modal-dialog modal-fullscreen"><div class="modal-content bg-light"><div class="modal-header bg-white shadow-sm"><h5 class="modal-title fw-bold text-primary"><i class="fas fa-edit me-2"></i> Editor Bank Soal</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-4"><div class="container" style="max-width:900px"><div id="q-list-container"></div><div class="text-center mt-5 mb-5"><button class="btn btn-lg btn-success rounded-pill px-5 shadow fw-bold" onclick="addNewQuestionBlock()"><i class="fas fa-plus-circle me-2"></i> BUAT SOAL BARU</button></div></div></div></div></div></div>
+
+<!-- MODAL TAMBAH USER -->
+<div class="modal fade" id="modalUser" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header bg-primary text-white"><h5 class="modal-title fw-bold">Kelola Akun Pengguna</h5><button class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="frm-user" onsubmit="event.preventDefault(); saveUser(); return false;"><input type="hidden" id="mu-id"><label class="small fw-bold text-muted">Nama Lengkap</label><input type="text" id="mu-nama" class="form-control mb-3" required><label class="small fw-bold text-muted">Username Login</label><input type="text" id="mu-user" class="form-control mb-3" required><label class="small fw-bold text-muted">Password Login</label><input type="text" id="mu-pass" class="form-control mb-3" required><div class="row g-2 mb-3"><div class="col"><label class="small fw-bold text-muted">Role/Jabatan</label><select id="mu-role" class="form-select"><option value="siswa">Siswa</option><option value="guru">Guru</option><option value="admin">Admin Instansi</option></select></div><div class="col"><label class="small fw-bold text-muted">Kelas</label><input type="text" id="mu-kelas" class="form-control" placeholder="Opsional"></div></div><button type="submit" class="btn btn-primary w-100 fw-bold py-2">Simpan Akun</button></form></div></div></div></div>
+
+<!-- JAVASCRIPT CORE -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+
 <script>
     // =========================================================
     // PASTIKAN MENGGANTI URL DI BAWAH DENGAN URL DEPLOY TERBARU
     // =========================================================
     const API_URL = 'https://script.google.com/macros/s/AKfycbxrBL7pCDPgvqNQIeOFezQjjZ0rZag77ksXHoHUuE2LcTIjCBadYwaaIW02ML_2JKadKQ/exec'; 
 
-    function toggleAuthView() {
-        document.getElementById('card-login').classList.toggle('hidden');
-        document.getElementById('card-register').classList.toggle('hidden');
+    let examSubmitting = false; let user = null; let gData = {}; let activeExamId = null; 
+    let timerInt, monitorInterval, autosaveInterval; let totalQ = 0; let currentQuestionsData = []; 
+    let currentQIdx = 0; let recapAllData = []; let recapDataStore = {}; 
+    let violationCount = 0; const maxViolations = 3; let isExamFinished = false; let violationLock = false;
+
+    // Config Editor Summernote (Fitur Rumus Matematika)
+    const MathButton = function(context){const ui=$.summernote.ui;const button=ui.button({contents:'<i class="fas fa-square-root-alt"></i> Rumus',tooltip:'Tambahkan Rumus Matematika',click:function(){Swal.fire({title:'Editor Rumus (LaTeX)',html:'<textarea id="swal-math-input" class="form-control font-monospace" rows="3" placeholder="Contoh: \\frac{a}{b}"></textarea>',showCancelButton:true}).then((r)=>{if(r.isConfirmed&&$('#swal-math-input').val())context.invoke('editor.insertText',` $$ ${$('#swal-math-input').val()} $$ `);});}});return button.render();}
+    const snConfig = { height: 180, toolbar: [['style', ['bold', 'italic', 'underline', 'clear']], ['para', ['ul', 'ol']], ['insert', ['picture', 'table', 'math']]], buttons: { math: MathButton } };
+
+    // Boot & Navigasi Antar View
+    window.onload = function() { const s = localStorage.getItem('cbt_session'); if(s) { user = JSON.parse(s); initDashboard(); checkResumeExam(); } else { document.getElementById('view-landing').classList.remove('hidden'); } };
+    function switchView(showId, cardId) { $('.auth-card').addClass('hidden'); $('#view-landing, #view-auth, #view-dashboard, #view-exam').addClass('hidden'); $(`#${showId}`).removeClass('hidden'); if(cardId) $(`#${cardId}`).removeClass('hidden'); }
+    function toggleAuthCard() { $('#card-login, #card-register').toggleClass('hidden'); }
+    function applyMathJax() { if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise().catch(()=>{}); }
+
+    // API Helper
+    async function callAPI(action, extraData = {}) {
+        const formData = new URLSearchParams(); formData.append('action', action);
+        if(user) { formData.append('kode', user.Kode); formData.append('userId', user.ID); formData.append('userClass', user.Kelas); formData.append('role', user.Role); }
+        for (const [key, value] of Object.entries(extraData)) { formData.append(key, value); }
+        const res = await fetch(API_URL, { method: 'POST', body: formData }); return await res.json();
     }
 
-    function comingSoon() {
-        Swal.fire('Fitur Sedang Dibangun', 'Menu ini belum diaktifkan di versi preview.', 'info');
-    }
-
+    // --- AUTHENTICATION ---
     async function handleRegister(e) {
-        e.preventDefault();
-        const btn = document.getElementById('btn-reg');
-        btn.disabled = true; btn.innerHTML = `<span class="spinner"></span> Mendaftar...`;
-
-        const formData = new URLSearchParams();
-        formData.append('action', 'register');
-        formData.append('nama', document.getElementById('reg-nama').value);
-        formData.append('whatsapp', document.getElementById('reg-wa').value);
-        formData.append('adminUser', document.getElementById('reg-user').value);
-        formData.append('adminPass', document.getElementById('reg-pass').value);
-
+        e.preventDefault(); const btn = document.getElementById('btn-reg'); btn.disabled = true; btn.innerHTML = `Memproses...`;
         try {
-            const response = await fetch(API_URL, { method: 'POST', body: formData });
-            const resData = await response.json();
-
-            if (resData.status === 'success') {
-                Swal.fire('Pendaftaran Berhasil!', resData.msg, 'success').then(() => {
-                    document.getElementById('log-kode').value = resData.kode;
-                    document.getElementById('log-user').value = document.getElementById('reg-user').value;
-                    document.getElementById('log-pass').value = document.getElementById('reg-pass').value;
-                    toggleAuthView();
-                });
-            } else { Swal.fire('Gagal', resData.msg, 'error'); }
-        } catch (err) { Swal.fire('Error', 'Gagal menghubungi server.', 'error'); } 
-        finally { btn.disabled = false; btn.innerHTML = `Daftar Sekarang`; }
+            const res = await callAPI('register', { nama: $('#reg-nama').val(), whatsapp: $('#reg-wa').val(), adminUser: $('#reg-user').val(), adminPass: $('#reg-pass').val() });
+            if (res.status === 'success') { Swal.fire('Berhasil!', res.msg, 'success').then(() => { $('#log-kode').val(res.kode); $('#log-user').val($('#reg-user').val()); $('#log-pass').val($('#reg-pass').val()); toggleAuthCard(); }); } 
+            else { Swal.fire('Gagal', res.msg, 'error'); }
+        } catch (err) { Swal.fire('Error', 'Gagal menghubungi server.', 'error'); } finally { btn.disabled = false; btn.innerHTML = `Daftar & Buat Database`; }
     }
 
     async function handleLogin(e) {
-        e.preventDefault();
-        const btn = document.getElementById('btn-login');
-        btn.disabled = true; btn.innerHTML = `<span class="spinner"></span> Login...`;
-
-        const formData = new URLSearchParams();
-        formData.append('action', 'login');
-        formData.append('kode', document.getElementById('log-kode').value);
-        formData.append('username', document.getElementById('log-user').value);
-        formData.append('password', document.getElementById('log-pass').value);
-
+        e.preventDefault(); const btn = document.getElementById('btn-login'); btn.disabled = true; btn.innerHTML = `Login...`;
         try {
-            const response = await fetch(API_URL, { method: 'POST', body: formData });
-            const resData = await response.json();
-
-            if (resData.status === 'success') {
-                localStorage.setItem('cbt_session', JSON.stringify(resData.data));
-                initDashboard();
-            } else { Swal.fire('Gagal', resData.msg, 'error'); }
-        } catch (err) { Swal.fire('Error', 'Gagal menghubungi server.', 'error'); } 
-        finally { btn.disabled = false; btn.innerHTML = `Login`; }
-    }
-
-    function initDashboard() {
-        const userStr = localStorage.getItem('cbt_session');
-        if(!userStr) return;
-        
-        const user = JSON.parse(userStr);
-        document.getElementById('view-auth').classList.add('hidden');
-        document.getElementById('view-dashboard').classList.remove('hidden');
-
-        // Set Profil dan Header
-        document.getElementById('avatar-icon').innerText = user.Nama.charAt(0).toUpperCase();
-        document.getElementById('top-user-name').innerText = user.Nama;
-        document.getElementById('top-role').innerText = String(user.Role).toUpperCase();
-        
-        document.getElementById('dash-welcome').innerText = `Selamat Datang, ${user.Nama}!`;
-        document.getElementById('dash-instansi').innerText = `Admin Lembaga - ${user.LembagaNama}`;
-        document.getElementById('disp-koin').innerText = user.Koin || '0';
+            const res = await callAPI('login', { kode: $('#log-kode').val(), username: $('#log-user').val(), password: $('#log-pass').val() });
+            if (res.status === 'success') { user = res.data; localStorage.setItem('cbt_session', JSON.stringify(user)); initDashboard(); } 
+            else { Swal.fire('Gagal', res.msg, 'error'); }
+        } catch (err) { Swal.fire('Error', 'Gagal menghubungi server.', 'error'); } finally { btn.disabled = false; btn.innerHTML = `Masuk Dashboard`; }
     }
 
     function handleLogout() {
-        Swal.fire({title: 'Logout?', icon: 'warning', showCancelButton: true}).then((r) => {
+        Swal.fire({title: 'Logout?', icon: 'warning', showCancelButton: true}).then((r) => { if(r.isConfirmed) { localStorage.removeItem('cbt_session'); user = null; switchView('view-landing'); } });
+    }
+
+    // --- DASHBOARD INIT ---
+    function initDashboard() {
+        switchView('view-dashboard');
+        $('#avatar-icon').innerText = user.Nama.charAt(0).toUpperCase(); $('#top-user-name').text(user.Nama); $('#top-role').text(String(user.Role).toUpperCase());
+        $('#sidebar-title').text(user.Kode); if(user.LogoUrl) $('#sidebar-logo').attr('src', user.LogoUrl);
+        const r = String(user.Role).trim().toLowerCase();
+        if(r === 'siswa') { $('#menu-admin-guru').addClass('hidden'); $('#menu-siswa').removeClass('hidden'); loadPage('siswa-home'); } 
+        else { $('#menu-siswa').addClass('hidden'); $('#menu-admin-guru').removeClass('hidden'); loadPage('admin-home'); }
+    }
+
+    function topUpKoin() {
+        const noWA = "6285895283075"; // Ganti dengan nomor Admin Anda
+        const msg = `Halo Tim Belajar Inovasi, saya Admin dari instansi *${user.LembagaNama}* (Kode: ${user.Kode}). Saya ingin Top Up Koin Ujian CBT. Mohon info harga paket lisensinya.`;
+        window.open(`https://wa.me/${noWA}?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    function comingSoon() { Swal.fire('Akan Datang', 'Fitur ini dalam tahap pengembangan.', 'info'); }
+    function appRefresh() { const a = $('.nav-item.active').attr('onclick'); if(a) { const m = a.match(/'([^']+)'/); if(m) loadPage(m[1]); } }
+
+    async function loadPage(page) {
+        clearInterval(timerInt); clearInterval(monitorInterval); clearInterval(autosaveInterval); disableSecurity();
+        $('.nav-item').removeClass('active'); $(`a[onclick="loadPage('${page}')"]`).addClass('active');
+        const area = $('#content-area'); area.html('<div class="text-center p-5"><div class="spinner border-primary"></div></div>');
+        
+        try {
+            if(page === 'admin-users') { const r = await callAPI('getUserList'); if(r.status==='success') renderUsers(r.data); else throw new Error(r.msg); return; }
+            if(page === 'hasil-rekap') { const r = await callAPI('getRecapList'); if(r.status==='success') { recapAllData=r.data; renderRecapTable(); } return; }
+            if(page === 'guru-monitoring') { renderMonitoring(); return; }
+            
+            const res = await callAPI('getDashboardData');
+            if (res.status === 'success') { gData = res.data; user.Koin = gData.koin; localStorage.setItem('cbt_session', JSON.stringify(user)); renderContent(page); applyMathJax(); } 
+            else throw new Error(res.msg);
+        } catch(e) { Swal.fire('Error', e.message, 'error'); area.html('<div class="alert alert-danger">Gagal memuat data halaman.</div>'); }
+    }
+
+    function renderContent(page) {
+        const area = $('#content-area'); let h = '';
+        if (page === 'admin-home') {
+            h = `<div class="page-header"><h4>Dashboard Admin</h4><p>${user.LembagaNama} - Poin Akses: <b class="text-warning">${gData.koin}</b></p></div><div class="row g-3"><div class="col-md-4"><div class="stat-card"><div class="stat-icon bg-light-primary"><i class="fas fa-users"></i></div><div class="stat-value">${gData.stats.totalSiswa}</div><div class="stat-label">Siswa Terdaftar</div></div></div><div class="col-md-4"><div class="stat-card"><div class="stat-icon bg-light-success"><i class="fas fa-box"></i></div><div class="stat-value">${gData.stats.totalUjian}</div><div class="stat-label">Paket Ujian</div></div></div><div class="col-md-4"><div class="stat-card border-warning"><div class="stat-icon bg-light-warning"><i class="fas fa-coins"></i></div><div class="stat-value">${gData.koin}</div><div class="stat-label text-warning">Sisa Koin Ujian</div></div></div></div>`;
+        } 
+        else if (page === 'admin-ujian') {
+            let uMapel = [...new Set(gData.exams.map(e => e.Mapel))];
+            h = `<div class="d-flex justify-content-between mb-4"><h4 class="fw-bold m-0"><i class="fas fa-folder-open me-2 text-primary"></i> Bank Soal</h4><button class="btn btn-primary fw-bold shadow-sm" onclick="openExamModal()">+ Buat Jadwal Ujian</button></div><div class="row g-4">`;
+            gData.exams.forEach(e => {
+                const act = `<button class="btn btn-sm btn-light border flex-fill fw-bold" onclick="openExamModal('${encodeURIComponent(JSON.stringify(e))}')"><i class="fas fa-cog"></i> Setup</button> <button class="btn btn-sm btn-primary flex-fill fw-bold" onclick="manageQ('${e.ExamID}')"><i class="fas fa-edit"></i> Edit Soal</button> <button class="btn btn-sm btn-danger" onclick="delExam('${e.ExamID}')"><i class="fas fa-trash"></i></button>`;
+                h += `<div class="col-md-6 col-lg-4"><div class="card h-100 shadow-sm border-0"><div class="card-body"><div class="d-flex justify-content-between mb-3"><span class="badge bg-primary px-3 py-2">${e.Mapel}</span><span class="badge bg-light text-dark border px-3 py-2"><i class="fas fa-users"></i> Kelas ${e.TargetKelas}</span></div><h5 class="fw-bold mb-1">${e.Judul}</h5><p class="text-muted small mb-3"><i class="fas fa-clock"></i> ${e.Durasi} Menit &bull; ${e.Status}</p><div class="d-flex gap-2">${act}</div></div></div></div>`;
+            }); h += '</div>';
+        } 
+        else if (page === 'siswa-home') {
+            h = `<div class="banner-telegram"><div class="d-flex align-items-center"><i class="fas fa-user-graduate fs-2 me-3"></i><div><h5 class="fw-bold mb-0">Selamat Datang, ${user.Nama}!</h5><small>Pastikan koneksi internet stabil sebelum mulai ujian.</small></div></div></div><h5 class="fw-bold mb-3"><i class="fas fa-play-circle text-primary me-2"></i> Ujian Tersedia</h5><div class="row g-4 mb-5">`;
+            if(!gData.availableExams || gData.availableExams.length === 0) { h += '<div class="col-12"><div class="card border-0 shadow-sm p-4 text-center text-muted">Belum ada jadwal ujian aktif untuk kelas Anda.</div></div>'; } else {
+                gData.availableExams.forEach(e => {
+                    let b = '', t = 'MULAI KERJAKAN', c = 'btn-primary';
+                    if (e.IsFinished) { b = 'disabled'; t = 'SUDAH DIKERJAKAN'; c = 'btn-success'; }
+                    h += `<div class="col-md-6 col-lg-4"><div class="card h-100 shadow-sm border-0 border-top border-4 border-primary"><div class="card-body"><h5 class="fw-bold text-dark mb-1">${e.Judul}</h5><p class="text-primary fw-bold small mb-3">${e.Mapel}</p><div class="d-flex justify-content-between text-muted small mb-4"><span><i class="fas fa-clock"></i> ${e.Durasi} Menit</span><span><i class="fas fa-check-square"></i> ${e.ShowStats==='Yes'?'Nilai Tampil':'Nilai Disembunyikan'}</span></div><button class="btn ${c} w-100 fw-bold py-2" onclick="startExam('${e.ExamID}')" ${b}>${t}</button></div></div></div>`;
+                });
+            }
+            h += '</div><h5 class="fw-bold mb-3"><i class="fas fa-history text-primary me-2"></i> Riwayat Ujian Saya</h5>';
+            if(!gData.history || gData.history.length === 0) { h += '<p class="text-muted">Belum ada riwayat pengerjaan ujian.</p>'; } else {
+                h += `<div class="card border-0 shadow-sm"><div class="table-responsive"><table class="table table-hover align-middle m-0"><thead class="table-light"><tr><th>Tgl Submit</th><th>Nama Ujian</th><th>Nilai Akhir</th></tr></thead><tbody>`;
+                gData.history.forEach(r => { h += `<tr><td class="text-muted small">${r.WaktuSubmit}</td><td class="fw-bold">${r.Judul}</td><td><span class="badge bg-primary fs-6 px-3">${r.Nilai}</span></td></tr>`; });
+                h += `</tbody></table></div></div>`;
+            }
+        }
+        area.html(h);
+    }
+
+    // --- CRUD EXAMS & QUESTIONS ---
+    function openExamModal(str) { $('#modalExam').modal('show'); if(str){ const d=JSON.parse(decodeURIComponent(str)); $('#ex-id').val(d.ExamID); $('#ex-judul').val(d.Judul); $('#ex-mapel').val(d.Mapel); $('#ex-durasi').val(d.Durasi); $('#ex-limit').val(d.Limit); $('#ex-start').val(d.StartDate.replace(' ','T')); $('#ex-end').val(d.EndDate.replace(' ','T')); $('#ex-kelas').val(d.TargetKelas); $('#ex-token').val(d.Token || ''); $('#ex-randomQ').prop('checked', d.RandomQ === 'Yes'); $('#ex-showStats').prop('checked', d.ShowStats === 'Yes'); } else { $('#frm-exam')[0].reset(); $('#ex-id').val(''); } }
+    async function saveExam() { const d=Object.fromEntries(new FormData(document.getElementById('frm-exam')).entries()); d.showStats = $('#ex-showStats').is(':checked') ? 'Yes' : 'No'; d.randomQ = $('#ex-randomQ').is(':checked') ? 'Yes' : 'No'; const btn = $('#modalExam button[type="submit"]'); btn.prop('disabled',true); try { const r = await callAPI('adminSaveExam', { data: JSON.stringify(d) }); if(r.status==='success') { $('#modalExam').modal('hide'); Swal.fire('Sukses', 'Jadwal disimpan', 'success'); loadPage('admin-ujian'); } else throw new Error(r.msg); } catch(e) { Swal.fire('Error', e.message, 'error'); } finally { btn.prop('disabled',false); } }
+    function delExam(id){ Swal.fire({title:'Hapus Jadwal?', icon:'warning', showCancelButton:true}).then(async r=>{if(r.isConfirmed){ try{ const res=await callAPI('adminDeleteExam',{id:id}); if(res.status==='success')loadPage('admin-ujian'); }catch(e){} }}) }
+
+    async function manageQ(id) { 
+        activeExamId = id; $('#modalQ').modal('show'); $('#q-list-container').html('<div class="text-center p-5"><div class="spinner border-primary"></div></div>');
+        try { const r = await callAPI('getExamQuestions', {eid: id}); if(r.status==='success') renderQList(r.data); else throw new Error(r.msg); } catch(e) { $('#q-list-container').html(`<div class="alert alert-danger">${e.message}</div>`); }
+    }
+    
+    function renderQList(qs) {
+        let html = ''; totalQ = qs.length; currentQuestionsData = qs || [];
+        let topActions = `<div class="alert alert-primary d-flex justify-content-between align-items-center mb-4 border-0 shadow-sm"><div><h6 class="fw-bold m-0"><i class="fas fa-list-ol"></i> Total Soal: ${totalQ}</h6></div><div><button class="btn btn-primary fw-bold px-4 rounded-pill shadow-sm" onclick="addNewQuestionBlock()">+ BUAT SOAL</button></div></div>`;
+        if (qs.length > 0) { qs.forEach((q, idx) => { html += renderQuestionBlock(q, idx); }); $('#q-list-container').html(topActions + html); applyMathJax(); } 
+        else { $('#q-list-container').html(topActions + '<div class="text-center p-5 text-muted border border-dashed rounded bg-white">Belum ada soal. Klik tombol di atas untuk membuat.</div>'); }
+    }
+
+    function addNewQuestionBlock() { const num = currentQuestionsData.length + 1; const newBlock = renderQuestionBlock({ Nomor: num }, num - 1); $('#q-list-container').append(newBlock); const uid = $(newBlock).attr('data-id'); toggleEditQ(uid); $('.modal-body').animate({ scrollTop: $('.modal-body')[0].scrollHeight }, 500); }
+    
+    function renderQuestionBlock(q, idx) { 
+        const uid = q.QID ? q.QID : 'NEW_' + Math.random().toString(36).substr(2, 9); const nomor = q.Nomor || (idx + 1); const cleanPrev = (q.Pertanyaan || '<i class="text-muted">Soal Kosong...</i>').replace(/<[^>]+>/g, '').substring(0, 100); const safeJson = JSON.stringify(q).replace(/'/g, "'"); 
+        return `<div class="card mb-4 border-0 shadow-sm q-block" id="block-${uid}" data-id="${uid}" data-q-obj='${safeJson}'><div class="card-header bg-white border-bottom-0 pt-3 pb-0 d-flex justify-content-between align-items-center"><span class="badge bg-dark fs-6 px-3 py-2">Soal No. ${nomor}</span><div><button class="btn btn-sm btn-outline-primary fw-bold px-3 me-2" onclick="toggleEditQ('${uid}')"><i class="fas fa-edit"></i> Edit</button><button class="btn btn-sm btn-outline-danger" onclick="deleteQBlock('${uid}')"><i class="fas fa-trash"></i></button></div></div><div class="card-body"><div class="q-preview mb-0 lead">${cleanPrev}</div><div class="q-form hidden mt-3 border-top pt-3" id="form-${uid}"><form id="frm-q-${uid}" onsubmit="event.preventDefault(); saveQBlock('${uid}'); return false;"><input type="hidden" name="id" value="${q.QID || ''}"><div class="row g-3 mb-3"><div class="col-md-2"><label class="small fw-bold text-muted">Nomor</label><input type="number" name="num" class="form-control fw-bold" value="${nomor}"></div><div class="col-md-4"><label class="small fw-bold text-muted">Tipe Soal</label><select name="type" class="form-select q-type-sel" onchange="renderAnsFields('${uid}', this.value)" id="type-${uid}"><option value="PGS" ${q.Tipe=='PGS'?'selected':''}>Pilihan Ganda (1 Jawaban)</option><option value="PGK" ${q.Tipe=='PGK'?'selected':''}>PG Kompleks (Banyak Jawaban)</option><option value="Uraian" ${q.Tipe=='Uraian'?'selected':''}>Uraian / Essay</option></select></div><div class="col-md-2"><label class="small fw-bold text-muted">Bobot Skor</label><input type="number" step="0.1" name="score" class="form-control fw-bold" value="${q.Skor || 10}"></div></div><label class="small fw-bold text-muted mb-2">Teks Pertanyaan</label><textarea id="sn-${uid}" name="text">${q.Pertanyaan || ''}</textarea><div class="card mt-4 border-primary"><div class="card-header bg-primary text-white fw-bold">Opsi Jawaban & Kunci</div><div class="card-body bg-light" id="ans-area-${uid}"></div></div><div class="text-end mt-4"><button type="button" class="btn btn-light fw-bold me-2 px-4 border" onclick="toggleEditQ('${uid}')">Batal</button><button type="submit" class="btn btn-success fw-bold px-5 shadow-sm">Simpan Soal</button></div></form></div></div></div>`; 
+    }
+    
+    function toggleEditQ(uid) { const form = $(`#form-${uid}`); if (form.hasClass('hidden')) { form.removeClass('hidden'); $(`#block-${uid} .q-preview`).addClass('hidden'); $(`#sn-${uid}`).summernote(snConfig); renderAnsFields(uid, $(`#type-${uid}`).val()); } else { form.addClass('hidden'); $(`#block-${uid} .q-preview`).removeClass('hidden'); $(`#sn-${uid}`).summernote('destroy'); $(`#ans-area-${uid} .summernote-opt`).each(function(){ $(this).summernote('destroy'); }); } }
+    
+    function renderAnsFields(uid, type) { 
+        const block = $(`#block-${uid}`); let qData = {}; try { qData = JSON.parse(block.attr('data-q-obj').replace(/'/g, "'") || '{}'); } catch(e){} 
+        const opts = (qData.Tipe === type) ? JSON.parse(qData.Options || "[]") : []; const keys = (qData.Tipe === type) ? JSON.parse(qData.Key || "[]") : []; 
+        $(`#ans-area-${uid} .summernote-opt`).each(function(){ $(this).summernote('destroy'); }); let h = ''; 
+        if (type === 'PGS' || type === 'PGK') { const inputType = type === 'PGS' ? 'radio' : 'checkbox'; h = `<button type="button" class="btn btn-outline-primary btn-sm mb-3 fw-bold" onclick="addOptRow('${uid}', '${inputType}')"><i class="fas fa-plus"></i> Tambah Opsi</button><div id="opts-wrap-${uid}">`; if(opts.length) opts.forEach(o => h+=genOptRow(uid, inputType, o, keys.map(k=>k.trim()).includes(o.trim())?'checked':'')); else { h+=genOptRow(uid, inputType); h+=genOptRow(uid, inputType); } h+='</div>'; } 
+        else if (type === 'Uraian') { h = `<label class="small fw-bold mb-2">Kata Kunci Penilaian Otomatis (Pisahkan dengan koma)</label><textarea class="form-control" name="essay_key" placeholder="Contoh: Fotosintesis, Matahari, Oksigen" rows="3">${keys.join(',')}</textarea>`; } 
+        $(`#ans-area-${uid}`).html(h); $(`#ans-area-${uid} .summernote-opt`).summernote(snConfig); 
+    }
+    
+    function genOptRow(uid, type, val='', checked='') { return `<div class="d-flex align-items-start mb-3 ans-row bg-white p-3 rounded border"><div class="me-3 pt-2"><input type="${type}" name="k_${uid}" class="form-check-input border-dark" style="transform: scale(1.5);" ${checked}></div><div class="flex-grow-1"><textarea class="summernote-opt">${val}</textarea></div><button type="button" class="btn btn-light text-danger border ms-3" onclick="$(this).closest('.ans-row').remove()"><i class="fas fa-times"></i></button></div>`; }
+    function addOptRow(uid, t) { const el = $(genOptRow(uid, t)); $(`#opts-wrap-${uid}`).append(el); el.find('.summernote-opt').summernote(snConfig); }
+
+    async function saveQBlock(uid) { 
+        const form = $(`#frm-q-${uid}`); const type = form.find('select[name="type"]').val(); const text = $(`#sn-${uid}`).summernote('code'); const score = form.find('input[name="score"]').val(); const num = form.find('input[name="num"]').val(); const id = form.find('input[name="id"]').val(); let opts=[], keys=[], keyIndices=[]; 
+        if (type === 'PGS' || type === 'PGK') { $(`#opts-wrap-${uid} .ans-row`).each(function(){ const v = $(this).find('.summernote-opt').summernote('code'); if(v && v !== '<p><br></p>'){ opts.push(v); if($(this).find('.form-check-input').is(':checked')) { keys.push(v); keyIndices.push(opts.length - 1); } } }); } else { keys = form.find('textarea[name="essay_key"]').val().split(','); } 
+        const payload={id:id, num:num, type:type, text:text, options:opts, key:keys, keyIndices:keyIndices, score:score, pembuatId: user.ID}; 
+        const btn=form.find('button[type="submit"]'); btn.prop('disabled',true).text('Menyimpan...'); 
+        try {
+            const res = await callAPI('adminSaveSingleQuestion', { eid: activeExamId, data: JSON.stringify(payload) });
+            if(res.status==='success'){ toast('success','Soal Disimpan!'); toggleEditQ(uid); manageQ(activeExamId); } else throw new Error(res.msg);
+        } catch(e) { Swal.fire('Error', e.message, 'error'); btn.prop('disabled',false).text('Simpan Soal'); }
+    }
+    function deleteQBlock(uid) { const id=$(`#block-${uid}`).find('input[name="id"]').val(); if(!id){ $(`#block-${uid}`).remove(); return; } Swal.fire({title:'Hapus Soal?',showCancelButton:true}).then(async r=>{ if(r.isConfirmed){ try{ await callAPI('adminDeleteQuestion',{id:id}); $(`#block-${uid}`).fadeOut(); }catch(e){} } }); }
+
+    // --- PELAKSANAAN UJIAN ---
+    function startExam(eid) {
+        Swal.fire({ title: 'Mulai Ujian?', html: 'Waktu akan otomatis dihitung mundur.<br>Pastikan Anda <b>tidak pindah tab/aplikasi</b>.', icon: 'info', showCancelButton: true, confirmButtonText: 'KERJAKAN', confirmButtonColor: '#0d6efd' }).then(async r => {
             if(r.isConfirmed) {
-                localStorage.removeItem('cbt_session');
-                document.getElementById('view-dashboard').classList.add('hidden');
-                document.getElementById('view-auth').classList.remove('hidden');
-                document.getElementById('log-pass').value = '';
+                if (document.documentElement.requestFullscreen) { document.documentElement.requestFullscreen().catch((err) => {}); }
+                showLoad(true);
+                try {
+                    const res = await callAPI('getExamPack', { eid: eid }); showLoad(false);
+                    if(res.status === 'success') {
+                        activeExamId = eid; totalQ = res.data.length; $('#do-exam-title').html(`${res.judul} <span class="badge bg-light text-dark ms-3">${user.Nama}</span>`);
+                        try { localStorage.setItem('cbt_active_exam', JSON.stringify({ id: eid, qs: res.data, dur: res.duration, start: Date.now(), judul: res.judul, token: res.token })); } catch(e) {}
+                        violationCount = 0; enableSecurity(); runExam(res.data, res.duration, false);
+                    } else throw new Error(res.msg);
+                } catch(e) { showLoad(false); Swal.fire('Perhatian', e.message, 'warning'); }
             }
         });
     }
 
-    // Auto-login jika sesi masih ada
-    window.onload = function() {
-        if(localStorage.getItem('cbt_session')) initDashboard();
-    };
-</script>
+    function runExam(qs, dur, isResume) {
+        $('#view-dashboard').addClass('hidden'); $('#view-exam').removeClass('hidden'); $('body').addClass('exam-mode'); const c = $('#q-slides-container'); const g = $('#nav-grid'); c.empty(); g.empty();
+        qs.forEach((q,i) => {
+            let inp = '';
+            if(q.Tipe.includes('PG')) { const opts = JSON.parse(q.Options||"[]"); opts.forEach(o => inp += `<label class="clickable-opt"><input type="${q.Tipe==='PGK'?'checkbox':'radio'}" name="ans-${q.QID}" value="${encodeURIComponent(o)}" onchange="saveAnsLocal('${q.QID}', '${q.Tipe}', ${i})"><div class="flex-grow-1 opt-content mb-0">${o}</div></label>`); } 
+            else inp = `<textarea class="form-control" rows="8" placeholder="Ketik jawaban uraian Anda di sini..." name="ans-${q.QID}" onchange="saveAnsLocal('${q.QID}', 'ESSAY', ${i})"></textarea>`;
+            c.append(`<div class="q-slide hidden" id="sl-${i}" data-qid="${q.QID}" data-type="${q.Tipe}"><div class="fw-bold text-primary mb-3">Pertanyaan No. ${q.Nomor||i+1}</div><div class="mb-4 q-content">${q.Pertanyaan}</div>${inp}</div>`);
+            g.append(`<button id="nb-${i}" class="q-nav-btn ${i===0?'active-q':''}" onclick="jump(${i})">${i+1}</button>`);
+        });
+        restoreAnswers(qs); jump(0); applyMathJax();
+        let startTime = Date.now(); if(isResume) { const storedState = JSON.parse(localStorage.getItem('cbt_active_exam') || '{}'); if(storedState && storedState.start) startTime = storedState.start; }
+        const endTime = startTime + (dur * 60000); clearInterval(timerInt);
+        timerInt = setInterval(() => {
+            const diff = Math.floor((endTime - Date.now()) / 1000);
+            if(diff <= 0) { submitExamButton(true); } else { let m = Math.floor(diff/60), s = diff%60; $('#timer-disp').text(`${m}:${s<10?'0':''}${s}`); if(diff < 300) $('#timer-disp').removeClass('bg-danger').addClass('bg-warning text-dark'); }
+        }, 1000);
+    }
+    
+    function jump(i) { currentQIdx = i; $('.q-slide').addClass('hidden'); $(`#sl-${i}`).removeClass('hidden'); $('.q-nav-btn').removeClass('active-q'); $(`#nb-${i}`).addClass('active-q'); applyMathJax(); }
+    function navSlide(dir) { let next = currentQIdx + dir; if(next >= 0 && next < totalQ) jump(next); }
+    function saveAnsLocal(qid, type, idx) { let val; if(type.includes('PG')) { if(type==='PGK') { val=[]; $(`input[name="ans-${qid}"]:checked`).each(function(){ val.push(decodeURIComponent($(this).val())) }); } else val = decodeURIComponent($(`input[name="ans-${qid}"]:checked`).val()); } else val = $(`#sl-${idx} textarea`).val(); const key = `ANS_${user.ID}_${activeExamId}`; let currentData = {}; try { const stored = localStorage.getItem(key); if(stored) currentData = JSON.parse(decodeURIComponent(atob(stored))); } catch(e) {} currentData[qid] = val; try { localStorage.setItem(key, btoa(encodeURIComponent(JSON.stringify(currentData)))); } catch(e) {} $(`#nb-${idx}`).addClass('answered'); }
+    function restoreAnswers(qs) { const key = `ANS_${user.ID}_${activeExamId}`; let saved = {}; try { const stored = localStorage.getItem(key); if(stored) saved = JSON.parse(decodeURIComponent(atob(stored))); } catch(e) {} qs.forEach((q, idx) => { const val = saved[q.QID]; if(val) { $(`#nb-${idx}`).addClass('answered'); if(q.Tipe === 'PGS') $(`input[name="ans-${q.QID}"][value="${encodeURIComponent(val)}"]`).prop('checked', true); else if(q.Tipe === 'PGK') val.forEach(v => $(`input[name="ans-${q.QID}"][value="${encodeURIComponent(v)}"]`).prop('checked', true)); else if(q.Tipe === 'Uraian') $(`textarea[name="ans-${q.QID}"]`).val(val); } }); }
+    
+    function enableSecurity() { violationCount = 0; isExamFinished = false; violationLock = false; document.addEventListener("visibilitychange", handleVisibilityChange); window.addEventListener("blur", handleWindowBlur); }
+    function disableSecurity() { document.removeEventListener("visibilitychange", handleVisibilityChange); window.removeEventListener("blur", handleWindowBlur); }
+    function handleVisibilityChange() { if (!isExamFinished && document.hidden) triggerViolation("Anda membuka aplikasi lain!"); }
+    function handleWindowBlur() { if (!isExamFinished) triggerViolation("Layar ujian ditinggalkan!"); }
+    function triggerViolation(msg) { if(violationLock || isExamFinished) return; violationLock = true; violationCount++; if (violationCount >= maxViolations) { isExamFinished = true; submitExamButton(true); } else { Swal.fire({ icon: 'warning', title: 'PELANGGARAN!', text: `${msg} (${violationCount}/${maxViolations})`, confirmButtonText: 'SAYA MENGERTI', allowOutsideClick: false }).then(() => { violationLock = false; try{document.documentElement.requestFullscreen().catch(()=>{});}catch(e){} }); } }
 
+    function submitExamButton(force = false) {
+        if (examSubmitting) return; if (force) { processSubmission(); return; }
+        const answeredCount = $('.q-nav-btn.answered').length; const activeState = JSON.parse(localStorage.getItem('cbt_active_exam') || '{}'); const reqToken = activeState.token ? String(activeState.token).trim().toUpperCase() : "";
+        Swal.fire({ title: 'Selesai Ujian?', html: `Terjawab: <b>${answeredCount}</b> dari <b>${totalQ}</b> soal.<br><br>Ketik <b>${reqToken ? reqToken : 'SELESAI'}</b> untuk konfirmasi:`, input: 'text', icon: 'question', showCancelButton: true, confirmButtonText: 'Kirim', preConfirm: (val) => { val = (val||'').trim().toUpperCase(); if (reqToken && val !== reqToken) { Swal.showValidationMessage('Token Salah!'); return false; } else if (!reqToken && val !== 'SELESAI') { Swal.showValidationMessage('Ketik SELESAI'); return false; } return true; } }).then((r) => { if (r.isConfirmed) processSubmission(); });
+    }
+
+    async function processSubmission() {
+        examSubmitting = true; const btn = $('#btn-finish'); btn.prop('disabled', true).html('Mengirim...'); clearInterval(timerInt); isExamFinished = true; disableSecurity();
+        let ans = []; $('.q-slide').each(function() { const qid = $(this).data('qid'); const t = $(this).data('type'); let v = null; if (t === 'PGK') { v = []; $(this).find('input:checked').each(function() { v.push(decodeURIComponent($(this).val())) }); } else if (t === 'PGS') { const c = $(this).find('input:checked').val(); if(c) v = decodeURIComponent(c); } else v = $(this).find('textarea').val(); if (v !== null && v !== undefined) ans.push({ qid: qid, answer: v }); });
+        try {
+            const res = await callAPI('submitExam', { examId: activeExamId, answers: JSON.stringify(ans), violationCount: violationCount });
+            if (res.status === 'success') { localStorage.removeItem('cbt_active_exam'); localStorage.removeItem(`ANS_${user.ID}_${activeExamId}`); $('body').removeClass('exam-mode'); try { document.exitFullscreen().catch(()=>{}) } catch (e) {}; Swal.fire('Terkirim!', 'Jawaban berhasil disimpan.', 'success').then(() => { $('#view-exam').addClass('hidden'); $('#view-dashboard').removeClass('hidden'); loadPage('siswa-home'); }); } 
+            else throw new Error(res.msg);
+        } catch(e) { examSubmitting = false; btn.prop('disabled', false).html('Selesai'); Swal.fire('Error', e.message, 'error'); }
+    }
+
+    // --- REKAP & USERS ---
+    function renderUsers(users) {
+        let h = `<div class="d-flex justify-content-between mb-4"><h4 class="fw-bold m-0"><i class="fas fa-users me-2 text-primary"></i> Data Peserta</h4><button class="btn btn-success fw-bold shadow-sm" onclick="$('#modalUser').modal('show');$('#frm-user')[0].reset();$('#mu-id').val('');">+ Akun Baru</button></div><div class="card border-0 shadow-sm"><div class="table-responsive"><table class="table table-hover align-middle m-0"><thead class="table-light"><tr><th>Nama Lengkap</th><th>Username</th><th>Role</th><th>Kelas</th><th>Aksi</th></tr></thead><tbody>`;
+        users.forEach(u => { h += `<tr><td class="fw-bold">${u.Nama}</td><td>${u.Username}</td><td><span class="badge bg-${u.Role==='admin'?'danger':(u.Role==='guru'?'warning':'primary')} px-2">${u.Role}</span></td><td>${u.Kelas || '-'}</td><td><button class="btn btn-sm btn-light border me-1" onclick="editUser('${encodeURIComponent(JSON.stringify(u))}')"><i class="fas fa-edit"></i></button><button class="btn btn-sm btn-light text-danger border" onclick="delUser('${u.ID}')"><i class="fas fa-trash"></i></button></td></tr>`; }); h += `</tbody></table></div></div>`; $('#content-area').html(h);
+    }
+    function editUser(s){ const u=JSON.parse(decodeURIComponent(s)); $('#modalUser').modal('show'); $('#mu-id').val(u.ID); $('#mu-nama').val(u.Nama); $('#mu-user').val(u.Username); $('#mu-pass').val(u.Password); $('#mu-role').val(u.Role); $('#mu-kelas').val(u.Kelas); }
+    async function saveUser(){ const d={id:$('#mu-id').val(), nama:$('#mu-nama').val(), username:$('#mu-user').val(), password:$('#mu-pass').val(), role:$('#mu-role').val(), kelas:$('#mu-kelas').val()}; showLoad(true); try{ await callAPI('adminManageUser', {act:'save', data:JSON.stringify(d)}); $('#modalUser').modal('hide'); loadPage('admin-users'); }catch(e){} }
+    async function delUser(id){ if(confirm('Hapus User?')){ showLoad(true); try{ await callAPI('adminManageUser',{act:'delete', data:JSON.stringify({id:id})}); loadPage('admin-users'); }catch(e){} } }
+
+    function renderRecapTable() {
+        let h = `<div class="d-flex justify-content-between mb-4"><h4 class="fw-bold m-0"><i class="fas fa-chart-bar me-2 text-primary"></i> Rekapitulasi Nilai</h4><button class="btn btn-primary fw-bold shadow-sm"><i class="fas fa-file-excel"></i> Export Excel</button></div><div class="card border-0 shadow-sm"><div class="table-responsive"><table class="table table-hover align-middle m-0"><thead class="table-light"><tr><th>Waktu Submit</th><th>Nama Siswa</th><th>Kelas</th><th>Ujian</th><th>Nilai Akhir</th><th>Aksi</th></tr></thead><tbody>`;
+        recapAllData.forEach(r => { h += `<tr><td class="small text-muted">${r.WaktuSubmit}</td><td class="fw-bold">${r.NamaSiswa}</td><td>${r.KelasSiswa}</td><td>${r.JudulUjian}</td><td><span class="badge bg-success fs-6">${r.TotalNilai}</span></td><td><button class="btn btn-sm btn-danger" onclick="delRes('${r.ResultID}')">Hapus / Reset</button></td></tr>`; }); h += `</tbody></table></div></div>`; $('#content-area').html(h);
+    }
+    async function delRes(id){ Swal.fire({title:'Reset Ujian Siswa?', icon:'warning', showCancelButton:true}).then(async r=>{if(r.isConfirmed){ showLoad(true); await callAPI('adminDeleteResult',{rid:id}); loadPage('hasil-rekap'); }}) }
+</script>
 </body>
 </html>
