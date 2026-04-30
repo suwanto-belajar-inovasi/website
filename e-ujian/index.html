@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Ujian Serverless | Aplikasi CBT & LMS Google Spreadsheet</title>
+    
+    <!-- SEO META TAGS -->
+    <meta name="description" content="Platform Ujian Online (CBT) dan E-Learning berbasis Google Workspace. Tanpa biaya hosting, anti-down, dan database 100% menggunakan Google Spreadsheet.">
+    <meta name="keywords" content="e-ujian, CBT Online, Ujian Online Spreadsheet, Google Apps Script, Belajar Inovasi, Suwanto, Aplikasi Ujian Sekolah, LMS Tanpa Server">
+    <meta name="author" content="Suwanto">
+
+    <!-- FONT & FRAMEWORK -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #0ea5e9; /* Warna Biru Tech ala E-ujian */
+            --primary-dark: #0284c7;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --accent: #f59e0b;
+        }
+
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--light); color: var(--dark); overflow-x: hidden; }
+
+        /* Navbar */
+        .navbar { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); border-bottom: 1px solid #e2e8f0; }
+        .nav-link { color: #475569; font-weight: 500; transition: 0.3s; }
+        .nav-link:hover { color: var(--primary); }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(to right, #ffffff, #f0f9ff);
+            padding: 160px 0 100px;
+            position: relative;
+        }
+        .hero-title { font-weight: 800; font-size: 3.5rem; line-height: 1.2; letter-spacing: -1px; color: #0f172a; }
+        .hero-title span { color: var(--primary); }
+        .hero-subtitle { font-size: 1.15rem; color: #475569; line-height: 1.7; }
+        
+        .mockup-img { width: 100%; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(14, 165, 233, 0.25); border: 4px solid white; }
+
+        /* Stats Banner */
+        .stats-banner { background: var(--dark); color: white; padding: 40px 0; }
+        .stat-item h3 { font-size: 2.5rem; font-weight: 800; color: var(--primary); margin-bottom: 5px; }
+        .stat-item p { font-size: 0.9rem; color: #94a3b8; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; margin: 0; }
+
+        /* Section Titles */
+        .section-title { font-weight: 800; color: var(--dark); margin-bottom: 15px; }
+        .section-subtitle { color: #64748b; font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
+
+        /* Features Box */
+        .feature-box {
+            background: white; padding: 40px 30px; border-radius: 20px;
+            border: 1px solid #e2e8f0; height: 100%; transition: all 0.3s ease;
+        }
+        .feature-box:hover { box-shadow: 0 20px 40px -5px rgba(0,0,0,0.08); transform: translateY(-8px); border-color: var(--primary); }
+        .icon-feat { width: 65px; height: 65px; background: #e0f2fe; color: var(--primary); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin-bottom: 25px; transition: 0.3s; }
+        .feature-box:hover .icon-feat { background: var(--primary); color: white; }
+
+        /* How it Works */
+        .step-card { text-align: center; position: relative; z-index: 1; }
+        .step-number { width: 50px; height: 50px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 800; margin: 0 auto 20px; border: 4px solid #e0f2fe; }
+
+        /* Testimonials */
+        .testimonial-card {
+            background: white; border-radius: 20px; padding: 30px; border: 1px solid #e2e8f0; height: 100%; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); position: relative;
+        }
+        .testimonial-card::before { content: "\201C"; position: absolute; top: -10px; left: 20px; font-size: 5rem; color: #e2e8f0; font-family: serif; opacity: 0.5; line-height: 1; }
+        .stars i { color: var(--accent); font-size: 1.1rem; }
+        .client-info { display: flex; align-items: center; gap: 15px; margin-top: 20px; }
+        .client-avatar { width: 50px; height: 50px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; }
+
+        /* Pricing Table */
+        .pricing-card { background: white; border-radius: 24px; padding: 50px 40px; border: 1px solid #e2e8f0; position: relative; height: 100%; }
+        .pricing-card.popular { background: var(--dark); color: white; border: none; transform: scale(1.05); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.3); z-index: 2; }
+        .badge-popular { position: absolute; top: 0; left: 50%; transform: translateX(-50%); background: var(--accent); color: white; padding: 8px 20px; border-radius: 0 0 15px 15px; font-weight: bold; font-size: 0.85rem; letter-spacing: 1px; }
+        .price-text { font-size: 3.5rem; font-weight: 800; margin: 20px 0; }
+        .pricing-card.popular .price-text { color: white; }
+        .price-text span { font-size: 1rem; color: #64748b; font-weight: 500; }
+        .pricing-card.popular .price-text span { color: #94a3b8; }
+        
+        .list-check { padding-left: 0; margin-bottom: 30px; }
+        .list-check li { margin-bottom: 15px; display: flex; align-items: center; gap: 12px; }
+        .pricing-card:not(.popular) .list-check li { color: #475569; }
+        .list-check li i { color: #10b981; font-size: 1.2rem; flex-shrink: 0; }
+        .list-cross li i { color: #ef4444; }
+        .pricing-card.popular .list-cross li i { color: #f87171; }
+
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg fixed-top py-3">
+    <div class="container">
+        <a class="navbar-brand fw-bolder fs-4 d-flex align-items-center gap-2" href="#">
+            <i class="bi bi-laptop text-primary"></i> Belajar Inovasi CBT
+        </a>
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+            <i class="bi bi-list fs-1 text-dark"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navMenu">
+            <ul class="navbar-nav ms-auto gap-1 gap-lg-4 align-items-center">
+                <li class="nav-item"><a class="nav-link" href="#keunggulan">Mengapa Kami?</a></li>
+                <li class="nav-item"><a class="nav-link" href="#fitur">Fitur Ujian</a></li>
+                <li class="nav-item"><a class="nav-link" href="#cara-kerja">Cara Kerja</a></li>
+                <li class="nav-item"><a class="nav-link" href="#harga">Harga Spesial</a></li>
+                <li class="nav-item ms-lg-3">
+                    <a href="https://wa.me/6285895283075?text=Halo%20Pak%20Wanto,%20saya%20ingin%20konsultasi%20tentang%20Aplikasi%20CBT." target="_blank" class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm">Hubungi Kami</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6" data-aos="fade-right">
+                <div class="d-inline-flex align-items-center gap-2 px-3 py-2 rounded-pill bg-white border border-primary-subtle text-primary fw-semibold mb-4 shadow-sm">
+                    <span class="spinner-grow spinner-grow-sm text-primary" role="status"></span> Serverless Engine v2.0
+                </div>
+                <h1 class="hero-title mb-4">Platform Ujian Online (CBT) <span>Tanpa Biaya Server.</span></h1>
+                <p class="hero-subtitle mb-5">Tinggalkan tagihan hosting bulanan. Gunakan kekuatan Google Workspace untuk menggelar ujian yang stabil, anti-down, dan database terpusat di Google Spreadsheet.</p>
+                <div class="d-flex flex-column flex-sm-row gap-3">
+                    <a href="#harga" class="btn btn-primary btn-lg rounded-pill px-5 py-3 fw-bold shadow-sm">Lihat Paket Harga</a>
+                    <a href="https://www.youtube.com/@suwanto_pakwanto" target="_blank" class="btn btn-white border bg-white btn-lg rounded-pill px-4 py-3 fw-bold text-dark"><i class="bi bi-play-circle-fill text-danger me-2"></i> Demo Video</a>
+                </div>
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                <!-- Ganti link gambar ini dengan tampilan dashboard CBT Anda -->
+                <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Dashboard CBT Belajar Inovasi" class="mockup-img">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Banner -->
+<section class="stats-banner">
+    <div class="container text-center">
+        <div class="row g-4">
+            <div class="col-md-3 col-6 stat-item" data-aos="fade-up">
+                <h3>Rp 0</h3>
+                <p>Biaya Hosting/Bulan</p>
+            </div>
+            <div class="col-md-3 col-6 stat-item" data-aos="fade-up" data-aos-delay="100">
+                <h3>100%</h3>
+                <p>Uptime Google Server</p>
+            </div>
+            <div class="col-md-3 col-6 stat-item" data-aos="fade-up" data-aos-delay="200">
+                <h3>&infin;</h3>
+                <p>Kapasitas Siswa</p>
+            </div>
+            <div class="col-md-3 col-6 stat-item" data-aos="fade-up" data-aos-delay="300">
+                <h3>1x</h3>
+                <p>Bayar Seumur Hidup</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Cara Kerja (Spreadsheet integration) -->
+<section id="cara-kerja" class="py-5" style="background-color: white;">
+    <div class="container py-5">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="section-title">Semudah Mengisi Excel</h2>
+            <p class="section-subtitle">Tidak perlu pusing belajar sistem database rumit. Guru-guru senior pun dijamin bisa menggunakannya dalam hitungan menit.</p>
+        </div>
+        
+        <div class="row g-4 position-relative">
+            <!-- Connecting Line for Desktop -->
+            <div class="d-none d-lg-block position-absolute" style="top: 25px; left: 15%; right: 15%; height: 2px; background: #e2e8f0; z-index: 0;"></div>
+
+            <div class="col-lg-4" data-aos="fade-up">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h5 class="fw-bold">Buka Spreadsheet</h5>
+                    <p class="text-muted small px-3">Buka file master Google Spreadsheet yang telah kami sediakan di Google Drive Anda.</p>
+                </div>
+            </div>
+            <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h5 class="fw-bold">Copy-Paste Soal</h5>
+                    <p class="text-muted small px-3">Copy soal dari Microsoft Word dan Paste langsung ke kolom Spreadsheet. Termasuk gambar dan audio.</p>
+                </div>
+            </div>
+            <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h5 class="fw-bold">Share Link Ujian</h5>
+                    <p class="text-muted small px-3">Berikan link CBT & Token kepada siswa. Nilai akan otomatis masuk dan terekap di sheet yang sama.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Fitur Lengkap Grid -->
+<section id="fitur" class="py-5 bg-light">
+    <div class="container py-5">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="section-title">Fitur CBT Sekelas Enterprise</h2>
+            <p class="section-subtitle">Aplikasi kami didesain untuk mencegah kecurangan dan mempermudah rekapitulasi nilai akhir bagi guru pengajar.</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6" data-aos="fade-up">
+                <div class="feature-box">
+                    <div class="icon-feat"><i class="bi bi-shield-check"></i></div>
+                    <h4 class="fw-bold mb-3">Keamanan PIN & Token</h4>
+                    <p class="text-muted mb-0">Siswa tidak akan bisa mengakses soal sebelum memasukkan Token Ujian aktif yang hanya diketahui oleh Proktor/Pengawas.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-box">
+                    <div class="icon-feat"><i class="bi bi-alarm"></i></div>
+                    <h4 class="fw-bold mb-3">Timer & Auto-Submit</h4>
+                    <p class="text-muted mb-0">Waktu mundur (Countdown) berjalan akurat. Saat waktu habis, sistem akan memaksa (force) pengumpulan jawaban siswa secara otomatis.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-box">
+                    <div class="icon-feat"><i class="bi bi-file-earmark-spreadsheet"></i></div>
+                    <h4 class="fw-bold mb-3">Auto-Grading Sistem</h4>
+                    <p class="text-muted mb-0">Selamat tinggal koreksi manual. Detik itu juga siswa selesai ujian, nilai Pilihan Ganda (PG) langsung terkalkulasi di Spreadsheet guru.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="feature-box">
+                    <div class="icon-feat"><i class="bi bi-images"></i></div>
+                    <h4 class="fw-bold mb-3">Support Multimedia</h4>
+                    <p class="text-muted mb-0">Sangat cocok untuk ujian Matematika (rumus) atau Listening Bahasa Inggris. Render gambar dan audio terintegrasi langsung dari Google Drive.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
+                <div class="feature-box">
+                    <div class="icon-feat"><i class="bi bi-phone"></i></div>
+                    <h4 class="fw-bold mb-3">Mobile & Responsive</h4>
+                    <p class="text-muted mb-0">User Interface (UI) sangat nyaman diakses dari smartphone, tablet, maupun laptop siswa. Tidak memerlukan aplikasi tambahan.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
+                <div class="feature-box">
+                    <div class="icon-feat"><i class="bi bi-cloud-arrow-down"></i></div>
+                    <h4 class="fw-bold mb-3">Export Analisis Nilai</h4>
+                    <p class="text-muted mb-0">Data jawaban siswa, waktu pengerjaan, dan skor akhir dapat di-download ke format PDF atau Excel (XLSX) untuk keperluan arsip rapor.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TESTIMONI SECTION -->
+<section id="testimoni" class="py-5" style="background: white;">
+    <div class="container py-5">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="section-title">Dipercaya Berbagai Instansi</h2>
+            <p class="section-subtitle">Lebih dari sekadar aplikasi, kami memberikan kemudahan nyata di lapangan.</p>
+        </div>
+        
+        <div class="row justify-content-center g-4">
+            <div class="col-lg-4 col-md-6" data-aos="fade-up">
+                <div class="testimonial-card">
+                    <div class="stars mb-3">
+                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                    </div>
+                    <p class="text-secondary fst-italic position-relative z-1">"Awalnya ragu karena tanpa server, tapi pas PAS dipakai 300 siswa serentak pakai HP masing-masing, lancar jaya! Tidak ada error 500 seperti CBT hosting sebelumnya. Mantap Pak Wanto!"</p>
+                    <div class="client-info">
+                        <div class="client-avatar">AH</div>
+                        <div><h6 class="fw-bold mb-0">Ahmad H.</h6><small class="text-muted">Proktor MTs</small></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="testimonial-card">
+                    <div class="stars mb-3">
+                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                    </div>
+                    <p class="text-secondary fst-italic position-relative z-1">"Yang paling saya suka adalah pengisian soalnya murni di Spreadsheet. Guru-guru senior yang gaptek pun langsung bisa input soal karena mirip Excel. Sangat memudahkan kerja."</p>
+                    <div class="client-info">
+                        <div class="client-avatar bg-success">SD</div>
+                        <div><h6 class="fw-bold mb-0">Siti D.</h6><small class="text-muted">Kepala Tata Usaha SD</small></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="testimonial-card">
+                    <div class="stars mb-3">
+                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                    </div>
+                    <p class="text-secondary fst-italic position-relative z-1">"Sangat hemat! Dulu sekolah harus sewa VPS per tahun jutaan rupiah untuk Ujian. Sekarang pakai aplikasi dari Belajar Inovasi cukup beli sekali selamanya."</p>
+                    <div class="client-info">
+                        <div class="client-avatar bg-warning text-dark">BS</div>
+                        <div><h6 class="fw-bold mb-0">Budi S.</h6><small class="text-muted">Kepala Yayasan</small></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Paket Harga (SaaS Style) -->
+<section id="harga" class="py-5 bg-light">
+    <div class="container py-5">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="section-title">Investasi Cerdas Tanpa Biaya Bulanan</h2>
+            <p class="section-subtitle">Bayar 1x untuk selamanya. Lisensi melekat pada Google Workspace Instansi Anda.</p>
+        </div>
+        
+        <div class="row justify-content-center align-items-center g-0">
+            <!-- Paket Mandiri -->
+            <div class="col-lg-4 mb-4 mb-lg-0" data-aos="fade-right">
+                <div class="pricing-card" style="border-radius: 24px 0 0 24px;">
+                    <h4 class="fw-bold text-dark mb-2">Paket Mandiri</h4>
+                    <p class="text-muted small">Untuk Proktor Berpengalaman.</p>
+                    <div class="price-text text-dark">Rp 750k<span>/Sekolah</span></div>
+                    
+                    <ul class="list-unstyled list-check">
+                        <li><i class="bi bi-check-circle-fill"></i> Source Code Lengkap CBT</li>
+                        <li><i class="bi bi-check-circle-fill"></i> Template Master Spreadsheet</li>
+                        <li><i class="bi bi-check-circle-fill"></i> Panduan Instalasi (Video)</li>
+                        <li><i class="bi bi-check-circle-fill"></i> Bebas Tambah Siswa</li>
+                        <li class="list-cross"><i class="bi bi-dash-circle text-muted"></i> Tanpa Jasa Setup Akun</li>
+                        <li class="list-cross"><i class="bi bi-dash-circle text-muted"></i> Konsultasi Terbatas</li>
+                    </ul>
+                    <a href="https://wa.me/6285895283075?text=Halo%20Pak%20Wanto,%20saya%20ingin%20membeli%20Aplikasi%20CBT%20Paket%20Mandiri." target="_blank" class="btn btn-outline-primary w-100 py-3 fw-bold rounded-pill">Pilih Paket Mandiri</a>
+                </div>
+            </div>
+
+            <!-- Paket Terima Beres (Popular) -->
+            <div class="col-lg-4" data-aos="fade-up">
+                <div class="pricing-card popular" style="border-radius: 24px;">
+                    <div class="badge-popular">PALING DIREKOMENDASIKAN</div>
+                    <h4 class="fw-bold text-white mb-2">Paket Terima Beres</h4>
+                    <p class="text-white-50 small">Sistem siap pakai, langsung kami instalkan.</p>
+                    <div class="price-text">Rp 1.2jt<span>/Sekolah</span></div>
+                    
+                    <ul class="list-unstyled list-check">
+                        <li><i class="bi bi-check-circle-fill"></i> <b>Semua Fitur Paket Mandiri</b></li>
+                        <li><i class="bi bi-check-circle-fill text-warning"></i> <b>100% Setup oleh Developer</b></li>
+                        <li><i class="bi bi-check-circle-fill text-warning"></i> <b>Bimbingan Full via WA (1 Bulan)</b></li>
+                        <li><i class="bi bi-check-circle-fill text-warning"></i> <b>Free Update Bug Minor</b></li>
+                        <li><i class="bi bi-check-circle-fill"></i> Jaminan Sistem Berjalan Baik</li>
+                    </ul>
+                    <a href="https://wa.me/6285895283075?text=Halo%20Pak%20Wanto,%20saya%20ingin%20membeli%20Aplikasi%20CBT%20Paket%20Terima%20Beres." target="_blank" class="btn btn-primary w-100 py-3 fw-bold rounded-pill shadow-lg border-0" style="background: var(--accent); color: white;">Pesan Terima Beres</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-dark text-white py-5 mt-auto">
+    <div class="container text-center">
+        <h4 class="fw-bold mb-3 d-flex align-items-center justify-content-center gap-2">
+            <i class="bi bi-laptop text-primary"></i> Belajar Inovasi CBT
+        </h4>
+        <p class="mb-4 text-white-50">Menghadirkan ekosistem ujian online yang ringan, cerdas, dan hemat anggaran untuk Pendidikan Indonesia.</p>
+        <p class="small text-white-50">© 2026 Suwanto (Pak Wanto). Spesialis Serverless Google Apps Script. Surabaya.</p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        AOS.init({ duration: 800, once: true, offset: 50 });
+    });
+</script>
+
+</body>
+</html>
