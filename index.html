@@ -475,4 +475,19 @@
             const harga = document.getElementById('valHarga').value;
             const invoice = document.getElementById('valInvoice').value;
 
-            pesan = `*INVOICE PEMBELIAN - BELAJAR INOVASI*\n================
+            pesan = `*INVOICE PEMBELIAN - BELAJAR INOVASI*\n===============================\n*No. Referensi:* ${invoice}\n\nHalo Pak Wanto, saya ingin konfirmasi pembelian aplikasi:\n\n*📝 DATA PRODUK*\n- Aplikasi: ${produk}\n- Total Tagihan: *${harga}*\n\n*👤 DATA LISENSI*\n- Instansi/Nama: ${nama}\n- Email Google: ${email}\n- WA: ${wa}\n\nSaya setuju aturan lisensi (1 Spreadsheet ID). Mohon info pembayarannya. Terima kasih!`;
+        } 
+        else {
+            const reqID = document.getElementById('valInvoice').value;
+            const customReq = document.getElementById('inputCustomReq').value;
+
+            pesan = `*REQUEST APLIKASI CUSTOM*\n===============================\n*No. Referensi:* ${reqID}\n\nHalo Pak Wanto, saya tertarik untuk membuat aplikasi berbasis Google Apps Script secara *custom*.\n\n*👤 DATA KLIEN*\n- Instansi/Nama: ${nama}\n- Email: ${email}\n- WA: ${wa}\n\n*💡 IDE / KEBUTUHAN APLIKASI:*\n"${customReq ? customReq : 'Belum ditulis, mari kita diskusikan.'}"\n\nKapan kita bisa berdiskusi lebih lanjut mengenai sistem dan biayanya?`;
+        }
+
+        window.open(`https://wa.me/${noAdmin}?text=${encodeURIComponent(pesan)}`, '_blank');
+        modalCheckout.hide();
+    }
+</script>
+
+</body>
+</html>
