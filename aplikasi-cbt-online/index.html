@@ -3,83 +3,258 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal CBT Belajar Inovasi</title>
+    <title>Dashboard | E-Ujian Clone Belajar Inovasi</title>
     
     <!-- Bootstrap & Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        body { 
-            font-family: 'Poppins', sans-serif; 
-            background: linear-gradient(135deg, #0ea5e9 0%, #1e3a8a 100%); 
-            min-height: 100vh; display: flex; align-items: center; justify-content: center; 
+        /* BASE & VARIABLES (E-Ujian Style) */
+        :root {
+            --primary: #0d6efd;
+            --sidebar-bg: #ffffff;
+            --sidebar-text: #4b5563;
+            --sidebar-hover-bg: #eff6ff;
+            --sidebar-active-border: #0d6efd;
+            --bg-light: #f4f6f9;
         }
-        .auth-card { 
-            background: white; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); 
-            width: 100%; max-width: 450px; padding: 40px; 
-        }
+
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-light); color: #333; overflow-x: hidden; }
         .hidden { display: none !important; }
-        .spinner { width: 1.5rem; height: 1.5rem; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: white; animation: spin 1s ease-in-out infinite; display: inline-block; margin-right: 5px; }
+
+        /* --- AUTH VIEW (LOGIN/REGISTER) --- */
+        .auth-wrapper { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #e0f2fe; }
+        .auth-card { background: white; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); width: 100%; max-width: 420px; padding: 40px; }
+        
+        /* --- DASHBOARD LAYOUT --- */
+        .app-container { display: flex; width: 100%; min-height: 100vh; }
+        
+        /* Sidebar */
+        #sidebar { min-width: 250px; max-width: 250px; background: var(--sidebar-bg); border-right: 1px solid #e5e7eb; transition: all 0.3s; display: flex; flex-direction: column; }
+        .sidebar-brand { padding: 15px 20px; font-size: 1.25rem; font-weight: 700; color: var(--primary); display: flex; align-items: center; border-bottom: 1px solid #f3f4f6; }
+        .sidebar-brand i { font-size: 1.5rem; margin-right: 10px; }
+        .nav-title { font-size: 0.75rem; color: #9ca3af; text-transform: uppercase; font-weight: 700; padding: 15px 20px 5px; margin-top: 5px; }
+        .nav-item { padding: 10px 20px; display: flex; align-items: center; color: var(--sidebar-text); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: 0.2s; border-left: 3px solid transparent; cursor: pointer; }
+        .nav-item i { margin-right: 12px; font-size: 1.1rem; color: #9ca3af; width: 20px; text-align: center; }
+        .nav-item:hover, .nav-item.active { background: var(--sidebar-hover-bg); color: var(--primary); border-left-color: var(--primary); }
+        .nav-item.active i { color: var(--primary); }
+        
+        /* Main Content */
+        #main-content { flex-grow: 1; transition: all 0.3s; display: flex; flex-direction: column; }
+        
+        /* Top Navbar */
+        .topbar { background: #ffffff; border-bottom: 1px solid #e5e7eb; padding: 12px 25px; display: flex; justify-content: space-between; align-items: center; }
+        .btn-toggle { background: transparent; border: none; font-size: 1.2rem; color: #6b7280; cursor: pointer; }
+        .user-profile { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; font-weight: 500; color: #374151; }
+        .user-avatar { width: 35px; height: 35px; background: #e0f2fe; color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+
+        /* Page Content Area */
+        .page-content { padding: 25px; flex-grow: 1; }
+        .page-header { margin-bottom: 25px; }
+        .page-header h4 { font-weight: 700; color: #111827; margin-bottom: 5px; }
+        .page-header p { color: #6b7280; font-size: 0.9rem; margin: 0; }
+
+        /* E-Ujian Specific Components */
+        .banner-telegram { background: var(--primary); color: white; border-radius: 8px; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; box-shadow: 0 4px 6px -1px rgba(13, 110, 253, 0.2); }
+        .stat-card { background: white; border-radius: 10px; padding: 20px; border: 1px solid #e5e7eb; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; height: 100%; }
+        .stat-icon { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 15px; }
+        .stat-icon.bg-light-primary { background: #eff6ff; color: var(--primary); }
+        .stat-icon.bg-light-success { background: #f0fdf4; color: #10b981; }
+        .stat-icon.bg-light-warning { background: #fffbeb; color: #f59e0b; }
+        .stat-icon.bg-light-purple { background: #f5f3ff; color: #8b5cf6; }
+        .stat-icon.bg-light-danger { background: #fef2f2; color: #ef4444; }
+        .stat-value { font-size: 1.8rem; font-weight: 700; color: #111827; line-height: 1; margin-bottom: 5px; }
+        .stat-label { font-size: 0.8rem; color: #6b7280; font-weight: 600; text-transform: uppercase; }
+
+        .spinner { width: 1rem; height: 1rem; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: white; animation: spin 1s ease-in-out infinite; display: inline-block; margin-right: 5px; }
         @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-<!-- KOTAK LOGIN -->
-<div class="auth-card" id="card-login">
-    <div class="text-center mb-4">
-        <h4 class="fw-bold text-primary">PORTAL UJIAN CBT</h4>
-        <p class="text-muted small">Login menggunakan Kode Lembaga Anda.</p>
+<!-- ========================================== -->
+<!-- 1. AUTHENTICATION VIEW                     -->
+<!-- ========================================== -->
+<div id="view-auth" class="auth-wrapper">
+    <!-- Kotak Login -->
+    <div class="auth-card" id="card-login">
+        <div class="text-center mb-4">
+            <h3 class="fw-bold text-primary"><i class="fas fa-laptop-code"></i> e-ujian</h3>
+            <p class="text-muted small mt-2">Login dengan Kode Instansi Anda</p>
+        </div>
+        <form onsubmit="handleLogin(event)">
+            <div class="mb-3">
+                <label class="form-label small fw-bold text-muted">Kode Lembaga</label>
+                <input type="text" id="log-kode" class="form-control" placeholder="CBT1234" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label small fw-bold text-muted">Username</label>
+                <input type="text" id="log-user" class="form-control" required>
+            </div>
+            <div class="mb-4">
+                <label class="form-label small fw-bold text-muted">Password</label>
+                <input type="password" id="log-pass" class="form-control" required>
+            </div>
+            <button type="submit" id="btn-login" class="btn btn-primary w-100 py-2 fw-bold">Login</button>
+            <div class="text-center mt-3"><a href="#" onclick="toggleAuthView()" class="text-decoration-none small">Daftar Lembaga Baru</a></div>
+        </form>
     </div>
-    
-    <form id="frm-login" onsubmit="handleLogin(event)">
-        <div class="form-floating mb-3">
-            <input type="text" id="log-kode" class="form-control" placeholder="CBT1234" required>
-            <label>Kode Lembaga</label>
+
+    <!-- Kotak Register -->
+    <div class="auth-card hidden" id="card-register">
+        <div class="text-center mb-4">
+            <h4 class="fw-bold text-success">Daftar Instansi</h4>
+            <p class="text-muted small mt-1">Akses akan dikirim ke WhatsApp</p>
         </div>
-        <div class="form-floating mb-3">
-            <input type="text" id="log-user" class="form-control" placeholder="User" required>
-            <label>Username</label>
-        </div>
-        <div class="form-floating mb-4 position-relative">
-            <input type="password" id="log-pass" class="form-control" placeholder="Pass" required>
-            <label>Password</label>
-        </div>
-        <button type="submit" id="btn-login" class="btn btn-primary w-100 py-3 fw-bold shadow-sm">MASUK SEKARANG</button>
-        <p class="text-center mt-3 mb-0 small">Belum mendaftar? <a href="#" onclick="toggleView()" class="fw-bold text-decoration-none">Buat Database Baru</a></p>
-    </form>
+        <form onsubmit="handleRegister(event)">
+            <div class="mb-3">
+                <input type="text" id="reg-nama" class="form-control" placeholder="Nama Sekolah/Lembaga" required>
+            </div>
+            <div class="mb-3">
+                <input type="number" id="reg-wa" class="form-control" placeholder="No. WA Aktif (08xxx)" required>
+            </div>
+            <div class="mb-3">
+                <input type="text" id="reg-user" class="form-control" placeholder="Buat Username Admin" required>
+            </div>
+            <div class="mb-4">
+                <input type="password" id="reg-pass" class="form-control" placeholder="Buat Password Admin" required>
+            </div>
+            <button type="submit" id="btn-reg" class="btn btn-success w-100 py-2 fw-bold">Daftar Sekarang</button>
+            <div class="text-center mt-3"><a href="#" onclick="toggleAuthView()" class="text-decoration-none text-muted small">Kembali ke Login</a></div>
+        </form>
+    </div>
 </div>
 
-<!-- KOTAK REGISTRASI -->
-<div class="auth-card hidden" id="card-register">
-    <div class="text-center mb-4">
-        <h4 class="fw-bold text-success">DAFTAR LEMBAGA</h4>
-        <p class="text-muted small">Akses login akan dikirimkan otomatis ke WhatsApp Anda.</p>
-    </div>
-    
-    <form id="frm-reg" onsubmit="handleRegister(event)">
-        <div class="form-floating mb-3">
-            <input type="text" id="reg-nama" class="form-control" placeholder="Nama Sekolah" required>
-            <label>Nama Sekolah / Instansi</label>
+<!-- ========================================== -->
+<!-- 2. DASHBOARD E-UJIAN CLONE                 -->
+<!-- ========================================== -->
+<div id="view-dashboard" class="app-container hidden">
+    <!-- Sidebar Kiri -->
+    <aside id="sidebar">
+        <div class="sidebar-brand">
+            <i class="fas fa-laptop-code"></i> e-ujian
         </div>
-        <div class="form-floating mb-3">
-            <input type="number" id="reg-wa" class="form-control" placeholder="0812xxxx" required>
-            <label>No WhatsApp Aktif (Mulai dgn 08..)</label>
+        <div style="overflow-y: auto; flex-grow: 1; padding-bottom: 20px;">
+            <a class="nav-item active" onclick="loadPage('dashboard')"><i class="fas fa-home"></i> Dashboard</a>
+            
+            <div class="nav-title">Persiapan</div>
+            <a class="nav-item" onclick="comingSoon()"><i class="fas fa-folder-open"></i> Bank Soal</a>
+            <a class="nav-item" onclick="comingSoon()"><i class="fas fa-book"></i> Materi</a>
+            <a class="nav-item" onclick="comingSoon()"><i class="fas fa-box"></i> Paket Soal</a>
+            
+            <div class="nav-title">Peserta & Pengguna</div>
+            <a class="nav-item" onclick="comingSoon()"><i class="fas fa-user-tie"></i> Pengguna</a>
+            <a class="nav-item" onclick="comingSoon()"><i class="fas fa-users"></i> Peserta</a>
+            <a class="nav-item" onclick="comingSoon()"><i class="fas fa-th-large"></i> Modul</a>
+
+            <div class="nav-title">Pelaksanaan</div>
+            <a class="nav-item" onclick="comingSoon()"><i class="fas fa-play-circle"></i> Sesi Ujian</a>
+            <a class="nav-item" onclick="comingSoon()"><i class="fas fa-calendar-alt"></i> Timeline Jadwal</a>
+            <a class="nav-item" onclick="comingSoon()"><i class="fas fa-desktop"></i> Monitoring Event</a>
+            
+            <div class="nav-title">Evaluasi</div>
+            <a class="nav-item" onclick="comingSoon()"><i class="fas fa-check-double"></i> Koreksi Ujian</a>
+            <a class="nav-item" onclick="comingSoon()"><i class="fas fa-chart-bar"></i> Laporan</a>
         </div>
-        <div class="form-floating mb-3">
-            <input type="text" id="reg-user" class="form-control" placeholder="Admin" required>
-            <label>Buat Username Admin</label>
+    </aside>
+
+    <!-- Konten Utama Kanan -->
+    <main id="main-content">
+        <!-- Top Navigation -->
+        <header class="topbar">
+            <button class="btn-toggle" onclick="document.getElementById('sidebar').classList.toggle('hidden')">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="user-profile dropdown">
+                <div class="user-avatar" id="avatar-icon">A</div>
+                <div class="d-none d-md-block" style="line-height: 1.2;">
+                    <div id="top-user-name">User Name</div>
+                    <small class="text-muted" id="top-role" style="font-size: 0.75rem;">Admin Lembaga</small>
+                </div>
+                <button class="btn btn-sm btn-light ms-3 border" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </header>
+
+        <!-- Area Konten Dinamis -->
+        <div class="page-content" id="dynamic-content">
+            <!-- Halaman Dashboard (Default) -->
+            <div class="page-header">
+                <h4 id="dash-welcome">Dashboard</h4>
+                <p id="dash-instansi">Admin Lembaga - Nama Sekolah</p>
+            </div>
+
+            <!-- Banner Telegram Persis E-Ujian -->
+            <div class="banner-telegram">
+                <div class="d-flex align-items-center">
+                    <i class="fab fa-telegram-plane fs-2 me-3"></i>
+                    <div>
+                        <h6 class="fw-bold mb-1">Gabung Grup Telegram E-Ujian</h6>
+                        <small style="opacity: 0.9;">Dapatkan info terbaru, tips, dan bantuan dari komunitas</small>
+                    </div>
+                </div>
+                <button class="btn btn-light text-primary fw-bold px-4 rounded-pill">Gabung</button>
+            </div>
+
+            <!-- Kartu Statistik -->
+            <div class="row g-3 mb-4">
+                <div class="col-6 col-md-2">
+                    <div class="stat-card">
+                        <div class="stat-icon bg-light-primary"><i class="fas fa-user-tie"></i></div>
+                        <div class="stat-label">Users</div>
+                        <div class="stat-value">0</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-2">
+                    <div class="stat-card">
+                        <div class="stat-icon bg-light-purple"><i class="fas fa-users"></i></div>
+                        <div class="stat-label">Peserta</div>
+                        <div class="stat-value">0</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-2">
+                    <div class="stat-card">
+                        <div class="stat-icon bg-light-success"><i class="fas fa-box"></i></div>
+                        <div class="stat-label">Paket Soal</div>
+                        <div class="stat-value">0</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-2">
+                    <div class="stat-card">
+                        <div class="stat-icon bg-light-danger"><i class="fas fa-file-alt"></i></div>
+                        <div class="stat-label">Soal</div>
+                        <div class="stat-value">0</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-2">
+                    <div class="stat-card border-warning">
+                        <div class="stat-icon bg-light-warning"><i class="fas fa-coins"></i></div>
+                        <div class="stat-label text-warning">Saldo Poin</div>
+                        <div class="stat-value" id="disp-koin">0</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-2">
+                    <div class="stat-card">
+                        <div class="stat-icon bg-light-success"><i class="fas fa-play-circle"></i></div>
+                        <div class="stat-label">Sesi Aktif</div>
+                        <div class="stat-value">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Placeholder Chart -->
+            <div class="card border-0 shadow-sm mt-2">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-4">Statistik Ujian (6 Bulan Terakhir)</h6>
+                    <div style="height: 250px; background: #f9fafb; border: 1px dashed #d1d5db; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #9ca3af;">
+                        <i class="fas fa-chart-line me-2"></i> Grafik Aktivitas Ujian Akan Muncul Di Sini
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="form-floating mb-4">
-            <input type="password" id="reg-pass" class="form-control" placeholder="Password" required>
-            <label>Buat Password Admin</label>
-        </div>
-        <button type="submit" id="btn-reg" class="btn btn-success w-100 py-3 fw-bold shadow-sm">DAFTAR & BUAT SERVER</button>
-        <p class="text-center mt-3 mb-0 small"><a href="#" onclick="toggleView()" class="text-muted text-decoration-none">Kembali ke Login</a></p>
-    </form>
+    </main>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -89,106 +264,99 @@
     // =========================================================
     const API_URL = 'https://script.google.com/macros/s/AKfycbxrBL7pCDPgvqNQIeOFezQjjZ0rZag77ksXHoHUuE2LcTIjCBadYwaaIW02ML_2JKadKQ/exec'; 
 
-    function toggleView() {
+    function toggleAuthView() {
         document.getElementById('card-login').classList.toggle('hidden');
         document.getElementById('card-register').classList.toggle('hidden');
     }
 
-    // Fungsi Mendaftar
+    function comingSoon() {
+        Swal.fire('Fitur Sedang Dibangun', 'Menu ini belum diaktifkan di versi preview.', 'info');
+    }
+
     async function handleRegister(e) {
         e.preventDefault();
         const btn = document.getElementById('btn-reg');
-        const nama = document.getElementById('reg-nama').value;
-        const wa = document.getElementById('reg-wa').value;
-        const user = document.getElementById('reg-user').value;
-        const pass = document.getElementById('reg-pass').value;
-
-        btn.disabled = true;
-        btn.innerHTML = `<span class="spinner"></span> Memproses...`;
+        btn.disabled = true; btn.innerHTML = `<span class="spinner"></span> Mendaftar...`;
 
         const formData = new URLSearchParams();
         formData.append('action', 'register');
-        formData.append('nama', nama);
-        formData.append('whatsapp', wa);
-        formData.append('adminUser', user);
-        formData.append('adminPass', pass);
+        formData.append('nama', document.getElementById('reg-nama').value);
+        formData.append('whatsapp', document.getElementById('reg-wa').value);
+        formData.append('adminUser', document.getElementById('reg-user').value);
+        formData.append('adminPass', document.getElementById('reg-pass').value);
 
         try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                body: formData
-            });
+            const response = await fetch(API_URL, { method: 'POST', body: formData });
             const resData = await response.json();
 
             if (resData.status === 'success') {
-                Swal.fire({
-                    title: 'Pendaftaran Berhasil!',
-                    html: `Sistem sedang mengirimkan Kode Lembaga dan akses login ke WhatsApp Anda (<b>${wa}</b>).<br><br><small class="text-muted">Jika belum masuk, tunggu beberapa saat atau cek kembali nomor Anda.</small>`,
-                    icon: 'success',
-                    confirmButtonText: 'Lanjut Login'
-                }).then(() => {
-                    // Isi form login otomatis dengan data yang baru dibuat
+                Swal.fire('Pendaftaran Berhasil!', resData.msg, 'success').then(() => {
                     document.getElementById('log-kode').value = resData.kode;
-                    document.getElementById('log-user').value = user;
-                    document.getElementById('log-pass').value = pass;
-                    toggleView();
+                    document.getElementById('log-user').value = document.getElementById('reg-user').value;
+                    document.getElementById('log-pass').value = document.getElementById('reg-pass').value;
+                    toggleAuthView();
                 });
-            } else {
-                Swal.fire('Gagal', resData.msg, 'error');
-            }
-        } catch (err) {
-            Swal.fire('Error', 'Gagal menghubungi server.', 'error');
-        } finally {
-            btn.disabled = false;
-            btn.innerHTML = `DAFTAR & BUAT SERVER`;
-        }
+            } else { Swal.fire('Gagal', resData.msg, 'error'); }
+        } catch (err) { Swal.fire('Error', 'Gagal menghubungi server.', 'error'); } 
+        finally { btn.disabled = false; btn.innerHTML = `Daftar Sekarang`; }
     }
 
-    // Fungsi Login
     async function handleLogin(e) {
         e.preventDefault();
         const btn = document.getElementById('btn-login');
-        const kode = document.getElementById('log-kode').value;
-        const user = document.getElementById('log-user').value;
-        const pass = document.getElementById('log-pass').value;
-
-        btn.disabled = true;
-        btn.innerHTML = `<span class="spinner"></span> Mengecek Data...`;
+        btn.disabled = true; btn.innerHTML = `<span class="spinner"></span> Login...`;
 
         const formData = new URLSearchParams();
         formData.append('action', 'login');
-        formData.append('kode', kode);
-        formData.append('username', user);
-        formData.append('password', pass);
+        formData.append('kode', document.getElementById('log-kode').value);
+        formData.append('username', document.getElementById('log-user').value);
+        formData.append('password', document.getElementById('log-pass').value);
 
         try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                body: formData
-            });
+            const response = await fetch(API_URL, { method: 'POST', body: formData });
             const resData = await response.json();
 
             if (resData.status === 'success') {
-                localStorage.setItem('cbt_user_session', JSON.stringify(resData.data));
-                
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Login Berhasil',
-                    showConfirmButton: false,
-                    timer: 1500
-                }).then(() => {
-                    window.location.href = 'dashboard.html'; 
-                });
-            } else {
-                Swal.fire('Gagal', resData.msg, 'error');
-            }
-        } catch (err) {
-            Swal.fire('Error', 'Gagal menghubungi server.', 'error');
-        } finally {
-            btn.disabled = false;
-            btn.innerHTML = `MASUK SEKARANG`;
-        }
+                localStorage.setItem('cbt_session', JSON.stringify(resData.data));
+                initDashboard();
+            } else { Swal.fire('Gagal', resData.msg, 'error'); }
+        } catch (err) { Swal.fire('Error', 'Gagal menghubungi server.', 'error'); } 
+        finally { btn.disabled = false; btn.innerHTML = `Login`; }
     }
+
+    function initDashboard() {
+        const userStr = localStorage.getItem('cbt_session');
+        if(!userStr) return;
+        
+        const user = JSON.parse(userStr);
+        document.getElementById('view-auth').classList.add('hidden');
+        document.getElementById('view-dashboard').classList.remove('hidden');
+
+        // Set Profil dan Header
+        document.getElementById('avatar-icon').innerText = user.Nama.charAt(0).toUpperCase();
+        document.getElementById('top-user-name').innerText = user.Nama;
+        document.getElementById('top-role').innerText = String(user.Role).toUpperCase();
+        
+        document.getElementById('dash-welcome').innerText = `Selamat Datang, ${user.Nama}!`;
+        document.getElementById('dash-instansi').innerText = `Admin Lembaga - ${user.LembagaNama}`;
+        document.getElementById('disp-koin').innerText = user.Koin || '0';
+    }
+
+    function handleLogout() {
+        Swal.fire({title: 'Logout?', icon: 'warning', showCancelButton: true}).then((r) => {
+            if(r.isConfirmed) {
+                localStorage.removeItem('cbt_session');
+                document.getElementById('view-dashboard').classList.add('hidden');
+                document.getElementById('view-auth').classList.remove('hidden');
+                document.getElementById('log-pass').value = '';
+            }
+        });
+    }
+
+    // Auto-login jika sesi masih ada
+    window.onload = function() {
+        if(localStorage.getItem('cbt_session')) initDashboard();
+    };
 </script>
 
 </body>
