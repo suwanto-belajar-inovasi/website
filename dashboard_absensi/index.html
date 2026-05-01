@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Rekap Absensi</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+      --card-bg: #ffffff;
+      --bg-color: #f8fafc;
+    }
+    
+    body { background-color: var(--bg-color); font-family: 'Segoe UI', system-ui, sans-serif; }
+    
+    /* Tampilan Header Navbar yang lebih segar */
+    .navbar { background: var(--primary-gradient) !important; padding: 1rem 0; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .navbar-brand { font-weight: 700; letter-spacing: 0.5px; }
+    
+    /* Gaya Card modern */
+    .filter-card { border-radius: 16px; border: none; box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05); }
+    .main-card { border-radius: 16px; border: none; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08); overflow: hidden; }
+    .card-header { background-color: var(--card-bg); border-bottom: 2px solid #f1f5f9; padding: 1.2rem 1.5rem; font-weight: 700; color: #1e293b; font-size: 1.1rem; }
+    
+    /* Navigasi Pill lebih membulat dan interaktif */
+    .nav-pills .nav-link { color: #ffffff; border-radius: 50px; margin: 0 4px; font-weight: 500; transition: all 0.3s ease; opacity: 0.8; }
+    .nav-pills .nav-link:hover { opacity: 1; background-color: rgba(255,255,255,0.1); }
+    .nav-pills .nav-link.active { background-color: #ffffff; color: #4f46e5; box-shadow: 0 4px 10px rgba(0,0,0,0.1); opacity: 1; font-weight: 600; }
+    
+    .table-container { overflow-x: auto; max-height: 65vh; }
+    .table th { background-color: #f8fafc; color: #475569; position: sticky; top: 0; z-index: 1; white-space: nowrap; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #e2e8f0; }
+    .table td { white-space: nowrap; font-size: 0.95rem; vertical-align: middle; border-bottom: 1px solid #f1f5f9; color: #334155; }
+    .table tbody tr:hover { background-color: #f8fafc; }
+    
+    #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.98); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+    
+    .badge-status { min-width: 65px; padding: 6px 14px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; text-align: center; display: inline-block; letter-spacing: 0.5px;}
+    .bg-H { background-color: #10b981; color: #ffffff; box-shadow: 0 2px 5px rgba(16, 185, 129, 0.3); }
+    .bg-I { background-color: #0ea5e9; color: #ffffff; box-shadow: 0 2px 5px rgba(14, 165, 233, 0.3); }
+    .bg-S { background-color: #f59e0b; color: #ffffff; box-shadow: 0 2px 5px rgba(245, 158, 11, 0.3); }
+    .bg-A { background-color: #ef4444; color: #ffffff; box-shadow: 0 2px 5px rgba(239, 68, 68, 0.3); }
+    .bg-B { background-color: #64748b; color: #ffffff; box-shadow: 0 2px 5px rgba(100, 116, 139, 0.3); }
+    
+    /* Input Styling */
+    .form-control, .form-select { border-radius: 8px; border: 1px solid #cbd5e1; padding: 0.6rem 1rem; }
+    .form-control:focus, .form-select:focus { box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2); border-color: #4f46e5; }
+  </style>
+</head>
+<body>
+
+  <div id="loader">
+    <div class="spinner-grow text-primary" style="width: 4rem; height: 4rem;" role="status"></div>
+    <div class="mt-4 fw-bold text-primary" style="letter-spacing: 2px; font-size: 1.1rem;">MENGAMBIL DATA...</div>
+  </div>
+
+  <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+    <div class="container-fluid px-lg-4">
+      <a class="navbar-brand text-white" href="#"><i class="fas fa-chart-pie me-2"></i>E-Absensi Interaktif</a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto nav-pills mt-3 mt-lg-0 pb-2 pb-lg-0" id="main-nav">
+          <li class="nav-item"><a class="nav-link active" href="#" onclick="switchView('harian', this)"><i class="fas fa-calendar-day me-1"></i> Harian</a></li>
+          <li class="nav-item"><a class="nav-link" href="#" onclick="switchView('bulanan', this)"><i class="fas fa-calendar-alt me-1"></i> Bulanan</a></li>
+          <li class="nav-item"><a class="nav-link" href="#" onclick="switchView('semester', this)"><i class="fas fa-layer-group me-1"></i> Semester</a></li>
+          <li class="nav-item"><a class="nav-link" href="#" onclick="switchView('siswa', this)"><i class="fas fa-id-badge me-1"></i> Kartu Siswa</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-fluid px-lg-4 mt-4 mb-5">
+    
+    <!-- Area Filter Utama -->
+    <div class="card filter-card mb-4 border-0">
+      <div class="card-body row g-4">
+        <div class="col-md-6">
+          <label class="form-label fw-bold text-primary small text-uppercase"><i class="fas fa-door-open me-1"></i> Target Kelas</label>
+          <input type="text" class="form-control" id="inputKelas" list="listKelas" placeholder="Ketik kelas (Contoh: 10A)...">
+          <datalist id="listKelas"></datalist>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-bold text-primary small text-uppercase"><i class="fas fa-book me-1"></i> Mata Pelajaran</label>
+          <select class="form-select" id="inputMapel">
+            <option value="">Semua Mata Pelajaran</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW: HARIAN -->
+    <div id="view-harian" class="view-section">
+      <div class="card main-card">
+        <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+          <span><i class="fas fa-calendar-day text-primary me-2"></i>Kehadiran Harian</span>
+          <input type="date" id="filterTanggalHarian" class="form-control form-control-sm w-auto fw-bold text-primary">
+        </div>
+        <div class="card-body p-0 table-container">
+          <table class="table mb-0">
+            <thead><tr><th width="5%" class="text-center">No</th><th>Nama Siswa</th><th width="15%" class="text-center">Status</th></tr></thead>
+            <tbody id="tbody-harian"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW: BULANAN -->
+    <div id="view-bulanan" class="view-section" style="display: none;">
+      <div class="card main-card">
+        <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+          <span><i class="fas fa-calendar-alt text-primary me-2"></i>Rekapitulasi Bulanan</span>
+          <select id="filterBulan" class="form-select form-select-sm w-auto fw-bold text-primary">
+            <option value="01">Januari</option><option value="02">Februari</option><option value="03">Maret</option>
+            <option value="04">April</option><option value="05">Mei</option><option value="06">Juni</option>
+            <option value="07">Juli</option><option value="08">Agustus</option><option value="09">September</option>
+            <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
+          </select>
+        </div>
+        <div class="card-body p-0 table-container">
+          <table class="table mb-0 text-center">
+            <thead><tr><th width="5%">No</th><th class="text-start">Nama Siswa</th><th>Hadir (H)</th><th>Izin (I)</th><th>Sakit (S)</th><th>Alpa (A)</th><th>Bolos (B)</th></tr></thead>
+            <tbody id="tbody-bulanan"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW: SEMESTER -->
+    <div id="view-semester" class="view-section" style="display: none;">
+      <div class="card main-card">
+        <div class="card-header"><i class="fas fa-layer-group text-primary me-2"></i>Rekapitulasi Total Semester</div>
+        <div class="card-body p-0 table-container">
+          <table class="table mb-0 text-center">
+            <thead><tr><th width="5%">No</th><th class="text-start">Nama Siswa</th><th>Total H</th><th>Total I</th><th>Total S</th><th>Total A</th><th>Total B</th></tr></thead>
+            <tbody id="tbody-semester"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW: KARTU SISWA -->
+    <div id="view-siswa" class="view-section" style="display: none;">
+      <div class="card main-card">
+        <div class="card-header"><i class="fas fa-id-badge text-primary me-2"></i>Kartu Absen Personal</div>
+        <div class="card-body p-4">
+          <div class="mb-4">
+            <input type="text" class="form-control form-control-lg border-2" id="inputNamaSiswa" list="listSiswa" placeholder="🔍 Ketik nama siswa untuk melihat riwayat lengkap...">
+            <datalist id="listSiswa"></datalist>
+          </div>
+          <div class="table-container border rounded-3 overflow-hidden">
+            <table class="table mb-0">
+              <thead><tr><th class="px-4">Tanggal Pertemuan</th><th class="text-center">Status Kehadiran</th></tr></thead>
+              <tbody id="tbody-siswa"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // MASUKKAN URL WEB APP ANDA DI BAWAH INI
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxusTlTqRtvzIMzTS78pKjQBlhBYpJb_be2mymOapIESYI1_37RZ4XzPBw0YfcuZmgwug/exec';
+    
+    let globalData = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('filterTanggalHarian').valueAsDate = new Date();
+      
+      // Menggunakan Fetch API untuk mengambil data dari Google Apps Script
+      fetch(APPS_SCRIPT_URL)
+        .then(response => response.json())
+        .then(data => initApp(data))
+        .catch(error => {
+          alert("Gagal terhubung ke Database: " + error);
+          document.getElementById('loader').style.display = 'none';
+        });
+    });
+
+    function initApp(response) {
+      document.getElementById('loader').style.display = 'none';
+      if(response.error) { alert(response.error); return; }
+      
+      globalData = response.data;
+      populateDatalists();
+      
+      document.getElementById('inputKelas').addEventListener('input', refreshActiveView);
+      document.getElementById('inputMapel').addEventListener('change', refreshActiveView);
+      document.getElementById('filterTanggalHarian').addEventListener('change', renderHarian);
+      document.getElementById('filterBulan').addEventListener('change', renderBulanan);
+      document.getElementById('inputNamaSiswa').addEventListener('input', renderSiswa);
+
+      refreshActiveView();
+    }
+
+    function populateDatalists() {
+      const kelasSet = new Set(), mapelSet = new Set(), siswaSet = new Set();
+      globalData.forEach(row => {
+        if(row.kelas) kelasSet.add(row.kelas);
+        if(row.mapel) mapelSet.add(row.mapel);
+        if(row.nama) siswaSet.add(row.nama);
+      });
+
+      const listKelas = document.getElementById('listKelas');
+      kelasSet.forEach(k => listKelas.innerHTML += `<option value="${k}">`);
+      
+      const selectMapel = document.getElementById('inputMapel');
+      mapelSet.forEach(m => selectMapel.innerHTML += `<option value="${m}">${m}</option>`);
+
+      const listSiswa = document.getElementById('listSiswa');
+      siswaSet.forEach(s => listSiswa.innerHTML += `<option value="${s}">`);
+    }
+
+    function getFilteredData() {
+      const tKelas = document.getElementById('inputKelas').value.toLowerCase();
+      const tMapel = document.getElementById('inputMapel').value.toLowerCase();
+      return globalData.filter(r => 
+        (tKelas === "" || r.kelas.toLowerCase().includes(tKelas)) &&
+        (tMapel === "" || r.mapel.toLowerCase() === tMapel)
+      );
+    }
+
+    function switchView(viewName, btn) {
+      document.querySelectorAll('.view-section').forEach(el => el.style.display = 'none');
+      document.querySelectorAll('#main-nav .nav-link').forEach(el => el.classList.remove('active'));
+      document.getElementById(`view-${viewName}`).style.display = 'block';
+      if(btn) btn.classList.add('active');
+      
+      const toggler = document.querySelector('.navbar-toggler');
+      if(window.getComputedStyle(toggler).display !== 'none' && !toggler.classList.contains('collapsed')) {
+        toggler.click();
+      }
+      refreshActiveView();
+    }
+
+    function refreshActiveView() {
+      const activeDiv = document.querySelector('.view-section[style*="block"]');
+      if(activeDiv.id === 'view-harian') renderHarian();
+      if(activeDiv.id === 'view-bulanan') renderBulanan();
+      if(activeDiv.id === 'view-semester') renderSemester();
+      if(activeDiv.id === 'view-siswa') renderSiswa();
+    }
+
+    function formatDateToLocal(yyyy_mm_dd) {
+      if(!yyyy_mm_dd) return "";
+      const parts = yyyy_mm_dd.split('-');
+      if(parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+      return yyyy_mm_dd;
+    }
+
+    function getStatusBadge(status) {
+      const s = status || "";
+      if(s === 'H') return `<span class="badge-status bg-H">Hadir</span>`;
+      if(s === 'I') return `<span class="badge-status bg-I">Izin</span>`;
+      if(s === 'S') return `<span class="badge-status bg-S">Sakit</span>`;
+      if(s === 'A') return `<span class="badge-status bg-A">Alpa</span>`;
+      if(s === 'B') return `<span class="badge-status bg-B">Bolos</span>`;
+      return `<span class="badge-status bg-B">${s}</span>`;
+    }
+
+    function renderHarian() {
+      const tbody = document.getElementById('tbody-harian');
+      tbody.innerHTML = '';
+      const baseData = getFilteredData();
+      
+      const tglInput = document.getElementById('filterTanggalHarian').value; 
+      const targetTgl = formatDateToLocal(tglInput);
+
+      let no = 1;
+      baseData.forEach(row => {
+        if(row.tanggal === targetTgl) {
+          tbody.innerHTML += `
+            <tr>
+              <td class="text-center text-muted">${no++}</td>
+              <td class="fw-bold">${row.nama}</td>
+              <td class="text-center">${getStatusBadge(row.status)}</td>
+            </tr>`;
+        }
+      });
+      if(no === 1) tbody.innerHTML = `<tr><td colspan="3" class="text-center text-muted py-5"><i>Tidak ada data absensi untuk tanggal ini.</i></td></tr>`;
+    }
+
+    function aggregateData(dataToAggregate) {
+      const summary = {};
+      dataToAggregate.forEach(row => {
+        if(!summary[row.nama]) summary[row.nama] = { H:0, I:0, S:0, A:0, B:0 };
+        if(summary[row.nama][row.status] !== undefined) {
+          summary[row.nama][row.status]++;
+        }
+      });
+      return summary;
+    }
+
+    function renderBulanan() {
+      const tbody = document.getElementById('tbody-bulanan');
+      tbody.innerHTML = '';
+      const baseData = getFilteredData();
+      const targetBulan = document.getElementById('filterBulan').value;
+      
+      const monthData = baseData.filter(row => {
+        const parts = row.tanggal.split('/');
+        return parts.length === 3 && parts[1] === targetBulan;
+      });
+
+      const summary = aggregateData(monthData);
+      let no = 1;
+      for(let nama in summary) {
+        let s = summary[nama];
+        tbody.innerHTML += `
+          <tr>
+            <td class="text-muted">${no++}</td>
+            <td class="fw-bold text-start">${nama}</td>
+            <td class="text-success fw-bold">${s.H || '-'}</td>
+            <td class="text-info fw-bold">${s.I || '-'}</td>
+            <td class="text-warning fw-bold">${s.S || '-'}</td>
+            <td class="text-danger fw-bold">${s.A || '-'}</td>
+            <td class="text-secondary fw-bold">${s.B || '-'}</td>
+          </tr>`;
+      }
+      if(no === 1) tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted py-5"><i>Pilih filter kelas/bulan yang sesuai atau data kosong.</i></td></tr>`;
+    }
+
+    function renderSemester() {
+      const tbody = document.getElementById('tbody-semester');
+      tbody.innerHTML = '';
+      const baseData = getFilteredData();
+      const summary = aggregateData(baseData);
+      
+      let no = 1;
+      for(let nama in summary) {
+        let s = summary[nama];
+        tbody.innerHTML += `
+          <tr>
+            <td class="text-muted">${no++}</td>
+            <td class="fw-bold text-start">${nama}</td>
+            <td class="text-success fw-bold">${s.H || '-'}</td>
+            <td class="text-info fw-bold">${s.I || '-'}</td>
+            <td class="text-warning fw-bold">${s.S || '-'}</td>
+            <td class="text-danger fw-bold">${s.A || '-'}</td>
+            <td class="text-secondary fw-bold">${s.B || '-'}</td>
+          </tr>`;
+      }
+      if(no === 1) tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted py-5"><i>Pilih filter kelas terlebih dahulu.</i></td></tr>`;
+    }
+
+    function renderSiswa() {
+      const tbody = document.getElementById('tbody-siswa');
+      tbody.innerHTML = '';
+      const baseData = getFilteredData();
+      const targetNama = document.getElementById('inputNamaSiswa').value.toLowerCase();
+      
+      if(!targetNama) {
+        tbody.innerHTML = `<tr><td colspan="2" class="text-center text-muted py-5"><i>Silakan ketik nama siswa untuk menampilkan data.</i></td></tr>`;
+        return;
+      }
+
+      let count = 0;
+      baseData.forEach(row => {
+        if(row.nama.toLowerCase().includes(targetNama)) {
+          tbody.innerHTML += `
+            <tr>
+              <td class="fw-bold text-primary px-4"><i class="fas fa-calendar-check me-2 opacity-50"></i>${row.tanggal}</td>
+              <td class="text-center">${getStatusBadge(row.status)}</td>
+            </tr>`;
+          count++;
+        }
+      });
+      if(count === 0) tbody.innerHTML = `<tr><td colspan="2" class="text-center text-muted py-5"><i>Riwayat absensi tidak ditemukan.</i></td></tr>`;
+    }
+  </script>
+</body>
+</html>
