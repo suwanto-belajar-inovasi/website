@@ -27,19 +27,24 @@
     .nav-pills .nav-link.active { background-color: #ffffff; color: #4f46e5; box-shadow: 0 4px 10px rgba(0,0,0,0.1); opacity: 1; font-weight: 600; }
     
     .table-container { overflow-x: auto; max-height: 65vh; }
-    .table th { background-color: #f8fafc; color: #475569; position: sticky; top: 0; z-index: 1; white-space: nowrap; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #e2e8f0; }
-    .table td { white-space: nowrap; font-size: 0.95rem; vertical-align: middle; border-bottom: 1px solid #f1f5f9; color: #334155; }
-    .table tbody tr:hover { background-color: #f8fafc; }
+    
+    /* Pewarnaan Spesifik Sel sesuai Gambar Excel */
+    .cell-H { background-color: #10b981 !important; color: white !important; font-weight: bold; }
+    .cell-A { background-color: #ef4444 !important; color: white !important; font-weight: bold; }
+    .cell-I { background-color: #06b6d4 !important; color: white !important; font-weight: bold; } /* Cyan */
+    .cell-S { background-color: #eab308 !important; color: white !important; font-weight: bold; } /* Yellow */
+    .cell-B { background-color: #94a3b8 !important; color: white !important; font-weight: bold; }
+    
+    /* Styling Header Matriks Harian */
+    .matriks-table th { border: 1px solid #cbd5e1; white-space: nowrap; font-size: 0.85rem; vertical-align: middle;}
+    .matriks-table td { border: 1px solid #e2e8f0; white-space: nowrap; font-size: 0.9rem; vertical-align: middle; }
+    .header-dark { background-color: #475569 !important; color: white; }
+    
+    /* Styling Kartu Siswa */
+    .kartu-siswa-header { background-color: #06b6d4 !important; color: white; border-bottom: 2px solid #0891b2; }
+    .kartu-siswa-table td { padding: 4px 8px; font-size: 0.9rem; border-color: #cbd5e1; }
     
     #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.98); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-    
-    .badge-status { min-width: 65px; padding: 6px 14px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; text-align: center; display: inline-block; letter-spacing: 0.5px;}
-    .bg-H { background-color: #10b981; color: #ffffff; box-shadow: 0 2px 5px rgba(16, 185, 129, 0.3); }
-    .bg-I { background-color: #0ea5e9; color: #ffffff; box-shadow: 0 2px 5px rgba(14, 165, 233, 0.3); }
-    .bg-S { background-color: #f59e0b; color: #ffffff; box-shadow: 0 2px 5px rgba(245, 158, 11, 0.3); }
-    .bg-A { background-color: #ef4444; color: #ffffff; box-shadow: 0 2px 5px rgba(239, 68, 68, 0.3); }
-    .bg-B { background-color: #64748b; color: #ffffff; box-shadow: 0 2px 5px rgba(100, 116, 139, 0.3); }
-    
     .form-control, .form-select { border-radius: 8px; border: 1px solid #cbd5e1; padding: 0.6rem 1rem; }
     .form-control:focus, .form-select:focus { box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2); border-color: #4f46e5; }
   </style>
@@ -59,7 +64,7 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto nav-pills mt-3 mt-lg-0 pb-2 pb-lg-0" id="main-nav">
-          <li class="nav-item"><a class="nav-link active" href="#" onclick="switchView('harian', this)"><i class="fas fa-calendar-day me-1"></i> Harian</a></li>
+          <li class="nav-item"><a class="nav-link active" href="#" onclick="switchView('harian', this)"><i class="fas fa-border-all me-1"></i> Matriks Harian</a></li>
           <li class="nav-item"><a class="nav-link" href="#" onclick="switchView('bulanan', this)"><i class="fas fa-calendar-alt me-1"></i> Bulanan</a></li>
           <li class="nav-item"><a class="nav-link" href="#" onclick="switchView('semester', this)"><i class="fas fa-layer-group me-1"></i> Semester</a></li>
           <li class="nav-item"><a class="nav-link" href="#" onclick="switchView('siswa', this)"><i class="fas fa-id-badge me-1"></i> Kartu Siswa</a></li>
@@ -86,22 +91,24 @@
       </div>
     </div>
 
-    <!-- Tampilan Harian diberi display block sebagai default agar tidak terbaca null saat dimuat -->
+    <!-- VIEW: HARIAN (MATRIX STYLE) -->
     <div id="view-harian" class="view-section" style="display: block;">
       <div class="card main-card">
         <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
-          <span><i class="fas fa-calendar-day text-primary me-2"></i>Kehadiran Harian</span>
-          <input type="date" id="filterTanggalHarian" class="form-control form-control-sm w-auto fw-bold text-primary">
+          <span><i class="fas fa-border-all text-primary me-2"></i>Matriks Kehadiran Harian</span>
+          <!-- Menggunakan input type month untuk mengambil matriks per bulan -->
+          <input type="month" id="filterBulanHarian" class="form-control form-control-sm w-auto fw-bold text-primary">
         </div>
         <div class="card-body p-0 table-container">
-          <table class="table mb-0">
-            <thead><tr><th width="5%" class="text-center">No</th><th>Nama Siswa</th><th width="15%" class="text-center">Status</th></tr></thead>
+          <table class="table table-bordered matriks-table mb-0 text-center">
+            <thead id="thead-harian"></thead>
             <tbody id="tbody-harian"></tbody>
           </table>
         </div>
       </div>
     </div>
 
+    <!-- VIEW: BULANAN -->
     <div id="view-bulanan" class="view-section" style="display: none;">
       <div class="card main-card">
         <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
@@ -114,39 +121,40 @@
           </select>
         </div>
         <div class="card-body p-0 table-container">
-          <table class="table mb-0 text-center">
-            <thead><tr><th width="5%">No</th><th class="text-start">Nama Siswa</th><th>Hadir (H)</th><th>Izin (I)</th><th>Sakit (S)</th><th>Alpa (A)</th><th>Bolos (B)</th></tr></thead>
+          <table class="table mb-0 text-center table-hover">
+            <thead class="table-light"><tr><th width="5%">No</th><th class="text-start">Nama Siswa</th><th>Hadir (H)</th><th>Izin (I)</th><th>Sakit (S)</th><th>Alpa (A)</th><th>Bolos (B)</th></tr></thead>
             <tbody id="tbody-bulanan"></tbody>
           </table>
         </div>
       </div>
     </div>
 
+    <!-- VIEW: SEMESTER -->
     <div id="view-semester" class="view-section" style="display: none;">
       <div class="card main-card">
         <div class="card-header"><i class="fas fa-layer-group text-primary me-2"></i>Rekapitulasi Total Semester</div>
         <div class="card-body p-0 table-container">
-          <table class="table mb-0 text-center">
-            <thead><tr><th width="5%">No</th><th class="text-start">Nama Siswa</th><th>Total H</th><th>Total I</th><th>Total S</th><th>Total A</th><th>Total B</th></tr></thead>
+          <table class="table mb-0 text-center table-hover">
+            <thead class="table-light"><tr><th width="5%">No</th><th class="text-start">Nama Siswa</th><th>Total H</th><th>Total I</th><th>Total S</th><th>Total A</th><th>Total B</th></tr></thead>
             <tbody id="tbody-semester"></tbody>
           </table>
         </div>
       </div>
     </div>
 
+    <!-- VIEW: KARTU SISWA (GRID CARDS PER BULAN) -->
     <div id="view-siswa" class="view-section" style="display: none;">
       <div class="card main-card">
         <div class="card-header"><i class="fas fa-id-badge text-primary me-2"></i>Kartu Absen Personal</div>
-        <div class="card-body p-4">
-          <div class="mb-4">
-            <input type="text" class="form-control form-control-lg border-2" id="inputNamaSiswa" list="listSiswa" placeholder="🔍 Ketik nama siswa untuk melihat riwayat lengkap...">
+        <div class="card-body p-4 bg-light">
+          <div class="mb-4 bg-white p-3 rounded-3 shadow-sm border">
+            <input type="text" class="form-control form-control-lg border-2" id="inputNamaSiswa" list="listSiswa" placeholder="🔍 Ketik nama siswa untuk menampilkan Kartu Absen...">
             <datalist id="listSiswa"></datalist>
           </div>
-          <div class="table-container border rounded-3 overflow-hidden">
-            <table class="table mb-0">
-              <thead><tr><th class="px-4">Tanggal Pertemuan</th><th class="text-center">Status Kehadiran</th></tr></thead>
-              <tbody id="tbody-siswa"></tbody>
-            </table>
+          
+          <!-- Container untuk kartu-kartu per bulan -->
+          <div id="siswa-cards-container" class="row g-3">
+             <!-- Akan dirender oleh JS -->
           </div>
         </div>
       </div>
@@ -160,9 +168,13 @@
     const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxusTlTqRtvzIMzTS78pKjQBlhBYpJb_be2mymOapIESYI1_37RZ4XzPBw0YfcuZmgwug/exec';
     
     let globalData = [];
+    const namaBulanIndo = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 
     document.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('filterTanggalHarian').valueAsDate = new Date();
+      // Set Default Month to Current Month (YYYY-MM)
+      const now = new Date();
+      const currentMonth = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+      document.getElementById('filterBulanHarian').value = currentMonth;
       
       fetch(APPS_SCRIPT_URL, { redirect: 'follow' })
         .then(response => {
@@ -185,7 +197,7 @@
       
       document.getElementById('inputKelas').addEventListener('input', refreshActiveView);
       document.getElementById('inputMapel').addEventListener('change', refreshActiveView);
-      document.getElementById('filterTanggalHarian').addEventListener('change', renderHarian);
+      document.getElementById('filterBulanHarian').addEventListener('change', renderHarian);
       document.getElementById('filterBulan').addEventListener('change', renderBulanan);
       document.getElementById('inputNamaSiswa').addEventListener('input', renderSiswa);
 
@@ -234,7 +246,7 @@
 
     function refreshActiveView() {
       let activeDiv = document.querySelector('.view-section[style*="block"]');
-      if (!activeDiv) activeDiv = document.getElementById('view-harian'); // Fallback pengaman id
+      if (!activeDiv) activeDiv = document.getElementById('view-harian'); 
       
       if(activeDiv.id === 'view-harian') renderHarian();
       if(activeDiv.id === 'view-bulanan') renderBulanan();
@@ -242,43 +254,102 @@
       if(activeDiv.id === 'view-siswa') renderSiswa();
     }
 
-    function formatDateToLocal(yyyy_mm_dd) {
-      if(!yyyy_mm_dd) return "";
-      const parts = yyyy_mm_dd.split('-');
-      if(parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
-      return yyyy_mm_dd;
-    }
-
-    function getStatusBadge(status) {
+    // Helper Untuk Warna Cell
+    function getStatusCellClass(status) {
       const s = status || "";
-      if(s === 'H') return `<span class="badge-status bg-H">Hadir</span>`;
-      if(s === 'I') return `<span class="badge-status bg-I">Izin</span>`;
-      if(s === 'S') return `<span class="badge-status bg-S">Sakit</span>`;
-      if(s === 'A') return `<span class="badge-status bg-A">Alpa</span>`;
-      if(s === 'B') return `<span class="badge-status bg-B">Bolos</span>`;
-      return `<span class="badge-status bg-B">${s}</span>`;
+      if(s === 'H') return `cell-H`;
+      if(s === 'I') return `cell-I`;
+      if(s === 'S') return `cell-S`;
+      if(s === 'A') return `cell-A`;
+      if(s === 'B') return `cell-B`;
+      return ``;
     }
 
     function renderHarian() {
+      const thead = document.getElementById('thead-harian');
       const tbody = document.getElementById('tbody-harian');
-      tbody.innerHTML = '';
-      const baseData = getFilteredData();
+      thead.innerHTML = ''; tbody.innerHTML = '';
       
-      const tglInput = document.getElementById('filterTanggalHarian').value; 
-      const targetTgl = formatDateToLocal(tglInput);
+      const baseData = getFilteredData();
+      const monthVal = document.getElementById('filterBulanHarian').value; // YYYY-MM
+      if(!monthVal) {
+        tbody.innerHTML = `<tr><td class="text-center text-muted py-5"><i>Silakan pilih bulan.</i></td></tr>`;
+        return;
+      }
 
-      let no = 1;
-      baseData.forEach(row => {
-        if(row.tanggal === targetTgl) {
-          tbody.innerHTML += `
-            <tr>
-              <td class="text-center text-muted">${no++}</td>
-              <td class="fw-bold">${row.nama}</td>
-              <td class="text-center">${getStatusBadge(row.status)}</td>
-            </tr>`;
+      const [targetYear, targetMonth] = monthVal.split('-');
+      const strBulan = namaBulanIndo[parseInt(targetMonth) - 1];
+
+      // Filter Data berdasarkan Bulan & Tahun
+      const monthData = baseData.filter(row => {
+        const parts = row.tanggal.split('/'); // DD/MM/YYYY
+        return parts.length === 3 && parts[1] === targetMonth && parts[2] === targetYear;
+      });
+
+      // Cari Tanggal Unik untuk dijadikan Kolom (01, 02, 05, dst)
+      let uniqueDates = [...new Set(monthData.map(r => r.tanggal.split('/')[0]))].sort();
+
+      // Render THEAD (Header Matriks)
+      let thHtml = `<tr class="header-dark">
+                      <th rowspan="2" class="align-middle">NO</th>
+                      <th rowspan="2" class="align-middle text-start px-3">Nama Siswa</th>`;
+      if(uniqueDates.length > 0) {
+         thHtml += `<th colspan="${uniqueDates.length}" class="align-middle bg-secondary text-white">${strBulan}</th>`;
+      }
+      thHtml += `     <th class="cell-A">A</th>
+                      <th class="cell-I">I</th>
+                      <th class="cell-S">S</th>
+                      <th class="cell-B">B</th>
+                      <th rowspan="2" class="align-middle bg-danger text-white">Jum</th>
+                    </tr><tr>`;
+      
+      uniqueDates.forEach(d => { thHtml += `<th class="bg-light text-dark py-1">${d}</th>`; });
+      
+      // Kosongkan bawah A I S B karena sudah di baris 1
+      if(uniqueDates.length >= 0) {
+        thHtml += `<th class="bg-light border-0"></th><th class="bg-light border-0"></th><th class="bg-light border-0"></th><th class="bg-light border-0"></th></tr>`;
+      }
+      thead.innerHTML = thHtml;
+
+      // Group & Hitung Status Siswa
+      const studentStats = {};
+      monthData.forEach(r => {
+        if(!studentStats[r.nama]) {
+          studentStats[r.nama] = { dates: {}, A:0, I:0, S:0, B:0, Jum:0 };
+        }
+        studentStats[r.nama].dates[r.tanggal.split('/')[0]] = r.status;
+        if(['A','I','S','B'].includes(r.status)) {
+          studentStats[r.nama][r.status]++;
+          studentStats[r.nama].Jum++;
         }
       });
-      if(no === 1) tbody.innerHTML = `<tr><td colspan="3" class="text-center text-muted py-5"><i>Tidak ada data absensi untuk tanggal ini.</i></td></tr>`;
+
+      // Render TBODY (Isi Data)
+      let no = 1;
+      for(let nama in studentStats) {
+        let stats = studentStats[nama];
+        let rowHtml = `<tr>
+                        <td class="text-center text-muted">${no++}</td>
+                        <td class="text-start fw-bold text-dark px-3">${nama}</td>`;
+        
+        uniqueDates.forEach(d => {
+          let status = stats.dates[d] || '';
+          rowHtml += `<td class="p-1 ${getStatusCellClass(status)}">${status}</td>`;
+        });
+
+        rowHtml += `    <td class="text-danger fw-bold bg-light">${stats.A || ''}</td>
+                        <td class="text-info fw-bold bg-light">${stats.I || ''}</td>
+                        <td class="text-warning fw-bold bg-light">${stats.S || ''}</td>
+                        <td class="text-secondary fw-bold bg-light">${stats.B || ''}</td>
+                        <td class="text-white fw-bold bg-danger">${stats.Jum || ''}</td>
+                      </tr>`;
+        tbody.innerHTML += rowHtml;
+      }
+      
+      if(no === 1) {
+        let colSpanCount = 7 + uniqueDates.length;
+        tbody.innerHTML = `<tr><td colspan="${colSpanCount}" class="text-center text-muted py-5"><i>Tidak ada data absensi untuk bulan ini.</i></td></tr>`;
+      }
     }
 
     function aggregateData(dataToAggregate) {
@@ -345,28 +416,83 @@
     }
 
     function renderSiswa() {
-      const tbody = document.getElementById('tbody-siswa');
-      tbody.innerHTML = '';
+      const container = document.getElementById('siswa-cards-container');
+      container.innerHTML = '';
       const baseData = getFilteredData();
       const targetNama = document.getElementById('inputNamaSiswa').value.toLowerCase();
       
       if(!targetNama) {
-        tbody.innerHTML = `<tr><td colspan="2" class="text-center text-muted py-5"><i>Silakan ketik nama siswa untuk menampilkan data.</i></td></tr>`;
+        container.innerHTML = `<div class="col-12 text-center text-muted py-5"><i>Silakan ketik nama siswa di kolom pencarian.</i></div>`;
         return;
       }
 
-      let count = 0;
-      baseData.forEach(row => {
-        if(row.nama.toLowerCase().includes(targetNama)) {
-          tbody.innerHTML += `
-            <tr>
-              <td class="fw-bold text-primary px-4"><i class="fas fa-calendar-check me-2 opacity-50"></i>${row.tanggal}</td>
-              <td class="text-center">${getStatusBadge(row.status)}</td>
-            </tr>`;
-          count++;
+      const studentData = baseData.filter(r => r.nama.toLowerCase().includes(targetNama));
+      
+      // Kelompokkan data berdasarkan Bulan & Tahun
+      const monthGroups = {};
+      studentData.forEach(r => {
+        const [dd, mm, yyyy] = r.tanggal.split('/');
+        const monthKey = `${yyyy}-${mm}`;
+        if(!monthGroups[monthKey]) {
+          monthGroups[monthKey] = { 
+            name: namaBulanIndo[parseInt(mm)-1] + " " + yyyy, 
+            records: [], H:0, TidakHadir:0 
+          };
         }
+        monthGroups[monthKey].records.push(r);
+        
+        if(r.status === 'H') monthGroups[monthKey].H++;
+        else if(['A','I','S','B'].includes(r.status)) monthGroups[monthKey].TidakHadir++;
       });
-      if(count === 0) tbody.innerHTML = `<tr><td colspan="2" class="text-center text-muted py-5"><i>Riwayat absensi tidak ditemukan.</i></td></tr>`;
+
+      const sortedKeys = Object.keys(monthGroups).sort();
+
+      sortedKeys.forEach(key => {
+        const mg = monthGroups[key];
+        const totalEfektif = mg.H + mg.TidakHadir;
+        const persentase = totalEfektif === 0 ? "0%" : Math.round((mg.H / totalEfektif) * 100) + "%";
+
+        // Urutkan detail tanggal
+        mg.records.sort((a,b) => parseInt(a.tanggal.split('/')[0]) - parseInt(b.tanggal.split('/')[0]));
+        
+        let detailsHtml = '';
+        mg.records.forEach(r => {
+          let dateStr = `${r.tanggal.split('/')[0]} ${mg.name.split(' ')[0]}`;
+          detailsHtml += `<tr>
+                            <td class="px-3 py-2 border-end bg-white text-dark">${dateStr}</td>
+                            <td class="p-0 text-center align-middle w-25 ${getStatusCellClass(r.status)}">${r.status}</td>
+                          </tr>`;
+        });
+
+        // Template Kartu HTML
+        const cardHtml = `
+          <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm border-0 rounded-3 overflow-hidden">
+              <div class="kartu-siswa-header text-center fw-bold py-2 text-uppercase letter-spacing-1">${mg.name}</div>
+              <div class="card-body p-0">
+                <table class="table table-bordered kartu-siswa-table mb-0 bg-white">
+                  <tbody>
+                    <tr><td class="text-secondary">Hadir</td><td class="text-center fw-bold text-dark w-25">${mg.H}</td></tr>
+                    <tr><td class="text-secondary">Tidak Hadir</td><td class="text-center fw-bold text-danger w-25">${mg.TidakHadir}</td></tr>
+                    <tr class="bg-light"><td class="text-secondary">Hari Efektif</td><td class="text-center fw-bold text-dark">${totalEfektif}</td></tr>
+                    <tr><td class="fw-bold text-dark">Pres. Kehadiran</td><td class="text-center fw-bold cell-I fs-6">${persentase}</td></tr>
+                  </tbody>
+                </table>
+                <div class="bg-light text-secondary text-center fw-bold py-1 border-bottom fs-7">Rincian Tanggal</div>
+                <div style="max-height: 180px; overflow-y: auto;">
+                    <table class="table mb-0">
+                      <tbody>${detailsHtml}</tbody>
+                    </table>
+                </div>
+              </div>
+            </div>
+          </div>`;
+        container.innerHTML += cardHtml;
+      });
+
+      if(sortedKeys.length === 0) {
+        container.innerHTML = `<div class="col-12 text-center text-muted py-5"><i>Riwayat absensi untuk siswa tersebut tidak ditemukan.</i></div>`;
+      }
     }
   </script>
 </body>
