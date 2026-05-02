@@ -3,59 +3,62 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Rekap Absensi</title>
+  <title>Smart Dashboard Absensi</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
-      --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+      --primary-gradient: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
       --card-bg: #ffffff;
-      --bg-color: #f8fafc;
+      --bg-color: #f1f5f9;
     }
     
     body { background-color: var(--bg-color); font-family: 'Segoe UI', system-ui, sans-serif; }
     
-    .navbar { background: var(--primary-gradient) !important; padding: 1rem 0; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .navbar { background: var(--primary-gradient) !important; padding: 1rem 0; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
     .navbar-brand { font-weight: 700; letter-spacing: 0.5px; }
     
-    .filter-card { border-radius: 16px; border: none; box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05); }
-    .main-card { border-radius: 16px; border: none; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08); overflow: hidden; }
-    .card-header { background-color: var(--card-bg); border-bottom: 2px solid #f1f5f9; padding: 1.2rem 1.5rem; font-weight: 700; color: #1e293b; font-size: 1.1rem; }
+    .card { border-radius: 16px; border: none; box-shadow: 0 8px 20px -5px rgba(0, 0, 0, 0.05); }
+    .card-header { background-color: var(--card-bg); border-bottom: 1px solid #e2e8f0; padding: 1.2rem 1.5rem; font-weight: 700; color: #1e293b; border-radius: 16px 16px 0 0 !important; }
     
-    .nav-pills .nav-link { color: #ffffff; border-radius: 50px; margin: 0 4px; font-weight: 500; transition: all 0.3s ease; opacity: 0.8; }
-    .nav-pills .nav-link:hover { opacity: 1; background-color: rgba(255,255,255,0.1); }
-    .nav-pills .nav-link.active { background-color: #ffffff; color: #4f46e5; box-shadow: 0 4px 10px rgba(0,0,0,0.1); opacity: 1; font-weight: 600; }
+    .nav-pills .nav-link { color: #ffffff; border-radius: 50px; margin: 0 4px; font-weight: 500; transition: all 0.3s; opacity: 0.8; }
+    .nav-pills .nav-link:hover { opacity: 1; background-color: rgba(255,255,255,0.15); }
+    .nav-pills .nav-link.active { background-color: #ffffff; color: #1e3a8a; box-shadow: 0 4px 10px rgba(0,0,0,0.1); opacity: 1; font-weight: 700; }
     
-    .table-container { overflow-x: auto; max-height: 65vh; }
+    .table-container { overflow-x: auto; max-height: 65vh; border-radius: 0 0 16px 16px; }
     
-    .cell-H { background-color: #10b981 !important; color: white !important; font-weight: bold; }
-    .cell-A { background-color: #ef4444 !important; color: white !important; font-weight: bold; }
-    .cell-I { background-color: #06b6d4 !important; color: white !important; font-weight: bold; } 
-    .cell-S { background-color: #eab308 !important; color: white !important; font-weight: bold; } 
-    .cell-B { background-color: #94a3b8 !important; color: white !important; font-weight: bold; }
+    /* Warna Status yang Nyaman di Mata (Soft/Pastel Tone) */
+    .status-H { background-color: #d1fae5 !important; color: #065f46 !important; font-weight: bold; } /* Soft Green */
+    .status-I { background-color: #e0f2fe !important; color: #0369a1 !important; font-weight: bold; } /* Soft Blue */
+    .status-S { background-color: #fef3c7 !important; color: #b45309 !important; font-weight: bold; } /* Soft Yellow */
+    .status-A { background-color: #fee2e2 !important; color: #b91c1c !important; font-weight: bold; } /* Soft Red */
+    .status-B { background-color: #f1f5f9 !important; color: #475569 !important; font-weight: bold; } /* Soft Slate */
     
-    .matriks-table th { border: 1px solid #cbd5e1; white-space: nowrap; font-size: 0.85rem; vertical-align: middle;}
+    .matriks-table th { border: 1px solid #cbd5e1; white-space: nowrap; font-size: 0.85rem; vertical-align: middle; }
     .matriks-table td { border: 1px solid #e2e8f0; white-space: nowrap; font-size: 0.9rem; vertical-align: middle; }
-    .header-dark { background-color: #475569 !important; color: white; }
     
-    .kartu-siswa-header { background-color: #06b6d4 !important; color: white; border-bottom: 2px solid #0891b2; }
-    .kartu-siswa-table td { padding: 4px 8px; font-size: 0.9rem; border-color: #cbd5e1; }
+    /* Sticky Columns untuk UX Mobile yang Sangat Nyaman */
+    .sticky-col-1 { position: sticky; left: 0; background-color: #fff; z-index: 5; }
+    .sticky-col-2 { position: sticky; left: 45px; background-color: #fff; z-index: 5; border-right: 2px solid #cbd5e1 !important; box-shadow: 2px 0 5px rgba(0,0,0,0.03); }
+    thead .sticky-col-1, thead .sticky-col-2 { z-index: 6; background-color: #f8fafc; }
     
-    #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.98); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+    .kartu-siswa-header { background-color: #0ea5e9 !important; color: white; border-bottom: 3px solid #0284c7; }
+    
+    #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
     .form-control, .form-select { border-radius: 8px; border: 1px solid #cbd5e1; padding: 0.6rem 1rem; }
-    .form-control:focus, .form-select:focus { box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2); border-color: #4f46e5; }
+    .form-control:focus, .form-select:focus { box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); border-color: #3b82f6; }
   </style>
 </head>
 <body>
 
   <div id="loader">
     <div class="spinner-grow text-primary" style="width: 4rem; height: 4rem;" role="status"></div>
-    <div class="mt-4 fw-bold text-primary" style="letter-spacing: 2px; font-size: 1.1rem;">MENGAMBIL DATA...</div>
+    <div class="mt-4 fw-bold text-primary" style="letter-spacing: 2px;">SINKRONISASI DATABASE...</div>
   </div>
 
   <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
     <div class="container-fluid px-lg-4">
-      <a class="navbar-brand text-white" href="#"><i class="fas fa-chart-pie me-2"></i>E-Absensi Interaktif</a>
+      <a class="navbar-brand text-white" href="#"><i class="fas fa-fingerprint me-2"></i>E-Absensi Smart</a>
       <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -72,15 +75,15 @@
 
   <div class="container-fluid px-lg-4 mt-4 mb-5">
     
-    <div class="card filter-card mb-4 border-0">
+    <div class="card mb-4 border-0 border-top border-primary border-4">
       <div class="card-body row g-4">
         <div class="col-md-6">
-          <label class="form-label fw-bold text-primary small text-uppercase"><i class="fas fa-door-open me-1"></i> Target Kelas</label>
+          <label class="form-label fw-bold text-secondary small text-uppercase"><i class="fas fa-door-open me-1"></i> Filter Kelas</label>
           <input type="text" class="form-control" id="inputKelas" list="listKelas" placeholder="Ketik kelas (Contoh: 10A)...">
           <datalist id="listKelas"></datalist>
         </div>
         <div class="col-md-6">
-          <label class="form-label fw-bold text-primary small text-uppercase"><i class="fas fa-book me-1"></i> Mata Pelajaran</label>
+          <label class="form-label fw-bold text-secondary small text-uppercase"><i class="fas fa-book me-1"></i> Mata Pelajaran</label>
           <select class="form-select" id="inputMapel">
             <option value="">Semua Mata Pelajaran</option>
           </select>
@@ -88,14 +91,32 @@
       </div>
     </div>
 
+    <!-- VIEW: HARIAN (MATRIX DINAMIS) -->
     <div id="view-harian" class="view-section" style="display: block;">
-      <div class="card main-card">
+      
+      <!-- Info Cards untuk Harian -->
+      <div class="row g-3 mb-3" id="info-harian-cards" style="display: none;">
+        <div class="col-6 col-md-3">
+          <div class="card bg-primary text-white p-3 text-center border-0">
+            <h5 class="mb-0 fw-bold" id="info-hari-efektif">0</h5>
+            <small class="opacity-75">Hari Efektif</small>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="card bg-success text-white p-3 text-center border-0">
+            <h5 class="mb-0 fw-bold" id="info-total-siswa">0</h5>
+            <small class="opacity-75">Siswa Terdaftar</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
         <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
           <span><i class="fas fa-border-all text-primary me-2"></i>Matriks Kehadiran Harian</span>
-          <input type="month" id="filterBulanHarian" class="form-control form-control-sm w-auto fw-bold text-primary">
+          <input type="month" id="filterBulanHarian" class="form-control form-control-sm w-auto fw-bold text-primary bg-light border-primary">
         </div>
         <div class="card-body p-0 table-container">
-          <table class="table table-bordered matriks-table mb-0 text-center">
+          <table class="table table-bordered matriks-table mb-0 text-center table-hover">
             <thead id="thead-harian"></thead>
             <tbody id="tbody-harian"></tbody>
           </table>
@@ -103,11 +124,12 @@
       </div>
     </div>
 
+    <!-- VIEW: BULANAN -->
     <div id="view-bulanan" class="view-section" style="display: none;">
-      <div class="card main-card">
+      <div class="card">
         <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
           <span><i class="fas fa-calendar-alt text-primary me-2"></i>Rekapitulasi Bulanan</span>
-          <select id="filterBulan" class="form-select form-select-sm w-auto fw-bold text-primary">
+          <select id="filterBulan" class="form-select form-select-sm w-auto fw-bold text-primary bg-light border-primary">
             <option value="01">Januari</option><option value="02">Februari</option><option value="03">Maret</option>
             <option value="04">April</option><option value="05">Mei</option><option value="06">Juni</option>
             <option value="07">Juli</option><option value="08">Agustus</option><option value="09">September</option>
@@ -123,8 +145,9 @@
       </div>
     </div>
 
+    <!-- VIEW: SEMESTER -->
     <div id="view-semester" class="view-section" style="display: none;">
-      <div class="card main-card">
+      <div class="card">
         <div class="card-header"><i class="fas fa-layer-group text-primary me-2"></i>Rekapitulasi Total Semester</div>
         <div class="card-body p-0 table-container">
           <table class="table mb-0 text-center table-hover">
@@ -135,17 +158,16 @@
       </div>
     </div>
 
+    <!-- VIEW: KARTU SISWA -->
     <div id="view-siswa" class="view-section" style="display: none;">
-      <div class="card main-card">
+      <div class="card">
         <div class="card-header"><i class="fas fa-id-badge text-primary me-2"></i>Kartu Absen Personal</div>
-        <div class="card-body p-4 bg-light">
-          <div class="mb-4 bg-white p-3 rounded-3 shadow-sm border">
+        <div class="card-body p-4 bg-light rounded-bottom-4">
+          <div class="mb-4 bg-white p-3 rounded-4 shadow-sm border">
             <input type="text" class="form-control form-control-lg border-2" id="inputNamaSiswa" list="listSiswa" placeholder="🔍 Ketik nama siswa untuk menampilkan Kartu Absen...">
             <datalist id="listSiswa"></datalist>
           </div>
-          
-          <div id="siswa-cards-container" class="row g-3">
-          </div>
+          <div id="siswa-cards-container" class="row g-4"></div>
         </div>
       </div>
     </div>
@@ -154,7 +176,8 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxusTlTqRtvzIMzTS78pKjQBlhBYpJb_be2mymOapIESYI1_37RZ4XzPBw0YfcuZmgwug/exec';
+    // MASUKKAN URL WEB APP ANDA DI BAWAH INI
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwQBuVIKjk5Q9FaRMmN88VKtiYsPXAGAXcQdi9G9_j24RkiM6cNbMeWl3IHmc2RCz64CQ/exec';
     
     let globalData = [];
     const namaBulanIndo = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
@@ -244,22 +267,24 @@
 
     function getStatusCellClass(status) {
       const s = status || "";
-      if(s === 'H') return `cell-H`;
-      if(s === 'I') return `cell-I`;
-      if(s === 'S') return `cell-S`;
-      if(s === 'A') return `cell-A`;
-      if(s === 'B') return `cell-B`;
+      if(s === 'H') return `status-H`;
+      if(s === 'I') return `status-I`;
+      if(s === 'S') return `status-S`;
+      if(s === 'A') return `status-A`;
+      if(s === 'B') return `status-B`;
       return ``;
     }
 
     function renderHarian() {
       const thead = document.getElementById('thead-harian');
       const tbody = document.getElementById('tbody-harian');
+      const infoPanel = document.getElementById('info-harian-cards');
       thead.innerHTML = ''; tbody.innerHTML = '';
       
       const baseData = getFilteredData();
       const monthVal = document.getElementById('filterBulanHarian').value;
       if(!monthVal) {
+        infoPanel.style.display = 'none';
         tbody.innerHTML = `<tr><td class="text-center text-muted py-5"><i>Silakan pilih bulan.</i></td></tr>`;
         return;
       }
@@ -272,34 +297,13 @@
         return parts.length === 3 && parts[1] === targetMonth && parts[2] === targetYear;
       });
 
-      const daysInMonth = new Date(parseInt(targetYear), parseInt(targetMonth), 0).getDate();
-      let allDates = [];
-      for(let i=1; i<=daysInMonth; i++) {
-        allDates.push(String(i).padStart(2, '0'));
-      }
+      // MENDAPATKAN TANGGAL DINAMIS (Hanya yang ada datanya)
+      let uniqueDates = [...new Set(monthData.map(r => r.tanggal.split('/')[0]))].sort((a,b) => parseInt(a) - parseInt(b));
 
-      let thHtml = `<tr class="header-dark">
-                      <th rowspan="2" class="align-middle border-end">NO</th>
-                      <th rowspan="2" class="align-middle text-start px-3 border-end" style="min-width: 200px;">Nama Siswa</th>
-                      <th colspan="${daysInMonth}" class="align-middle bg-secondary text-white text-center border-end text-uppercase tracking-wide">${strBulan}</th>
-                      <th rowspan="2" class="align-middle cell-A border-end">A</th>
-                      <th rowspan="2" class="align-middle cell-I border-end">I</th>
-                      <th rowspan="2" class="align-middle cell-S border-end">S</th>
-                      <th rowspan="2" class="align-middle cell-B border-end">B</th>
-                      <th rowspan="2" class="align-middle bg-danger text-white">Jum</th>
-                    </tr><tr>`;
-      
-      allDates.forEach(d => { 
-        thHtml += `<th class="bg-light text-dark py-1 border-end" style="min-width: 35px;">${parseInt(d)}</th>`; 
-      });
-      thHtml += `</tr>`;
-      thead.innerHTML = thHtml;
-
+      // Info Dashboard Panel
       const studentStats = {};
       baseData.forEach(r => {
-        if(!studentStats[r.nama]) {
-          studentStats[r.nama] = { dates: {}, A:0, I:0, S:0, B:0, Jum:0 };
-        }
+        if(!studentStats[r.nama]) studentStats[r.nama] = { dates: {}, A:0, I:0, S:0, B:0, Jum:0 };
       });
 
       monthData.forEach(r => {
@@ -311,33 +315,62 @@
         }
       });
 
-      const sortedNames = Object.keys(studentStats).sort();
+      const sortedNames = Object.keys(studentStats).filter(nama => Object.keys(studentStats[nama].dates).length > 0).sort();
+      
+      infoPanel.style.display = 'flex';
+      document.getElementById('info-hari-efektif').textContent = uniqueDates.length;
+      document.getElementById('info-total-siswa').textContent = sortedNames.length;
 
+      if(uniqueDates.length === 0 || sortedNames.length === 0) {
+        tbody.innerHTML = `<tr><td class="text-center text-muted py-5"><i>Data absen untuk kelas dan bulan ini kosong.</i></td></tr>`;
+        return;
+      }
+
+      // RENDER HEADER DINAMIS (Hanya Tanggal Aktif)
+      let thHtml = `<tr>
+                      <th rowspan="2" class="align-middle sticky-col-1 text-muted bg-light" style="width:50px">NO</th>
+                      <th rowspan="2" class="align-middle sticky-col-2 text-start px-3 bg-light" style="min-width: 220px;">Nama Siswa</th>
+                      <th colspan="${uniqueDates.length}" class="align-middle bg-primary text-white text-center text-uppercase border-end tracking-wide">
+                        Bulan ${strBulan}
+                      </th>
+                      <th rowspan="2" class="align-middle status-A border-end border-white">A</th>
+                      <th rowspan="2" class="align-middle status-I border-end border-white">I</th>
+                      <th rowspan="2" class="align-middle status-S border-end border-white">S</th>
+                      <th rowspan="2" class="align-middle status-B border-end border-white">B</th>
+                      <th rowspan="2" class="align-middle bg-danger text-white">Jum</th>
+                    </tr><tr>`;
+      
+      uniqueDates.forEach(d => { 
+        thHtml += `<th class="bg-light text-dark py-2 border-end" style="min-width: 45px;">${parseInt(d)}</th>`; 
+      });
+      thHtml += `</tr>`;
+      thead.innerHTML = thHtml;
+
+      // RENDER BODY
       let no = 1;
       sortedNames.forEach(nama => {
         let stats = studentStats[nama];
         let rowHtml = `<tr>
-                        <td class="text-center text-muted fw-bold">${no++}</td>
-                        <td class="text-start fw-bold text-dark px-3 text-uppercase" style="white-space: nowrap;">${nama}</td>`;
+                        <td class="text-center text-muted fw-bold sticky-col-1">${no++}</td>
+                        <td class="text-start fw-bold text-dark px-3 sticky-col-2 text-uppercase" style="white-space: nowrap;">${nama}</td>`;
         
-        allDates.forEach(d => {
-          let status = stats.dates[d] || '';
-          rowHtml += `<td class="p-1 ${getStatusCellClass(status)}">${status}</td>`;
+        uniqueDates.forEach(d => {
+          let status = stats.dates[d];
+          if(!status) {
+            rowHtml += `<td class="p-1 text-muted bg-light border-end">-</td>`; // Jika murid tidak ada di kelas tersebut pd hari itu
+          } else {
+            rowHtml += `<td class="p-1 border-end ${getStatusCellClass(status)}">${status}</td>`;
+          }
         });
 
-        rowHtml += `    <td class="text-danger fw-bold bg-light">${stats.A || ''}</td>
-                        <td class="text-info fw-bold bg-light">${stats.I || ''}</td>
-                        <td class="text-warning fw-bold bg-light">${stats.S || ''}</td>
-                        <td class="text-secondary fw-bold bg-light">${stats.B || ''}</td>
-                        <td class="text-white fw-bold bg-danger">${stats.Jum || ''}</td>
+        rowHtml += `    <td class="text-danger fw-bold bg-white">${stats.A || ''}</td>
+                        <td class="text-info fw-bold bg-white">${stats.I || ''}</td>
+                        <td class="text-warning fw-bold bg-white">${stats.S || ''}</td>
+                        <td class="text-secondary fw-bold bg-white">${stats.B || ''}</td>
+                        <td class="text-danger fw-bold bg-light">${stats.Jum || ''}</td>
                       </tr>`;
         tbody.innerHTML += rowHtml;
       });
-      
-      if(sortedNames.length === 0) {
-        let colSpanCount = 7 + daysInMonth;
-        tbody.innerHTML = `<tr><td colspan="${colSpanCount}" class="text-center text-muted py-5"><i>Pilih filter kelas terlebih dahulu.</i></td></tr>`;
-      }
     }
 
     function aggregateData(dataToAggregate) {
@@ -368,8 +401,8 @@
         let s = summary[nama];
         tbody.innerHTML += `
           <tr>
-            <td class="text-muted">${no++}</td>
-            <td class="fw-bold text-start">${nama}</td>
+            <td class="text-muted fw-bold">${no++}</td>
+            <td class="fw-bold text-start text-dark">${nama}</td>
             <td class="text-success fw-bold">${s.H || '-'}</td>
             <td class="text-info fw-bold">${s.I || '-'}</td>
             <td class="text-warning fw-bold">${s.S || '-'}</td>
@@ -391,8 +424,8 @@
         let s = summary[nama];
         tbody.innerHTML += `
           <tr>
-            <td class="text-muted">${no++}</td>
-            <td class="fw-bold text-start">${nama}</td>
+            <td class="text-muted fw-bold">${no++}</td>
+            <td class="fw-bold text-start text-dark">${nama}</td>
             <td class="text-success fw-bold">${s.H || '-'}</td>
             <td class="text-info fw-bold">${s.I || '-'}</td>
             <td class="text-warning fw-bold">${s.S || '-'}</td>
@@ -410,7 +443,7 @@
       const targetNama = document.getElementById('inputNamaSiswa').value.toLowerCase();
       
       if(!targetNama) {
-        container.innerHTML = `<div class="col-12 text-center text-muted py-5"><i>Silakan ketik nama siswa di kolom pencarian.</i></div>`;
+        container.innerHTML = `<div class="col-12 text-center text-muted py-5"><i>Silakan ketik nama siswa di kolom pencarian atas.</i></div>`;
         return;
       }
 
@@ -445,26 +478,26 @@
         mg.records.forEach(r => {
           let dateStr = `${r.tanggal.split('/')[0]} ${mg.name.split(' ')[0]}`;
           detailsHtml += `<tr>
-                            <td class="px-3 py-2 border-end bg-white text-dark">${dateStr}</td>
-                            <td class="p-0 text-center align-middle w-25 ${getStatusCellClass(r.status)}">${r.status}</td>
+                            <td class="px-4 py-2 border-end bg-white text-dark fw-medium">${dateStr}</td>
+                            <td class="p-0 text-center align-middle w-25 border-bottom ${getStatusCellClass(r.status)}">${r.status}</td>
                           </tr>`;
         });
 
         const cardHtml = `
           <div class="col-md-6 col-lg-4">
-            <div class="card h-100 shadow-sm border-0 rounded-3 overflow-hidden">
-              <div class="kartu-siswa-header text-center fw-bold py-2 text-uppercase letter-spacing-1">${mg.name}</div>
+            <div class="card h-100 shadow border-0 rounded-4 overflow-hidden">
+              <div class="kartu-siswa-header text-center fw-bold py-3 text-uppercase shadow-sm" style="letter-spacing:1px">${mg.name}</div>
               <div class="card-body p-0">
                 <table class="table table-bordered kartu-siswa-table mb-0 bg-white">
                   <tbody>
-                    <tr><td class="text-secondary">Hadir</td><td class="text-center fw-bold text-dark w-25">${mg.H}</td></tr>
-                    <tr><td class="text-secondary">Tidak Hadir</td><td class="text-center fw-bold text-danger w-25">${mg.TidakHadir}</td></tr>
-                    <tr class="bg-light"><td class="text-secondary">Hari Efektif</td><td class="text-center fw-bold text-dark">${totalEfektif}</td></tr>
-                    <tr><td class="fw-bold text-dark">Pres. Kehadiran</td><td class="text-center fw-bold cell-I fs-6">${persentase}</td></tr>
+                    <tr><td class="text-secondary px-3">Hadir (H)</td><td class="text-center fw-bold text-success w-25">${mg.H}</td></tr>
+                    <tr><td class="text-secondary px-3">Tidak Hadir</td><td class="text-center fw-bold text-danger w-25">${mg.TidakHadir}</td></tr>
+                    <tr class="bg-light"><td class="text-secondary px-3">Hari Efektif</td><td class="text-center fw-bold text-dark">${totalEfektif}</td></tr>
+                    <tr><td class="fw-bold text-dark px-3 py-2">Pres. Kehadiran</td><td class="text-center fw-bold status-I fs-6">${persentase}</td></tr>
                   </tbody>
                 </table>
-                <div class="bg-light text-secondary text-center fw-bold py-1 border-bottom fs-7">Rincian Tanggal</div>
-                <div style="max-height: 180px; overflow-y: auto;">
+                <div class="bg-light text-secondary text-center fw-bold py-2 border-bottom border-top" style="font-size:0.8rem; letter-spacing:1px">RINCIAN TANGGAL</div>
+                <div style="max-height: 200px; overflow-y: auto;">
                     <table class="table mb-0">
                       <tbody>${detailsHtml}</tbody>
                     </table>
@@ -476,7 +509,7 @@
       });
 
       if(sortedKeys.length === 0) {
-        container.innerHTML = `<div class="col-12 text-center text-muted py-5"><i>Riwayat absensi untuk siswa tersebut tidak ditemukan.</i></div>`;
+        container.innerHTML = `<div class="col-12 text-center text-muted py-5"><i>Riwayat absensi untuk siswa "${targetNama}" tidak ditemukan.</i></div>`;
       }
     }
   </script>
