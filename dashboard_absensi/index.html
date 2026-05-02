@@ -28,19 +28,16 @@
     
     .table-container { overflow-x: auto; max-height: 65vh; }
     
-    /* Pewarnaan Spesifik Sel sesuai Gambar Excel */
     .cell-H { background-color: #10b981 !important; color: white !important; font-weight: bold; }
     .cell-A { background-color: #ef4444 !important; color: white !important; font-weight: bold; }
-    .cell-I { background-color: #06b6d4 !important; color: white !important; font-weight: bold; } /* Cyan */
-    .cell-S { background-color: #eab308 !important; color: white !important; font-weight: bold; } /* Yellow */
+    .cell-I { background-color: #06b6d4 !important; color: white !important; font-weight: bold; } 
+    .cell-S { background-color: #eab308 !important; color: white !important; font-weight: bold; } 
     .cell-B { background-color: #94a3b8 !important; color: white !important; font-weight: bold; }
     
-    /* Styling Header Matriks Harian */
     .matriks-table th { border: 1px solid #cbd5e1; white-space: nowrap; font-size: 0.85rem; vertical-align: middle;}
     .matriks-table td { border: 1px solid #e2e8f0; white-space: nowrap; font-size: 0.9rem; vertical-align: middle; }
     .header-dark { background-color: #475569 !important; color: white; }
     
-    /* Styling Kartu Siswa */
     .kartu-siswa-header { background-color: #06b6d4 !important; color: white; border-bottom: 2px solid #0891b2; }
     .kartu-siswa-table td { padding: 4px 8px; font-size: 0.9rem; border-color: #cbd5e1; }
     
@@ -91,12 +88,10 @@
       </div>
     </div>
 
-    <!-- VIEW: HARIAN (MATRIX STYLE) -->
     <div id="view-harian" class="view-section" style="display: block;">
       <div class="card main-card">
         <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
           <span><i class="fas fa-border-all text-primary me-2"></i>Matriks Kehadiran Harian</span>
-          <!-- Menggunakan input type month untuk mengambil matriks per bulan -->
           <input type="month" id="filterBulanHarian" class="form-control form-control-sm w-auto fw-bold text-primary">
         </div>
         <div class="card-body p-0 table-container">
@@ -108,7 +103,6 @@
       </div>
     </div>
 
-    <!-- VIEW: BULANAN -->
     <div id="view-bulanan" class="view-section" style="display: none;">
       <div class="card main-card">
         <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
@@ -129,7 +123,6 @@
       </div>
     </div>
 
-    <!-- VIEW: SEMESTER -->
     <div id="view-semester" class="view-section" style="display: none;">
       <div class="card main-card">
         <div class="card-header"><i class="fas fa-layer-group text-primary me-2"></i>Rekapitulasi Total Semester</div>
@@ -142,7 +135,6 @@
       </div>
     </div>
 
-    <!-- VIEW: KARTU SISWA (GRID CARDS PER BULAN) -->
     <div id="view-siswa" class="view-section" style="display: none;">
       <div class="card main-card">
         <div class="card-header"><i class="fas fa-id-badge text-primary me-2"></i>Kartu Absen Personal</div>
@@ -152,9 +144,7 @@
             <datalist id="listSiswa"></datalist>
           </div>
           
-          <!-- Container untuk kartu-kartu per bulan -->
           <div id="siswa-cards-container" class="row g-3">
-             <!-- Akan dirender oleh JS -->
           </div>
         </div>
       </div>
@@ -164,14 +154,12 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // MASUKKAN URL WEB APP ANDA DI BAWAH INI
     const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxusTlTqRtvzIMzTS78pKjQBlhBYpJb_be2mymOapIESYI1_37RZ4XzPBw0YfcuZmgwug/exec';
     
     let globalData = [];
     const namaBulanIndo = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 
     document.addEventListener('DOMContentLoaded', () => {
-      // Set Default Month to Current Month (YYYY-MM)
       const now = new Date();
       const currentMonth = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
       document.getElementById('filterBulanHarian').value = currentMonth;
@@ -254,7 +242,6 @@
       if(activeDiv.id === 'view-siswa') renderSiswa();
     }
 
-    // Helper Untuk Warna Cell
     function getStatusCellClass(status) {
       const s = status || "";
       if(s === 'H') return `cell-H`;
@@ -271,68 +258,69 @@
       thead.innerHTML = ''; tbody.innerHTML = '';
       
       const baseData = getFilteredData();
-      const monthVal = document.getElementById('filterBulanHarian').value; // YYYY-MM
+      const monthVal = document.getElementById('filterBulanHarian').value;
       if(!monthVal) {
         tbody.innerHTML = `<tr><td class="text-center text-muted py-5"><i>Silakan pilih bulan.</i></td></tr>`;
         return;
       }
 
       const [targetYear, targetMonth] = monthVal.split('-');
-      const strBulan = namaBulanIndo[parseInt(targetMonth) - 1];
+      const strBulan = namaBulanIndo[parseInt(targetMonth) - 1] + " " + targetYear;
 
-      // Filter Data berdasarkan Bulan & Tahun
       const monthData = baseData.filter(row => {
-        const parts = row.tanggal.split('/'); // DD/MM/YYYY
+        const parts = row.tanggal.split('/'); 
         return parts.length === 3 && parts[1] === targetMonth && parts[2] === targetYear;
       });
 
-      // Cari Tanggal Unik untuk dijadikan Kolom (01, 02, 05, dst)
-      let uniqueDates = [...new Set(monthData.map(r => r.tanggal.split('/')[0]))].sort();
-
-      // Render THEAD (Header Matriks)
-      let thHtml = `<tr class="header-dark">
-                      <th rowspan="2" class="align-middle">NO</th>
-                      <th rowspan="2" class="align-middle text-start px-3">Nama Siswa</th>`;
-      if(uniqueDates.length > 0) {
-         thHtml += `<th colspan="${uniqueDates.length}" class="align-middle bg-secondary text-white">${strBulan}</th>`;
+      const daysInMonth = new Date(parseInt(targetYear), parseInt(targetMonth), 0).getDate();
+      let allDates = [];
+      for(let i=1; i<=daysInMonth; i++) {
+        allDates.push(String(i).padStart(2, '0'));
       }
-      thHtml += `     <th class="cell-A">A</th>
-                      <th class="cell-I">I</th>
-                      <th class="cell-S">S</th>
-                      <th class="cell-B">B</th>
+
+      let thHtml = `<tr class="header-dark">
+                      <th rowspan="2" class="align-middle border-end">NO</th>
+                      <th rowspan="2" class="align-middle text-start px-3 border-end" style="min-width: 200px;">Nama Siswa</th>
+                      <th colspan="${daysInMonth}" class="align-middle bg-secondary text-white text-center border-end text-uppercase tracking-wide">${strBulan}</th>
+                      <th rowspan="2" class="align-middle cell-A border-end">A</th>
+                      <th rowspan="2" class="align-middle cell-I border-end">I</th>
+                      <th rowspan="2" class="align-middle cell-S border-end">S</th>
+                      <th rowspan="2" class="align-middle cell-B border-end">B</th>
                       <th rowspan="2" class="align-middle bg-danger text-white">Jum</th>
                     </tr><tr>`;
       
-      uniqueDates.forEach(d => { thHtml += `<th class="bg-light text-dark py-1">${d}</th>`; });
-      
-      // Kosongkan bawah A I S B karena sudah di baris 1
-      if(uniqueDates.length >= 0) {
-        thHtml += `<th class="bg-light border-0"></th><th class="bg-light border-0"></th><th class="bg-light border-0"></th><th class="bg-light border-0"></th></tr>`;
-      }
+      allDates.forEach(d => { 
+        thHtml += `<th class="bg-light text-dark py-1 border-end" style="min-width: 35px;">${parseInt(d)}</th>`; 
+      });
+      thHtml += `</tr>`;
       thead.innerHTML = thHtml;
 
-      // Group & Hitung Status Siswa
       const studentStats = {};
-      monthData.forEach(r => {
+      baseData.forEach(r => {
         if(!studentStats[r.nama]) {
           studentStats[r.nama] = { dates: {}, A:0, I:0, S:0, B:0, Jum:0 };
         }
-        studentStats[r.nama].dates[r.tanggal.split('/')[0]] = r.status;
+      });
+
+      monthData.forEach(r => {
+        const d = r.tanggal.split('/')[0];
+        studentStats[r.nama].dates[d] = r.status;
         if(['A','I','S','B'].includes(r.status)) {
           studentStats[r.nama][r.status]++;
           studentStats[r.nama].Jum++;
         }
       });
 
-      // Render TBODY (Isi Data)
+      const sortedNames = Object.keys(studentStats).sort();
+
       let no = 1;
-      for(let nama in studentStats) {
+      sortedNames.forEach(nama => {
         let stats = studentStats[nama];
         let rowHtml = `<tr>
-                        <td class="text-center text-muted">${no++}</td>
-                        <td class="text-start fw-bold text-dark px-3">${nama}</td>`;
+                        <td class="text-center text-muted fw-bold">${no++}</td>
+                        <td class="text-start fw-bold text-dark px-3 text-uppercase" style="white-space: nowrap;">${nama}</td>`;
         
-        uniqueDates.forEach(d => {
+        allDates.forEach(d => {
           let status = stats.dates[d] || '';
           rowHtml += `<td class="p-1 ${getStatusCellClass(status)}">${status}</td>`;
         });
@@ -344,11 +332,11 @@
                         <td class="text-white fw-bold bg-danger">${stats.Jum || ''}</td>
                       </tr>`;
         tbody.innerHTML += rowHtml;
-      }
+      });
       
-      if(no === 1) {
-        let colSpanCount = 7 + uniqueDates.length;
-        tbody.innerHTML = `<tr><td colspan="${colSpanCount}" class="text-center text-muted py-5"><i>Tidak ada data absensi untuk bulan ini.</i></td></tr>`;
+      if(sortedNames.length === 0) {
+        let colSpanCount = 7 + daysInMonth;
+        tbody.innerHTML = `<tr><td colspan="${colSpanCount}" class="text-center text-muted py-5"><i>Pilih filter kelas terlebih dahulu.</i></td></tr>`;
       }
     }
 
@@ -428,7 +416,6 @@
 
       const studentData = baseData.filter(r => r.nama.toLowerCase().includes(targetNama));
       
-      // Kelompokkan data berdasarkan Bulan & Tahun
       const monthGroups = {};
       studentData.forEach(r => {
         const [dd, mm, yyyy] = r.tanggal.split('/');
@@ -452,7 +439,6 @@
         const totalEfektif = mg.H + mg.TidakHadir;
         const persentase = totalEfektif === 0 ? "0%" : Math.round((mg.H / totalEfektif) * 100) + "%";
 
-        // Urutkan detail tanggal
         mg.records.sort((a,b) => parseInt(a.tanggal.split('/')[0]) - parseInt(b.tanggal.split('/')[0]));
         
         let detailsHtml = '';
@@ -464,7 +450,6 @@
                           </tr>`;
         });
 
-        // Template Kartu HTML
         const cardHtml = `
           <div class="col-md-6 col-lg-4">
             <div class="card h-100 shadow-sm border-0 rounded-3 overflow-hidden">
