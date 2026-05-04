@@ -73,7 +73,9 @@
 <body>
 <div id="loader" class="loader hidden" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(255,255,255,0.8);z-index:10000;display:flex;justify-content:center;align-items:center;"><div class="spinner" style="width:40px;height:40px;border:4px solid #e2e8f0;border-top-color:#0d6efd;border-radius:50%;animation:spin 0.8s linear infinite;"></div></div>
 
-<!-- 0. LANDING PAGE -->
+<!-- ========================================== -->
+<!-- 0. LANDING PAGE (PROMOSI)                  -->
+<!-- ========================================== -->
 <div id="view-landing">
     <nav class="navbar-landing d-flex justify-content-between align-items-center shadow-sm">
         <div class="fw-bold fs-4 text-primary"><i class="fas fa-laptop-code me-2"></i>Belajar Inovasi</div>
@@ -91,14 +93,16 @@
         <h2 class="text-center fw-bold mb-5">Keunggulan Sistem Kami</h2>
         <div class="row g-4">
             <div class="col-md-4"><div class="ft-card text-center"><i class="fas fa-database ft-icon"></i><h5 class="fw-bold">Database Spreadsheet</h5><p class="text-muted small">Guru tidak perlu repot belajar bahasa SQL. Input soal dan tarik nilai semudah mengetik di Excel.</p></div></div>
-            <div class="col-md-4"><div class="ft-card text-center"><i class="fas fa-server ft-icon text-danger"></i><h5 class="fw-bold">Bebas Tagihan Hosting</h5><p class="text-muted small">Cukup satu kali bayar. Server ditenagai oleh Google yang nyaris tidak pernah Down.</p></div></div>
-            <div class="col-md-4"><div class="ft-card text-center"><i class="fas fa-shield-alt ft-icon text-success"></i><h5 class="fw-bold">Fitur Anti Kecurangan</h5><p class="text-muted small">Berpindah Tab akan terekam sebagai pelanggaran dan jawaban akan dikirim otomatis.</p></div></div>
+            <div class="col-md-4"><div class="ft-card text-center"><i class="fas fa-server ft-icon text-danger"></i><h5 class="fw-bold">Bebas Tagihan Hosting</h5><p class="text-muted small">Cukup satu kali bayar. Server ditenagai oleh infrastruktur Google yang nyaris tidak pernah Down.</p></div></div>
+            <div class="col-md-4"><div class="ft-card text-center"><i class="fas fa-shield-alt ft-icon text-success"></i><h5 class="fw-bold">Fitur Anti Kecurangan</h5><p class="text-muted small">Siswa diwajibkan menggunakan mode layar penuh. Berpindah Tab akan terekam sebagai pelanggaran dan dikirim otomatis.</p></div></div>
         </div>
     </section>
     <footer class="bg-dark text-white text-center py-4 mt-auto"><p class="mb-0 small">© 2026 Belajar Inovasi. Hak Cipta Dilindungi.</p></footer>
 </div>
 
-<!-- 1. AUTHENTICATION VIEW -->
+<!-- ========================================== -->
+<!-- 1. AUTHENTICATION VIEW                     -->
+<!-- ========================================== -->
 <div id="view-auth" class="auth-wrapper hidden">
     <div class="auth-card" id="card-login">
         <div class="text-center mb-4"><h3 class="fw-bold text-primary"><i class="fas fa-laptop-code"></i> e-ujian</h3><p class="text-muted small mt-2">Login dengan Kode Instansi Anda</p></div>
@@ -124,7 +128,9 @@
     </div>
 </div>
 
-<!-- 2. DASHBOARD APLIKASI -->
+<!-- ========================================== -->
+<!-- 2. DASHBOARD APLIKASI                      -->
+<!-- ========================================== -->
 <div id="view-dashboard" class="app-container hidden">
     <aside id="sidebar">
         <div class="sidebar-brand">
@@ -167,7 +173,9 @@
     </main>
 </div>
 
-<!-- 3. VIEW PELAKSANAAN UJIAN (LAYAR PENUH) -->
+<!-- ========================================== -->
+<!-- 3. VIEW PELAKSANAAN UJIAN (LAYAR PENUH)    -->
+<!-- ========================================== -->
 <div id="view-exam" class="hidden">
     <div class="exam-header">
         <div class="d-flex align-items-center"><i class="fas fa-laptop-code text-primary me-3 fs-4"></i><div><h6 class="fw-bold m-0" id="do-exam-title">Judul Ujian</h6><small class="text-muted" id="do-exam-user">Nama Peserta</small></div></div>
@@ -202,17 +210,19 @@
     </div>
 </div>
 
-<!-- MODAL PEMBAYARAN KOIN -->
+<!-- ========================================== -->
+<!-- MODALS -->
+<!-- ========================================== -->
 <div class="modal fade" id="modalPayment" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white"><h5 class="modal-title fw-bold"><i class="fas fa-shopping-cart"></i> Rincian Pembelian Koin</h5><button class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
             <div class="modal-body p-4">
-                <div class="alert alert-info small mb-4"><strong>Apa itu Koin?</strong> 1 Koin = 1 Tiket Peserta. Koin akan terpotong secara otomatis setiap kali 1 siswa selesai melakukan submit jawaban ujian.</div>
+                <div class="alert alert-info small mb-4"><strong>Apa itu Koin?</strong> 1 Koin = 1 Tiket Ujian. Koin akan terpotong secara otomatis setiap 1 siswa Selesai Ujian.</div>
                 <table class="table table-bordered mb-4">
                     <tr><td class="bg-light">Paket Pilihan</td><td id="pay-paket" class="fw-bold"></td></tr>
                     <tr><td class="bg-light">Jumlah Koin</td><td id="pay-koin" class="fw-bold text-primary"></td></tr>
-                    <tr><td class="bg-light">Total Pembayaran</td><td id="pay-harga" class="fw-bold text-success fs-5"></td></tr>
+                    <tr><td class="bg-light">Total Harga</td><td id="pay-harga" class="fw-bold text-success fs-5"></td></tr>
                 </table>
                 <h6 class="fw-bold border-bottom pb-2">Transfer Pembayaran Ke:</h6>
                 <ul class="list-unstyled small mb-4">
@@ -225,7 +235,6 @@
         </div>
     </div>
 </div>
-
 <div class="modal fade" id="modalExam" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header bg-primary text-white"><h5 class="modal-title fw-bold">Jadwal Ujian</h5><button class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="frm-exam" onsubmit="event.preventDefault(); saveExam(); return false;"><input type="hidden" id="ex-id" name="examId"><div class="mb-3"><label class="small fw-bold text-muted">Judul Ujian</label><input type="text" name="judul" id="ex-judul" class="form-control" placeholder="Penilaian Akhir Semester" required></div><div class="row g-3 mb-3"><div class="col-md-6"><label class="small fw-bold text-muted">Mata Pelajaran</label><input type="text" name="mapel" id="ex-mapel" class="form-control" required></div><div class="col-md-6"><label class="small fw-bold text-muted">Durasi (Menit)</label><input type="number" name="durasi" id="ex-durasi" class="form-control" required></div></div><div class="row g-3 mb-3"><div class="col-md-6"><label class="small fw-bold text-muted">Waktu Mulai</label><input type="datetime-local" name="start" id="ex-start" class="form-control" required></div><div class="col-md-6"><label class="small fw-bold text-muted">Waktu Selesai (Kadaluarsa)</label><input type="datetime-local" name="end" id="ex-end" class="form-control" required></div></div><div class="row g-3 mb-3"><div class="col-md-4"><label class="small fw-bold text-muted">Target Kelas</label><input type="text" name="targetKelas" id="ex-kelas" class="form-control" placeholder="7A, 7B, atau All" required></div><div class="col-md-4"><label class="small fw-bold text-muted">Batas Mengerjakan</label><input type="number" name="limit" id="ex-limit" class="form-control" value="1" title="Berapa kali siswa boleh mengulang"></div><div class="col-md-4"><label class="small fw-bold text-muted">Token (Opsional)</label><input type="text" name="token" id="ex-token" class="form-control" placeholder="Kosongkan jika tidak ada"></div></div><div class="d-flex gap-4 mb-4 border p-3 rounded bg-light"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" name="showStats" id="ex-showStats" value="Yes"><label class="small fw-bold">Tampilkan Nilai ke Siswa</label></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" name="randomQ" id="ex-randomQ" value="Yes"><label class="small fw-bold">Acak Nomor Soal</label></div></div><button type="submit" class="btn btn-primary w-100 fw-bold py-2">SIMPAN JADWAL</button></form></div></div></div></div>
 <div class="modal fade" id="modalQ" tabindex="-1"><div class="modal-dialog modal-fullscreen"><div class="modal-content bg-light"><div class="modal-header bg-white shadow-sm"><h5 class="modal-title fw-bold text-primary"><i class="fas fa-edit me-2"></i> Editor Bank Soal</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-4"><div class="container" style="max-width:900px"><div id="q-list-container"></div><div class="text-center mt-5 mb-5"><button class="btn btn-lg btn-success rounded-pill px-5 shadow fw-bold" onclick="addNewQuestionBlock()"><i class="fas fa-plus-circle me-2"></i> BUAT SOAL BARU</button></div></div></div></div></div></div>
 <div class="modal fade" id="modalUser" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header bg-primary text-white"><h5 class="modal-title fw-bold">Kelola Akun Pengguna</h5><button class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="frm-user" onsubmit="event.preventDefault(); saveUser(); return false;"><input type="hidden" id="mu-id"><label class="small fw-bold text-muted">Nama Lengkap</label><input type="text" id="mu-nama" class="form-control mb-3" required><label class="small fw-bold text-muted">Username Login</label><input type="text" id="mu-user" class="form-control mb-3" required><label class="small fw-bold text-muted">Password Login</label><input type="text" id="mu-pass" class="form-control mb-3" required><div class="row g-2 mb-3"><div class="col"><label class="small fw-bold text-muted">Role/Jabatan</label><select id="mu-role" class="form-select"><option value="siswa">Siswa</option><option value="guru">Guru</option><option value="admin">Admin Instansi</option></select></div><div class="col"><label class="small fw-bold text-muted">Kelas</label><input type="text" id="mu-kelas" class="form-control" placeholder="Opsional"></div></div><button type="submit" class="btn btn-primary w-100 fw-bold py-2">Simpan Akun</button></form></div></div></div></div>
@@ -241,35 +250,35 @@
     // =========================================================
     // PASTIKAN MENGGANTI URL DI BAWAH DENGAN URL DEPLOY TERBARU
     // =========================================================
-    const API_URL = 'https://script.google.com/macros/s/AKfycby7QPAts9SNBLAL76Je5IyDMLqnmUl1n9F8KGbX_dThLZwe5AyItEWHKpOmkQrRzste_g/exec'; // GANTI INI DENGAN URL BARU BAPAK!
+    const API_URL = 'https://script.google.com/macros/s/AKfycby7QPAts9SNBLAL76Je5IyDMLqnmUl1n9F8KGbX_dThLZwe5AyItEWHKpOmkQrRzste_g/exec'; 
 
     let examSubmitting = false; let user = null; let gData = {}; let activeExamId = null; let gAdminData = { exams: [], users: [] };
     let timerInt, monitorInterval, autosaveInterval; let totalQ = 0; let currentQuestionsData = []; 
     let currentQIdx = 0; let recapAllData = []; let recapDataStore = {}; 
     let violationCount = 0; const maxViolations = 3; let isExamFinished = false; let violationLock = false;
 
-    // Toast Global Config - (Dideklarasikan secara global agar tidak error 'toast is not defined')
+    // Toast Global
     function toast(icon, title) { Swal.mixin({toast: true, position: 'top-end', showConfirmButton: false, timer: 3000}).fire({icon: icon, title: title}); }
 
     const MathButton = function(context){const ui=$.summernote.ui;const button=ui.button({contents:'<i class="fas fa-square-root-alt"></i> Rumus',tooltip:'Tambahkan Rumus Matematika',click:function(){Swal.fire({title:'Editor Rumus (LaTeX)',html:'<textarea id="swal-math-input" class="form-control font-monospace" rows="3" placeholder="Contoh: \\frac{a}{b}"></textarea>',showCancelButton:true}).then((r)=>{if(r.isConfirmed&&$('#swal-math-input').val())context.invoke('editor.insertText',` $$ ${$('#swal-math-input').val()} $$ `);});}});return button.render();}
     const snConfig = { height: 180, toolbar: [['style', ['bold', 'italic', 'underline', 'clear']], ['para', ['ul', 'ol']], ['insert', ['picture', 'table', 'math']]], buttons: { math: MathButton } };
 
-    // FUNGSI NAVIGASI HALAMAN (Diperbaiki agar tidak di dalam onload)
-    function switchView(showId, cardId) { 
+    // GLOBAL VIEW SWITCHER FIX
+    window.switchView = function(showId, cardId) { 
         document.getElementById('view-landing').classList.add('hidden'); 
         document.getElementById('view-auth').classList.add('hidden'); 
         document.getElementById('view-dashboard').classList.add('hidden'); 
         document.getElementById('view-exam').classList.add('hidden'); 
         if(document.getElementById('card-login')) document.getElementById('card-login').classList.add('hidden'); 
         if(document.getElementById('card-register')) document.getElementById('card-register').classList.add('hidden'); 
+        
         document.getElementById(showId).classList.remove('hidden'); 
         if(cardId) document.getElementById(cardId).classList.remove('hidden'); 
-    }
+    };
 
     window.onload = function() { 
         const s = localStorage.getItem('cbt_session'); 
-        if(s) { user = JSON.parse(s); initDashboard(); checkResumeExam(); } 
-        else { switchView('view-landing'); } 
+        if(s) { user = JSON.parse(s); initDashboard(); checkResumeExam(); } else { switchView('view-landing'); } 
     };
     
     function checkResumeExam() {
@@ -288,7 +297,6 @@
         }
     }
 
-    function toggleAuthCard() { $('#card-login, #card-register').toggleClass('hidden'); }
     function applyMathJax() { if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise().catch(()=>{}); }
     function showLoad(s) { s ? $('#loader').removeClass('hidden') : $('#loader').addClass('hidden'); }
     function toggleSidebar() { $('#sidebar').toggleClass('active'); }
@@ -332,7 +340,7 @@
         else { $('#menu-siswa').addClass('hidden'); $('#menu-admin-guru').removeClass('hidden'); loadPage('admin-home'); }
     }
 
-    // --- FITUR KOIN / PEMBAYARAN ---
+    // --- FITUR KOIN & ROUTER HALAMAN ---
     let selectedPackage = '';
     function loadPage(page) {
         clearInterval(timerInt); clearInterval(monitorInterval); clearInterval(autosaveInterval); disableSecurity();
@@ -341,11 +349,11 @@
         if(window.innerWidth <= 768) { $('#sidebar').addClass('active'); }
         
         if(page === 'koin-topup') {
-            const h = `<div class="text-center mb-5"><h3 class="fw-bold text-primary"><i class="fas fa-coins text-warning"></i> Beli Lisensi / Koin Ujian</h3><p class="text-muted">1 Koin = 1 Siswa yang melakukan Submit Jawaban. Saldo Koin saat ini: <b class="text-dark fs-4">${user.Koin}</b></p></div>
+            const h = `<div class="text-center mb-5"><h3 class="fw-bold text-primary"><i class="fas fa-coins text-warning"></i> Beli Lisensi / Koin Ujian</h3><p class="text-muted">1 Koin = 1 Siswa Submit Ujian. Saldo Koin Anda: <b class="text-dark fs-4">${user.Koin}</b></p></div>
             <div class="row justify-content-center g-4">
-                <div class="col-md-4"><div class="card h-100 shadow-sm border-0"><div class="card-body text-center p-4"><h5 class="fw-bold text-dark">Paket Hemat</h5><h2 class="fw-bold text-primary my-3">100 Koin</h2><p class="text-muted small mb-4">Cocok untuk Ujian Ulangan Harian atau Tryout skala kecil.</p><button onclick="openPaymentModal('Paket Hemat', '100', '45.000')" class="btn btn-outline-primary w-100 fw-bold">Beli Rp 45.000</button></div></div></div>
-                <div class="col-md-4"><div class="card h-100 shadow-lg border-0 border-top border-4 border-warning"><div class="card-body text-center p-4"><span class="badge bg-warning text-dark mb-2">Terpopuler</span><h5 class="fw-bold text-dark">Paket Sekolah</h5><h2 class="fw-bold text-warning my-3">500 Koin</h2><p class="text-muted small mb-4">Sangat direkomendasikan untuk PTS atau PAS skala satu sekolah.</p><button onclick="openPaymentModal('Paket Sekolah', '500', '195.000')" class="btn btn-warning w-100 fw-bold text-dark">Beli Rp 195.000</button></div></div></div>
-                <div class="col-md-4"><div class="card h-100 shadow-sm border-0"><div class="card-body text-center p-4"><h5 class="fw-bold text-dark">Paket Enterprise</h5><h2 class="fw-bold text-success my-3">1.000 Koin</h2><p class="text-muted small mb-4">Pilihan terbaik untuk Yayasan besar atau event tryout massal.</p><button onclick="openPaymentModal('Paket Enterprise', '1.000', '330.000')" class="btn btn-outline-success w-100 fw-bold">Beli Rp 330.000</button></div></div></div>
+                <div class="col-md-4"><div class="card h-100 shadow-sm border-0"><div class="card-body text-center p-4"><h5 class="fw-bold text-dark">Paket Hemat</h5><h2 class="fw-bold text-primary my-3">100 Koin</h2><button onclick="openPaymentModal('Paket Hemat', '100', '45.000')" class="btn btn-outline-primary w-100 fw-bold mt-4">Beli Rp 45.000</button></div></div></div>
+                <div class="col-md-4"><div class="card h-100 shadow-lg border-0 border-top border-4 border-warning"><div class="card-body text-center p-4"><span class="badge bg-warning text-dark mb-2">Terpopuler</span><h5 class="fw-bold text-dark">Paket Sekolah</h5><h2 class="fw-bold text-warning my-3">500 Koin</h2><button onclick="openPaymentModal('Paket Sekolah', '500', '195.000')" class="btn btn-warning w-100 fw-bold text-dark mt-4">Beli Rp 195.000</button></div></div></div>
+                <div class="col-md-4"><div class="card h-100 shadow-sm border-0"><div class="card-body text-center p-4"><h5 class="fw-bold text-dark">Paket Enterprise</h5><h2 class="fw-bold text-success my-3">1.000 Koin</h2><button onclick="openPaymentModal('Paket Enterprise', '1.000', '330.000')" class="btn btn-outline-success w-100 fw-bold mt-4">Beli Rp 330.000</button></div></div></div>
             </div>`; area.html(h); return;
         }
         if(page === 'admin-settings') {
@@ -370,7 +378,7 @@
     }
     function confirmPaymentWA() {
         const noWA = "6285895283075"; 
-        const msg = `Halo Belajar Inovasi, saya Admin dari instansi *${user.LembagaNama}* (Kode: ${user.Kode}).\n\nSaya sudah melakukan transfer ke salah satu rekening untuk pembelian *${selectedPackage}*.\n\nMohon segera diaktifkan Koin saya. Terima kasih.`;
+        const msg = `Halo Belajar Inovasi, saya Admin dari instansi *${user.LembagaNama}* (Kode: ${user.Kode}).\n\nSaya sudah melakukan transfer untuk pembelian *${selectedPackage}*.\n\nMohon diaktifkan Koin saya. Terima kasih.`;
         window.open(`https://wa.me/${noWA}?text=${encodeURIComponent(msg)}`, '_blank');
         $('#modalPayment').modal('hide');
     }
@@ -395,7 +403,7 @@
     function renderContent(page) {
         const area = $('#content-area'); let h = '';
         if (page === 'admin-home') {
-            h = `<div class="page-header mb-4"><h4>Dashboard Utama</h4><p class="text-muted">${user.LembagaNama}</p></div><div class="row g-3"><div class="col-md-4"><div class="card p-4 shadow-sm border-0 border-top border-4 border-primary text-center"><i class="fas fa-users fs-1 text-primary mb-2"></i><h2 class="fw-bold">${gData.stats.totalSiswa}</h2><small class="text-muted text-uppercase">Peserta Siswa</small></div></div><div class="col-md-4"><div class="card p-4 shadow-sm border-0 border-top border-4 border-success text-center"><i class="fas fa-box fs-1 text-success mb-2"></i><h2 class="fw-bold">${gData.stats.totalUjian}</h2><small class="text-muted text-uppercase">Paket Ujian</small></div></div><div class="col-md-4"><div class="card p-4 shadow-sm border-0 border-top border-4 border-warning text-center"><i class="fas fa-coins fs-1 text-warning mb-2"></i><h2 class="fw-bold">${gData.koin}</h2><small class="text-muted text-uppercase">Sisa Koin Akses</small></div></div></div>`;
+            h = `<div class="page-header mb-4"><h4>Dashboard Utama</h4><p class="text-muted">${user.LembagaNama}</p></div><div class="row g-3"><div class="col-md-4"><div class="stat-card border-top border-4 border-primary text-center"><i class="fas fa-users fs-1 text-primary mb-2"></i><h2 class="fw-bold">${gData.stats.totalSiswa}</h2><small class="text-muted text-uppercase">Peserta Siswa</small></div></div><div class="col-md-4"><div class="stat-card border-top border-4 border-success text-center"><i class="fas fa-box fs-1 text-success mb-2"></i><h2 class="fw-bold">${gData.stats.totalUjian}</h2><small class="text-muted text-uppercase">Paket Ujian</small></div></div><div class="col-md-4"><div class="stat-card border-top border-4 border-warning text-center"><i class="fas fa-coins fs-1 text-warning mb-2"></i><h2 class="fw-bold">${gData.koin}</h2><small class="text-muted text-uppercase">Sisa Koin Akses</small></div></div></div>`;
         } 
         else if (page === 'admin-ujian') {
             h = `<div class="d-flex justify-content-between mb-4"><h5 class="fw-bold m-0"><i class="fas fa-folder-open text-primary me-2"></i> Bank Soal</h5><button class="btn btn-primary fw-bold shadow-sm" onclick="openExamModal()">+ Buat Jadwal</button></div><div class="row g-4" id="admin-ujian-list">`;
@@ -407,15 +415,15 @@
         } 
         else if (page === 'siswa-home') {
             h = `<div class="card border-0 shadow-sm mb-4" style="background:var(--primary); color:white;"><div class="card-body p-4"><h4 class="fw-bold mb-1">Selamat Datang, ${user.Nama}!</h4><p class="mb-0" style="opacity:0.9">Siapkan diri Anda dan pastikan koneksi internet stabil sebelum memulai ujian.</p></div></div><h5 class="fw-bold mb-3"><i class="fas fa-play-circle text-primary me-2"></i> Ujian Tersedia</h5><div class="row g-4 mb-5">`;
-            if(!gData.availableExams || gData.availableExams.length === 0) { h += '<div class="col-12"><div class="card border-0 shadow-sm p-4 text-center text-muted">Belum ada jadwal ujian aktif untuk kelas Anda.</div></div>'; } else {
+            if(!gData.availableExams || gData.availableExams.length === 0) { h += '<div class="col-12"><div class="card border-0 p-4 text-center text-muted">Belum ada ujian aktif untuk kelas Anda.</div></div>'; } else {
                 gData.availableExams.forEach(e => {
                     let b = '', t = 'MULAI KERJAKAN', c = 'btn-primary';
-                    if (e.IsFinished) { b = 'disabled'; t = 'SUDAH DIKERJAKAN'; c = 'btn-success'; }
-                    h += `<div class="col-md-6 col-lg-4"><div class="card h-100 shadow-sm border-0 border-top border-4 border-primary"><div class="card-body"><h5 class="fw-bold text-dark mb-1">${e.Judul}</h5><p class="text-primary fw-bold small mb-3">${e.Mapel}</p><div class="d-flex justify-content-between text-muted small mb-4"><span><i class="fas fa-clock"></i> ${e.Durasi} Menit</span><span><i class="fas fa-check-square"></i> ${e.ShowStats==='Yes'?'Nilai Tampil':'Disembunyikan'}</span></div><button class="btn ${c} w-100 fw-bold py-2" onclick="startExam('${e.ExamID}')" ${b}>${t}</button></div></div></div>`;
+                    if (e.IsFinished) { b = 'disabled'; t = 'SUDAH DIKERJAKAN'; c = 'btn-success'; } else if (e.IsExpired) { b = 'disabled'; t = 'WAKTU HABIS'; c = 'btn-danger'; }
+                    h += `<div class="col-md-6 col-lg-4"><div class="card h-100 shadow-sm border-0 border-top border-4 border-primary"><div class="card-body"><h5 class="fw-bold text-dark mb-1">${e.Judul}</h5><p class="text-primary fw-bold small mb-3">${e.Mapel}</p><div class="d-flex justify-content-between text-muted small mb-4"><span><i class="fas fa-clock"></i> ${e.Durasi} Menit</span></div><button class="btn ${c} w-100 fw-bold py-2" onclick="startExam('${e.ExamID}')" ${b}>${t}</button></div></div></div>`;
                 });
             }
             h += '</div><h5 class="fw-bold mb-3"><i class="fas fa-history text-primary me-2"></i> Riwayat Pengerjaan</h5>';
-            if(!gData.history || gData.history.length === 0) { h += '<p class="text-muted">Belum ada riwayat pengerjaan ujian.</p>'; } else {
+            if(!gData.history || gData.history.length === 0) { h += '<p class="text-muted">Belum ada riwayat.</p>'; } else {
                 h += `<div class="card border-0 shadow-sm"><div class="table-responsive"><table class="table table-hover align-middle m-0"><thead class="table-light"><tr><th>Tanggal Submit</th><th>Judul Ujian</th><th>Nilai Akhir</th></tr></thead><tbody>`;
                 gData.history.forEach(r => { h += `<tr><td class="text-muted small">${r.WaktuSubmit}</td><td class="fw-bold">${r.Judul}</td><td><span class="badge bg-primary px-3 fs-6">${r.Nilai}</span></td></tr>`; });
                 h += `</tbody></table></div></div>`;
@@ -426,8 +434,8 @@
 
     // --- CRUD EXAMS & QUESTIONS ---
     function openExamModal(str) { $('#modalExam').modal('show'); if(str){ const d=JSON.parse(decodeURIComponent(str)); $('#ex-id').val(d.ExamID); $('#ex-judul').val(d.Judul); $('#ex-mapel').val(d.Mapel); $('#ex-durasi').val(d.Durasi); $('#ex-limit').val(d.Limit); $('#ex-start').val(d.StartDate.replace(' ','T')); $('#ex-end').val(d.EndDate.replace(' ','T')); $('#ex-kelas').val(d.TargetKelas); $('#ex-token').val(d.Token || ''); $('#ex-randomQ').prop('checked', d.RandomQ === 'Yes'); $('#ex-showStats').prop('checked', d.ShowStats === 'Yes'); } else { $('#frm-exam')[0].reset(); $('#ex-id').val(''); } }
-    async function saveExam() { const d=Object.fromEntries(new FormData(document.getElementById('frm-exam')).entries()); d.showStats = $('#ex-showStats').is(':checked') ? 'Yes' : 'No'; d.randomQ = $('#ex-randomQ').is(':checked') ? 'Yes' : 'No'; const btn = $('#modalExam button[type="submit"]'); btn.prop('disabled',true); try { const r = await callAPI('adminSaveExam', { data: JSON.stringify(d) }); if(r.status==='success') { $('#modalExam').modal('hide'); Swal.fire('Sukses', 'Jadwal disimpan', 'success'); loadPage('admin-ujian'); } else throw new Error(r.msg); } catch(e) { Swal.fire('Error', e.message, 'error'); } finally { btn.prop('disabled',false); } }
-    function delExam(id){ Swal.fire({title:'Hapus Jadwal?', icon:'warning', showCancelButton:true}).then(async r=>{if(r.isConfirmed){ try{ const res=await callAPI('adminDeleteExam',{id:id}); if(res.status==='success')loadPage('admin-ujian'); }catch(e){} }}) }
+    async function saveExam() { const d=Object.fromEntries(new FormData(document.getElementById('frm-exam')).entries()); d.showStats = $('#ex-showStats').is(':checked') ? 'Yes' : 'No'; d.randomQ = $('#ex-randomQ').is(':checked') ? 'Yes' : 'No'; const btn = $('#modalExam button[type="submit"]'); btn.prop('disabled',true); try { const r = await callAPI('adminSaveExam', { data: JSON.stringify(d) }); if(r.status==='success') { $('#modalExam').modal('hide'); toast('success', 'Jadwal disimpan'); loadPage('admin-ujian'); } else throw new Error(r.msg); } catch(e) { Swal.fire('Error', e.message, 'error'); } finally { btn.prop('disabled',false); } }
+    function delExam(id){ Swal.fire({title:'Hapus Jadwal?', icon:'warning', showCancelButton:true}).then(async r=>{if(r.isConfirmed){ try{ await callAPI('adminDeleteExam',{id:id}); loadPage('admin-ujian'); }catch(e){} }}) }
 
     async function manageQ(id) { 
         activeExamId = id; $('#modalQ').modal('show'); $('#q-list-container').html('<div class="text-center p-5"><div class="spinner border-primary"></div></div>');
@@ -472,9 +480,9 @@
             if(res.status==='success'){ toast('success','Soal Disimpan!'); toggleEditQ(uid); manageQ(activeExamId); } else throw new Error(res.msg);
         } catch(e) { Swal.fire('Error', e.message, 'error'); btn.prop('disabled',false).text('Simpan Soal'); }
     }
-    function deleteQBlock(uid) { const id=$(`#block-${uid}`).find('input[name="id"]').val(); if(!id){ $(`#block-${uid}`).remove(); return; } Swal.fire({title:'Hapus Soal?',showCancelButton:true}).then(async r=>{ if(r.isConfirmed){ try{ await callAPI('adminDeleteQuestion',{id:id}); $(`#block-${uid}`).fadeOut(); }catch(e){} } }); }
+    function deleteQBlock(uid) { const id=$(`#block-${uid}`).find('input[name="id"]').val(); if(!id){ $(`#block-${uid}`).remove(); return; } Swal.fire({title:'Hapus Soal?',showCancelButton:true}).then(async r=>{ if(r.isConfirmed){ try{ await callAPI('adminDeleteQuestion',{id:id}); $(`#block-${uid}`).fadeOut(); manageQ(activeExamId); }catch(e){} } }); }
 
-    // Upload Excel
+    // Upload Excel Soal
     function generateQuestionExcelTemplate() { const ws_data = [ ["Nomor", "Tipe", "Skor", "Pertanyaan", "Opsi (Pisahkan dgn |)", "Kunci (Pisahkan dgn |)"], [1, "PGS", 10, "Apa ibukota Indonesia?", "Jakarta|Bandung|Surabaya|Bali", "Jakarta"], [2, "PGK", 10, "Manakah yang merupakan bilangan genap?", "2|3|4|5", "2|4"] ]; const ws = XLSX.utils.aoa_to_sheet(ws_data); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "TemplateSoal"); XLSX.writeFile(wb, "Template_Upload_Soal.xlsx"); }
     function handleUploadQuestionsExcel(e) { const file = e.target.files[0]; if(!file) return; const reader = new FileReader(); reader.onload = async function(evt) { const data = evt.target.result; const workbook = XLSX.read(data, {type: 'binary'}); const worksheet = workbook.Sheets[workbook.SheetNames[0]]; const json = XLSX.utils.sheet_to_json(worksheet); let formattedData = json.map(row => { let opsRaw = row['Opsi (Pisahkan dgn |)'] ? String(row['Opsi (Pisahkan dgn |)']).split('|') : []; let keyRaw = row['Kunci (Pisahkan dgn |)'] ? String(row['Kunci (Pisahkan dgn |)']).split('|') : []; return { num: row['Nomor'] || 1, type: row['Tipe'] || 'PGS', score: row['Skor'] || 10, text: row['Pertanyaan'] || '', options: opsRaw, key: keyRaw }; }).filter(q => q.text !== ''); if(formattedData.length === 0) return Swal.fire('Error', 'Format data tidak valid.', 'error'); showLoad(true); try { const res = await callAPI('adminBatchSaveQuestions', { eid: activeExamId, data: JSON.stringify(formattedData) }); if(res.status === 'success') { Swal.fire('Sukses', res.msg, 'success'); manageQ(activeExamId); } else throw new Error(res.msg); } catch(e) { Swal.fire('Gagal', e.message, 'error'); showLoad(false); } }; reader.readAsBinaryString(file); }
 
@@ -493,7 +501,7 @@
 
     // --- PELAKSANAAN UJIAN ---
     function startExam(eid) {
-        Swal.fire({ title: 'Mulai Ujian?', html: 'Waktu akan otomatis dihitung mundur.<br>Pastikan Anda <b>tidak pindah tab/aplikasi</b>.', icon: 'info', showCancelButton: true, confirmButtonText: 'KERJAKAN', confirmButtonColor: '#0d6efd' }).then(async r => {
+        Swal.fire({ title: 'Mulai Ujian?', html: 'Sistem Anti-Curang Aktif.<br>Ujian otomatis selesai jika Anda:<br><b>1. Keluar dari Layar Penuh</b><br><b>2. Membuka Tab / Aplikasi Lain</b><br><b>3. Menggunakan Layar Terbelah (Split Screen)</b>', icon: 'warning', showCancelButton: true, confirmButtonText: 'SAYA MENGERTI & MULAI', confirmButtonColor: '#0d6efd' }).then(async r => {
             if(r.isConfirmed) {
                 showLoad(true);
                 try {
@@ -536,33 +544,75 @@
     function saveAnsLocal(qid, type, idx) { let val; if(type.includes('PG')) { if(type==='PGK') { val=[]; $(`input[name="ans-${qid}"]:checked`).each(function(){ val.push(decodeURIComponent($(this).val())) }); } else val = decodeURIComponent($(`input[name="ans-${qid}"]:checked`).val()); } else val = $(`#sl-${idx} textarea`).val(); const key = `ANS_${user.ID}_${activeExamId}`; let currentData = {}; try { const stored = localStorage.getItem(key); if(stored) currentData = JSON.parse(decodeURIComponent(atob(stored))); } catch(e) {} currentData[qid] = { v: val, r: $(`#nb-${idx}`).hasClass('ragu') }; try { localStorage.setItem(key, btoa(encodeURIComponent(JSON.stringify(currentData)))); } catch(e) {} if(!$(`#nb-${idx}`).hasClass('ragu')) $(`#nb-${idx}`).addClass('answered'); }
     function restoreAnswers(qs) { const key = `ANS_${user.ID}_${activeExamId}`; let saved = {}; try { const stored = localStorage.getItem(key); if(stored) saved = JSON.parse(decodeURIComponent(atob(stored))); } catch(e) {} qs.forEach((q, idx) => { const obj = saved[q.QID]; if(obj) { const val = obj.v; const isRagu = obj.r; if(isRagu) $(`#nb-${idx}`).addClass('ragu'); else if(val && (Array.isArray(val) ? val.length > 0 : true)) $(`#nb-${idx}`).addClass('answered'); if(val) { if(q.Tipe === 'PGS' && val!=='undefined') $(`input[name="ans-${q.QID}"][value="${encodeURIComponent(val)}"]`).prop('checked', true); else if(q.Tipe === 'PGK') val.forEach(v => $(`input[name="ans-${q.QID}"][value="${encodeURIComponent(v)}"]`).prop('checked', true)); else if(q.Tipe === 'Uraian' && val!=='undefined') $(`textarea[name="ans-${q.QID}"]`).val(val); } } }); }
 
-    function enableSecurity() { violationCount = 0; isExamFinished = false; violationLock = false; window.addEventListener("blur", handleWindowBlur); document.addEventListener("visibilitychange", handleVisibilityChange); document.addEventListener("fullscreenchange", handleFullscreenChange); $(document).on("contextmenu.exam", function(e) { e.preventDefault(); return false; }); $(document).on("keydown.exam", function(e) { if (e.key === "PrintScreen" || (e.ctrlKey && e.key === "p") || (e.key === "F12")) { e.preventDefault(); return false; } }); }
-    function disableSecurity() { window.removeEventListener("blur", handleWindowBlur); document.removeEventListener("visibilitychange", handleVisibilityChange); document.removeEventListener("fullscreenchange", handleFullscreenChange); $(document).off(".exam"); }
+    // --- SECURITY ANTI CHEAT ---
+    function enableSecurity() { 
+        violationCount = 0; isExamFinished = false; violationLock = false; 
+        window.addEventListener("blur", handleWindowBlur); 
+        document.addEventListener("visibilitychange", handleVisibilityChange); 
+        document.addEventListener("fullscreenchange", handleFullscreenChange); 
+        $(document).on("contextmenu.exam", function(e) { e.preventDefault(); return false; }); 
+        $(document).on("keydown.exam", function(e) { if (e.key === "PrintScreen" || (e.ctrlKey && e.key === "p") || (e.key === "F12")) { e.preventDefault(); return false; } }); 
+        
+        // Deteksi Belah Layar (Split Screen) by Aspect Ratio
+        window.addEventListener("resize", handleResizeSplitScreen);
+    }
     
-    // PENANGANAN ANTI-CHEAT (KELUAR TAB / LAYAR)
-    function handleWindowBlur() { if (!isExamFinished) triggerViolation("Layar ujian ditinggalkan (terindikasi membuka aplikasi lain atau membelah layar)!"); }
-    function handleVisibilityChange() { if (!isExamFinished && document.visibilityState === 'hidden') triggerViolation("Anda membuka tab atau aplikasi lain!"); }
+    function disableSecurity() { 
+        window.removeEventListener("blur", handleWindowBlur); 
+        document.removeEventListener("visibilitychange", handleVisibilityChange); 
+        document.removeEventListener("fullscreenchange", handleFullscreenChange); 
+        window.removeEventListener("resize", handleResizeSplitScreen);
+        $(document).off(".exam"); 
+    }
+    
+    function handleVisibilityChange() { if (!isExamFinished && document.visibilityState === 'hidden') triggerViolation("Anda membuka aplikasi atau tab lain!"); }
+    function handleWindowBlur() { if (!isExamFinished) triggerViolation("Layar ujian ditinggalkan (Membuka aplikasi lain)!"); }
     function handleFullscreenChange() { if (!isExamFinished && !document.fullscreenElement) { triggerViolation("Anda keluar dari mode Layar Penuh!"); try{document.documentElement.requestFullscreen().catch(()=>{});}catch(e){} } }
+    
+    function handleResizeSplitScreen() {
+        if (isExamFinished) return;
+        // Jika rasio layar berubah secara ekstrem (lebar menjadi kurang dari 60% tinggi layar pada mode landscape) 
+        // Ini mendeteksi split screen horizontal pada device mobile/tablet/desktop
+        const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+        const height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+        const screenWidth = window.screen.width;
+        
+        // Cek jika lebar window mendadak mengecil drastis dibanding lebar asli layar
+        if (width < (screenWidth * 0.7) && width > 400) {
+            triggerViolation("Sistem mendeteksi layar terbelah (Split Screen) atau Floating Window!");
+        }
+    }
     
     function triggerViolation(msg) { 
         if(violationLock || isExamFinished) return; 
         violationLock = true; violationCount++; 
         if (violationCount >= maxViolations) { 
             isExamFinished = true; 
-            Swal.fire({ icon: 'error', title: 'UJIAN DIBATALKAN!', text: 'Anda telah melakukan pelanggaran 3 kali. Jawaban otomatis terkirim.', allowOutsideClick: false }).then(() => { submitExamButton(true); });
+            Swal.fire({ icon: 'error', title: 'UJIAN DIBATALKAN!', text: 'Anda telah melakukan pelanggaran fatal. Ujian otomatis terkirim.', allowOutsideClick: false }).then(() => { submitExamButton(true); });
         } 
         else { Swal.fire({ icon: 'warning', title: 'PELANGGARAN!', text: `${msg} (${violationCount}/${maxViolations})`, confirmButtonText: 'SAYA MENGERTI', allowOutsideClick: false }).then(() => { violationLock = false; try{document.documentElement.requestFullscreen().catch(()=>{});}catch(e){} }); } 
     }
 
     function submitExamButton(force = false) {
-        if (examSubmitting) return; if (force) { processSubmission(); return; }
+        if (examSubmitting) return; 
+        if (force) { processSubmission(); return; }
+        
         const answeredCount = $('.q-nav-btn.answered').length + $('.q-nav-btn.ragu').length; 
-        const activeState = JSON.parse(localStorage.getItem('cbt_active_exam') || '{}'); const reqToken = activeState.token ? String(activeState.token).trim().toUpperCase() : "";
+        const activeState = JSON.parse(localStorage.getItem('cbt_active_exam') || '{}'); 
+        const reqToken = activeState.token ? String(activeState.token).trim().toUpperCase() : "";
         let htmlMsg = `Terjawab: <b>${answeredCount}</b> dari <b>${totalQ}</b> soal.<br>`;
-        if($('.q-nav-btn.ragu').length > 0) htmlMsg += `<span class="text-warning fw-bold">Peringatan: Masih ada soal yang ditandai Ragu-ragu!</span><br><br>`;
-        htmlMsg += `Ketik <b>${reqToken ? reqToken : 'SELESAI'}</b> untuk konfirmasi:`;
+        if($('.q-nav-btn.ragu').length > 0) htmlMsg += `<span class="text-warning fw-bold">Peringatan: Masih ada soal Ragu-ragu!</span><br><br>`;
+        htmlMsg += `Ketik <b>${reqToken ? reqToken : 'SELESAI'}</b> untuk konfirmasi pengiriman:`;
 
-        Swal.fire({ title: 'Selesai Ujian?', html: htmlMsg, input: 'text', icon: 'question', showCancelButton: true, confirmButtonText: 'Kirim', confirmButtonColor: '#0d6efd', preConfirm: (val) => { val = (val||'').trim().toUpperCase(); if (reqToken && val !== reqToken) { Swal.showValidationMessage('Token Kirim Salah!'); return false; } else if (!reqToken && val !== 'SELESAI') { Swal.showValidationMessage('Ketik kata SELESAI'); return false; } return true; } }).then((r) => { if (r.isConfirmed) processSubmission(); });
+        Swal.fire({ 
+            title: 'Selesai Ujian?', html: htmlMsg, input: 'text', icon: 'question', showCancelButton: true, confirmButtonText: 'Kirim', confirmButtonColor: '#0d6efd', 
+            preConfirm: (val) => { 
+                val = (val||'').trim().toUpperCase(); 
+                if (reqToken && val !== reqToken) { Swal.showValidationMessage('Token Kirim Salah!'); return false; } 
+                else if (!reqToken && val !== 'SELESAI') { Swal.showValidationMessage('Ketik kata SELESAI'); return false; } 
+                return true; 
+            } 
+        }).then((r) => { if (r.isConfirmed) processSubmission(); });
     }
 
     async function processSubmission(retryCount = 0) {
@@ -571,7 +621,7 @@
         try {
             const res = await callAPI('submitExam', { examId: activeExamId, answers: JSON.stringify(ans), violationCount: violationCount });
             if (res.status === 'success') { localStorage.removeItem('cbt_active_exam'); localStorage.removeItem(`ANS_${user.ID}_${activeExamId}`); $('body').removeClass('exam-mode'); try { document.exitFullscreen().catch(()=>{}) } catch (e) {}; Swal.fire({ title: 'Terkirim!', html: '<div class="text-success fs-1 mb-2"><i class="fas fa-check-circle"></i></div>Jawaban ujian Anda berhasil disimpan.', confirmButtonColor: '#0d6efd' }).then(() => { $('#view-exam').addClass('hidden'); $('#view-dashboard').removeClass('hidden'); loadPage('siswa-home'); }); } else throw new Error(res.msg);
-        } catch(e) { examSubmitting = false; btn.prop('disabled', false).html('SELESAI UJIAN'); Swal.fire('Error', e.message, 'error'); }
+        } catch(e) { examSubmitting = false; btn.prop('disabled', false).html('Selesai'); Swal.fire('Error', e.message, 'error'); }
     }
 
     // --- REKAP & USERS ---
@@ -587,10 +637,9 @@
         showLoad(true); 
         try { 
             const res = await callAPI('adminManageUser', {act:'save', data:JSON.stringify(d)}); 
-            if(res.status === 'success') { $('#modalUser').modal('hide'); Swal.fire('Sukses', 'Berhasil menyimpan user', 'success'); loadPage('admin-users'); }
+            if(res.status === 'success') { $('#modalUser').modal('hide'); toast('success', 'User Disimpan'); loadPage('admin-users'); }
             else throw new Error(res.msg);
-        } catch(e) { Swal.fire('Error', e.message, 'error'); } 
-        finally { showLoad(false); } 
+        } catch(e) { Swal.fire('Error', e.message, 'error'); showLoad(false); } 
     }
 
     async function delUser(id){ Swal.fire({title:'Hapus User?', icon:'warning', showCancelButton:true}).then(async r=>{if(r.isConfirmed){showLoad(true); try{ await callAPI('adminManageUser',{act:'delete', data:JSON.stringify({id:id})}); loadPage('admin-users'); }catch(e){} showLoad(false); }}) }
@@ -604,6 +653,7 @@
     async function saveKoreksi() { const rid = $('#kor-rid').val(); const d = recapDataStore[rid]; let detailArr = JSON.parse(d.detail); $('.kor-score').each(function() { detailArr[$(this).data('idx')].s = parseFloat($(this).val()) || 0; }); let maxTotal = 0, totalScore = 0; detailArr.forEach(item => { maxTotal += (item.m || 0); totalScore += (item.s || 0); }); const finalScore = maxTotal > 0 ? Number(((totalScore / maxTotal) * 100).toFixed(2)) : 0; const btn = $('#btn-save-kor'); btn.prop('disabled', true).text('Menyimpan...'); try { await callAPI('adminUpdateResult',{rid:rid, newScore:finalScore, newDetail:JSON.stringify(detailArr)}); $('#modalKoreksi').modal('hide'); loadPage('hasil-rekap'); }catch(e){} btn.prop('disabled', false).text('Simpan Perubahan'); }
     async function deleteResult(rid) { Swal.fire({title:'Reset Ujian Siswa?', text:'Data terhapus dan siswa bisa ujian kembali.', icon:'warning', showCancelButton:true, confirmButtonText:'Ya, Reset'}).then(async r=>{ if(r.isConfirmed) { showLoad(true); try{ await callAPI('adminDeleteResult',{rid:rid}); loadPage('hasil-rekap'); }catch(e){} showLoad(false); } }); }
 
+    // --- CETAK ADMINISTRASI ---
     function renderAdministrasi() { const uniqueKelas = [...new Set(gAdminData.users.map(u => String(u.Kelas).trim()))].filter(k => k).sort(); let optKelas = `<option value="ALL">Semua Kelas</option>` + uniqueKelas.map(k => `<option value="${k}">${k}</option>`).join(''); let optUjian = `<option value="">-- Pilih Ujian --</option>` + gAdminData.exams.map(e => `<option value="${e.ExamID}">${e.Judul} (${e.Mapel})</option>`).join(''); let h = `<h4 class="fw-bold mb-4"><i class="fas fa-print text-primary me-2"></i> Cetak Administrasi Ujian</h4><div class="row g-4"><div class="col-md-4"><div class="card shadow-sm border-0 h-100 border-top border-4 border-primary"><div class="card-body"><h5 class="fw-bold text-dark mb-3"><i class="fas fa-id-card text-primary me-2"></i>Kartu Login Peserta</h5><label class="small fw-bold text-muted mb-1">Filter Kelas</label><select id="adm-kls-kartu" class="form-select mb-4 bg-light">${optKelas}</select><button class="btn btn-primary w-100 fw-bold py-2" onclick="printKartuLogin()"><i class="fas fa-print me-1"></i> Cetak Kartu</button></div></div></div><div class="col-md-4"><div class="card shadow-sm border-0 h-100 border-top border-4 border-info"><div class="card-body"><h5 class="fw-bold text-dark mb-3"><i class="fas fa-clipboard-list text-info me-2"></i>Daftar Hadir</h5><label class="small fw-bold text-muted mb-1">Pilih Ujian</label><select id="adm-exam-hadir" class="form-select mb-2 bg-light">${optUjian}</select><label class="small fw-bold text-muted mb-1">Filter Kelas</label><select id="adm-kls-hadir" class="form-select mb-4 bg-light">${optKelas}</select><button class="btn btn-info text-white w-100 fw-bold py-2" onclick="printDaftarHadir()"><i class="fas fa-print me-1"></i> Cetak Absensi</button></div></div></div><div class="col-md-4"><div class="card shadow-sm border-0 h-100 border-top border-4 border-success"><div class="card-body"><h5 class="fw-bold text-dark mb-3"><i class="fas fa-file-signature text-success me-2"></i>Berita Acara</h5><label class="small fw-bold text-muted mb-1">Pilih Ujian</label><select id="adm-exam-ba" class="form-select mb-2 bg-light">${optUjian}</select><label class="small fw-bold text-muted mb-1">Filter Kelas</label><select id="adm-kls-ba" class="form-select mb-4 bg-light">${optKelas}</select><button class="btn btn-success w-100 fw-bold py-2" onclick="printBeritaAcara()"><i class="fas fa-print me-1"></i> Cetak Laporan</button></div></div></div></div>`; $('#content-area').html(h); }
     function printKartuLogin() { const kls = $('#adm-kls-kartu').val(); let usersToPrint = gAdminData.users; if (kls !== 'ALL') usersToPrint = usersToPrint.filter(u => u.Kelas === kls); if (usersToPrint.length === 0) return Swal.fire('Kosong', 'Tidak ada data.', 'info'); let html = `<html><head><title>Kartu Login</title><style>body { font-family: 'Arial', sans-serif; } .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; padding: 20px; } .card { border: 2px dashed #000; padding: 20px; border-radius: 12px; page-break-inside: avoid; background: #fff; } .kop { display: flex; align-items: center; border-bottom: 3px solid #000; padding-bottom: 10px; margin-bottom: 15px; } .kop img { width: 55px; height: 55px; margin-right: 15px; } .kop h3 { margin: 0; font-size: 16px; font-weight: bold; } .kop p { margin: 0; font-size: 12px; } table { width: 100%; font-size: 14px; } td { padding: 6px 0; } @media print { .no-print { display: none; } body { background: none; } }</style></head><body><div class="no-print" style="margin: 15px; text-align:right;"><button onclick="window.print()" style="padding:10px 25px; font-size:16px; font-weight:bold; background:#0d6efd; color:white; border:none; border-radius:6px; cursor:pointer;">CETAK KARTU</button></div><div class="grid">`; usersToPrint.forEach(u => { html += `<div class="card"><div class="kop"><img src="${user.LogoUrl || 'https://via.placeholder.com/50'}" alt="Logo" onerror="this.src='https://via.placeholder.com/50'"><div><h3>KARTU LOGIN UJIAN CBT</h3><p>${user.LembagaNama}</p></div></div><table><tr><td width="30%"><strong>Nama</strong></td><td width="5%">:</td><td>${u.Nama}</td></tr><tr><td><strong>Kelas</strong></td><td>:</td><td>${u.Kelas}</td></tr><tr><td><strong>Username</strong></td><td>:</td><td><strong>${u.Username}</strong></td></tr><tr><td><strong>Password</strong></td><td>:</td><td><strong>${u.Password}</strong></td></tr></table></div>`; }); html += `</div><script>window.onload=function(){window.print();}<\/script></body></html>`; const win = window.open('', '', 'width=800,height=600'); win.document.write(html); win.document.close(); }
     function printDaftarHadir() { const examId = $('#adm-exam-hadir').val(); const kls = $('#adm-kls-hadir').val(); if(!examId) return Swal.fire('Perhatian', 'Pilih Ujian.', 'warning'); const exam = gAdminData.exams.find(e => String(e.ExamID) === String(examId)); let usersToPrint = gAdminData.users; if (kls !== 'ALL') usersToPrint = usersToPrint.filter(u => u.Kelas === kls); if (usersToPrint.length === 0) return Swal.fire('Kosong', 'Tidak ada data siswa.', 'info'); let html = `<html><head><title>Daftar Hadir</title><style>body { font-family: 'Times New Roman', serif; padding: 30px; } .kop { display: flex; align-items: center; justify-content: center; border-bottom: 4px solid #000; padding-bottom: 15px; margin-bottom: 20px; text-align: center; } .kop img { width: 80px; height: 80px; position: absolute; left: 40px; } .kop h2 { margin: 0; font-size: 24px; font-weight: bold; } .kop p { margin: 5px 0 0; font-size: 16px; } h3 { text-align: center; text-decoration: underline; margin-bottom: 25px; } .data-table { width: 100%; border-collapse: collapse; font-size: 15px; } .data-table th, .data-table td { border: 1px solid #000; padding: 10px; } .data-table th { background: #f3f4f6; text-align: center; } @media print { .no-print { display: none; } }</style></head><body><div class="no-print" style="margin-bottom: 15px; text-align:right;"><button onclick="window.print()" style="padding:10px 25px; font-size:16px; font-weight:bold; background:#0dcaf0; color:white; border:none; border-radius:6px; cursor:pointer;">CETAK ABSENSI</button></div><div class="kop"><img src="${user.LogoUrl || 'https://via.placeholder.com/80'}" onerror="this.src='https://via.placeholder.com/80'"><div><h2>DAFTAR HADIR PESERTA UJIAN</h2><p>${user.LembagaNama}</p></div></div><h3>DAFTAR HADIR PESERTA</h3><p style="font-size:16px;"><strong>Mapel/Judul:</strong> ${exam.Mapel} - ${exam.Judul} <br><strong>Kelas:</strong> ${kls === 'ALL' ? 'Semua' : kls}</p><table class="data-table"><thead><tr><th width="5%">No</th><th width="15%">Username</th><th width="35%">Nama Peserta</th><th width="30%" colspan="2">Tanda Tangan</th><th width="15%">Keterangan</th></tr></thead><tbody>`; usersToPrint.forEach((u, i) => { let ttdCol1 = (i % 2 === 0) ? `${i+1}.` : ''; let ttdCol2 = (i % 2 !== 0) ? `${i+1}.` : ''; html += `<tr><td style="text-align:center">${i + 1}</td><td style="text-align:center">${u.Username}</td><td>${u.Nama}</td><td height="40" width="15%">${ttdCol1}</td><td width="15%">${ttdCol2}</td><td></td></tr>`; }); html += `</tbody></table><div style="margin-top:50px; text-align:right; padding-right: 50px;"><p>Pengawas Ujian,</p><p style="margin-top:80px;">(........................................)</p></div><script>window.onload=function(){window.print();}<\/script></body></html>`; const win = window.open('', '', 'width=800,height=600'); win.document.write(html); win.document.close(); }
