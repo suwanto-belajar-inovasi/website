@@ -5,11 +5,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <base target="_top">
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
@@ -17,9 +15,7 @@
 <style>
 :root { --sidebar-bg: #2c3e50; --header-bg: #3498db; --bg-light: #f4f7fa; }
 body { font-family: 'Poppins', sans-serif; background: var(--bg-light); font-size: 13px; color: #333; overflow-x: hidden; margin:0; padding:0; }
-
 .wrapper { display: flex; height: 100vh; overflow: hidden; position: relative; }
-
 #sidebar { width: 250px; background: var(--sidebar-bg); color: #fff; overflow-y: auto; transition: transform 0.3s ease; flex-shrink: 0; z-index: 1050; }
 .sidebar-brand { background: #1a252f; padding: 15px 20px; text-align: center; }
 .menu-header { font-size: 10px; text-transform: uppercase; color: #95a5a6; padding: 15px 20px 5px; font-weight: bold; }
@@ -27,23 +23,21 @@ body { font-family: 'Poppins', sans-serif; background: var(--bg-light); font-siz
 .nav-link i { width: 25px; text-align: center; font-size: 14px;}
 .nav-link:hover, .nav-link.active { background: #34495e; color: #fff; border-left: 3px solid #3498db; }
 .sidebar-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); z-index: 1040; }
-
 @media (max-width: 768px) {
 #sidebar { position: fixed; height: 100vh; transform: translateX(-100%); }
 #sidebar.open { transform: translateX(0); }
 .sidebar-overlay.show { display: block; }
 }
-
 #content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; width: 100%; }
-.top-navbar { background: var(--header-bg); height: 50px; display: flex; align-items: center; padding: 0 20px; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); z-index: 10; }
+.top-navbar { background: var(--header-bg); height: 50px; display: flex; align-items: center; padding: 0 20px; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+z-index: 10; }
 .main-container { padding: 20px; flex: 1; }
 .card-custom { background: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px; border: none; }
-
 .dash-card { padding: 20px; border-radius: 8px; color: #fff; position: relative; overflow: hidden; }
 .dash-card h3 { margin: 0; font-weight: 700; font-size: 22px; }
 .dash-card p { margin: 0; font-size: 12px; opacity: 0.9; }
 .dash-card i { position: absolute; right: 15px; top: 15px; font-size: 45px; opacity: 0.2; }
-.bg-blue { background: #3498db; } .bg-green { background: #2ecc71; } .bg-yellow { background: #f1c40f; color: #333;} 
+.bg-blue { background: #3498db; } .bg-green { background: #2ecc71; } .bg-yellow { background: #f1c40f; color: #333;}
 .bg-orange { background: #f39c12; } .bg-red { background: #e74c3c; }
 [v-cloak] { display: none; }
 .loading-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.8); z-index:9999; display:flex; flex-direction: column; align-items:center; justify-content:center; }
@@ -51,26 +45,23 @@ body { font-family: 'Poppins', sans-serif; background: var(--bg-light); font-siz
 .modal-body-custom { background:#fff; width: 90%; max-width: 750px; border-radius: 10px; padding: 25px; max-height: 90vh; overflow-y: auto; }
 .modal-body-custom.sm { max-width: 500px; }
 .swal2-container { z-index: 99999 !important; }
-
 .table-bayar th { background-color: #f8f9fa; font-size: 12px; }
 .table-bayar td { font-size: 13px; vertical-align: middle; }
 .btn-action { width: 30px; height: 30px; padding: 0; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; transition: all 0.2s; }
 .btn-action:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-
 .row-parent { cursor: pointer; transition: background 0.2s; }
 .row-parent:hover { background-color: #f1f8ff !important; }
 .row-child-container { background-color: #fafbfc; padding: 15px; border-left: 4px solid #3498db; }
 #invoice-print-area, #riwayat-print-area { display: none; background: white; padding: 30px; font-family: Arial, sans-serif; color: black; }
 .invoice-kop { display: flex; align-items: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; }
-
 @media print {
 @page { size: auto; margin: 10mm; }
 html, body { height: auto !important; overflow: visible !important; background: #ffffff !important; background-color: #ffffff !important; }
-.wrapper, #content, .main-container { height: auto !important; min-height: auto !important; overflow: visible !important; background: #ffffff !important; background-color: #ffffff !important; width: 100% !important; display: block !important; }
+.wrapper, #content, .main-container { height: auto !important; min-height: auto !important; overflow: visible !important; background: #ffffff !important; background-color: #ffffff !important;
+width: 100% !important; display: block !important; }
 #sidebar, .top-navbar, .no-print, .modal-custom, .swal2-container, .sidebar-overlay { display: none !important; }
 .main-container { padding: 0 !important; margin: 0 !important; }
 .card-custom { box-shadow: none !important; border: none !important; padding: 0 !important; margin: 0 !important; }
-
 #invoice-print-area, #riwayat-print-area { display: none !important; }
 .printing-invoice > div:not(#invoice-print-area) { display: none !important; }
 .printing-invoice #invoice-print-area { display: block !important; width: 100% !important; }
@@ -113,7 +104,6 @@ html, body { height: auto !important; overflow: visible !important; background: 
 </button>
 </div>
 </div>
-
 <div v-else class="wrapper">
 <div class="sidebar-overlay" :class="{'show': sidebarOpen}" @click="sidebarOpen = false"></div>
 <nav id="sidebar" :class="{'open': sidebarOpen}">
@@ -123,10 +113,8 @@ html, body { height: auto !important; overflow: visible !important; background: 
 <div class="text-center py-2 bg-dark" style="font-size:11px; color:#bbb;">
 Login: <span class="fw-bold text-warning text-uppercase"><i class="fa-solid fa-user-shield me-1"></i> {{ session.role }}</span>
 </div>
-
 <div class="menu-header">Dashboard</div>
 <a @click="go('dashboard')" :class="['nav-link', view === 'dashboard' ? 'active' : '']"><i class="fa-solid fa-chart-pie text-info"></i> Ringkasan Utama</a>
-
 <template v-if="session.role === 'admin' || session.role === 'bendahara'">
 <div class="menu-header">Data Transaksi</div>
 <a @click="go('pendapatan')" :class="['nav-link', view === 'pendapatan' ? 'active' : '']"><i class="fa-solid fa-coins text-success"></i> Pendapatan Lain</a>
@@ -134,19 +122,16 @@ Login: <span class="fw-bold text-warning text-uppercase"><i class="fa-solid fa-u
 <a @click="go('tabungan')" :class="['nav-link', view === 'tabungan' ? 'active' : '']"><i class="fa-solid fa-piggy-bank text-info"></i> Data Tabungan Siswa</a>
 <a @click="go('pengeluaran')" :class="['nav-link', view === 'pengeluaran' ? 'active' : '']"><i class="fa-solid fa-cart-shopping text-danger"></i> Pengeluaran Kas</a>
 <a @click="go('utang_pegawai')" :class="['nav-link', view === 'utang_pegawai' ? 'active' : '']"><i class="fa-solid fa-file-invoice-dollar text-warning"></i> Utang Pegawai</a>
-
 <div class="menu-header">Master Data</div>
 <a v-if="session.role === 'admin'" @click="go('users')" :class="['nav-link', view === 'users' ? 'active' : '']"><i class="fa-solid fa-users-gear text-primary"></i> Data Pengguna</a>
 <a @click="go('siswa')" :class="['nav-link', view === 'siswa' ? 'active' : '']"><i class="fa-solid fa-id-badge text-secondary"></i> Data Siswa</a>
 <a @click="go('tagihan_siswa')" :class="['nav-link', view === 'tagihan_siswa' ? 'active' : '']"><i class="fa-solid fa-file-signature text-primary"></i> Data Tagihan Siswa</a>
 <a @click="go('jenis_pendapatan')" :class="['nav-link', view === 'jenis_pendapatan' ? 'active' : '']"><i class="fa-solid fa-tags text-secondary"></i> Jenis Pendapatan</a>
 <a @click="go('kategori_pengeluaran')" :class="['nav-link', view === 'kategori_pengeluaran' ? 'active' : '']"><i class="fa-solid fa-layer-group text-secondary"></i> Kat. Pengeluaran</a>
-
 <div class="menu-header">Laporan Cetak</div>
 <a @click="go('laporan_kas')" :class="['nav-link', view === 'laporan_kas' ? 'active' : '']"><i class="fa-solid fa-book-open text-white"></i> Laporan Arus Kas</a>
 <a @click="go('laporan_labarugi')" :class="['nav-link', view === 'laporan_labarugi' ? 'active' : '']"><i class="fa-solid fa-chart-line text-white"></i> Laporan Laba Rugi</a>
 </template>
-
 <template v-if="session.role === 'siswa'">
 <div class="menu-header">Menu Siswa</div>
 <a @click="go('tagihan_siswa')" :class="['nav-link', view === 'tagihan_siswa' ? 'active' : '']"><i class="fa-solid fa-file-invoice-dollar text-warning"></i> Tagihan Saya</a>
@@ -157,15 +142,12 @@ Login: <span class="fw-bold text-warning text-uppercase"><i class="fa-solid fa-u
 <button @click="logout" class="btn btn-danger btn-sm w-100 fw-bold shadow-sm"><i class="fa-solid fa-power-off me-1"></i> KELUAR SISTEM</button>
 </div>
 </nav>
-
 <div id="content">
 <div class="top-navbar d-flex justify-content-between">
 <div @click="sidebarOpen = !sidebarOpen" style="cursor:pointer; padding: 10px;"><i class="fa-solid fa-bars fs-4"></i></div>
 <div class="fw-bold"><i class="fa-solid fa-circle-user fs-5 me-2 align-middle text-light"></i> {{ session.nama }}</div>
 </div>
-
 <div class="main-container" :class="{'printing-invoice': printMode === 'invoice', 'printing-laporan': printMode === 'laporan', 'printing-riwayat': printMode === 'riwayat'}">
-
 <div v-show="view === 'dashboard'">
 <div class="row g-3 mb-4" v-if="session.role !== 'siswa'">
 <div class="col-md-2 col-6" style="width: 20%;">
@@ -223,7 +205,6 @@ Login: <span class="fw-bold text-warning text-uppercase"><i class="fa-solid fa-u
 </div>
 </div>
 </div>
-
 <div v-show="view === 'pembayaran_siswa'">
 <div class="card-custom p-4">
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 border-bottom pb-3">
@@ -257,6 +238,7 @@ Login: <span class="fw-bold text-warning text-uppercase"><i class="fa-solid fa-u
 <td v-if="session.role !== 'siswa'" class="text-center" style="white-space: nowrap;">
 <button v-if="session.role === 'admin'" @click="openModal('edit', row)" class="btn btn-primary btn-action shadow-sm text-white" title="Edit Transaksi"><i class="fa-solid fa-pen-to-square"></i></button>
 <button @click="doPrintInvoice(row)" class="btn btn-info btn-action shadow-sm text-white ms-1" title="Cetak Invoice Ini"><i class="fa-solid fa-print"></i></button>
+<button @click="salinKwitansiWA(row, group)" class="btn btn-success btn-action shadow-sm text-white ms-1" title="Salin Pesan WA"><i class="fa-brands fa-whatsapp"></i></button>
 <button v-if="session.role === 'admin'" @click="deleteData(row[0], 'pendapatan')" class="btn btn-danger btn-action shadow-sm text-white ms-1" title="Hapus"><i class="fa-solid fa-trash-can"></i></button>
 </td>
 </tr>
@@ -273,7 +255,6 @@ Login: <span class="fw-bold text-warning text-uppercase"><i class="fa-solid fa-u
 </div>
 </div>
 </div>
-
 <div v-show="view === 'tagihan_siswa'">
 <div class="card-custom p-4">
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 border-bottom pb-3">
@@ -285,14 +266,17 @@ Login: <span class="fw-bold text-warning text-uppercase"><i class="fa-solid fa-u
 </div>
 <div class="table-responsive">
 <table class="table table-hover align-middle">
-<thead class="table-light"><tr><th style="width: 50px;"></th><th>Nama Siswa</th><th>Total Tagihan</th><th>Total Kekurangan</th><th class="text-center" style="width: 100px;">Aksi</th></tr></thead>
+<thead class="table-light"><tr><th style="width: 50px;"></th><th>Nama Siswa</th><th>Total Tagihan</th><th>Total Kekurangan</th><th class="text-center" style="width: 150px;">Aksi</th></tr></thead>
 <tbody v-for="g in filteredGroupedTagihan" :key="g.nama">
 <tr class="row-parent" @click="toggleTagihan(g.nama)">
 <td class="text-center text-primary"><i :class="expandedTagihan === g.nama ? 'fa-solid fa-chevron-down' : 'fa-solid fa-chevron-right'"></i></td>
 <td class="fw-bold">{{ g.nama }}</td>
 <td class="text-muted">{{ formatRp(g.totalTagihan) }}</td>
 <td class="fw-bold text-danger">{{ formatRp(g.totalKurang) }}</td>
-<td class="text-center"><button class="btn btn-sm btn-outline-primary py-0 px-2">Rincian</button></td>
+<td class="text-center">
+<button class="btn btn-sm btn-outline-primary py-0 px-2 shadow-sm">Rincian</button>
+<button v-if="session.role !== 'siswa'" class="btn btn-sm btn-success py-0 px-2 ms-1 shadow-sm" @click.stop="salinInfoTagihanWA(g)"><i class="fa-brands fa-whatsapp"></i> WA</button>
+</td>
 </tr>
 <tr v-if="expandedTagihan === g.nama">
 <td colspan="5" class="p-0">
@@ -323,7 +307,6 @@ Login: <span class="fw-bold text-warning text-uppercase"><i class="fa-solid fa-u
 </div>
 </div>
 </div>
-
 <div v-show="view === 'tabungan'">
 <div class="card-custom p-4">
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 border-bottom pb-3">
@@ -353,7 +336,8 @@ Login: <span class="fw-bold text-warning text-uppercase"><i class="fa-solid fa-u
 <tbody>
 <tr v-for="row in g.details" :key="row[0]">
 <td>{{ row[1] }}</td>
-<td :class="Number(row[3]) < 0 ? 'text-danger fw-bold' : 'text-success fw-bold'">{{ Number(row[3]) > 0 ? '+ ' : '' }}{{ formatRp(row[3]) }}</td>
+<td :class="Number(row[3]) < 0 ? 'text-danger fw-bold' : 'text-success fw-bold'">{{ Number(row[3]) > 0 ?
+'+ ' : '' }}{{ formatRp(row[3]) }}</td>
 <td class="fw-bold">{{ formatRp(row[4]) }}</td>
 <td>{{ row[5] }}</td>
 <td v-if="session.role === 'admin' || session.role === 'bendahara'" class="text-center" style="white-space: nowrap;">
@@ -374,7 +358,6 @@ Login: <span class="fw-bold text-warning text-uppercase"><i class="fa-solid fa-u
 </div>
 </div>
 </div>
-
 <div v-show="['users', 'siswa', 'pendapatan', 'pengeluaran', 'utang_pegawai', 'jenis_pendapatan', 'kategori_pengeluaran'].includes(view)">
 <div class="card-custom p-4">
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
@@ -412,7 +395,6 @@ Login: <span class="fw-bold text-warning text-uppercase"><i class="fa-solid fa-u
 </div>
 </div>
 </div>
-
 <div id="laporan-view" v-show="['laporan_kas', 'laporan_labarugi'].includes(view)">
 <div class="mb-3 no-print text-end">
 <button @click="printReport('laporan')" class="btn btn-secondary shadow-sm"><i class="fa-solid fa-print me-2"></i> Cetak / Simpan PDF</button>
@@ -443,7 +425,6 @@ Login: <span class="fw-bold text-warning text-uppercase"><i class="fa-solid fa-u
 </div>
 </div>
 </div>
-
 <div id="invoice-print-area" v-if="cetakData">
 <div class="invoice-kop">
 <img src="https://lh3.googleusercontent.com/d/1ob1YnejyZU2jS5OVEJwMbb9Ajst9J7uz" width="80" style="margin-right: 15px;" onerror="this.style.display='none'">
@@ -483,7 +464,6 @@ Login: <span class="fw-bold text-warning text-uppercase"><i class="fa-solid fa-u
 </div>
 </div>
 </div>
-
 <div id="riwayat-print-area" v-if="cetakRiwayatData">
 <div class="invoice-kop">
 <img src="https://lh3.googleusercontent.com/d/1ob1YnejyZU2jS5OVEJwMbb9Ajst9J7uz" width="80" style="margin-right: 15px;" onerror="this.style.display='none'">
@@ -519,13 +499,11 @@ Login: <span class="fw-bold text-warning text-uppercase"><i class="fa-solid fa-u
 </div>
 </div>
 </div>
-
 </div>
 <footer class="text-center py-3 text-muted no-print" style="font-size: 11px;">
 © 2026 <strong>Aplikasi Keuangan PONDOK</strong> | Belajar Inovasi
 </footer>
 </div>
-
 <div v-if="modalBuatTagihan.show" class="modal-custom" style="z-index: 1065;">
 <div class="modal-body-custom shadow-lg sm">
 <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
@@ -568,14 +546,12 @@ Login: <span class="fw-bold text-warning text-uppercase"><i class="fa-solid fa-u
 </div>
 </div>
 </div>
-
 <div v-if="modalBayar.show" class="modal-custom">
 <div class="modal-body-custom shadow-lg">
 <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
 <h5 class="fw-bold m-0 text-success"><i class="fa-solid fa-cash-register me-2"></i> Form Pembayaran Siswa</h5>
 <i class="fa-solid fa-xmark fs-5 text-secondary cursor-pointer" @click="modalBayar.show = false"></i>
 </div>
-
 <div class="mb-3 row align-items-center">
 <label class="col-sm-3 col-form-label fw-bold">Pilih Siswa</label>
 <div class="col-sm-9">
@@ -593,7 +569,6 @@ Login: <span class="fw-bold text-warning text-uppercase"><i class="fa-solid fa-u
 <label class="col-sm-3 col-form-label fw-bold">Tanggal Bayar</label>
 <div class="col-sm-9"><input type="date" class="form-control" v-model="formBayar.tglBayar"></div>
 </div>
-
 <div class="mb-3 row align-items-center">
 <label class="col-sm-3 col-form-label fw-bold">Rincian Tagihan</label>
 <div class="col-sm-9">
@@ -602,7 +577,6 @@ Login: <span class="fw-bold text-warning text-uppercase"><i class="fa-solid fa-u
 </button>
 </div>
 </div>
-
 <div class="table-responsive mt-3" v-if="formBayar.items.length > 0">
 <table class="table table-bordered table-bayar mb-0">
 <thead><tr><th>Nama Pembayaran</th><th>Tagihan & Sisa</th><th>Nominal Bayar</th><th>Aksi</th></tr></thead>
@@ -619,71 +593,69 @@ Login: <span class="fw-bold text-warning text-uppercase"><i class="fa-solid fa-u
 </tr>
 </tbody>
 </table>
-
 <div class="row mt-3 pt-3 border-top">
-    <div class="col-md-7">
-        <h6 class="fw-bold mb-3"><i class="fa-solid fa-layer-group text-primary me-2"></i>Multi Metode Pembayaran</h6>
-        <div class="row mb-2 align-items-center">
-            <label class="col-4 small fw-bold text-muted">Tunai</label>
-            <div class="col-8">
-                <div class="input-group input-group-sm">
-                    <span class="input-group-text">Rp</span>
-                    <input type="number" class="form-control" v-model.number="formBayar.metodeBayar.tunai">
-                </div>
-            </div>
-        </div>
-        <div class="row mb-2 align-items-center">
-            <label class="col-4 small fw-bold text-muted">Transfer Bank</label>
-            <div class="col-8">
-                <div class="input-group input-group-sm">
-                    <span class="input-group-text">Rp</span>
-                    <input type="number" class="form-control" v-model.number="formBayar.metodeBayar.transfer">
-                </div>
-            </div>
-        </div>
-        <div class="row mb-2 align-items-center">
-            <label class="col-4 small fw-bold text-muted">QRIS/e-Wallet</label>
-            <div class="col-8">
-                <div class="input-group input-group-sm">
-                    <span class="input-group-text">Rp</span>
-                    <input type="number" class="form-control" v-model.number="formBayar.metodeBayar.qris">
-                </div>
-            </div>
-        </div>
-        <div class="row mb-2 align-items-center">
-            <label class="col-4 small fw-bold text-muted">Potong Tabungan</label>
-            <div class="col-8">
-                <div class="input-group input-group-sm">
-                    <span class="input-group-text">Rp</span>
-                    <input type="number" class="form-control" v-model.number="formBayar.metodeBayar.tabungan" :max="formBayar.saldoSiswa">
-                </div>
-            </div>
-        </div>
-        <button type="button" class="btn btn-outline-primary btn-sm mt-2 w-100 fw-bold" @click="setFullTunai">
-            <i class="fa-solid fa-money-bill-wave me-1"></i> Isi Otomatis Set Full Tunai
-        </button>
-    </div>
-
-    <div class="col-md-5">
-        <div class="p-2 rounded border mb-3 text-center" :class="formBayar.saldoSiswa >= formBayar.metodeBayar.tabungan ? 'bg-success bg-opacity-10 border-success text-success' : 'bg-danger bg-opacity-10 border-danger text-danger'">
-            <i class="fa-solid fa-piggy-bank me-1 mb-1"></i> Saldo Tabungan Siswa:<br><strong class="fs-6">{{ formatRp(formBayar.saldoSiswa) }}</strong>
-        </div>
-        <div class="p-3 rounded border bg-light shadow-sm">
-            <div class="d-flex justify-content-between mb-1">
-                <span class="small text-muted">Total Tagihan (Cart):</span>
-                <span class="fw-bold">{{ formatRp(totalTagihanCart) }}</span>
-            </div>
-            <div class="d-flex justify-content-between mb-1">
-                <span class="small text-muted">Total Bayar (Metode):</span>
-                <span class="fw-bold">{{ formatRp(totalMultiBayar) }}</span>
-            </div>
-            <hr class="my-2 border-secondary">
-            <div class="d-flex justify-content-between">
-                <span class="small fw-bold">Selisih Kekurangan:</span>
-                <span class="fw-bold" :class="totalTagihanCart === totalMultiBayar ? 'text-success' : 'text-danger'">{{ formatRp(totalTagihanCart - totalMultiBayar) }}</span>
-            </div>
-        </div>
-    </div>
+<div class="col-md-7">
+<h6 class="fw-bold mb-3"><i class="fa-solid fa-layer-group text-primary me-2"></i>Multi Metode Pembayaran</h6>
+<div class="row mb-2 align-items-center">
+<label class="col-4 small fw-bold text-muted">Tunai</label>
+<div class="col-8">
+<div class="input-group input-group-sm">
+<span class="input-group-text">Rp</span>
+<input type="number" class="form-control" v-model.number="formBayar.metodeBayar.tunai">
+</div>
+</div>
+</div>
+<div class="row mb-2 align-items-center">
+<label class="col-4 small fw-bold text-muted">Transfer Bank</label>
+<div class="col-8">
+<div class="input-group input-group-sm">
+<span class="input-group-text">Rp</span>
+<input type="number" class="form-control" v-model.number="formBayar.metodeBayar.transfer">
+</div>
+</div>
+</div>
+<div class="row mb-2 align-items-center">
+<label class="col-4 small fw-bold text-muted">QRIS/e-Wallet</label>
+<div class="col-8">
+<div class="input-group input-group-sm">
+<span class="input-group-text">Rp</span>
+<input type="number" class="form-control" v-model.number="formBayar.metodeBayar.qris">
+</div>
+</div>
+</div>
+<div class="row mb-2 align-items-center">
+<label class="col-4 small fw-bold text-muted">Potong Tabungan</label>
+<div class="col-8">
+<div class="input-group input-group-sm">
+<span class="input-group-text">Rp</span>
+<input type="number" class="form-control" v-model.number="formBayar.metodeBayar.tabungan" :max="formBayar.saldoSiswa">
+</div>
+</div>
+</div>
+<button type="button" class="btn btn-outline-primary btn-sm mt-2 w-100 fw-bold" @click="setFullTunai">
+<i class="fa-solid fa-money-bill-wave me-1"></i> Isi Otomatis Set Full Tunai
+</button>
+</div>
+<div class="col-md-5">
+<div class="p-2 rounded border mb-3 text-center" :class="formBayar.saldoSiswa >= formBayar.metodeBayar.tabungan ? 'bg-success bg-opacity-10 border-success text-success' : 'bg-danger bg-opacity-10 border-danger text-danger'">
+<i class="fa-solid fa-piggy-bank me-1 mb-1"></i> Saldo Tabungan Siswa:<br><strong class="fs-6">{{ formatRp(formBayar.saldoSiswa) }}</strong>
+</div>
+<div class="p-3 rounded border bg-light shadow-sm">
+<div class="d-flex justify-content-between mb-1">
+<span class="small text-muted">Total Tagihan (Cart):</span>
+<span class="fw-bold">{{ formatRp(totalTagihanCart) }}</span>
+</div>
+<div class="d-flex justify-content-between mb-1">
+<span class="small text-muted">Total Bayar (Metode):</span>
+<span class="fw-bold">{{ formatRp(totalMultiBayar) }}</span>
+</div>
+<hr class="my-2 border-secondary">
+<div class="d-flex justify-content-between">
+<span class="small fw-bold">Selisih Kekurangan:</span>
+<span class="fw-bold" :class="totalTagihanCart === totalMultiBayar ? 'text-success' : 'text-danger'">{{ formatRp(totalTagihanCart - totalMultiBayar) }}</span>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
@@ -692,7 +664,6 @@ Login: <span class="fw-bold text-warning text-uppercase"><i class="fa-solid fa-u
 </div>
 </div>
 </div>
-
 <div v-if="modalSiswa.show" class="modal-custom" style="z-index: 1070;">
 <div class="modal-body-custom shadow-lg">
 <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
@@ -717,7 +688,6 @@ Login: <span class="fw-bold text-warning text-uppercase"><i class="fa-solid fa-u
 </div>
 </div>
 </div>
-
 <div v-if="modalTagihan.show" class="modal-custom" style="z-index: 1070;">
 <div class="modal-body-custom shadow-lg">
 <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3 bg-primary text-white p-3 rounded">
@@ -738,39 +708,33 @@ Login: <span class="fw-bold text-warning text-uppercase"><i class="fa-solid fa-u
 </div>
 </div>
 </div>
-
 <div v-if="modal.show" class="modal-custom">
 <div class="modal-body-custom sm shadow-lg">
 <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
-<h5 class="fw-bold text-capitalize m-0 text-primary"><i :class="modal.action === 'add' ? 'fa-solid fa-circle-plus' : 'fa-solid fa-pen-to-square'"></i> {{ modal.action === 'add' ? 'Tambah' : 'Edit' }} Data</h5>
+<h5 class="fw-bold text-capitalize m-0 text-primary"><i :class="modal.action === 'add' ? 'fa-solid fa-circle-plus' : 'fa-solid fa-pen-to-square'"></i> {{ modal.action === 'add' ?
+'Tambah' : 'Edit' }} Data</h5>
 <i class="fa-solid fa-xmark fs-4 text-secondary cursor-pointer" @click="modal.show = false"></i>
 </div>
 <div class="row g-3">
 <template v-for="(head, i) in tableData.header" :key="'main-'+i">
 <div class="col-12" v-if="!['catatan', 'keterangan', 'saldo'].includes(head.toLowerCase())">
 <label class="form-label fw-bold text-muted small mb-1">{{ head === 'No' && head.includes('Invoice') ? 'No. Invoice' : head }}</label>
-
 <select v-if="head.toLowerCase().includes('jenis') && view === 'pendapatan'" v-model="modal.formData[i]" class="form-select bg-light">
 <option value="" disabled>Pilih {{ head }}...</option>
 <option v-for="j in listJenisPendapatan" :value="j">{{ j }}</option>
 </select>
-
 <div v-else-if="head.toLowerCase().includes('nama') && view === 'tabungan'">
 <input type="text" :list="'datalist-siswa-' + i" v-model="modal.formData[i]" class="form-control bg-light" placeholder="Ketik/Pilih Nama Siswa...">
 <datalist :id="'datalist-siswa-' + i">
-    <option v-for="s in listSiswa" :value="s.nama">{{ s.nis }} - {{ s.kelas }}</option>
+<option v-for="s in listSiswa" :value="s.nama">{{ s.nis }} - {{ s.kelas }}</option>
 </datalist>
 </div>
-
 <select v-else-if="(head.toLowerCase().includes('kategori') || head.toLowerCase().includes('jenis')) && view === 'pengeluaran'" v-model="modal.formData[i]" class="form-select bg-light">
 <option value="" disabled>Pilih {{ head }}...</option>
 <option v-for="k in listKategoriPengeluaran" :value="k">{{ k }}</option>
 </select>
-
 <input v-else-if="head.toLowerCase().includes('tgl') || head.toLowerCase().includes('tanggal')" type="date" v-model="modal.formData[i]" class="form-control bg-light">
-
 <input v-else v-model="modal.formData[i]" :type="head.toLowerCase().includes('password') ? 'password' : (head.toLowerCase().includes('nominal') ? 'number' : 'text')" class="form-control bg-light" :readonly="(i === 0 && modal.action === 'add') || (head.toLowerCase().includes('invoice') && modal.action === 'add')" :placeholder="(i === 0 && modal.action === 'add') || (head.toLowerCase().includes('invoice') && modal.action === 'add') ? 'Auto Generate' : 'Input ' + head">
-
 <small v-if="head.toLowerCase().includes('nominal') && view === 'tabungan'" class="text-muted mt-1 d-block"><i class="fa-solid fa-circle-info"></i> Isi dengan angka minus (-) untuk Penarikan / Pengambilan.</small>
 </div>
 </template>
@@ -807,34 +771,31 @@ modal: { show: false, action: 'add', identifier: null, formData: [] },
 historyPembayaranSiswa: [], searchHistory: '', expandedHistory: null,
 searchTagihan: '', expandedTagihan: null,
 cetakData: null, cetakRiwayatData: null, listKelas: [],
-
 listJenisPendapatan: [], listKategoriPengeluaran: [],
 searchSiswaInput: '',
 searchTabungan: '',
 expandedTabungan: null,
-
 modalBuatTagihan: { show: false },
 formBuatTagihan: { tipe: 'semua', kelasTarget: '', siswa: null, jenis: '', nominal: '' },
 modalBayar: { show: false },
 modalSiswa: { show: false, context: 'bayar' },
 modalTagihan: { show: false },
 listSiswa: [], listTagihanAktif: [],
-formBayar: { 
-    invoice: '', tglBayar: getToday(), siswa: null, items: [], 
-    metodeBayar: { tunai: 0, transfer: 0, qris: 0, tabungan: 0 }, 
-    saldoSiswa: 0 
+formBayar: {
+invoice: '', tglBayar: getToday(), siswa: null, items: [],
+metodeBayar: { tunai: 0, transfer: 0, qris: 0, tabungan: 0 },
+saldoSiswa: 0
 }
 }
 },
 computed: {
 totalTagihanCart() { return this.formBayar.items.reduce((sum, item) => sum + Number(item.nilai_bayar || 0), 0); },
-totalMultiBayar() { 
-    return Number(this.formBayar.metodeBayar.tunai || 0) + 
-           Number(this.formBayar.metodeBayar.transfer || 0) + 
-           Number(this.formBayar.metodeBayar.qris || 0) + 
-           Number(this.formBayar.metodeBayar.tabungan || 0); 
+totalMultiBayar() {
+return Number(this.formBayar.metodeBayar.tunai || 0) +
+Number(this.formBayar.metodeBayar.transfer || 0) +
+Number(this.formBayar.metodeBayar.qris || 0) +
+Number(this.formBayar.metodeBayar.tabungan || 0);
 },
-
 filteredListSiswa() {
 if (!this.searchSiswaInput) return this.listSiswa;
 let s = this.searchSiswaInput.toLowerCase();
@@ -872,32 +833,29 @@ arr = arr.filter(g => g.nama.toLowerCase().includes(s));
 }
 return arr;
 },
-
 groupedTabungan() {
 if (this.view !== 'tabungan') return [];
 let groups = {};
 this.tableData.body.forEach(row => {
-    let nama = row[2];
-    if (!groups[nama]) {
-        let s = this.listSiswa.find(x => x.nama === nama);
-        let kelas = s ? s.kelas : '-';
-        groups[nama] = { nama: nama, kelas: kelas, currentSaldo: 0, details: [] };
-    }
-    groups[nama].details.push(row);
+let nama = row[2];
+if (!groups[nama]) {
+let s = this.listSiswa.find(x => x.nama === nama);
+let kelas = s ? s.kelas : '-';
+groups[nama] = { nama: nama, kelas: kelas, currentSaldo: 0, details: [] };
+}
+groups[nama].details.push(row);
 });
 let arr = Object.values(groups);
 arr.forEach(g => {
-    // Current saldo is on the most recent row (index 0 because it's reversed), Saldo is at index 4
-    if(g.details.length > 0) g.currentSaldo = g.details[0][4] || 0; 
+// Current saldo is on the most recent row (index 0 because it's reversed), Saldo is at index 4
+if(g.details.length > 0) g.currentSaldo = g.details[0][4] || 0;
 });
-
 if (this.searchTabungan) {
-    let s = this.searchTabungan.toLowerCase();
-    arr = arr.filter(g => g.nama.toLowerCase().includes(s) || g.kelas.toLowerCase().includes(s));
+let s = this.searchTabungan.toLowerCase();
+arr = arr.filter(g => g.nama.toLowerCase().includes(s) || g.kelas.toLowerCase().includes(s));
 }
 return arr;
 }
-
 },
 created() {
 const localSess = localStorage.getItem('erp_session');
@@ -913,6 +871,33 @@ if(window.innerWidth >= 768) { this.sidebarOpen = true; }
 window.addEventListener('afterprint', () => { this.printMode = ''; });
 },
 methods: {
+// FUNGSI COPY/SALIN TEXT WA UNTUK KWITANSI & TAGIHAN
+salinKwitansiWA(row, group) {
+  const text = `*BUKTI PEMBAYARAN PONDOK*\nSistem Administrasi Terpadu - Belajar Inovasi\n\nNama Siswa: ${group.nama}\nNo. Invoice: ${row[3]}\nTanggal: ${row[6]}\n\nRincian Pembayaran:\n${row[4]}\n\n*Total Dibayar: ${this.formatRp(row[5])}*\n\nTerima kasih atas pembayarannya.`;
+  this.salinKeClipboard(text, 'Kwitansi');
+},
+salinInfoTagihanWA(group) {
+  let text = `*INFO TAGIHAN PONDOK*\nSistem Administrasi Terpadu - Belajar Inovasi\n\nNama Siswa: ${group.nama}\n\nRincian Tunggakan Belum Dibayar:\n`;
+  group.details.forEach((r, i) => {
+    text += `${i+1}. ${r[3]} (Sisa: ${this.formatRp(r[6])})\n`;
+  });
+  text += `\n*Total Kekurangan: ${this.formatRp(group.totalKurang)}*\n\nMohon untuk dapat segera diselesaikan. Terima kasih.`;
+  this.salinKeClipboard(text, 'Tagihan');
+},
+salinKeClipboard(text, jenisTeks) {
+  navigator.clipboard.writeText(text).then(() => {
+    Swal.fire({
+      icon: 'success',
+      title: 'Teks Pesan Disalin!',
+      text: `Teks ${jenisTeks} telah disalin. Silakan Paste (Tempel) di pesan WhatsApp orang tua siswa.`,
+      timer: 3000,
+      showConfirmButton: true,
+      confirmButtonText: 'OK'
+    });
+  }).catch(err => {
+    Swal.fire('Gagal', 'Sistem tidak dapat menyalin teks. Pastikan browser Anda mengizinkan akses Clipboard.', 'error');
+  });
+},
 async apiCall(action, payload = {}) {
 if (SCRIPT_URL === 'URL_APPS_SCRIPT_ANDA_DISINI') {
 Swal.fire('Konfigurasi Dibutuhkan', 'Ganti variabel SCRIPT_URL dengan Web App URL Google Apps Script', 'error');
@@ -936,7 +921,6 @@ toast(title, icon = 'success') { Swal.fire({ toast: true, position: 'top-end', i
 toggleHistory(nama) { this.expandedHistory = this.expandedHistory === nama ? null : nama; },
 toggleTagihan(nama) { this.expandedTagihan = this.expandedTagihan === nama ? null : nama; },
 toggleTabungan(nama) { this.expandedTabungan = this.expandedTabungan === nama ? null : nama; },
-
 generateInvoice() {
 const d = new Date();
 const yyyy = d.getFullYear();
@@ -969,7 +953,6 @@ this.go('dashboard');
 } catch (err) { this.loading = false; Swal.fire('Error API', err.message, 'error'); }
 },
 logout() { localStorage.removeItem('erp_session'); this.isLoggedIn = false; this.session = {}; this.form = { user: '', pass: '' }; },
-
 go(menu) {
 this.view = menu;
 this.session.lastView = menu;
@@ -1013,7 +996,6 @@ const res = await this.apiCall('getDaftarKelas');
 this.listKelas = res;
 } catch(e) {}
 },
-
 bukaModalBuatTagihan() {
 this.formBuatTagihan = { tipe: 'semua', kelasTarget: '', siswa: null, jenis: '', nominal: '' };
 this.searchSiswaInput = '';
@@ -1037,15 +1019,14 @@ if(this.view === 'tagihan_siswa') this.fetchTableData();
 } catch(err) { this.loading = false; Swal.fire('Error', err.message, 'error'); }
 },
 bukaModalBayar() {
-this.formBayar = { 
-    invoice: this.generateInvoice(), tglBayar: getToday(), siswa: null, items: [], 
-    metodeBayar: { tunai: 0, transfer: 0, qris: 0, tabungan: 0 }, 
-    saldoSiswa: 0 
+this.formBayar = {
+invoice: this.generateInvoice(), tglBayar: getToday(), siswa: null, items: [],
+metodeBayar: { tunai: 0, transfer: 0, qris: 0, tabungan: 0 },
+saldoSiswa: 0
 };
 this.searchSiswaInput = '';
 this.modalBayar.show = true;
 },
-
 async fetchSaldoSiswa(namaSiswa) {
 try {
 const res = await this.apiCall('getSaldoTabungan', { namaSiswa: namaSiswa });
@@ -1063,7 +1044,6 @@ this.loading = false; this.listSiswa = res; this.modalSiswa.show = true;
 if(context === 'tagihan' && this.listKelas.length === 0) this.fetchDaftarKelas();
 } catch(err) { this.loading = false; }
 },
-
 pilihSiswa(s) {
 this.searchSiswaInput = s.nama + ' (' + s.nis + ')';
 if(this.modalSiswa.context === 'bayar') {
@@ -1086,10 +1066,10 @@ this.loading = false; this.listTagihanAktif = res; this.modalTagihan.show = true
 } catch(err) { this.loading = false; }
 },
 setFullTunai() {
-   this.formBayar.metodeBayar.tunai = this.totalTagihanCart;
-   this.formBayar.metodeBayar.transfer = 0;
-   this.formBayar.metodeBayar.qris = 0;
-   this.formBayar.metodeBayar.tabungan = 0;
+this.formBayar.metodeBayar.tunai = this.totalTagihanCart;
+this.formBayar.metodeBayar.transfer = 0;
+this.formBayar.metodeBayar.qris = 0;
+this.formBayar.metodeBayar.tabungan = 0;
 },
 tambahkanTagihanKeCart(tagihan) {
 const exists = this.formBayar.items.find(i => i.id === tagihan.id);
@@ -1100,13 +1080,11 @@ this.modalTagihan.show = false;
 },
 async submitPembayaranSiswa() {
 if(this.totalTagihanCart !== this.totalMultiBayar) {
-    return Swal.fire('Nominal Tidak Sesuai', 'Total Bayar (Multi Metode) harus sama dengan Total Tagihan Keranjang (' + this.formatRp(this.totalTagihanCart) + '). Silakan cek kembali.', 'warning');
+return Swal.fire('Nominal Tidak Sesuai', 'Total Bayar (Multi Metode) harus sama dengan Total Tagihan Keranjang (' + this.formatRp(this.totalTagihanCart) + '). Silakan cek kembali.', 'warning');
 }
-
 if(this.formBayar.metodeBayar.tabungan > 0 && this.formBayar.metodeBayar.tabungan > this.formBayar.saldoSiswa) {
 return Swal.fire('Saldo Tidak Mencukupi', 'Nominal potongan tabungan melebihi sisa saldo tabungan siswa.', 'error');
 }
-
 this.loading = true;
 const payload = {
 siswa: this.formBayar.siswa,
@@ -1123,7 +1101,6 @@ if(res.success) { this.toast(res.message); this.modalBayar.show = false; this.fe
 else Swal.fire('Gagal', res.message, 'error');
 } catch(err) { this.loading = false; Swal.fire('Error', err.message, 'error'); }
 },
-
 async fetchTableData() {
 this.loading = true;
 this.expandedTagihan = null;
@@ -1134,7 +1111,6 @@ this.loading = false;
 if(res.success) {
 this.tableData = { header: res.header, body: res.body };
 if(this.view === 'tagihan_siswa' && this.listKelas.length === 0) this.fetchDaftarKelas();
-
 if(this.view === 'tabungan' && this.listSiswa.length === 0) {
 const resSiswa = await this.apiCall('getDaftarSiswa');
 this.listSiswa = resSiswa;
@@ -1172,11 +1148,11 @@ options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { po
 }
 },
 openModalAddTabungan(nama) {
-    this.openModal('add');
-    let idxNama = this.tableData.header.findIndex(h => h.toLowerCase().includes('nama'));
-    if(idxNama !== -1) {
-        this.modal.formData[idxNama] = nama;
-    }
+this.openModal('add');
+let idxNama = this.tableData.header.findIndex(h => h.toLowerCase().includes('nama'));
+if(idxNama !== -1) {
+this.modal.formData[idxNama] = nama;
+}
 },
 openModal(action, row = null) {
 this.modal.action = action;
@@ -1186,7 +1162,6 @@ this.modal.formData = [...row];
 } else {
 this.modal.identifier = null;
 this.modal.formData = new Array(this.tableData.header.length).fill('');
-
 if (this.tableData.header.length > 0 && this.tableData.header[0].toLowerCase() === 'no') {
 let targetArr = this.view === 'pembayaran_siswa' ? this.historyPembayaranSiswa : this.tableData.body;
 this.modal.formData[0] = targetArr.length > 0 ? Number(targetArr[targetArr.length-1][0]) + 1 : 1;
@@ -1206,13 +1181,11 @@ this.modal.show = true;
 async saveData() {
 this.loading = true;
 const targetModule = this.view === 'pembayaran_siswa' ? 'pendapatan' : this.view;
-
 let dataToSave = [...this.modal.formData];
 if(this.view === 'tabungan') {
-   let idxSaldo = this.tableData.header.findIndex(h => h.toLowerCase() === 'saldo');
-   if(idxSaldo !== -1) dataToSave.splice(idxSaldo, 1);
+let idxSaldo = this.tableData.header.findIndex(h => h.toLowerCase() === 'saldo');
+if(idxSaldo !== -1) dataToSave.splice(idxSaldo, 1);
 }
-
 try {
 const res = await this.apiCall('crudOperation', { crudAction: this.modal.action, moduleName: targetModule, rowData: dataToSave, identifierStr: this.modal.identifier });
 this.loading = false;
