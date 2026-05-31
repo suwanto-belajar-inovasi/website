@@ -210,11 +210,10 @@
 
   <script>
     // ==========================================================
-    // KONFIGURASI PENTING (GANTI DENGAN URL WEB APP GAS ANDA)
+    // PASTIKAN INI ADALAH URL WEB APP /EXEC YANG BARU DARI APPS SCRIPT
     // ==========================================================
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzYG3MS9TVVU_b-N0f7cgT5VKF2bA3NnK_f1huyKYnfmfDbdYnlIdjsxManWrz0g2Wm/exec"; 
 
-    // URL Resmi dari GitHub Pages Anda (otomatis mendeteksi domain)
     const OFFICIAL_APP_URL = window.location.origin + window.location.pathname;
 
     let currentUser = null;
@@ -224,12 +223,10 @@
     let currentBookId = null;
     let rawPdfUrlForDownload = null;
 
-    // FUNGSI KOMUNIKASI API KE GOOGLE APPS SCRIPT
     async function apiCall(actionName, payloadData) {
       try {
         const response = await fetch(GAS_API_URL, {
           method: 'POST',
-          // Menggunakan text/plain untuk menghindari CORS Preflight (OPTIONS request) dari browser
           body: JSON.stringify({ action: actionName, data: payloadData }) 
         });
         return await response.json();
@@ -238,7 +235,6 @@
       }
     }
 
-    // BOOTSTRAP APP (Cek parameter URL)
     window.onload = () => {
       const urlParams = new URLSearchParams(window.location.search);
       const isPublicRead = urlParams.get('read');
@@ -266,7 +262,6 @@
        window.open(url, '_blank');
     }
 
-    // -- AUTHENTICATION --
     async function handleRegister(e) {
       e.preventDefault();
       Swal.fire({title:'Memproses Pendaftaran...', allowOutsideClick: false, didOpen:()=>Swal.showLoading()});
@@ -305,7 +300,6 @@
 
     function logout() { localStorage.removeItem('flip_user'); window.location.reload(); }
 
-    // -- DASHBOARD --
     function initDashboard() {
       showView('view-dashboard');
       document.getElementById('dash-brand').innerText = currentUser.brand_name;
@@ -338,10 +332,8 @@
       let favData = favFile ? await getBase64(favFile) : {url: currentUser.favicon_url, isNew: false};
       
       const res = await apiCall('saveSettings', {
-        userId: currentUser.id,
-        brandName: document.getElementById('set-brand').value,
-        logoObj: logoData,
-        faviconObj: favData
+        userId: currentUser.id, brandName: document.getElementById('set-brand').value,
+        logoObj: logoData, faviconObj: favData
       });
 
       if(res.success) {
@@ -433,7 +425,6 @@
        Swal.fire({icon: 'success', title: 'Tersalin!', toast: true, position: 'top-end', showConfirmButton: false, timer: 1500});
     }
 
-    // -- ADMIN --
     async function showAdmin() {
       showView('view-admin');
       const res = await apiCall('getAdminData', {});
@@ -473,7 +464,9 @@
       if(res.success) Swal.fire({icon: 'success', title: 'Berhasil', text: res.message, toast: true, position: 'top-end', timer: 2000, showConfirmButton: false});
     }
 
-    // -- READER & ANALYTICS --
+    // ==========================================
+    // PERBAIKAN LOGIKA RENDER PDF (ANTI CORS BLOCK)
+    // ==========================================
     async function loadPublicBook(pid) {
       currentBookId = pid;
       const res = await apiCall('getPublicBook', { publicId: pid });
@@ -482,10 +475,17 @@
       
       const book = res.book;
       document.getElementById('reader-title').innerText = book.title;
-      rawPdfUrlForDownload = book.pdf_url;
+      
+      // Mengekstrak ID PDF untuk Download Link yang bersih
+      let pdfId = book.pdf_url;
+      if (pdfId.includes('/d/')) pdfId = pdfId.split('/d/')[1].split('/')[0];
+      else if (pdfId.includes('id=')) pdfId = pdfId.split('id=')[1].split('&')[0];
+      
+      rawPdfUrlForDownload = `https://drive.google.com/uc?export=download&id=${pdfId}`;
+      
       if(book.bgm_url && book.bgm_url.trim() !== '') document.getElementById('bgm-player').src = book.bgm_url;
       
-      renderPDFToFlipbook(book.pdf_url);
+      renderPDFToFlipbook(pdfId); 
       
       apiCall('recordAnalytics', { publicId: currentBookId, action: 'view' });
       
@@ -518,13 +518,19 @@
       }
     }
 
-    async function renderPDFToFlipbook(url) {
+    async function renderPDFToFlipbook(fileId) {
       const container = document.getElementById('flipbook-container');
       container.innerHTML = `<div class="absolute inset-0 flex flex-col items-center justify-center text-white z-0"><div class="animate-spin w-12 h-12 border-4 border-blue-500 rounded-full border-t-transparent mb-4 shadow-[0_0_15px_rgba(59,130,246,0.5)]"></div><p class="font-medium tracking-wide">Menyiapkan Lembaran Resolusi Tinggi...</p></div>`;
       
       try {
+        // MENGGUNAKAN CORS PROXY UNTUK MENEMBUS BLOKIRAN GOOGLE DRIVE PADA BINARY DATA
+        const directUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+        const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(directUrl)}`;
+        
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
-        const pdf = await pdfjsLib.getDocument(url).promise;
+        
+        // Memuat PDF via Proxy
+        const pdf = await pdfjsLib.getDocument(proxyUrl).promise;
         container.innerHTML = '';
         
         for(let i=1; i<=pdf.numPages; i++) {
@@ -544,7 +550,7 @@
           pageFlip.loadFromHTML(document.querySelectorAll('.page'));
         }, 1500);
       } catch(e) {
-        container.innerHTML = `<div class="absolute inset-0 flex items-center justify-center p-6"><div class="bg-red-900/50 backdrop-blur border border-red-500/50 p-6 rounded-2xl text-center max-w-md"><span class="text-4xl block mb-2">❌</span><strong class="text-white block mb-2">Gagal Memuat Dokumen</strong></div></div>`;
+        container.innerHTML = `<div class="absolute inset-0 flex items-center justify-center p-6"><div class="bg-red-900/50 backdrop-blur border border-red-500/50 p-6 rounded-2xl text-center max-w-md"><span class="text-4xl block mb-2">❌</span><strong class="text-white block mb-2">Gagal Memuat Dokumen</strong><p class="text-xs text-red-200 mt-2">Error Server: ${e.message}</p></div></div>`;
       }
     }
     
