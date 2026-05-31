@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Flipbook SaaS - Belajar Inovasi</title>
+  <link id="dynamic-favicon" rel="icon" type="image/png" href="https://via.placeholder.com/32">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/page-flip/dist/js/page-flip.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    .bg-landing { 
+      background-image: linear-gradient(rgba(15, 23, 42, 0.8), rgba(37, 99, 235, 0.85)), url('https://images.unsplash.com/photo-1481627834876-b7833e8f5570?q=80&w=2000');
+      background-size: cover; background-position: center; background-attachment: fixed;
+    }
+    .bg-auth { 
+      background-image: linear-gradient(rgba(241, 245, 249, 0.9), rgba(241, 245, 249, 0.95)), url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?q=80&w=2070');
+      background-size: cover; background-position: center;
+    }
+    .bg-dash { background-color: #f8fafc; }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    #flipbook-container { width: 100%; max-width: 800px; height: 500px; margin: 0 auto; box-shadow: 0 20px 40px rgba(0,0,0,0.5); background-color: #27272a; }
+    .page { background-color: #fff; box-shadow: inset 0 0 10px rgba(0,0,0,0.1); overflow: hidden; }
+    canvas { width: 100%; height: 100%; object-fit: contain; }
+    
+    .wa-float { position: fixed; bottom: 30px; right: 30px; background-color: #25d366; color: white; border-radius: 50px; padding: 12px 24px; box-shadow: 0 5px 15px rgba(37,211,102,0.4); font-weight: bold; z-index: 100; transition: transform 0.3s; display: flex; align-items: center; gap: 8px;}
+    .wa-float:hover { transform: scale(1.05); }
+  </style>
+</head>
+<body class="font-sans antialiased text-slate-800">
+
+  <div id="app">
+    
+    <div id="view-landing" class="min-h-screen bg-landing flex flex-col">
+      <nav class="p-6 flex justify-between items-center text-white max-w-7xl mx-auto w-full">
+        <div class="font-extrabold text-2xl tracking-wider">Belajar Inovasi</div>
+        <button onclick="showView('view-login')" class="bg-white/20 hover:bg-white/30 backdrop-blur text-white px-6 py-2 rounded-full font-bold transition">Masuk Akun</button>
+      </nav>
+      <div class="flex-grow flex items-center justify-center text-center p-6 text-white">
+        <div class="max-w-3xl glass-card p-10 rounded-3xl shadow-2xl">
+          <span class="bg-blue-600 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-4 inline-block">SaaS Platform</span>
+          <h1 class="text-4xl md:text-6xl font-extrabold mb-6 leading-tight">Sulap PDF Anda Menjadi <span class="text-blue-300">Flipbook Interaktif</span></h1>
+          <p class="text-lg md:text-xl mb-10 text-slate-200">Tidak perlu hosting. Sistem aman dari peretasan. Dilengkapi analitik baca dan audio latar interaktif.</p>
+          <button onclick="showView('view-register')" class="bg-blue-600 hover:bg-blue-500 text-white px-10 py-4 rounded-full font-bold shadow-[0_0_20px_rgba(37,99,235,0.5)] transition text-lg transform hover:scale-105">Coba Gratis Sekarang</button>
+        </div>
+      </div>
+      <a href="https://wa.me/6285895283075?text=Halo%20Admin%20Belajar%20Inovasi,%20saya%20ingin%20tanya%20tentang%20aplikasi%20Flipbook" target="_blank" class="wa-float">
+        Tanya Admin (WA)
+      </a>
+    </div>
+
+    <div id="view-register" class="hidden min-h-screen bg-auth flex items-center justify-center p-4">
+      <form onsubmit="handleRegister(event)" class="bg-white/90 backdrop-blur p-8 rounded-3xl shadow-2xl w-full max-w-md border border-white">
+        <div class="text-center mb-6">
+           <h2 class="text-3xl font-bold text-slate-800">Buat Akun</h2>
+           <p class="text-sm text-slate-500">Mulai langkah digitalisasi Anda</p>
+        </div>
+        <input type="text" id="reg-brand" required placeholder="Nama Brand/Instansi" class="w-full mb-4 border-2 p-3 rounded-xl focus:border-blue-500 outline-none">
+        <input type="email" id="reg-email" required placeholder="Alamat Email" class="w-full mb-4 border-2 p-3 rounded-xl focus:border-blue-500 outline-none">
+        <input type="password" id="reg-password" required placeholder="Password Rahasia" class="w-full mb-6 border-2 p-3 rounded-xl focus:border-blue-500 outline-none">
+        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-xl font-bold shadow-lg transition">Daftar & Mulai</button>
+        <p class="mt-6 text-center text-sm font-medium">Sudah punya akun? <button type="button" onclick="showView('view-login')" class="text-blue-600 hover:underline">Masuk di sini</button></p>
+        <p class="mt-2 text-center text-xs text-slate-400"><button type="button" onclick="showView('view-landing')" class="hover:text-slate-700">Kembali ke Beranda</button></p>
+      </form>
+    </div>
+
+    <div id="view-login" class="hidden min-h-screen bg-auth flex items-center justify-center p-4">
+      <form onsubmit="handleLogin(event)" class="bg-white/90 backdrop-blur p-8 rounded-3xl shadow-2xl w-full max-w-md border border-white">
+        <div class="text-center mb-6">
+           <h2 class="text-3xl font-bold text-slate-800">Selamat Datang</h2>
+           <p class="text-sm text-slate-500">Masuk untuk kelola koleksi e-book Anda</p>
+        </div>
+        <input type="email" id="login-email" required placeholder="Email Anda" class="w-full mb-4 border-2 p-3 rounded-xl focus:border-blue-500 outline-none">
+        <input type="password" id="login-password" required placeholder="Password" class="w-full mb-6 border-2 p-3 rounded-xl focus:border-blue-500 outline-none">
+        <button type="submit" class="w-full bg-slate-900 hover:bg-black text-white p-4 rounded-xl font-bold shadow-lg transition">Masuk Dashboard</button>
+        <p class="mt-6 text-center text-sm font-medium">Belum punya akun? <button type="button" onclick="showView('view-register')" class="text-blue-600 hover:underline">Daftar sekarang</button></p>
+        <p class="mt-2 text-center text-xs text-slate-400"><button type="button" onclick="showView('view-landing')" class="hover:text-slate-700">Kembali ke Beranda</button></p>
+      </form>
+    </div>
+
+    <div id="view-dashboard" class="hidden min-h-screen bg-dash pb-20">
+      <nav class="bg-white shadow-sm border-b px-6 py-4 flex justify-between items-center sticky top-0 z-50">
+        <div class="flex items-center gap-3">
+          <img id="dash-logo" src="" class="h-9 w-auto rounded border"> <span id="dash-brand" class="font-bold text-lg text-slate-800"></span>
+        </div>
+        <div class="flex gap-4 items-center">
+          <span class="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-xs font-bold border">Paket: <span id="user-status" class="text-blue-600"></span></span>
+          <button id="admin-btn" onclick="showAdmin()" class="hidden bg-purple-600 hover:bg-purple-700 text-white px-4 py-1.5 rounded-full text-sm font-bold shadow-sm">⚙️ Panel Admin</button>
+          <button onclick="logout()" class="text-red-500 font-bold text-sm hover:underline">Keluar</button>
+        </div>
+      </nav>
+
+      <div class="max-w-7xl mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="space-y-6">
+          <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+            <h3 class="font-bold text-slate-800 border-b pb-2 mb-4 flex items-center gap-2"><span>🎨</span> Pengaturan Brand</h3>
+            <input type="text" id="set-brand" placeholder="Nama Brand Anda" class="w-full mb-3 border p-2.5 rounded-lg text-sm bg-slate-50 focus:bg-white focus:border-blue-500 outline-none">
+            <label class="text-xs font-bold text-slate-500 block mb-1">Upload Logo (150x50)</label>
+            <input type="file" id="set-logo" accept="image/*" class="w-full mb-3 text-sm border p-2 rounded-lg bg-slate-50">
+            <label class="text-xs font-bold text-slate-500 block mb-1">Upload Favicon (32x32)</label>
+            <input type="file" id="set-favicon" accept="image/*" class="w-full mb-4 text-sm border p-2 rounded-lg bg-slate-50">
+            <button onclick="saveSettings()" class="w-full bg-slate-800 hover:bg-slate-900 text-white p-3 rounded-xl font-bold text-sm shadow-md">Simpan Tampilan</button>
+          </div>
+
+          <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+            <h3 class="font-bold text-slate-800 border-b pb-2 mb-4 flex items-center gap-2"><span>📘</span> Terbitkan Buku</h3>
+            <p class="text-xs text-slate-500 mb-4 bg-blue-50 p-2 rounded border border-blue-100">Batas Kuota: <strong class="text-blue-700" id="user-maxbooks"></strong> Buku</p>
+            
+            <input type="text" id="book-title" placeholder="Judul Buku Digital" class="w-full mb-3 border p-2.5 rounded-lg text-sm bg-slate-50 focus:bg-white focus:border-blue-500 outline-none">
+            
+            <label class="text-xs font-bold text-slate-500 block mb-1">Pilih File PDF</label>
+            <input type="file" id="book-pdf" accept="application/pdf" class="w-full mb-3 text-sm border p-2.5 rounded-lg bg-slate-50">
+            
+            <label class="text-xs font-bold text-slate-500 block mb-1">Audio Latar (BGM)</label>
+            <select id="bgm-select" class="w-full mb-2 border p-2.5 rounded-lg text-sm bg-slate-50 outline-none" onchange="toggleCustomAudio()">
+              <option value="">Tanpa Audio Latar</option>
+              <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3">Lagu - Akustik Santai</option>
+              <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3">Lagu - Piano Klasik</option>
+              <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3">Lagu - Pop Semangat</option>
+              <option value="CUSTOM">Upload Audio MP3 Sendiri...</option>
+            </select>
+            <input type="file" id="book-bgm-file" accept="audio/mpeg" class="w-full mb-4 text-sm hidden border p-2.5 rounded-lg">
+            
+            <button onclick="addBook()" class="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-xl font-bold text-sm shadow-md">Generate Flipbook</button>
+          </div>
+        </div>
+
+        <div class="lg:col-span-2 space-y-6">
+          <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+             <h3 class="font-bold text-lg border-b pb-3 mb-5 flex items-center gap-2"><span>💎</span> Upgrade Paket Langganan</h3>
+             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="border border-slate-200 rounded-xl p-4 text-center hover:border-blue-500 transition shadow-sm">
+                   <h4 class="font-bold text-slate-700 mb-1">Pemula</h4>
+                   <p class="text-2xl font-extrabold text-blue-600 mb-2">10rb<span class="text-xs text-slate-500 font-normal">/bln</span></p>
+                   <p class="text-sm font-medium text-slate-600 bg-slate-100 py-1 rounded mb-4">Maks 5 Buku</p>
+                   <button onclick="buyPlan('Pemula (10rb/bulan)')" class="w-full bg-green-500 hover:bg-green-600 text-white text-xs font-bold py-2 rounded-lg transition">Pilih Paket via WA</button>
+                </div>
+                <div class="border border-blue-200 bg-blue-50/50 rounded-xl p-4 text-center hover:border-blue-500 transition shadow-sm relative">
+                   <span class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white text-[10px] font-bold px-3 py-1 rounded-full">POPULER</span>
+                   <h4 class="font-bold text-slate-700 mb-1 mt-1">Pro</h4>
+                   <p class="text-2xl font-extrabold text-blue-600 mb-2">20rb<span class="text-xs text-slate-500 font-normal">/bln</span></p>
+                   <p class="text-sm font-medium text-slate-600 bg-white border border-blue-100 py-1 rounded mb-4">Maks 15 Buku</p>
+                   <button onclick="buyPlan('Pro (20rb/bulan)')" class="w-full bg-green-500 hover:bg-green-600 text-white text-xs font-bold py-2 rounded-lg transition">Pilih Paket via WA</button>
+                </div>
+                <div class="border border-slate-200 rounded-xl p-4 text-center hover:border-blue-500 transition shadow-sm">
+                   <h4 class="font-bold text-slate-700 mb-1">Premium</h4>
+                   <p class="text-2xl font-extrabold text-blue-600 mb-2">30rb<span class="text-xs text-slate-500 font-normal">/bln</span></p>
+                   <p class="text-sm font-medium text-slate-600 bg-slate-100 py-1 rounded mb-4">Maks 25 Buku</p>
+                   <button onclick="buyPlan('Premium (30rb/bulan)')" class="w-full bg-green-500 hover:bg-green-600 text-white text-xs font-bold py-2 rounded-lg transition">Pilih Paket via WA</button>
+                </div>
+                <div class="border border-slate-800 bg-slate-900 rounded-xl p-4 text-center shadow-lg transform hover:-translate-y-1 transition">
+                   <h4 class="font-bold text-slate-300 mb-1">Enterprise</h4>
+                   <p class="text-2xl font-extrabold text-white mb-2">100rb<span class="text-xs text-slate-400 font-normal">/bln</span></p>
+                   <p class="text-sm font-medium text-slate-900 bg-yellow-400 py-1 rounded mb-4">Unlimited Buku</p>
+                   <button onclick="buyPlan('Enterprise (100rb/bulan - Unlimited)')" class="w-full bg-green-500 hover:bg-green-600 text-white text-xs font-bold py-2 rounded-lg transition">Pilih Paket via WA</button>
+                </div>
+             </div>
+          </div>
+
+          <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 min-h-[400px]">
+            <h3 class="font-bold text-lg border-b pb-3 mb-5 flex items-center gap-2"><span>🗂️</span> Rak Buku & Analitik</h3>
+            <div id="books-list" class="space-y-4"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="view-admin" class="hidden min-h-screen bg-slate-900 text-slate-200 p-6">
+      <div class="max-w-6xl mx-auto">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-2xl font-bold text-white flex items-center gap-2"><span class="bg-blue-600 text-white px-2 py-1 rounded text-sm">ADMIN</span> Belajar Inovasi</h2>
+          <button onclick="showView('view-dashboard')" class="bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded-lg font-bold transition">Kembali ke Dashboard</button>
+        </div>
+        <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 overflow-x-auto shadow-2xl">
+          <table class="w-full text-left text-sm">
+            <thead class="border-b-2 border-slate-600 text-slate-400">
+              <tr>
+                 <th class="pb-3">Email Pengguna</th>
+                 <th class="pb-3">Brand/Sekolah</th>
+                 <th class="pb-3">Status Berlangganan</th>
+                 <th class="pb-3">Batas Buku</th>
+                 <th class="pb-3 text-right">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="admin-users-list" class="divide-y divide-slate-700/50"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="view-reader" class="hidden min-h-screen bg-zinc-900 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-800 to-zinc-950 flex flex-col p-4 relative">
+      <div class="flex justify-between items-center text-white mb-6 max-w-5xl mx-auto w-full bg-black/40 px-6 py-3 rounded-2xl backdrop-blur-md border border-white/10 z-20">
+        <h2 id="reader-title" class="font-bold text-lg tracking-wide truncate max-w-[50%]">Memuat Buku...</h2>
+        <div class="flex gap-3">
+           <button onclick="toggleAudio()" class="bg-white/10 hover:bg-white/20 border border-white/20 px-4 py-2 rounded-full text-xs font-bold transition flex items-center gap-2">🎵 Mainkan BGM</button>
+           <button onclick="triggerDownload()" class="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-full text-xs font-bold shadow-lg shadow-blue-500/30 transition flex items-center gap-2">📥 Unduh PDF</button>
+        </div>
+      </div>
+      <div id="flipbook-container" class="my-auto z-10 relative"></div>
+      <p class="text-zinc-400 text-xs mt-6 text-center z-20 font-medium tracking-wide">Geser halaman atau klik sudut kertas untuk membalik</p>
+      <audio id="bgm-player" loop></audio>
+    </div>
+
+  </div>
+
+  <script>
+    // ==========================================================
+    // KONFIGURASI PENTING (GANTI DENGAN URL WEB APP GAS ANDA)
+    // ==========================================================
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzYG3MS9TVVU_b-N0f7cgT5VKF2bA3NnK_f1huyKYnfmfDbdYnlIdjsxManWrz0g2Wm/exec"; 
+
+    // URL Resmi dari GitHub Pages Anda (otomatis mendeteksi domain)
+    const OFFICIAL_APP_URL = window.location.origin + window.location.pathname;
+
+    let currentUser = null;
+    let pageFlip = null;
+    let readingTimer = null;
+    let timeSpent = 0;
+    let currentBookId = null;
+    let rawPdfUrlForDownload = null;
+
+    // FUNGSI KOMUNIKASI API KE GOOGLE APPS SCRIPT
+    async function apiCall(actionName, payloadData) {
+      try {
+        const response = await fetch(GAS_API_URL, {
+          method: 'POST',
+          // Menggunakan text/plain untuk menghindari CORS Preflight (OPTIONS request) dari browser
+          body: JSON.stringify({ action: actionName, data: payloadData }) 
+        });
+        return await response.json();
+      } catch (error) {
+        return { success: false, message: "Koneksi ke server gagal: " + error.message };
+      }
+    }
+
+    // BOOTSTRAP APP (Cek parameter URL)
+    window.onload = () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const isPublicRead = urlParams.get('read');
+
+      if (isPublicRead && isPublicRead !== '') {
+        showView('view-reader');
+        loadPublicBook(isPublicRead);
+      } else {
+        const saved = localStorage.getItem('flip_user');
+        if (saved) { currentUser = JSON.parse(saved); initDashboard(); }
+        else { showView('view-landing'); }
+      }
+    };
+
+    function showView(targetId) {
+      const views = ['view-landing', 'view-register', 'view-login', 'view-dashboard', 'view-admin', 'view-reader'];
+      views.forEach(id => document.getElementById(id).classList.add('hidden'));
+      document.getElementById(targetId).classList.remove('hidden');
+    }
+
+    function buyPlan(planName) {
+       const userEmail = currentUser ? currentUser.email : "Akun Baru";
+       const text = `Halo Admin Belajar Inovasi, saya pengguna dengan email: *${userEmail}*. Saya ingin upgrade ke *Paket ${planName}*. Mohon info rekeningnya, terima kasih.`;
+       const url = `https://wa.me/6285895283075?text=${encodeURIComponent(text)}`;
+       window.open(url, '_blank');
+    }
+
+    // -- AUTHENTICATION --
+    async function handleRegister(e) {
+      e.preventDefault();
+      Swal.fire({title:'Memproses Pendaftaran...', allowOutsideClick: false, didOpen:()=>Swal.showLoading()});
+      
+      const res = await apiCall('register', {
+        email: document.getElementById('reg-email').value,
+        password: document.getElementById('reg-password').value,
+        brand_name: document.getElementById('reg-brand').value
+      });
+
+      if(res.success) { 
+        Swal.fire({icon: 'success', title: 'Berhasil!', text: res.message, confirmButtonColor: '#2563eb'}); 
+        showView('view-login'); 
+      } else {
+        Swal.fire({icon: 'error', title: 'Oops', text: res.message});
+      }
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      Swal.fire({title:'Otentikasi...', didOpen:()=>Swal.showLoading()});
+      
+      const res = await apiCall('login', {
+        email: document.getElementById('login-email').value,
+        password: document.getElementById('login-password').value
+      });
+
+      if(res.success) {
+        currentUser = res.user;
+        localStorage.setItem('flip_user', JSON.stringify(currentUser));
+        Swal.close(); initDashboard();
+      } else {
+        Swal.fire({icon: 'error', title: 'Akses Ditolak', text: res.message});
+      }
+    }
+
+    function logout() { localStorage.removeItem('flip_user'); window.location.reload(); }
+
+    // -- DASHBOARD --
+    function initDashboard() {
+      showView('view-dashboard');
+      document.getElementById('dash-brand').innerText = currentUser.brand_name;
+      document.getElementById('dash-logo').src = currentUser.logo_url;
+      document.getElementById('dynamic-favicon').href = currentUser.favicon_url;
+      document.getElementById('user-status').innerText = currentUser.status;
+      document.getElementById('user-maxbooks').innerText = currentUser.max_books;
+      document.getElementById('set-brand').value = currentUser.brand_name;
+      
+      if(currentUser.role === 'admin') document.getElementById('admin-btn').classList.remove('hidden');
+      loadBooks();
+    }
+
+    function getBase64(file) {
+      return new Promise((resolve, reject) => {
+        if(!file) return resolve(null);
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve({ data: reader.result.split(',')[1], mime: file.type, isNew: true });
+        reader.onerror = error => reject(error);
+      });
+    }
+
+    async function saveSettings() {
+      Swal.fire({title:'Menyimpan Branding...', didOpen:()=>Swal.showLoading()});
+      const logoFile = document.getElementById('set-logo').files[0];
+      const favFile = document.getElementById('set-favicon').files[0];
+      
+      let logoData = logoFile ? await getBase64(logoFile) : {url: currentUser.logo_url, isNew: false};
+      let favData = favFile ? await getBase64(favFile) : {url: currentUser.favicon_url, isNew: false};
+      
+      const res = await apiCall('saveSettings', {
+        userId: currentUser.id,
+        brandName: document.getElementById('set-brand').value,
+        logoObj: logoData,
+        faviconObj: favData
+      });
+
+      if(res.success) {
+        currentUser.brand_name = document.getElementById('set-brand').value;
+        if(res.logo_url) currentUser.logo_url = res.logo_url;
+        if(res.favicon_url) currentUser.favicon_url = res.favicon_url;
+        localStorage.setItem('flip_user', JSON.stringify(currentUser));
+        Swal.fire({icon: 'success', title: 'Tersimpan!', timer: 2000, showConfirmButton: false}); 
+        initDashboard();
+      }
+    }
+
+    function toggleCustomAudio() {
+      const val = document.getElementById('bgm-select').value;
+      const fileInput = document.getElementById('book-bgm-file');
+      if(val === 'CUSTOM') fileInput.classList.remove('hidden');
+      else fileInput.classList.add('hidden');
+    }
+
+    async function addBook() {
+      const title = document.getElementById('book-title').value;
+      const pdfFile = document.getElementById('book-pdf').files[0];
+      if(!title || !pdfFile) return Swal.fire({icon: 'warning', title: 'Perhatian', text: 'Judul dan File PDF wajib diisi!'});
+      
+      Swal.fire({title:'Mengunggah Dokumen...', html:'Proses ini memakan waktu tergantung ukuran file PDF/Audio Anda. <br><b>Mohon jangan tutup halaman.</b>', allowOutsideClick: false, didOpen:()=>Swal.showLoading()});
+      
+      const pdfData = await getBase64(pdfFile);
+      
+      const bgmSel = document.getElementById('bgm-select').value;
+      let bgmData = {url: '', isNew: false};
+      if(bgmSel === 'CUSTOM') {
+         const mp3File = document.getElementById('book-bgm-file').files[0];
+         if(mp3File) bgmData = await getBase64(mp3File);
+      } else if (bgmSel !== '') {
+         bgmData = {url: bgmSel, isNew: false};
+      }
+
+      const res = await apiCall('saveBook', {
+        userId: currentUser.id, title: title, pdfObj: pdfData, bgmObj: bgmData
+      });
+
+      if(res.success) { 
+         Swal.fire({icon: 'success', title: 'Buku Siap!', text: res.message});
+         document.getElementById('book-title').value = '';
+         loadBooks(); 
+      } else {
+         Swal.fire({icon: 'error', title: 'Gagal', text: res.message});
+      }
+    }
+
+    async function loadBooks() {
+      const list = document.getElementById('books-list');
+      list.innerHTML = '<div class="text-center py-10 text-slate-500">Memuat koleksi buku...</div>';
+      
+      const res = await apiCall('getBooks', { userId: currentUser.id });
+      
+      if(res.success) {
+        list.innerHTML = '';
+        if(res.books.length === 0) list.innerHTML = '<div class="text-center py-10 bg-slate-50 rounded-xl border-2 border-dashed border-slate-200 text-slate-500">Belum ada buku yang diterbitkan.</div>';
+        
+        res.books.forEach(b => {
+          const shareUrl = `${OFFICIAL_APP_URL}?read=${b.public_id}`;
+          
+          list.innerHTML += `
+            <div class="border border-slate-200 rounded-xl p-5 bg-slate-50 hover:bg-white hover:shadow-lg transition flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <div class="w-full">
+                <h4 class="font-bold text-slate-800 text-lg">${b.title}</h4>
+                <div class="flex flex-wrap gap-3 mt-2">
+                  <span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded font-medium">👁️ Dilihat: ${b.read_count}x</span>
+                  <span class="bg-emerald-100 text-emerald-700 text-xs px-2 py-1 rounded font-medium">⏱️ Waktu Baca: ${Math.floor(b.read_time_secs/60)} Menit</span>
+                  <span class="bg-purple-100 text-purple-700 text-xs px-2 py-1 rounded font-medium">⬇️ Diunduh: ${b.download_count}x</span>
+                </div>
+                <div class="mt-3 flex items-center gap-2 bg-white border border-slate-200 rounded-lg p-2 overflow-hidden">
+                   <code class="text-xs text-slate-500 truncate flex-grow select-all">${shareUrl}</code>
+                   <button onclick="copyLink('${shareUrl}')" class="text-blue-600 hover:text-blue-800 text-xs font-bold whitespace-nowrap bg-blue-50 px-3 py-1.5 rounded">Salin Link</button>
+                </div>
+              </div>
+              <div class="flex-shrink-0 w-full md:w-auto">
+                <a href="${shareUrl}" target="_blank" class="block text-center bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl text-sm font-bold shadow-md transition w-full">Buka Buku</a>
+              </div>
+            </div>
+          `;
+        });
+      }
+    }
+    
+    function copyLink(text) {
+       navigator.clipboard.writeText(text);
+       Swal.fire({icon: 'success', title: 'Tersalin!', toast: true, position: 'top-end', showConfirmButton: false, timer: 1500});
+    }
+
+    // -- ADMIN --
+    async function showAdmin() {
+      showView('view-admin');
+      const res = await apiCall('getAdminData', {});
+      
+      if (res.success) {
+        const tbody = document.getElementById('admin-users-list');
+        tbody.innerHTML = '';
+        res.data.users.forEach(u => {
+          if(u.role === 'admin') return;
+          tbody.innerHTML += `
+            <tr class="border-b border-slate-700/50 hover:bg-slate-700/30 transition">
+              <td class="py-4 font-medium text-white">${u.email}</td>
+              <td class="text-slate-300">${u.brand_name}</td>
+              <td>
+                <select id="stat-${u.id}" class="bg-slate-900 border border-slate-600 text-white rounded-lg px-2 py-1.5 text-sm outline-none focus:border-blue-500">
+                  <option value="TRIAL" ${u.status=='TRIAL'?'selected':''}>TRIAL</option>
+                  <option value="ACTIVE" ${u.status=='ACTIVE'?'selected':''}>ACTIVE</option>
+                  <option value="EXPIRED" ${u.status=='EXPIRED'?'selected':''}>EXPIRED</option>
+                </select>
+              </td>
+              <td><input type="number" id="max-${u.id}" value="${u.max_books}" class="w-20 bg-slate-900 border border-slate-600 rounded-lg px-2 py-1.5 text-center text-sm text-white outline-none focus:border-blue-500"></td>
+              <td class="text-right"><button onclick="updateTier('${u.id}')" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-4 py-1.5 rounded-lg text-sm transition shadow-lg">Simpan</button></td>
+            </tr>
+          `;
+        });
+      }
+    }
+    
+    async function updateTier(uid) {
+      const stat = document.getElementById(`stat-${uid}`).value;
+      const max = document.getElementById(`max-${uid}`).value;
+      
+      const res = await apiCall('updateTier', {
+        adminId: currentUser.id, targetUserId: uid, newStatus: stat, newMaxBooks: max
+      });
+      
+      if(res.success) Swal.fire({icon: 'success', title: 'Berhasil', text: res.message, toast: true, position: 'top-end', timer: 2000, showConfirmButton: false});
+    }
+
+    // -- READER & ANALYTICS --
+    async function loadPublicBook(pid) {
+      currentBookId = pid;
+      const res = await apiCall('getPublicBook', { publicId: pid });
+      
+      if(!res.success || !res.book) return document.getElementById('reader-title').innerText = "Buku Tidak Ditemukan / Akses Ditolak";
+      
+      const book = res.book;
+      document.getElementById('reader-title').innerText = book.title;
+      rawPdfUrlForDownload = book.pdf_url;
+      if(book.bgm_url && book.bgm_url.trim() !== '') document.getElementById('bgm-player').src = book.bgm_url;
+      
+      renderPDFToFlipbook(book.pdf_url);
+      
+      apiCall('recordAnalytics', { publicId: currentBookId, action: 'view' });
+      
+      readingTimer = setInterval(() => {
+        timeSpent += 10; 
+        if(timeSpent % 30 === 0) apiCall('recordAnalytics', { publicId: currentBookId, action: 'time', value: 30 });
+      }, 10000);
+    }
+
+    function triggerDownload() {
+      if(rawPdfUrlForDownload) {
+        apiCall('recordAnalytics', { publicId: currentBookId, action: 'download' });
+        window.open(rawPdfUrlForDownload, '_blank');
+      }
+    }
+
+    let isPlaying = false;
+    function toggleAudio() {
+      const audio = document.getElementById('bgm-player');
+      if(!audio.src || audio.src === window.location.href) return Swal.fire({icon: 'info', title: 'Opsi', text: 'Buku ini diterbitkan tanpa audio latar.'});
+      
+      if(isPlaying) { 
+         audio.pause(); isPlaying = false; 
+         Swal.fire({icon: 'info', title: 'Audio Dijeda', toast: true, position: 'top-end', timer: 1500, showConfirmButton: false});
+      } else { 
+         audio.play().then(() => {
+            isPlaying = true; 
+            Swal.fire({icon: 'success', title: 'Memutar BGM...', toast: true, position: 'top-end', timer: 1500, showConfirmButton: false});
+         }).catch(err => Swal.fire({icon: 'warning', title: 'Interaksi Diperlukan', text: 'Klik atau sentuh area buku terlebih dahulu.'}));
+      }
+    }
+
+    async function renderPDFToFlipbook(url) {
+      const container = document.getElementById('flipbook-container');
+      container.innerHTML = `<div class="absolute inset-0 flex flex-col items-center justify-center text-white z-0"><div class="animate-spin w-12 h-12 border-4 border-blue-500 rounded-full border-t-transparent mb-4 shadow-[0_0_15px_rgba(59,130,246,0.5)]"></div><p class="font-medium tracking-wide">Menyiapkan Lembaran Resolusi Tinggi...</p></div>`;
+      
+      try {
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+        const pdf = await pdfjsLib.getDocument(url).promise;
+        container.innerHTML = '';
+        
+        for(let i=1; i<=pdf.numPages; i++) {
+          const div = document.createElement('div'); div.className = 'page';
+          const canvas = document.createElement('canvas'); div.appendChild(canvas);
+          container.appendChild(div);
+          
+          pdf.getPage(i).then(page => {
+            const vp = page.getViewport({ scale: 1.5 });
+            canvas.height = vp.height; canvas.width = vp.width;
+            page.render({ canvasContext: canvas.getContext('2d'), viewport: vp });
+          });
+        }
+        
+        setTimeout(() => {
+          pageFlip = new St.PageFlip(container, { width: 400, height: 500, showCover: true, usePortrait: true, maxShadowOpacity: 0.5, mobileScrollSupport: true });
+          pageFlip.loadFromHTML(document.querySelectorAll('.page'));
+        }, 1500);
+      } catch(e) {
+        container.innerHTML = `<div class="absolute inset-0 flex items-center justify-center p-6"><div class="bg-red-900/50 backdrop-blur border border-red-500/50 p-6 rounded-2xl text-center max-w-md"><span class="text-4xl block mb-2">❌</span><strong class="text-white block mb-2">Gagal Memuat Dokumen</strong></div></div>`;
+      }
+    }
+    
+    window.addEventListener('beforeunload', () => { if(readingTimer) clearInterval(readingTimer); });
+  </script>
+</body>
+</html>
