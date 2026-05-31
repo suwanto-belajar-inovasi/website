@@ -209,9 +209,6 @@
   </div>
 
   <script>
-    // ==========================================================
-    // PASTIKAN INI ADALAH URL WEB APP /EXEC YANG BARU DARI APPS SCRIPT
-    // ==========================================================
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzYG3MS9TVVU_b-N0f7cgT5VKF2bA3NnK_f1huyKYnfmfDbdYnlIdjsxManWrz0g2Wm/exec"; 
 
     const OFFICIAL_APP_URL = window.location.origin + window.location.pathname;
@@ -464,9 +461,6 @@
       if(res.success) Swal.fire({icon: 'success', title: 'Berhasil', text: res.message, toast: true, position: 'top-end', timer: 2000, showConfirmButton: false});
     }
 
-    // ==========================================
-    // PERBAIKAN LOGIKA RENDER PDF (ANTI CORS BLOCK)
-    // ==========================================
     async function loadPublicBook(pid) {
       currentBookId = pid;
       const res = await apiCall('getPublicBook', { publicId: pid });
@@ -476,7 +470,6 @@
       const book = res.book;
       document.getElementById('reader-title').innerText = book.title;
       
-      // Mengekstrak ID PDF untuk Download Link yang bersih
       let pdfId = book.pdf_url;
       if (pdfId.includes('/d/')) pdfId = pdfId.split('/d/')[1].split('/')[0];
       else if (pdfId.includes('id=')) pdfId = pdfId.split('id=')[1].split('&')[0];
@@ -518,19 +511,27 @@
       }
     }
 
+    // [UPDATE PENTING]: FUNGSI INI KINI MENGGUNAKAN API INTERNAL UNTUK MENGHINDARI CORS GOOGLE DRIVE
     async function renderPDFToFlipbook(fileId) {
       const container = document.getElementById('flipbook-container');
-      container.innerHTML = `<div class="absolute inset-0 flex flex-col items-center justify-center text-white z-0"><div class="animate-spin w-12 h-12 border-4 border-blue-500 rounded-full border-t-transparent mb-4 shadow-[0_0_15px_rgba(59,130,246,0.5)]"></div><p class="font-medium tracking-wide">Menyiapkan Lembaran Resolusi Tinggi...</p></div>`;
+      container.innerHTML = `<div class="absolute inset-0 flex flex-col items-center justify-center text-white z-0"><div class="animate-spin w-12 h-12 border-4 border-blue-500 rounded-full border-t-transparent mb-4 shadow-[0_0_15px_rgba(59,130,246,0.5)]"></div><p class="font-medium tracking-wide">Mengunduh Dokumen Aman...</p></div>`;
       
       try {
-        // MENGGUNAKAN CORS PROXY UNTUK MENEMBUS BLOKIRAN GOOGLE DRIVE PADA BINARY DATA
-        const directUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
-        const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(directUrl)}`;
-        
+        // 1. Ambil data PDF dari GAS API (mengatasi pemblokiran Google)
+        const res = await apiCall('getPdfData', { fileId: fileId });
+        if (!res.success) throw new Error(res.message);
+
+        // 2. Konversi Base64 string ke Binary Array yang bisa dibaca PDF.js
+        const pdfData = atob(res.base64);
+        const uint8Array = new Uint8Array(pdfData.length);
+        for (let i = 0; i < pdfData.length; i++) {
+            uint8Array[i] = pdfData.charCodeAt(i);
+        }
+
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
         
-        // Memuat PDF via Proxy
-        const pdf = await pdfjsLib.getDocument(proxyUrl).promise;
+        // 3. Render dari memori
+        const pdf = await pdfjsLib.getDocument({ data: uint8Array }).promise;
         container.innerHTML = '';
         
         for(let i=1; i<=pdf.numPages; i++) {
@@ -550,7 +551,7 @@
           pageFlip.loadFromHTML(document.querySelectorAll('.page'));
         }, 1500);
       } catch(e) {
-        container.innerHTML = `<div class="absolute inset-0 flex items-center justify-center p-6"><div class="bg-red-900/50 backdrop-blur border border-red-500/50 p-6 rounded-2xl text-center max-w-md"><span class="text-4xl block mb-2">❌</span><strong class="text-white block mb-2">Gagal Memuat Dokumen</strong><p class="text-xs text-red-200 mt-2">Error Server: ${e.message}</p></div></div>`;
+        container.innerHTML = `<div class="absolute inset-0 flex items-center justify-center p-6"><div class="bg-red-900/50 backdrop-blur border border-red-500/50 p-6 rounded-2xl text-center max-w-md"><span class="text-4xl block mb-2">❌</span><strong class="text-white block mb-2">Gagal Memuat Dokumen</strong><p class="text-xs text-red-200 mt-2">${e.message}</p></div></div>`;
       }
     }
     
