@@ -131,21 +131,20 @@ body.exam-mode { overflow: hidden; user-select: none; }
 .nav-panel-header { text-align: center; padding: 15px; font-weight: bold; border-bottom: 1px solid #cbd5e1; }
 .nav-panel-body { padding: 15px; overflow-y: auto; flex-grow: 1; }
 
-/* REVISI GRID BUTTONS (5 KOLOM TETAP) */
 .q-grid { 
     display: grid; 
-    grid-template-columns: repeat(5, 45px); /* FIX: 5 Kolom ukuran persis sama */
+    grid-template-columns: repeat(5, 45px);
     gap: 8px; 
-    justify-content: center; /* Posisikan Grid persis di tengah panel */
+    justify-content: center; 
     margin-bottom: 20px; 
 }
 .btn-nav-grid { 
     width: 100%; 
-    height: 45px; /* FIX: Tinggi kotak seragam dan bujur sangkar */
+    height: 45px; 
     border: 1px solid #94a3b8; 
     background-color: white; 
     color: #333; 
-    border-radius: 4px; /* FIX: Melengkung kecil sesuai standar CBT */
+    border-radius: 4px; 
     font-weight: 600; 
     font-size: 0.95rem;
     display: flex; 
@@ -455,7 +454,7 @@ body.exam-mode { overflow: hidden; user-select: none; }
 <script>
 // =========================================================================
 // PASTE URL WEB APP APPS SCRIPT ANDA DI SINI
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbw85JLpkTJPzaS8OOkijhzoc-lI62cFOb_e39TYwLvEyDSPnbdv7imS1_-pmwhJh-SyoQ/exec'; 
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbxWMnAiC_y_BCCIqIL_FfrufwuDGbClkpKJ5GalOsS1F0PUyBTBIxUyUtFGQNC5BtpjvQ/exec'; 
 // =========================================================================
 
 let examSubmitting = false; let user = null; let gData = {};
@@ -739,7 +738,9 @@ function downloadPembahasan(eid, judul) {
         let optsHtml = ''; try { let optsArr = JSON.parse(q.Options||"[]"); if(optsArr.length > 0) { optsHtml = '<ol style="margin-top:10px;" type="A">';
         optsArr.forEach(o => optsHtml += `<li style="margin-bottom:5px;">${o}</li>`); optsHtml += '</ol>'; } } catch(e) {}
         let bahasHtml = q.Pembahasan ? `<div class="bahas"><b>Pembahasan:</b><br>${q.Pembahasan}</div>` : '';
-        let jawabanPeserta = q.JawabanPeserta || 'Kosong / Tidak Menjawab';
+        
+        let jawabanPeserta = q.JawabanPeserta;
+        if (!jawabanPeserta || jawabanPeserta === '-') jawabanPeserta = 'Kosong / Tidak Menjawab';
 
         html += `<div class="q-box"><h4 style="margin-top:0;">Soal No. ${q.Nomor || i+1} <span style="font-size:12px; color:#666;">(${q.Bagian || 'Manajerial'})</span></h4><div>${q.Pertanyaan}</div>${optsHtml}
         <div class="kunci">Jawaban Anda: <b style="color: #047857;">${jawabanPeserta}</b> <br> Jawaban Benar: <b>${kunciText}</b></div>${bahasHtml}</div>`;
