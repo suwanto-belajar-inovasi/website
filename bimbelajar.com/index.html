@@ -39,7 +39,7 @@ body.exam-mode { overflow: hidden; user-select: none; }
    ========================================= */
 #view-exam { 
     position: fixed; 
-    top: 0; left: 0; right: 0; bottom: 0; /* FIT SCREEN 100% PREVENT HIDDEN FOOTER */
+    top: 0; left: 0; right: 0; bottom: 0; 
     z-index: 9999; 
     background-color: #f0f4f8; 
     display: flex; 
@@ -105,7 +105,7 @@ body.exam-mode { overflow: hidden; user-select: none; }
     display: flex; 
     justify-content: space-between; 
     align-items: center; 
-    flex-shrink: 0; /* Keep Footer at the bottom */
+    flex-shrink: 0; 
 }
 
 /* Buttons Pill Style */
@@ -130,10 +130,31 @@ body.exam-mode { overflow: hidden; user-select: none; }
 }
 .nav-panel-header { text-align: center; padding: 15px; font-weight: bold; border-bottom: 1px solid #cbd5e1; }
 .nav-panel-body { padding: 15px; overflow-y: auto; flex-grow: 1; }
-.q-nav-grid { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
 
-/* Grid Buttons */
-.btn-nav-grid { width: 42px; height: 42px; border: 1px solid #94a3b8; background-color: white; color: #333; border-radius: 4px; font-weight: bold; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; }
+/* REVISI GRID BUTTONS (5 KOLOM TETAP) */
+.q-grid { 
+    display: grid; 
+    grid-template-columns: repeat(5, 45px); /* FIX: 5 Kolom ukuran persis sama */
+    gap: 8px; 
+    justify-content: center; /* Posisikan Grid persis di tengah panel */
+    margin-bottom: 20px; 
+}
+.btn-nav-grid { 
+    width: 100%; 
+    height: 45px; /* FIX: Tinggi kotak seragam dan bujur sangkar */
+    border: 1px solid #94a3b8; 
+    background-color: white; 
+    color: #333; 
+    border-radius: 4px; /* FIX: Melengkung kecil sesuai standar CBT */
+    font-weight: 600; 
+    font-size: 0.95rem;
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    cursor: pointer; 
+    padding: 0; 
+    transition: all 0.2s;
+}
 .btn-nav-grid.answered { background-color: #2563eb; color: white; border-color: #1d4ed8; }
 .btn-nav-grid.ragu { background-color: #eab308 !important; color: white !important; border-color: #ca8a04 !important; }
 .btn-nav-grid.active-q { outline: 3px solid #38bdf8; outline-offset: 1px; }
@@ -337,7 +358,7 @@ body.exam-mode { overflow: hidden; user-select: none; }
                 <span class="border-bottom border-secondary pb-1 d-inline-block px-3">Daftar Soal</span>
             </div>
             <div class="nav-panel-body">
-                <div class="q-nav-grid" id="nav-grid"></div>
+                <div id="nav-grid"></div>
             </div>
         </div>
     </div>
@@ -934,14 +955,13 @@ function handleFullscreenChange() { if (!isExamFinished && !document.fullscreenE
 
 function enableSecurity() { violationCount = 0; isExamFinished = false; violationLock = false; document.addEventListener("visibilitychange", handleVisibilityChange); window.addEventListener("blur", handleWindowBlur); document.addEventListener("fullscreenchange", handleFullscreenChange); }
 
-// --- FUNGSI BARU (FIX): Ukuran Font Adjuster ---
 function setFontSize(sz) {
   $('#q-slides-container').removeClass('fs-small fs-medium fs-large').addClass('fs-' + sz);
   $('.font-sizer').removeClass('active');
   $(`.font-sizer.fs-${sz}`).addClass('active');
 }
 
-// Function to toggle Sidebar in Mobile View
+// Toggle Sidebar untuk HP / Tablet
 function toggleNavPanel() { $('#sidebar-grid').toggleClass('d-none'); }
 
 function runExam(qs, dur, isResume) {
@@ -949,7 +969,7 @@ function runExam(qs, dur, isResume) {
   const c = $('#q-slides-container'); const g = $('#nav-grid'); c.empty(); g.empty();
   const bagians = ["Manajerial", "Sosial Kultural", "Wawancara"];
   
-  bagians.forEach(b => { g.append(`<div class="q-nav-section-title w-100 mt-2 mb-2 text-center" style="font-size: 0.85rem; color: #64748b;">${b}</div><div class="q-grid w-100" id="grid-${b.replace(/\s+/g, '-')}"></div>`); });
+  bagians.forEach(b => { g.append(`<div class="q-nav-section-title w-100 mt-2 mb-2 text-center" style="font-size: 0.85rem; color: #64748b; font-weight: bold;">${b}</div><div class="q-grid w-100" id="grid-${b.replace(/\s+/g, '-')}"></div>`); });
   
   qs.forEach((q,i) => {
     let inp = '';
