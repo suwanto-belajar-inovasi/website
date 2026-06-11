@@ -18,6 +18,7 @@ body { font-family: 'Poppins', sans-serif; background-color: var(--bg-body); col
 body.exam-mode { overflow: hidden; user-select: none; }
 .hidden { display: none !important; }
 .q-content img, .opt-content img { max-width: 100% !important; height: auto !important; border-radius: 6px; margin: 5px 0; }
+
 /* LANDING PAGE STYLES */
 .hero-section { background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); color: white; padding: 80px 20px; text-align: center; }
 .hero-section ul { text-align: left; background: rgba(255,255,255,0.1); padding: 30px; border-radius: 12px; display: inline-block; max-width: 800px; }
@@ -30,27 +31,45 @@ body.exam-mode { overflow: hidden; user-select: none; }
 #content { width: 100%; margin-left: 260px; padding: 20px; transition: all 0.3s; min-height: 100vh; display: flex; flex-direction: column; }
 #sidebar ul li a { padding: 15px 25px; display: block; color: #cbd5e1; text-decoration: none; border-left: 4px solid transparent; cursor: pointer; }
 #sidebar ul li a:hover, #sidebar ul li a.active { background: rgba(255,255,255,0.05); color: #fff; border-left-color: var(--accent); }
+
 @media (max-width: 768px) { #sidebar { left: -260px; } #sidebar.active { left: 0; } #content { margin-left: 0; padding: 15px; } .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1040; display: none; } .overlay.active { display: block; } }
-/* EXAM VIEW STYLES */
+
+/* EXAM VIEW STYLES - REVISED (PUSMENDIK CBT STYLE) */
 #view-exam { position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100vw; height: 100vh; z-index: 9999; background: #f8fafc; display: flex; flex-direction: column; }
-.exam-header { flex-shrink: 0; height: 60px; background: #0f172a; color: white; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; }
-.exam-container-split { flex-grow: 1; display: flex; flex-direction: row; gap: 20px; padding: 20px; overflow: hidden; }
-.q-main-area { flex: 3; background: white; border-radius: 8px; border: 1px solid #cbd5e1; display: flex; flex-direction: column; overflow: hidden; }
-#q-slides-container { flex-grow: 1; overflow-y: auto; padding: 30px; font-size: 1.15rem; }
-.q-nav-area { flex: 1; max-width: 320px; background: white; border-radius: 8px; border: 1px solid #cbd5e1; display: flex; flex-direction: column; overflow: hidden; }
-.q-nav-scroll { flex-grow: 1; overflow-y: auto; padding: 15px; }
-.q-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)); gap: 8px; margin-bottom: 20px; }
-.q-nav-btn { aspect-ratio: 1; border: 1px solid #94a3b8; background: #fff; font-weight: bold; border-radius: 4px; cursor: pointer; color: #333; }
-.q-nav-btn.active-q { border: 2px solid #000; box-shadow: 0 0 5px rgba(0,0,0,0.5); }
-.q-nav-btn.answered { background: #3b82f6; color: white; border-color: #2563eb; }
-.q-nav-btn.ragu { background: #eab308 !important; color: #000 !important; border-color: #ca8a04 !important; }
-.q-nav-section-title { font-size: 0.9rem; font-weight: bold; text-transform: uppercase; margin-bottom: 10px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; color: #475569; }
+.exam-header-top { background: #1e3a8a; color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); z-index: 10; }
+.exam-sub-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; border-bottom: 2px solid #e2e8f0; background: #fff; }
+.exam-container-split { flex-grow: 1; display: flex; flex-direction: row; gap: 20px; padding: 20px; overflow: hidden; background: #f1f5f9; }
+
+.q-main-area { flex: 3; background: white; border-radius: 8px; border: 1px solid #cbd5e1; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+#q-slides-container { flex-grow: 1; overflow-y: auto; padding: 30px; transition: font-size 0.2s ease; }
+.fs-small { font-size: 0.95rem; }
+.fs-medium { font-size: 1.15rem; }
+.fs-large { font-size: 1.35rem; }
+
+.font-sizer { cursor: pointer; margin: 0 5px; font-weight: bold; color: #64748b; }
+.font-sizer:hover, .font-sizer.active { color: #1e3a8a; }
+.timer-box { border: 2px solid #cbd5e1; border-radius: 20px; padding: 6px 20px; font-weight: bold; font-family: monospace; font-size: 1.1rem; background: #fff; }
+
 .exam-footer-bar { display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; background: #f8fafc; border-top: 1px solid #cbd5e1; }
-@media (max-width: 768px) { .exam-container-split { flex-direction: column; overflow-y: auto; } .q-nav-area { flex: none; max-width: 100%; max-height: 250px; } #q-slides-container { overflow-y: visible; } .exam-footer-bar { flex-direction: column; gap: 10px; } .exam-footer-bar button, .exam-footer-bar label { width: 100%; text-align: center; justify-content: center; } }
+.btn-exam-nav { border-radius: 30px; padding: 10px 25px; font-weight: bold; font-size: 1rem; border: none; box-shadow: 0 2px 4px rgba(0,0,0,0.1); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.btn-prev-exam { background-color: #f43f5e; color: white; } 
+.btn-ragu-exam { background-color: #f59e0b; color: white; gap: 8px; }
+.btn-next-exam { background-color: #0ea5e9; color: white; }
+
+.q-nav-area { flex: 1; max-width: 320px; background: white; border-radius: 8px; border: 1px solid #cbd5e1; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+.q-nav-scroll { flex-grow: 1; overflow-y: auto; padding: 15px; }
+.q-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(42px, 1fr)); gap: 10px; margin-bottom: 20px; }
+.q-nav-btn { aspect-ratio: 1; border: 1px solid #94a3b8; background: #fff; font-weight: bold; border-radius: 4px; cursor: pointer; color: #333; transition: all 0.2s; }
+.q-nav-btn.active-q { outline: 3px solid #38bdf8; outline-offset: 1px; border-color: #0ea5e9; }
+.q-nav-btn.answered { background: #2563eb; color: white; border-color: #1d4ed8; }
+.q-nav-btn.ragu { background: #eab308 !important; color: #fff !important; border-color: #ca8a04 !important; }
+
+@media (max-width: 768px) { .exam-container-split { flex-direction: column; overflow-y: auto; } .q-nav-area { flex: none; max-width: 100%; max-height: 250px; } #q-slides-container { overflow-y: visible; } .exam-footer-bar { flex-direction: column; gap: 10px; } .exam-footer-bar button, .exam-footer-bar label { width: 100%; text-align: center; justify-content: center; } .exam-sub-header { flex-direction: column; align-items: flex-start; gap: 10px; } }
+
 .loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); z-index: 10000; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
 .spinner { width: 50px; height: 50px; border: 5px solid #e2e8f0; border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
 @keyframes spin { 100% { transform: rotate(360deg); } }
-/* Form Review / Pembahasan Styles */
+
 .review-card { border-radius: 8px; margin-bottom: 20px; border: 2px solid #e2e8f0; overflow: hidden; background: white; }
 .review-card.correct { border-color: #3b82f6; }
 .review-card.wrong { border-color: #ef4444; }
@@ -58,8 +77,6 @@ body.exam-mode { overflow: hidden; user-select: none; }
 .review-card.correct .review-header { background: #eff6ff; color: #1e3a8a; }
 .review-card.wrong .review-header { background: #fef2f2; color: #991b1b; }
 .review-body { padding: 20px; }
-.review-ans-box { margin-top: 15px; padding: 15px; border-radius: 6px; background: #f8fafc; }
-.pembahasan-box { margin-top: 15px; padding: 15px; border-left: 4px solid #10b981; background: #f0fdf4; }
 .swal2-container { z-index: 20000 !important; }
 #q-slides-container .form-check-input { width: 1.5em !important; height: 1.5em !important; cursor: pointer; margin-top: 0 !important; }
 .clickable-opt { cursor: pointer; transition: all 0.2s ease-in-out; margin-bottom: 0; border: 1px solid #cbd5e1; border-radius: 6px; }
@@ -69,6 +86,7 @@ body.exam-mode { overflow: hidden; user-select: none; }
 </head>
 <body>
 <div id="loader" class="loader"><div class="spinner"></div></div>
+
 <div id="view-landing" class="hidden">
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3">
 <div class="container">
@@ -105,6 +123,7 @@ body.exam-mode { overflow: hidden; user-select: none; }
 <p class="mb-0 fw-bold"> 🌟 BIMBELAJAR.COM – Teman Setia Menuju Kelulusan! © 2026 All rights reserved.</p>
 </footer>
 </div>
+
 <div id="view-auth" class="auth-container hidden">
 <div class="auth-card">
 <div class="text-center mb-4">
@@ -132,6 +151,7 @@ body.exam-mode { overflow: hidden; user-select: none; }
 <div class="text-center mt-4"><button class="btn btn-link text-muted small" onclick="goHome()"><i class="fas fa-arrow-left"></i> Kembali ke Beranda</button></div>
 </div>
 </div>
+
 <div id="sidebar-overlay" class="overlay" onclick="toggleSidebar()"></div>
 <div id="view-dashboard" class="hidden wrapper">
 <nav id="sidebar">
@@ -167,35 +187,48 @@ body.exam-mode { overflow: hidden; user-select: none; }
 <footer class="mt-4 text-center text-muted small pb-3 border-top pt-3">© 2026 BIMBELAJAR.COM</footer>
 </div>
 </div>
+
 <div id="view-exam" class="hidden">
-<div class="exam-header">
-<div class="d-flex align-items-center">
-<div class="fs-4 me-3 fw-bold">CAT BKN SYSTEM</div>
-<div class="d-none d-md-block"><span class="m-0 text-white-50" id="do-exam-title">Judul Ujian</span></div>
+    <div class="exam-header-top">
+        <div class="fw-bold fs-5 d-flex align-items-center"><i class="fas fa-graduation-cap me-2 fs-4"></i> CBT APPLICATION</div>
+        <div class="d-flex align-items-center gap-3">
+            <div class="fw-bold d-none d-sm-block"><span id="u-exam-name">Nama Peserta</span></div>
+        </div>
+    </div>
+    
+    <div class="exam-container-split">
+        <div class="q-main-area">
+            <div class="exam-sub-header">
+                <div>
+                    <h3 class="mb-1 fw-bold text-dark" id="disp-no-soal">Soal nomor 1</h3>
+                    <div class="text-muted small mt-2">Ukuran font soal: 
+                        <span class="font-sizer fs-small" onclick="setFontSize('small')">A</span>
+                        <span class="font-sizer fs-medium active" onclick="setFontSize('medium')">A</span>
+                        <span class="font-sizer fs-large" onclick="setFontSize('large')">A</span>
+                    </div>
+                </div>
+                <div class="timer-box"><span class="me-2 text-muted fs-6">Sisa Waktu:</span><span id="timer-disp" class="fs-5">00:00:00</span></div>
+            </div>
+            
+            <div id="q-slides-container" class="fs-medium"></div>
+            
+            <div class="exam-footer-bar">
+                <button class="btn btn-exam-nav btn-prev-exam" id="btn-prev" onclick="navSlide(-1)"><i class="fas fa-chevron-left me-2"></i> Soal sebelumnya</button>
+                <label class="btn btn-exam-nav btn-ragu-exam text-dark">
+                    <input type="checkbox" id="chk-ragu" onchange="toggleRagu()" style="transform: scale(1.3);"> Ragu - Ragu
+                </label>
+                <button class="btn btn-exam-nav btn-next-exam" id="btn-next" onclick="navSlide(1)">Soal Selanjutnya <i class="fas fa-chevron-right ms-2"></i></button>
+                <button class="btn btn-exam-nav btn-next-exam hidden" id="btn-finish" onclick="submitExamButton(false)"><i class="fas fa-check-circle me-2"></i> Selesai Ujian</button>
+            </div>
+        </div>
+        
+        <div class="q-nav-area">
+            <div class="bg-white p-3 border-bottom fw-bold text-center text-dark" style="font-size: 1.1rem;">Daftar Soal</div>
+            <div class="q-nav-scroll" id="nav-grid"></div>
+        </div>
+    </div>
 </div>
-<div class="d-flex align-items-center gap-3">
-<div class="fw-bold"><span id="u-exam-name">Nama Peserta</span></div>
-<div class="badge bg-danger fs-5 p-2 font-monospace border border-light"><i class="fas fa-clock me-2"></i><span id="timer-disp">00:00:00</span></div>
-</div>
-</div>
-<div class="exam-container-split">
-<div class="q-main-area">
-<div id="q-slides-container"></div>
-<div class="exam-footer-bar">
-<button class="btn btn-danger px-4 fw-bold shadow-sm" id="btn-prev" onclick="navSlide(-1)"><i class="fas fa-chevron-left"></i> Soal Sebelumnya</button>
-<label class="btn btn-warning px-4 fw-bold shadow-sm text-dark d-flex align-items-center gap-2">
-<input type="checkbox" id="chk-ragu" onchange="toggleRagu()" style="transform: scale(1.5);"> Ragu-Ragu
-</label>
-<button class="btn btn-primary px-4 fw-bold shadow-sm" id="btn-next" onclick="navSlide(1)">Selanjutnya <i class="fas fa-chevron-right"></i></button>
-<button class="btn btn-success px-4 fw-bold shadow-sm hidden" id="btn-finish" onclick="submitExamButton(false)"><i class="fas fa-check-circle me-1"></i> Selesai Ujian</button>
-</div>
-</div>
-<div class="q-nav-area">
-<div class="bg-light p-2 border-bottom fw-bold text-center text-primary"><i class="fas fa-th me-2"></i>Navigasi Soal</div>
-<div class="q-nav-scroll" id="nav-grid"></div>
-</div>
-</div>
-</div>
+
 <div id="view-review" class="hidden">
 <div class="container py-4">
 <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
@@ -211,6 +244,7 @@ body.exam-mode { overflow: hidden; user-select: none; }
 <div id="review-container"></div>
 </div>
 </div>
+
 <div class="modal fade" id="modalExam" tabindex="-1">
 <div class="modal-dialog modal-lg">
 <div class="modal-content">
@@ -242,6 +276,7 @@ body.exam-mode { overflow: hidden; user-select: none; }
 </div>
 </div>
 </div>
+
 <div class="modal fade" id="modalQ" tabindex="-1">
 <div class="modal-dialog modal-fullscreen">
 <div class="modal-content bg-light">
@@ -258,6 +293,7 @@ body.exam-mode { overflow: hidden; user-select: none; }
 </div>
 </div>
 </div>
+
 <div class="modal fade" id="modalUser" tabindex="-1">
 <div class="modal-dialog">
 <div class="modal-content">
@@ -285,7 +321,7 @@ body.exam-mode { overflow: hidden; user-select: none; }
 // =========================================================================
 // PASTE URL WEB APP APPS SCRIPT ANDA DI SINI
 // PENTING: Deploy Apps Script sebagai Web App baru -> (Execute as: Me, Who has access: Anyone)
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbyBMYmGXghVMjtegx63WZsdbv4bkeNpaZSV3zpAIHuslEb0ptTM8dgfvkY3POhvtwMD_Q/exec'; 
+const GAS_URL = 'https://script.google.com/macros/s/AKfycby7sma51IK1t9E_okvKQlVloq06lwyFTF-RnoAcbAQyKJGFUPwovfidaAdX-vijLcdr-Q/exec'; 
 // =========================================================================
 
 let examSubmitting = false; let user = null; let gData = {};
@@ -297,7 +333,7 @@ let isExamFinished = false; let violationLock = false;
 let raguList = [];
 let currentPageTrack = '';
 
-// --- FETCH WRAPPER (Pengganti google.script.run) ---
+// --- FETCH WRAPPER ---
 async function gasAPI(action, payload = {}) {
   try {
     const response = await fetch(GAS_URL, {
@@ -343,7 +379,6 @@ function openExamModal(str) {
 $(document).ready(() => {
   $('#togglePassword').on('click', function() { const type = $('#p-login').attr('type') === 'password' ? 'text' : 'password'; $('#p-login').attr('type', type); $(this).toggleClass('fa-eye fa-eye-slash'); });
   
-  // Memeriksa lisensi di backend melalui API
   gasAPI('checkLicense').then(res => {
     showLoad(false);
     if(res.status === 'error') {
@@ -530,7 +565,8 @@ function executeStartExam(eid, tokenInput) {
     if(res.status === 'success') {
       localStorage.removeItem(`ANS_${user.ID}_${eid}`); localStorage.removeItem(`RAGU_${user.ID}_${eid}`);
       activeExamId = eid; totalQ = res.data.length; currentQuestionsData = res.data;
-      $('#do-exam-title').html(`${res.judul}`); $('#u-exam-name').html(`${user.Nama}`);
+      
+      $('#u-exam-name').html(`${user.Nama}`);
       try { localStorage.setItem('cbt_active_exam', JSON.stringify({ id: eid, qs: res.data, dur: res.duration, start: Date.now(), judul: res.judul, token: res.token })); } catch(e) {}
       violationCount = 0; enableSecurity(); runExam(res.data, res.duration, false);
     } else { Swal.fire('Akses Ditolak', res.msg, 'error'); }
@@ -785,10 +821,18 @@ function handleFullscreenChange() { if (!isExamFinished && !document.fullscreenE
 
 function enableSecurity() { violationCount = 0; isExamFinished = false; violationLock = false; document.addEventListener("visibilitychange", handleVisibilityChange); window.addEventListener("blur", handleWindowBlur); document.addEventListener("fullscreenchange", handleFullscreenChange); }
 
+// --- FUNGSI BARU (FIX): Ukuran Font Adjuster ---
+function setFontSize(sz) {
+  $('#q-slides-container').removeClass('fs-small fs-medium fs-large').addClass('fs-' + sz);
+  $('.font-sizer').removeClass('active');
+  $(`.font-sizer.fs-${sz}`).addClass('active');
+}
+
 function runExam(qs, dur, isResume) {
   $('#view-dashboard').addClass('hidden'); $('#view-exam').removeClass('hidden'); $('body').addClass('exam-mode');
   const c = $('#q-slides-container'); const g = $('#nav-grid'); c.empty(); g.empty();
   const bagians = ["Manajerial", "Sosial Kultural", "Wawancara"];
+  
   bagians.forEach(b => { g.append(`<div class="q-nav-section-title">${b}</div><div class="q-grid" id="grid-${b.replace(/\s+/g, '-')}"></div>`); });
   
   qs.forEach((q,i) => {
@@ -797,7 +841,13 @@ function runExam(qs, dur, isResume) {
       const opts = JSON.parse(q.Options||"[]");
       opts.forEach((o, x) => { let alpha = String.fromCharCode(65 + x); inp += `<label class="p-3 bg-light clickable-opt d-flex align-items-start w-100"><input class="form-check-input flex-shrink-0 mt-1 me-3" type="${q.Tipe==='PGK'?'checkbox':'radio'}" name="ans-${q.QID}" value="${encodeURIComponent(o)}" onchange="saveAnsLocal('${q.QID}', '${q.Tipe}', ${i})"><div class="flex-grow-1 opt-content mb-0 fw-bold me-2" style="max-width:20px;">${alpha}.</div><div class="flex-grow-1 opt-content mb-0">${o}</div></label>`; });
     } else inp = `<textarea class="form-control" rows="5" name="ans-${q.QID}" onchange="saveAnsLocal('${q.QID}', 'ESSAY', ${i})"></textarea>`;
-    c.append(`<div class="q-slide hidden" id="sl-${i}" data-qid="${q.QID}" data-type="${q.Tipe}"><div class="badge bg-primary mb-3 px-3 py-2 fs-6 shadow-sm">Soal No. ${i+1} <span class="ms-2 fw-normal opacity-75">(${q.Bagian || 'Manajerial'})</span></div><div class="mb-4 q-content">${q.Pertanyaan}</div><div class="d-flex flex-column gap-2">${inp}</div></div>`);
+    
+    // HTML yang digenerate lebih polos karena title sudah pindah ke sub-header di atas
+    c.append(`<div class="q-slide hidden" id="sl-${i}" data-qid="${q.QID}" data-type="${q.Tipe}">
+      <div class="mb-4 q-content">${q.Pertanyaan}</div>
+      <div class="d-flex flex-column gap-2">${inp}</div>
+    </div>`);
+    
     let currentBagian = q.Bagian || 'Manajerial'; let targetGridId = `#grid-${currentBagian.replace(/\s+/g, '-')}`;
     $(targetGridId).append(`<button id="nb-${i}" class="q-nav-btn shadow-sm" onclick="jump(${i})">${i+1}</button>`);
   });
@@ -809,7 +859,7 @@ function runExam(qs, dur, isResume) {
   timerInt = setInterval(() => {
     const diff = Math.floor((endTime - Date.now()) / 1000);
     if(diff <= 0) { processSubmission(); }
-    else { let h = Math.floor(diff/3600), m = Math.floor((diff%3600)/60), s = diff%60; $('#timer-disp').text(`${h<10?'0':''}${h}:${m<10?'0':''}${m}:${s<10?'0':''}${s}`); if(diff < 300) $('#timer-disp').removeClass('bg-danger').addClass('bg-warning text-dark'); }
+    else { let h = Math.floor(diff/3600), m = Math.floor((diff%3600)/60), s = diff%60; $('#timer-disp').text(`${h<10?'0':''}${h}:${m<10?'0':''}${m}:${s<10?'0':''}${s}`); if(diff < 300) { $('#timer-disp').addClass('text-danger'); $('.timer-box').addClass('border-danger'); } }
   }, 1000);
   monitorInterval = setInterval(() => { gasAPI('updateProgress', {eid: activeExamId, uid: user.ID, c: $('.q-nav-btn.answered').length, t: totalQ}); }, 20000);
   autosaveInterval = setInterval(() => { const key = `ANS_${user.ID}_${activeExamId}`; try { const stored = localStorage.getItem(key); if(stored) { let data = JSON.parse(decodeURIComponent(atob(stored))); gasAPI('autosave', {eid: activeExamId, uid: user.ID, j: JSON.stringify(data)}); } } catch(e){} }, 60000);
@@ -836,7 +886,34 @@ function restoreAnswers(qs) {
 }
 
 function markAns(i) { $(`#nb-${i}`).addClass('answered'); }
-function jump(i) { currentQIdx = i; $('.q-slide').addClass('hidden'); $(`#sl-${i}`).removeClass('hidden'); $('.q-nav-btn').removeClass('active-q'); $(`#nb-${i}`).addClass('active-q'); $('#chk-ragu').prop('checked', raguList.includes(i)); if (i === 0) $('#btn-prev').prop('disabled', true); else $('#btn-prev').prop('disabled', false); if (i === totalQ - 1) { $('#btn-next').addClass('hidden'); $('#btn-finish').removeClass('hidden'); } else { $('#btn-next').removeClass('hidden'); $('#btn-finish').addClass('hidden'); } applyMathJax(); }
+
+// --- FUNGSI BARU (FIX): Penyesuaian sinkronisasi tampilan header ---
+function jump(i) { 
+    currentQIdx = i; 
+    
+    // Update Judul Nomor
+    $('#disp-no-soal').text('Soal nomor ' + (i + 1));
+    
+    $('.q-slide').addClass('hidden'); 
+    $(`#sl-${i}`).removeClass('hidden'); 
+    $('.q-nav-btn').removeClass('active-q'); 
+    $(`#nb-${i}`).addClass('active-q'); 
+    
+    $('#chk-ragu').prop('checked', raguList.includes(i)); 
+    
+    if (i === 0) $('#btn-prev').prop('disabled', true); 
+    else $('#btn-prev').prop('disabled', false); 
+    
+    if (i === totalQ - 1) { 
+        $('#btn-next').addClass('hidden'); 
+        $('#btn-finish').removeClass('hidden'); 
+    } else { 
+        $('#btn-next').removeClass('hidden'); 
+        $('#btn-finish').addClass('hidden'); 
+    } 
+    applyMathJax(); 
+}
+
 function navSlide(dir) { let next = currentQIdx + dir; if(next >= 0 && next < totalQ) jump(next); }
 
 function toggleRagu() {
