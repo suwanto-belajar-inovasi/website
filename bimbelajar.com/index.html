@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>BIMBELAJAR.COM- Tryout CAT CPNS</title>
+<title>BIMBELAJAR.COM - Tryout CAT CPNS</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -34,32 +34,100 @@ body.exam-mode { overflow: hidden; user-select: none; }
 
 @media (max-width: 768px) { #sidebar { left: -260px; } #sidebar.active { left: 0; } #content { margin-left: 0; padding: 15px; } .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1040; display: none; } .overlay.active { display: block; } }
 
-/* EXAM VIEW STYLES - PUSMENDIK EXACT MATCH */
-#view-exam { background-color: #f0f4f8; min-height: 100vh; display: flex; flex-direction: column; }
-.exam-header-top { background-color: #1e3a8a; height: 60px; display: flex; align-items: center; padding: 0 20px; color: white; justify-content: space-between; flex-shrink: 0; }
-.exam-main-wrap { flex-grow: 1; padding: 20px; max-width: 1400px; margin: 0 auto; width: 100%; overflow: hidden; }
+/* =========================================
+   EXAM VIEW STYLES - PUSMENDIK EXACT MATCH 
+   ========================================= */
+#view-exam { 
+    position: fixed; 
+    top: 0; left: 0; right: 0; bottom: 0; /* FIT SCREEN 100% PREVENT HIDDEN FOOTER */
+    z-index: 9999; 
+    background-color: #f0f4f8; 
+    display: flex; 
+    flex-direction: column; 
+}
+.exam-header-top { 
+    background-color: #1e3a8a; 
+    height: 60px; 
+    display: flex; 
+    align-items: center; 
+    padding: 0 20px; 
+    color: white; 
+    justify-content: space-between; 
+    flex-shrink: 0; 
+}
+.exam-main-wrap { 
+    flex-grow: 1; 
+    padding: 20px; 
+    max-width: 1400px; 
+    margin: 0 auto; 
+    width: 100%; 
+    overflow: hidden; 
+    display: flex;
+    gap: 20px;
+}
 
 /* Sub Header Elements */
-.exam-sub-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+.exam-sub-header { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: flex-end; 
+    margin-bottom: 20px; 
+    flex-wrap: wrap; 
+    gap: 10px; 
+    flex-shrink: 0;
+}
 .font-sizer { cursor: pointer; margin: 0 8px; font-weight: bold; color: #64748b; font-family: serif; }
 .font-sizer:hover, .font-sizer.active { color: #1e3a8a; border-bottom: 2px solid #1e3a8a; padding-bottom: 2px; }
 .fs-small { font-size: 0.95rem; } .fs-medium { font-size: 1.15rem; } .fs-large { font-size: 1.35rem; }
 .timer-pusmendik { border: 2px solid #e11d48; border-radius: 50px; padding: 6px 20px; background: white; font-weight: bold; font-family: monospace; font-size: 1.1rem; }
 
-/* Main Areas */
-.q-box-container { background: white; border-radius: 8px; border: 1px solid #cbd5e1; box-shadow: 0 2px 5px rgba(0,0,0,0.05); min-height: 450px; display: flex; flex-direction: column; }
-.q-box-content { padding: 30px; flex-grow: 1; overflow-y: auto; color: #333; }
-.q-box-footer { background: white; padding: 20px 30px; border-top: 1px solid #cbd5e1; border-radius: 0 0 8px 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+/* Main Question Box Areas */
+.q-box-container { 
+    background: white; 
+    border-radius: 8px; 
+    border: 1px solid #cbd5e1; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+    display: flex; 
+    flex-direction: column; 
+    flex-grow: 1;
+    overflow: hidden;
+}
+.q-box-content { 
+    padding: 30px; 
+    flex-grow: 1; 
+    overflow-y: auto; 
+    color: #333; 
+}
+.q-box-footer { 
+    background: #f8fafc; 
+    padding: 15px 30px; 
+    border-top: 1px solid #cbd5e1; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    flex-shrink: 0; /* Keep Footer at the bottom */
+}
 
 /* Buttons Pill Style */
-.btn-pill-exam { border-radius: 50px; padding: 10px 25px; font-weight: bold; font-size: 0.95rem; border: none; box-shadow: 0 2px 4px rgba(0,0,0,0.1); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.btn-pill-exam { border-radius: 50px; padding: 10px 25px; font-weight: bold; font-size: 0.95rem; border: none; box-shadow: 0 2px 4px rgba(0,0,0,0.1); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: opacity 0.2s; }
+.btn-pill-exam:hover { opacity: 0.9; }
 .btn-prev-soal { background-color: #e11d48; color: white; } 
-.btn-ragu-soal { background-color: #f59e0b; color: white; gap: 8px; margin: 0; }
+.btn-ragu-soal { background-color: #f59e0b; color: white !important; gap: 8px; margin: 0; }
 .btn-next-soal { background-color: #0ea5e9; color: white; }
 .btn-info-soal { background-color: #0ea5e9; color: white; border-radius: 50px; font-weight: bold; padding: 8px 20px; border: none; }
 
 /* Navigasi Panel Sidebar */
-.nav-panel-container { background: white; border-radius: 8px; border: 1px solid #cbd5e1; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; flex-direction: column; height: 100%; max-height: calc(100vh - 100px); }
+.nav-panel-container { 
+    background: white; 
+    border-radius: 8px; 
+    border: 1px solid #cbd5e1; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+    display: flex; 
+    flex-direction: column; 
+    height: 100%; 
+    flex-basis: 320px;
+    flex-shrink: 0;
+}
 .nav-panel-header { text-align: center; padding: 15px; font-weight: bold; border-bottom: 1px solid #cbd5e1; }
 .nav-panel-body { padding: 15px; overflow-y: auto; flex-grow: 1; }
 .q-nav-grid { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
@@ -70,12 +138,25 @@ body.exam-mode { overflow: hidden; user-select: none; }
 .btn-nav-grid.ragu { background-color: #eab308 !important; color: white !important; border-color: #ca8a04 !important; }
 .btn-nav-grid.active-q { outline: 3px solid #38bdf8; outline-offset: 1px; }
 
-/* Checkbox & Options Fixes */
+/* Options Fixes */
 #q-slides-container .form-check-input { width: 1.2em !important; height: 1.2em !important; cursor: pointer; margin-top: 4px !important; }
-.clickable-opt { cursor: pointer; display: flex; align-items: flex-start; margin-bottom: 15px; transition: all 0.2s ease-in-out; border-radius: 6px; padding: 8px; }
-.clickable-opt:hover { background-color: #f8fafc; }
+.clickable-opt { cursor: pointer; display: flex; align-items: flex-start; margin-bottom: 10px; transition: all 0.2s ease-in-out; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px; background-color: #fff; }
+.clickable-opt:hover { background-color: #f8fafc; border-color: var(--secondary); }
 
-@media (max-width: 991px) { .exam-main-wrap { flex-direction: column; overflow-y: auto; } .nav-panel-container { margin-top: 20px; max-height: 300px; } }
+@media (max-width: 991px) { 
+    .exam-main-wrap { flex-direction: column; overflow-y: auto; } 
+    .q-main-area { flex-shrink: 0; }
+    .nav-panel-container { 
+        position: absolute; 
+        right: 20px; 
+        top: 80px; 
+        bottom: 20px; 
+        z-index: 1000; 
+        box-shadow: -5px 0 15px rgba(0,0,0,0.1); 
+    } 
+    .q-box-footer { flex-direction: column; gap: 10px; }
+    .q-box-footer button, .q-box-footer label { width: 100%; text-align: center; }
+}
 
 .loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); z-index: 10000; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
 .spinner { width: 50px; height: 50px; border: 5px solid #e2e8f0; border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
@@ -90,7 +171,7 @@ body.exam-mode { overflow: hidden; user-select: none; }
 <div id="view-landing" class="hidden">
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3">
 <div class="container">
-<a class="navbar-brand fw-bold text-primary" href="#"><i class="fas fa-graduation-cap me-2"></i>Belajar Inovasi</a>
+<a class="navbar-brand fw-bold text-primary" href="#"><i class="fas fa-graduation-cap me-2"></i>BIMBELAJAR.COM</a>
 <div>
 <button class="btn btn-outline-primary me-2 fw-bold" onclick="showAuth('login')">Masuk</button>
 <button class="btn btn-primary fw-bold" onclick="showAuth('register')">Daftar Akun</button>
@@ -99,10 +180,10 @@ body.exam-mode { overflow: hidden; user-select: none; }
 </nav>
 <div class="hero-section">
 <div class="container">
-<h1 class="display-4 fw-bold mb-4">BIMBELAJAR.COM– Bimbingan Belajar Online Terlengkap! 🚀 </h1>
-<p class="lead mb-4">Siap hadapi ujian? Dengan Belajar Inovasi, Anda akan berlatih menggunakan CAT Online yang dirancang khusus untuk membantu menembus ujian TBS LPDP, PPG, PPPK, CPNS Guru & Non Guru.</p>
+<h1 class="display-4 fw-bold mb-4">BIMBELAJAR.COM – Bimbingan Belajar Online Terlengkap! 🚀 </h1>
+<p class="lead mb-4">Siap hadapi ujian? Dengan BIMBELAJAR.COM, Anda akan berlatih menggunakan CAT Online yang dirancang khusus untuk membantu menembus ujian TBS LPDP, PPG, PPPK, CPNS Guru & Non Guru.</p>
 <div class="text-start d-inline-block mx-auto mb-5 shadow" style="background: rgba(255,255,255,0.15); padding: 30px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.2);">
-<h4 class="fw-bold mb-4 text-warning"><i class="fas fa-lightbulb me-2"></i> Kenapa harus Belajar Inovasi?</h4>
+<h4 class="fw-bold mb-4 text-warning"><i class="fas fa-lightbulb me-2"></i> Kenapa harus BIMBELAJAR.COM?</h4>
 <ul class="list-unstyled mb-0">
 <li class="mb-3"><i class="fas fa-check-circle text-success me-3 fs-5"></i> Latihan soal dengan simulasi yang mirip soal ujian asli</li>
 <li class="mb-3"><i class="fas fa-check-circle text-success me-3 fs-5"></i> Video pembahasan terbaru + tips & trik menjawab cepat dan tepat</li>
@@ -120,7 +201,7 @@ body.exam-mode { overflow: hidden; user-select: none; }
 </div>
 </div>
 <footer class="bg-dark text-white text-center py-4">
-<p class="mb-0 fw-bold"> 🌟 BIMBELAJAR.COM– Teman Setia Menuju Kelulusan! © 2026 All rights reserved.</p>
+<p class="mb-0 fw-bold"> 🌟 BIMBELAJAR.COM – Teman Setia Menuju Kelulusan! © 2026 All rights reserved.</p>
 </footer>
 </div>
 
@@ -128,7 +209,7 @@ body.exam-mode { overflow: hidden; user-select: none; }
 <div class="auth-card">
 <div class="text-center mb-4">
 <div id="logo-container"><img src="https://lh3.googleusercontent.com/d/1Udvay0kRIle364MvNswDCnLu5YbG5X_P" class="mb-3 rounded" width="100" alt="Logo"></div>
-<h4 class="fw-bold text-primary text-center"><span style="white-space: nowrap;">Belajar Inovasi</span></h4>
+<h4 class="fw-bold text-primary text-center"><span style="white-space: nowrap;">BIMBELAJAR.COM</span></h4>
 <p class="text-muted small" id="auth-subtitle">Login ke Akun Anda</p>
 </div>
 <form id="frm-login" onsubmit="event.preventDefault(); handleLogin(); return false;">
@@ -184,7 +265,7 @@ body.exam-mode { overflow: hidden; user-select: none; }
 <button class="btn btn-outline-primary btn-sm rounded-pill px-3" onclick="appRefresh()"><i class="fas fa-sync-alt"></i> Refresh</button>
 </nav>
 <div id="content-area"></div>
-<footer class="mt-4 text-center text-muted small pb-3 border-top pt-3">© 2026 Belajar Inovasi</footer>
+<footer class="mt-4 text-center text-muted small pb-3 border-top pt-3">© 2026 BIMBELAJAR.COM</footer>
 </div>
 </div>
 
@@ -193,15 +274,16 @@ body.exam-mode { overflow: hidden; user-select: none; }
         <div class="d-flex align-items-center">
             <i class="fas fa-graduation-cap fs-4 me-2"></i>
             <div>
-                <h6 class="m-0 fw-bold">Belajar Inovasi</h6>
+                <h6 class="m-0 fw-bold">BIMBELAJAR.COM</h6>
                 <small style="font-size: 0.75rem;">CBT Application</small>
             </div>
         </div>
         <div class="fw-bold d-none d-sm-block"><span id="u-exam-name">Nama Peserta</span></div>
     </div>
     
-    <div class="exam-main-wrap d-flex gap-4">
-        <div class="d-flex flex-column" style="flex: 1; min-width: 0;">
+    <div class="exam-main-wrap">
+        <div class="d-flex flex-column q-main-area">
+            
             <div class="exam-sub-header">
                 <div>
                     <h3 class="mb-1 fw-bold text-dark" id="disp-no-soal">Soal nomor 1</h3>
@@ -211,12 +293,16 @@ body.exam-mode { overflow: hidden; user-select: none; }
                         <span class="font-sizer fs-large" onclick="setFontSize('large')">A</span>
                     </div>
                 </div>
+                <div class="d-none d-md-block">
+                    <button class="btn-info-soal shadow-sm">INFORMASI SOAL</button>
+                </div>
                 <div class="d-flex align-items-center gap-3">
-                    <button class="btn-info-soal d-none d-md-block shadow-sm">INFORMASI SOAL</button>
                     <div class="timer-pusmendik shadow-sm">
                         <span class="text-muted fs-6 me-2 font-sans">Sisa Waktu:</span><span id="timer-disp">00:00:00</span>
                     </div>
-                    <button class="btn-info-soal d-lg-none shadow-sm" onclick="$('.nav-panel-container').toggle()">Daftar Soal</button>
+                    <button class="btn-info-soal d-lg-none shadow-sm" onclick="toggleNavPanel()">
+                        <i class="fas fa-th-list"></i>
+                    </button>
                 </div>
             </div>
             
@@ -228,8 +314,9 @@ body.exam-mode { overflow: hidden; user-select: none; }
                         <i class="fas fa-chevron-left me-2"></i> Soal sebelumnya
                     </button>
                     
-                    <label class="btn-pill-exam btn-ragu-soal text-dark">
-                        <input type="checkbox" id="chk-ragu" onchange="toggleRagu()" style="transform: scale(1.3);"> Ragu - Ragu
+                    <label class="btn-pill-exam btn-ragu-soal">
+                        <input type="checkbox" id="chk-ragu" onchange="toggleRagu()" style="transform: scale(1.3); margin-top:2px;"> 
+                        <span class="ms-2">Ragu - Ragu</span>
                     </label>
                     
                     <div>
@@ -242,9 +329,10 @@ body.exam-mode { overflow: hidden; user-select: none; }
                     </div>
                 </div>
             </div>
+            
         </div>
         
-        <div class="nav-panel-container d-none d-lg-flex" style="flex-basis: 320px;">
+        <div class="nav-panel-container d-none d-lg-flex" id="sidebar-grid">
             <div class="nav-panel-header">
                 <span class="border-bottom border-secondary pb-1 d-inline-block px-3">Daftar Soal</span>
             </div>
@@ -346,7 +434,7 @@ body.exam-mode { overflow: hidden; user-select: none; }
 <script>
 // =========================================================================
 // PASTE URL WEB APP APPS SCRIPT ANDA DI SINI
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbw2ElXWn2BSKyZzKb9clOEm-BTbUIprSks9ygcn8EOaMLxjsz6x5cZzSWWuHAEwjlqwTA/exec'; 
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbw85JLpkTJPzaS8OOkijhzoc-lI62cFOb_e39TYwLvEyDSPnbdv7imS1_-pmwhJh-SyoQ/exec'; 
 // =========================================================================
 
 let examSubmitting = false; let user = null; let gData = {};
@@ -411,7 +499,7 @@ $(document).ready(() => {
         <div style="font-family: sans-serif; text-align: center; margin-top: 100px; padding: 20px;">
           <h1 style="color: #d32f2f;">AKSES DITOLAK</h1>
           <h3 style="color: #333;">${res.msg}</h3>
-          <p style="color: #666; margin-top: 20px;">Aplikasi CBT ini dilindungi hak cipta.<br>Silakan hubungi <b>Belajar Inovasi</b> untuk aktivasi lisensi.</p>
+          <p style="color: #666; margin-top: 20px;">Aplikasi CBT ini dilindungi hak cipta.<br>Silakan hubungi <b>BIMBELAJAR.COM</b> untuk aktivasi lisensi.</p>
         </div>
       `);
     } else {
@@ -558,7 +646,7 @@ function renderContent(page) {
 }
 
 function promptToken(eid, judul, trueToken) {
-  let msg = encodeURIComponent(`Halo Admin Belajar Inovasi,\nSaya ingin membeli Token Ujian untuk paket Tryout: *${judul}*.\nSaya siap melakukan pembayaran sebesar Rp 15.000. Mohon info nomor rekening/e-wallet untuk pembayarannya. Terima kasih.`);
+  let msg = encodeURIComponent(`Halo Admin BIMBELAJAR.COM,\nSaya ingin membeli Token Ujian untuk paket Tryout: *${judul}*.\nSaya siap melakukan pembayaran sebesar Rp 15.000. Mohon info nomor rekening/e-wallet untuk pembayarannya. Terima kasih.`);
   let waUrl = `https://wa.me/6285895283075?text=${msg}`;
   Swal.fire({
     title: 'Masukkan Token Ujian',
@@ -624,7 +712,7 @@ function downloadPembahasan(eid, judul) {
       <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.12.1/polyfill.min.js"><\/script>
       <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"><\/script>
       </head><body>
-      <div class="kop"><h1 style="margin:0; color:#0f172a;">Belajar Inovasi</h1><p style="margin:5px 0 0 0; font-size:18px;">Pembahasan Tryout CAT CPNS: <b>${judul}</b></p></div>`;
+      <div class="kop"><h1 style="margin:0; color:#0f172a;">BIMBELAJAR.COM</h1><p style="margin:5px 0 0 0; font-size:18px;">Pembahasan Tryout CAT CPNS: <b>${judul}</b></p></div>`;
       res.data.forEach((q, i) => {
         let kunciText = 'Tidak ada kunci'; try { let keyArr = JSON.parse(q.Key||"[]"); kunciText = keyArr.join(', '); } catch(e) {}
         let optsHtml = ''; try { let optsArr = JSON.parse(q.Options||"[]"); if(optsArr.length > 0) { optsHtml = '<ol style="margin-top:10px;" type="A">';
@@ -818,7 +906,7 @@ function renderAdministrasi() {
 function printDaftarHadir() {
   const examId = $('#adm-exam-hadir').val(); if(!examId) return Swal.fire('Perhatian', 'Pilih Ujian terlebih dahulu.', 'warning');
   const exam = gAdminData.exams.find(e => String(e.ExamID) === String(examId)); let usersToPrint = gAdminData.users;
-  let html = `<html><head><title>Daftar Hadir Ujian</title><style> body { font-family: 'Times New Roman', Times, serif; padding: 30px; } .kop { display: flex; align-items: center; justify-content: center; border-bottom: 3px solid #000; padding-bottom: 15px; margin-bottom: 20px; text-align: center; } .kop img { width: 70px; height: 70px; margin-right: 20px; position: absolute; left: 40px; } .kop h2 { margin: 0; font-size: 20px; text-transform: uppercase; } h3 { text-align: center; text-decoration: underline; margin-bottom: 20px; } .data-table { width: 100%; border-collapse: collapse; font-size: 14px; } .data-table th, .data-table td { border: 1px solid #000; padding: 8px; } .data-table th { background: #f0f0f0; text-align: center; } .ttd-box { height: 35px; } @media print { .no-print { display: none; } } </style></head><body><div class="no-print" style="margin-bottom: 15px; text-align:right;"><button onclick="window.print()" style="padding:10px 20px; background:#0dcaf0; color:white; border:none; border-radius:5px;">Cetak</button></div><div class="kop"><img src="${user.LogoUrl || 'https://via.placeholder.com/70'}" alt="Logo"><div><h2>DAFTAR HADIR TRYOUT CAT CPNS</h2><p>Belajar Inovasi</p></div></div><h3>DAFTAR HADIR PESERTA - ${exam.Judul}</h3><table class="data-table"><thead><tr><th width="5%">No</th><th width="20%">Username</th><th width="45%">Nama Peserta</th><th width="30%" colspan="2">Tanda Tangan</th></tr></thead><tbody>`;
+  let html = `<html><head><title>Daftar Hadir Ujian</title><style> body { font-family: 'Times New Roman', Times, serif; padding: 30px; } .kop { display: flex; align-items: center; justify-content: center; border-bottom: 3px solid #000; padding-bottom: 15px; margin-bottom: 20px; text-align: center; } .kop img { width: 70px; height: 70px; margin-right: 20px; position: absolute; left: 40px; } .kop h2 { margin: 0; font-size: 20px; text-transform: uppercase; } h3 { text-align: center; text-decoration: underline; margin-bottom: 20px; } .data-table { width: 100%; border-collapse: collapse; font-size: 14px; } .data-table th, .data-table td { border: 1px solid #000; padding: 8px; } .data-table th { background: #f0f0f0; text-align: center; } .ttd-box { height: 35px; } @media print { .no-print { display: none; } } </style></head><body><div class="no-print" style="margin-bottom: 15px; text-align:right;"><button onclick="window.print()" style="padding:10px 20px; background:#0dcaf0; color:white; border:none; border-radius:5px;">Cetak</button></div><div class="kop"><img src="${user.LogoUrl || 'https://via.placeholder.com/70'}" alt="Logo"><div><h2>DAFTAR HADIR TRYOUT CAT CPNS</h2><p>BIMBELAJAR.COM</p></div></div><h3>DAFTAR HADIR PESERTA - ${exam.Judul}</h3><table class="data-table"><thead><tr><th width="5%">No</th><th width="20%">Username</th><th width="45%">Nama Peserta</th><th width="30%" colspan="2">Tanda Tangan</th></tr></thead><tbody>`;
   usersToPrint.forEach((u, i) => { html += `<tr><td style="text-align:center">${i + 1}</td><td style="text-align:center">${u.Username}</td><td>${u.Nama}</td><td class="ttd-box">${(i%2===0)?i+1+'.':''}</td><td class="ttd-box">${(i%2!==0)?i+1+'.':''}</td></tr>`; });
   html += `</tbody></table><script>window.onload = function() { window.print(); }<\/script></body></html>`;
   const win = window.open('', '', 'width=800,height=600'); win.document.write(html); win.document.close();
@@ -853,21 +941,23 @@ function setFontSize(sz) {
   $(`.font-sizer.fs-${sz}`).addClass('active');
 }
 
+// Function to toggle Sidebar in Mobile View
+function toggleNavPanel() { $('#sidebar-grid').toggleClass('d-none'); }
+
 function runExam(qs, dur, isResume) {
   $('#view-dashboard').addClass('hidden'); $('#view-exam').removeClass('hidden'); $('body').addClass('exam-mode');
   const c = $('#q-slides-container'); const g = $('#nav-grid'); c.empty(); g.empty();
   const bagians = ["Manajerial", "Sosial Kultural", "Wawancara"];
   
-  bagians.forEach(b => { g.append(`<div class="q-nav-section-title">${b}</div><div class="q-grid" id="grid-${b.replace(/\s+/g, '-')}"></div>`); });
+  bagians.forEach(b => { g.append(`<div class="q-nav-section-title w-100 mt-2 mb-2 text-center" style="font-size: 0.85rem; color: #64748b;">${b}</div><div class="q-grid w-100" id="grid-${b.replace(/\s+/g, '-')}"></div>`); });
   
   qs.forEach((q,i) => {
     let inp = '';
     if(q.Tipe.includes('PG')) {
       const opts = JSON.parse(q.Options||"[]");
-      opts.forEach((o, x) => { let alpha = String.fromCharCode(65 + x); inp += `<label class="p-3 bg-light clickable-opt d-flex align-items-start w-100"><input class="form-check-input flex-shrink-0 mt-1 me-3" type="${q.Tipe==='PGK'?'checkbox':'radio'}" name="ans-${q.QID}" value="${encodeURIComponent(o)}" onchange="saveAnsLocal('${q.QID}', '${q.Tipe}', ${i})"><div class="flex-grow-1 opt-content mb-0 fw-bold me-2" style="max-width:20px;">${alpha}.</div><div class="flex-grow-1 opt-content mb-0">${o}</div></label>`; });
+      opts.forEach((o, x) => { let alpha = String.fromCharCode(65 + x); inp += `<label class="clickable-opt w-100"><input class="form-check-input flex-shrink-0 me-3" type="${q.Tipe==='PGK'?'checkbox':'radio'}" name="ans-${q.QID}" value="${encodeURIComponent(o)}" onchange="saveAnsLocal('${q.QID}', '${q.Tipe}', ${i})"><div class="opt-content fw-bold me-2" style="width:20px;">${alpha}.</div><div class="opt-content flex-grow-1">${o}</div></label>`; });
     } else inp = `<textarea class="form-control" rows="5" name="ans-${q.QID}" onchange="saveAnsLocal('${q.QID}', 'ESSAY', ${i})"></textarea>`;
     
-    // HTML yang digenerate lebih polos karena title sudah pindah ke sub-header di atas
     c.append(`<div class="q-slide hidden" id="sl-${i}" data-qid="${q.QID}" data-type="${q.Tipe}">
       <div class="mb-4 q-content">${q.Pertanyaan}</div>
       <div class="d-flex flex-column gap-2">${inp}</div>
@@ -912,11 +1002,8 @@ function restoreAnswers(qs) {
 
 function markAns(i) { $(`#nb-${i}`).addClass('answered'); }
 
-// --- FUNGSI BARU (FIX): Penyesuaian sinkronisasi tampilan header ---
 function jump(i) { 
     currentQIdx = i; 
-    
-    // Update Judul Nomor
     $('#disp-no-soal').text('Soal nomor ' + (i + 1));
     
     $('.q-slide').addClass('hidden'); 
