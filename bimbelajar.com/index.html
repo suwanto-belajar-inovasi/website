@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>BIMBELAJAR.COM - Tryout CAT CPNS</title>
+<title>BIMBELAJAR.COM- Tryout CAT CPNS</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -34,53 +34,53 @@ body.exam-mode { overflow: hidden; user-select: none; }
 
 @media (max-width: 768px) { #sidebar { left: -260px; } #sidebar.active { left: 0; } #content { margin-left: 0; padding: 15px; } .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1040; display: none; } .overlay.active { display: block; } }
 
-/* EXAM VIEW STYLES - REVISED (PUSMENDIK CBT STYLE) */
-#view-exam { position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100vw; height: 100vh; z-index: 9999; background: #f8fafc; display: flex; flex-direction: column; }
-.exam-header-top { background: #1e3a8a; color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); z-index: 10; }
-.exam-sub-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; border-bottom: 2px solid #e2e8f0; background: #fff; }
-.exam-container-split { flex-grow: 1; display: flex; flex-direction: row; gap: 20px; padding: 20px; overflow: hidden; background: #f1f5f9; }
+/* EXAM VIEW STYLES - PUSMENDIK EXACT MATCH */
+#view-exam { background-color: #f0f4f8; min-height: 100vh; display: flex; flex-direction: column; }
+.exam-header-top { background-color: #1e3a8a; height: 60px; display: flex; align-items: center; padding: 0 20px; color: white; justify-content: space-between; flex-shrink: 0; }
+.exam-main-wrap { flex-grow: 1; padding: 20px; max-width: 1400px; margin: 0 auto; width: 100%; overflow: hidden; }
 
-.q-main-area { flex: 3; background: white; border-radius: 8px; border: 1px solid #cbd5e1; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-#q-slides-container { flex-grow: 1; overflow-y: auto; padding: 30px; transition: font-size 0.2s ease; }
-.fs-small { font-size: 0.95rem; }
-.fs-medium { font-size: 1.15rem; }
-.fs-large { font-size: 1.35rem; }
+/* Sub Header Elements */
+.exam-sub-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+.font-sizer { cursor: pointer; margin: 0 8px; font-weight: bold; color: #64748b; font-family: serif; }
+.font-sizer:hover, .font-sizer.active { color: #1e3a8a; border-bottom: 2px solid #1e3a8a; padding-bottom: 2px; }
+.fs-small { font-size: 0.95rem; } .fs-medium { font-size: 1.15rem; } .fs-large { font-size: 1.35rem; }
+.timer-pusmendik { border: 2px solid #e11d48; border-radius: 50px; padding: 6px 20px; background: white; font-weight: bold; font-family: monospace; font-size: 1.1rem; }
 
-.font-sizer { cursor: pointer; margin: 0 5px; font-weight: bold; color: #64748b; }
-.font-sizer:hover, .font-sizer.active { color: #1e3a8a; }
-.timer-box { border: 2px solid #cbd5e1; border-radius: 20px; padding: 6px 20px; font-weight: bold; font-family: monospace; font-size: 1.1rem; background: #fff; }
+/* Main Areas */
+.q-box-container { background: white; border-radius: 8px; border: 1px solid #cbd5e1; box-shadow: 0 2px 5px rgba(0,0,0,0.05); min-height: 450px; display: flex; flex-direction: column; }
+.q-box-content { padding: 30px; flex-grow: 1; overflow-y: auto; color: #333; }
+.q-box-footer { background: white; padding: 20px 30px; border-top: 1px solid #cbd5e1; border-radius: 0 0 8px 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
 
-.exam-footer-bar { display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; background: #f8fafc; border-top: 1px solid #cbd5e1; }
-.btn-exam-nav { border-radius: 30px; padding: 10px 25px; font-weight: bold; font-size: 1rem; border: none; box-shadow: 0 2px 4px rgba(0,0,0,0.1); cursor: pointer; display: flex; align-items: center; justify-content: center; }
-.btn-prev-exam { background-color: #f43f5e; color: white; } 
-.btn-ragu-exam { background-color: #f59e0b; color: white; gap: 8px; }
-.btn-next-exam { background-color: #0ea5e9; color: white; }
+/* Buttons Pill Style */
+.btn-pill-exam { border-radius: 50px; padding: 10px 25px; font-weight: bold; font-size: 0.95rem; border: none; box-shadow: 0 2px 4px rgba(0,0,0,0.1); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.btn-prev-soal { background-color: #e11d48; color: white; } 
+.btn-ragu-soal { background-color: #f59e0b; color: white; gap: 8px; margin: 0; }
+.btn-next-soal { background-color: #0ea5e9; color: white; }
+.btn-info-soal { background-color: #0ea5e9; color: white; border-radius: 50px; font-weight: bold; padding: 8px 20px; border: none; }
 
-.q-nav-area { flex: 1; max-width: 320px; background: white; border-radius: 8px; border: 1px solid #cbd5e1; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-.q-nav-scroll { flex-grow: 1; overflow-y: auto; padding: 15px; }
-.q-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(42px, 1fr)); gap: 10px; margin-bottom: 20px; }
-.q-nav-btn { aspect-ratio: 1; border: 1px solid #94a3b8; background: #fff; font-weight: bold; border-radius: 4px; cursor: pointer; color: #333; transition: all 0.2s; }
-.q-nav-btn.active-q { outline: 3px solid #38bdf8; outline-offset: 1px; border-color: #0ea5e9; }
-.q-nav-btn.answered { background: #2563eb; color: white; border-color: #1d4ed8; }
-.q-nav-btn.ragu { background: #eab308 !important; color: #fff !important; border-color: #ca8a04 !important; }
+/* Navigasi Panel Sidebar */
+.nav-panel-container { background: white; border-radius: 8px; border: 1px solid #cbd5e1; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; flex-direction: column; height: 100%; max-height: calc(100vh - 100px); }
+.nav-panel-header { text-align: center; padding: 15px; font-weight: bold; border-bottom: 1px solid #cbd5e1; }
+.nav-panel-body { padding: 15px; overflow-y: auto; flex-grow: 1; }
+.q-nav-grid { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
 
-@media (max-width: 768px) { .exam-container-split { flex-direction: column; overflow-y: auto; } .q-nav-area { flex: none; max-width: 100%; max-height: 250px; } #q-slides-container { overflow-y: visible; } .exam-footer-bar { flex-direction: column; gap: 10px; } .exam-footer-bar button, .exam-footer-bar label { width: 100%; text-align: center; justify-content: center; } .exam-sub-header { flex-direction: column; align-items: flex-start; gap: 10px; } }
+/* Grid Buttons */
+.btn-nav-grid { width: 42px; height: 42px; border: 1px solid #94a3b8; background-color: white; color: #333; border-radius: 4px; font-weight: bold; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; }
+.btn-nav-grid.answered { background-color: #2563eb; color: white; border-color: #1d4ed8; }
+.btn-nav-grid.ragu { background-color: #eab308 !important; color: white !important; border-color: #ca8a04 !important; }
+.btn-nav-grid.active-q { outline: 3px solid #38bdf8; outline-offset: 1px; }
+
+/* Checkbox & Options Fixes */
+#q-slides-container .form-check-input { width: 1.2em !important; height: 1.2em !important; cursor: pointer; margin-top: 4px !important; }
+.clickable-opt { cursor: pointer; display: flex; align-items: flex-start; margin-bottom: 15px; transition: all 0.2s ease-in-out; border-radius: 6px; padding: 8px; }
+.clickable-opt:hover { background-color: #f8fafc; }
+
+@media (max-width: 991px) { .exam-main-wrap { flex-direction: column; overflow-y: auto; } .nav-panel-container { margin-top: 20px; max-height: 300px; } }
 
 .loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); z-index: 10000; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
 .spinner { width: 50px; height: 50px; border: 5px solid #e2e8f0; border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
 @keyframes spin { 100% { transform: rotate(360deg); } }
-
-.review-card { border-radius: 8px; margin-bottom: 20px; border: 2px solid #e2e8f0; overflow: hidden; background: white; }
-.review-card.correct { border-color: #3b82f6; }
-.review-card.wrong { border-color: #ef4444; }
-.review-header { padding: 15px 20px; font-weight: bold; border-bottom: 1px solid #e2e8f0; }
-.review-card.correct .review-header { background: #eff6ff; color: #1e3a8a; }
-.review-card.wrong .review-header { background: #fef2f2; color: #991b1b; }
-.review-body { padding: 20px; }
 .swal2-container { z-index: 20000 !important; }
-#q-slides-container .form-check-input { width: 1.5em !important; height: 1.5em !important; cursor: pointer; margin-top: 0 !important; }
-.clickable-opt { cursor: pointer; transition: all 0.2s ease-in-out; margin-bottom: 0; border: 1px solid #cbd5e1; border-radius: 6px; }
-.clickable-opt:hover { background-color: #f1f5f9 !important; border-color: var(--secondary) !important; }
 .icon-eye-login { cursor: pointer; z-index: 10; font-size: 1.2rem; }
 </style>
 </head>
@@ -90,7 +90,7 @@ body.exam-mode { overflow: hidden; user-select: none; }
 <div id="view-landing" class="hidden">
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3">
 <div class="container">
-<a class="navbar-brand fw-bold text-primary" href="#"><i class="fas fa-graduation-cap me-2"></i>BIMBELAJAR.COM</a>
+<a class="navbar-brand fw-bold text-primary" href="#"><i class="fas fa-graduation-cap me-2"></i>Belajar Inovasi</a>
 <div>
 <button class="btn btn-outline-primary me-2 fw-bold" onclick="showAuth('login')">Masuk</button>
 <button class="btn btn-primary fw-bold" onclick="showAuth('register')">Daftar Akun</button>
@@ -99,10 +99,10 @@ body.exam-mode { overflow: hidden; user-select: none; }
 </nav>
 <div class="hero-section">
 <div class="container">
-<h1 class="display-4 fw-bold mb-4">BIMBELAJAR.COM – Bimbingan Belajar Online Terlengkap! 🚀 </h1>
-<p class="lead mb-4">Siap hadapi ujian? Dengan BIMBELAJAR.COM, Anda akan berlatih menggunakan CAT Online yang dirancang khusus untuk membantu menembus ujian TBS LPDP, PPG, PPPK, CPNS Guru & Non Guru.</p>
+<h1 class="display-4 fw-bold mb-4">BIMBELAJAR.COM– Bimbingan Belajar Online Terlengkap! 🚀 </h1>
+<p class="lead mb-4">Siap hadapi ujian? Dengan Belajar Inovasi, Anda akan berlatih menggunakan CAT Online yang dirancang khusus untuk membantu menembus ujian TBS LPDP, PPG, PPPK, CPNS Guru & Non Guru.</p>
 <div class="text-start d-inline-block mx-auto mb-5 shadow" style="background: rgba(255,255,255,0.15); padding: 30px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.2);">
-<h4 class="fw-bold mb-4 text-warning"><i class="fas fa-lightbulb me-2"></i> Kenapa harus BIMBELAJAR.COM?</h4>
+<h4 class="fw-bold mb-4 text-warning"><i class="fas fa-lightbulb me-2"></i> Kenapa harus Belajar Inovasi?</h4>
 <ul class="list-unstyled mb-0">
 <li class="mb-3"><i class="fas fa-check-circle text-success me-3 fs-5"></i> Latihan soal dengan simulasi yang mirip soal ujian asli</li>
 <li class="mb-3"><i class="fas fa-check-circle text-success me-3 fs-5"></i> Video pembahasan terbaru + tips & trik menjawab cepat dan tepat</li>
@@ -120,7 +120,7 @@ body.exam-mode { overflow: hidden; user-select: none; }
 </div>
 </div>
 <footer class="bg-dark text-white text-center py-4">
-<p class="mb-0 fw-bold"> 🌟 BIMBELAJAR.COM – Teman Setia Menuju Kelulusan! © 2026 All rights reserved.</p>
+<p class="mb-0 fw-bold"> 🌟 BIMBELAJAR.COM– Teman Setia Menuju Kelulusan! © 2026 All rights reserved.</p>
 </footer>
 </div>
 
@@ -128,7 +128,7 @@ body.exam-mode { overflow: hidden; user-select: none; }
 <div class="auth-card">
 <div class="text-center mb-4">
 <div id="logo-container"><img src="https://lh3.googleusercontent.com/d/1Udvay0kRIle364MvNswDCnLu5YbG5X_P" class="mb-3 rounded" width="100" alt="Logo"></div>
-<h4 class="fw-bold text-primary text-center"><span style="white-space: nowrap;">BIMBELAJAR.COM</span></h4>
+<h4 class="fw-bold text-primary text-center"><span style="white-space: nowrap;">Belajar Inovasi</span></h4>
 <p class="text-muted small" id="auth-subtitle">Login ke Akun Anda</p>
 </div>
 <form id="frm-login" onsubmit="event.preventDefault(); handleLogin(); return false;">
@@ -184,20 +184,24 @@ body.exam-mode { overflow: hidden; user-select: none; }
 <button class="btn btn-outline-primary btn-sm rounded-pill px-3" onclick="appRefresh()"><i class="fas fa-sync-alt"></i> Refresh</button>
 </nav>
 <div id="content-area"></div>
-<footer class="mt-4 text-center text-muted small pb-3 border-top pt-3">© 2026 BIMBELAJAR.COM</footer>
+<footer class="mt-4 text-center text-muted small pb-3 border-top pt-3">© 2026 Belajar Inovasi</footer>
 </div>
 </div>
 
 <div id="view-exam" class="hidden">
     <div class="exam-header-top">
-        <div class="fw-bold fs-5 d-flex align-items-center"><i class="fas fa-graduation-cap me-2 fs-4"></i> CBT APPLICATION</div>
-        <div class="d-flex align-items-center gap-3">
-            <div class="fw-bold d-none d-sm-block"><span id="u-exam-name">Nama Peserta</span></div>
+        <div class="d-flex align-items-center">
+            <i class="fas fa-graduation-cap fs-4 me-2"></i>
+            <div>
+                <h6 class="m-0 fw-bold">Belajar Inovasi</h6>
+                <small style="font-size: 0.75rem;">CBT Application</small>
+            </div>
         </div>
+        <div class="fw-bold d-none d-sm-block"><span id="u-exam-name">Nama Peserta</span></div>
     </div>
     
-    <div class="exam-container-split">
-        <div class="q-main-area">
+    <div class="exam-main-wrap d-flex gap-4">
+        <div class="d-flex flex-column" style="flex: 1; min-width: 0;">
             <div class="exam-sub-header">
                 <div>
                     <h3 class="mb-1 fw-bold text-dark" id="disp-no-soal">Soal nomor 1</h3>
@@ -207,24 +211,46 @@ body.exam-mode { overflow: hidden; user-select: none; }
                         <span class="font-sizer fs-large" onclick="setFontSize('large')">A</span>
                     </div>
                 </div>
-                <div class="timer-box"><span class="me-2 text-muted fs-6">Sisa Waktu:</span><span id="timer-disp" class="fs-5">00:00:00</span></div>
+                <div class="d-flex align-items-center gap-3">
+                    <button class="btn-info-soal d-none d-md-block shadow-sm">INFORMASI SOAL</button>
+                    <div class="timer-pusmendik shadow-sm">
+                        <span class="text-muted fs-6 me-2 font-sans">Sisa Waktu:</span><span id="timer-disp">00:00:00</span>
+                    </div>
+                    <button class="btn-info-soal d-lg-none shadow-sm" onclick="$('.nav-panel-container').toggle()">Daftar Soal</button>
+                </div>
             </div>
             
-            <div id="q-slides-container" class="fs-medium"></div>
-            
-            <div class="exam-footer-bar">
-                <button class="btn btn-exam-nav btn-prev-exam" id="btn-prev" onclick="navSlide(-1)"><i class="fas fa-chevron-left me-2"></i> Soal sebelumnya</button>
-                <label class="btn btn-exam-nav btn-ragu-exam text-dark">
-                    <input type="checkbox" id="chk-ragu" onchange="toggleRagu()" style="transform: scale(1.3);"> Ragu - Ragu
-                </label>
-                <button class="btn btn-exam-nav btn-next-exam" id="btn-next" onclick="navSlide(1)">Soal Selanjutnya <i class="fas fa-chevron-right ms-2"></i></button>
-                <button class="btn btn-exam-nav btn-next-exam hidden" id="btn-finish" onclick="submitExamButton(false)"><i class="fas fa-check-circle me-2"></i> Selesai Ujian</button>
+            <div class="q-box-container">
+                <div id="q-slides-container" class="q-box-content fs-medium"></div>
+                
+                <div class="q-box-footer">
+                    <button class="btn-pill-exam btn-prev-soal" id="btn-prev" onclick="navSlide(-1)">
+                        <i class="fas fa-chevron-left me-2"></i> Soal sebelumnya
+                    </button>
+                    
+                    <label class="btn-pill-exam btn-ragu-soal text-dark">
+                        <input type="checkbox" id="chk-ragu" onchange="toggleRagu()" style="transform: scale(1.3);"> Ragu - Ragu
+                    </label>
+                    
+                    <div>
+                        <button class="btn-pill-exam btn-next-soal" id="btn-next" onclick="navSlide(1)">
+                            Selanjutnya <i class="fas fa-chevron-right ms-2"></i>
+                        </button>
+                        <button class="btn-pill-exam btn-next-soal hidden" id="btn-finish" onclick="submitExamButton(false)">
+                            Selesai <i class="fas fa-check-circle ms-2"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
         
-        <div class="q-nav-area">
-            <div class="bg-white p-3 border-bottom fw-bold text-center text-dark" style="font-size: 1.1rem;">Daftar Soal</div>
-            <div class="q-nav-scroll" id="nav-grid"></div>
+        <div class="nav-panel-container d-none d-lg-flex" style="flex-basis: 320px;">
+            <div class="nav-panel-header">
+                <span class="border-bottom border-secondary pb-1 d-inline-block px-3">Daftar Soal</span>
+            </div>
+            <div class="nav-panel-body">
+                <div class="q-nav-grid" id="nav-grid"></div>
+            </div>
         </div>
     </div>
 </div>
@@ -320,8 +346,7 @@ body.exam-mode { overflow: hidden; user-select: none; }
 <script>
 // =========================================================================
 // PASTE URL WEB APP APPS SCRIPT ANDA DI SINI
-// PENTING: Deploy Apps Script sebagai Web App baru -> (Execute as: Me, Who has access: Anyone)
-const GAS_URL = 'https://script.google.com/macros/s/AKfycby7sma51IK1t9E_okvKQlVloq06lwyFTF-RnoAcbAQyKJGFUPwovfidaAdX-vijLcdr-Q/exec'; 
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbw2ElXWn2BSKyZzKb9clOEm-BTbUIprSks9ygcn8EOaMLxjsz6x5cZzSWWuHAEwjlqwTA/exec'; 
 // =========================================================================
 
 let examSubmitting = false; let user = null; let gData = {};
@@ -386,7 +411,7 @@ $(document).ready(() => {
         <div style="font-family: sans-serif; text-align: center; margin-top: 100px; padding: 20px;">
           <h1 style="color: #d32f2f;">AKSES DITOLAK</h1>
           <h3 style="color: #333;">${res.msg}</h3>
-          <p style="color: #666; margin-top: 20px;">Aplikasi CBT ini dilindungi hak cipta.<br>Silakan hubungi <b>BIMBELAJAR.COM</b> untuk aktivasi lisensi.</p>
+          <p style="color: #666; margin-top: 20px;">Aplikasi CBT ini dilindungi hak cipta.<br>Silakan hubungi <b>Belajar Inovasi</b> untuk aktivasi lisensi.</p>
         </div>
       `);
     } else {
@@ -533,7 +558,7 @@ function renderContent(page) {
 }
 
 function promptToken(eid, judul, trueToken) {
-  let msg = encodeURIComponent(`Halo Admin BIMBELAJAR.COM,\nSaya ingin membeli Token Ujian untuk paket Tryout: *${judul}*.\nSaya siap melakukan pembayaran sebesar Rp 15.000. Mohon info nomor rekening/e-wallet untuk pembayarannya. Terima kasih.`);
+  let msg = encodeURIComponent(`Halo Admin Belajar Inovasi,\nSaya ingin membeli Token Ujian untuk paket Tryout: *${judul}*.\nSaya siap melakukan pembayaran sebesar Rp 15.000. Mohon info nomor rekening/e-wallet untuk pembayarannya. Terima kasih.`);
   let waUrl = `https://wa.me/6285895283075?text=${msg}`;
   Swal.fire({
     title: 'Masukkan Token Ujian',
@@ -599,7 +624,7 @@ function downloadPembahasan(eid, judul) {
       <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.12.1/polyfill.min.js"><\/script>
       <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"><\/script>
       </head><body>
-      <div class="kop"><h1 style="margin:0; color:#0f172a;">BIMBELAJAR.COM</h1><p style="margin:5px 0 0 0; font-size:18px;">Pembahasan Tryout CAT CPNS: <b>${judul}</b></p></div>`;
+      <div class="kop"><h1 style="margin:0; color:#0f172a;">Belajar Inovasi</h1><p style="margin:5px 0 0 0; font-size:18px;">Pembahasan Tryout CAT CPNS: <b>${judul}</b></p></div>`;
       res.data.forEach((q, i) => {
         let kunciText = 'Tidak ada kunci'; try { let keyArr = JSON.parse(q.Key||"[]"); kunciText = keyArr.join(', '); } catch(e) {}
         let optsHtml = ''; try { let optsArr = JSON.parse(q.Options||"[]"); if(optsArr.length > 0) { optsHtml = '<ol style="margin-top:10px;" type="A">';
@@ -793,7 +818,7 @@ function renderAdministrasi() {
 function printDaftarHadir() {
   const examId = $('#adm-exam-hadir').val(); if(!examId) return Swal.fire('Perhatian', 'Pilih Ujian terlebih dahulu.', 'warning');
   const exam = gAdminData.exams.find(e => String(e.ExamID) === String(examId)); let usersToPrint = gAdminData.users;
-  let html = `<html><head><title>Daftar Hadir Ujian</title><style> body { font-family: 'Times New Roman', Times, serif; padding: 30px; } .kop { display: flex; align-items: center; justify-content: center; border-bottom: 3px solid #000; padding-bottom: 15px; margin-bottom: 20px; text-align: center; } .kop img { width: 70px; height: 70px; margin-right: 20px; position: absolute; left: 40px; } .kop h2 { margin: 0; font-size: 20px; text-transform: uppercase; } h3 { text-align: center; text-decoration: underline; margin-bottom: 20px; } .data-table { width: 100%; border-collapse: collapse; font-size: 14px; } .data-table th, .data-table td { border: 1px solid #000; padding: 8px; } .data-table th { background: #f0f0f0; text-align: center; } .ttd-box { height: 35px; } @media print { .no-print { display: none; } } </style></head><body><div class="no-print" style="margin-bottom: 15px; text-align:right;"><button onclick="window.print()" style="padding:10px 20px; background:#0dcaf0; color:white; border:none; border-radius:5px;">Cetak</button></div><div class="kop"><img src="${user.LogoUrl || 'https://via.placeholder.com/70'}" alt="Logo"><div><h2>DAFTAR HADIR TRYOUT CAT CPNS</h2><p>BIMBELAJAR.COM</p></div></div><h3>DAFTAR HADIR PESERTA - ${exam.Judul}</h3><table class="data-table"><thead><tr><th width="5%">No</th><th width="20%">Username</th><th width="45%">Nama Peserta</th><th width="30%" colspan="2">Tanda Tangan</th></tr></thead><tbody>`;
+  let html = `<html><head><title>Daftar Hadir Ujian</title><style> body { font-family: 'Times New Roman', Times, serif; padding: 30px; } .kop { display: flex; align-items: center; justify-content: center; border-bottom: 3px solid #000; padding-bottom: 15px; margin-bottom: 20px; text-align: center; } .kop img { width: 70px; height: 70px; margin-right: 20px; position: absolute; left: 40px; } .kop h2 { margin: 0; font-size: 20px; text-transform: uppercase; } h3 { text-align: center; text-decoration: underline; margin-bottom: 20px; } .data-table { width: 100%; border-collapse: collapse; font-size: 14px; } .data-table th, .data-table td { border: 1px solid #000; padding: 8px; } .data-table th { background: #f0f0f0; text-align: center; } .ttd-box { height: 35px; } @media print { .no-print { display: none; } } </style></head><body><div class="no-print" style="margin-bottom: 15px; text-align:right;"><button onclick="window.print()" style="padding:10px 20px; background:#0dcaf0; color:white; border:none; border-radius:5px;">Cetak</button></div><div class="kop"><img src="${user.LogoUrl || 'https://via.placeholder.com/70'}" alt="Logo"><div><h2>DAFTAR HADIR TRYOUT CAT CPNS</h2><p>Belajar Inovasi</p></div></div><h3>DAFTAR HADIR PESERTA - ${exam.Judul}</h3><table class="data-table"><thead><tr><th width="5%">No</th><th width="20%">Username</th><th width="45%">Nama Peserta</th><th width="30%" colspan="2">Tanda Tangan</th></tr></thead><tbody>`;
   usersToPrint.forEach((u, i) => { html += `<tr><td style="text-align:center">${i + 1}</td><td style="text-align:center">${u.Username}</td><td>${u.Nama}</td><td class="ttd-box">${(i%2===0)?i+1+'.':''}</td><td class="ttd-box">${(i%2!==0)?i+1+'.':''}</td></tr>`; });
   html += `</tbody></table><script>window.onload = function() { window.print(); }<\/script></body></html>`;
   const win = window.open('', '', 'width=800,height=600'); win.document.write(html); win.document.close();
@@ -849,7 +874,7 @@ function runExam(qs, dur, isResume) {
     </div>`);
     
     let currentBagian = q.Bagian || 'Manajerial'; let targetGridId = `#grid-${currentBagian.replace(/\s+/g, '-')}`;
-    $(targetGridId).append(`<button id="nb-${i}" class="q-nav-btn shadow-sm" onclick="jump(${i})">${i+1}</button>`);
+    $(targetGridId).append(`<button id="nb-${i}" class="btn-nav-grid shadow-sm" onclick="jump(${i})">${i+1}</button>`);
   });
   
   restoreAnswers(qs); jump(0); applyMathJax();
@@ -859,9 +884,9 @@ function runExam(qs, dur, isResume) {
   timerInt = setInterval(() => {
     const diff = Math.floor((endTime - Date.now()) / 1000);
     if(diff <= 0) { processSubmission(); }
-    else { let h = Math.floor(diff/3600), m = Math.floor((diff%3600)/60), s = diff%60; $('#timer-disp').text(`${h<10?'0':''}${h}:${m<10?'0':''}${m}:${s<10?'0':''}${s}`); if(diff < 300) { $('#timer-disp').addClass('text-danger'); $('.timer-box').addClass('border-danger'); } }
+    else { let h = Math.floor(diff/3600), m = Math.floor((diff%3600)/60), s = diff%60; $('#timer-disp').text(`${h<10?'0':''}${h}:${m<10?'0':''}${m}:${s<10?'0':''}${s}`); if(diff < 300) { $('#timer-disp').addClass('text-danger'); $('.timer-pusmendik').css('border-color', 'red'); } }
   }, 1000);
-  monitorInterval = setInterval(() => { gasAPI('updateProgress', {eid: activeExamId, uid: user.ID, c: $('.q-nav-btn.answered').length, t: totalQ}); }, 20000);
+  monitorInterval = setInterval(() => { gasAPI('updateProgress', {eid: activeExamId, uid: user.ID, c: $('.btn-nav-grid.answered').length, t: totalQ}); }, 20000);
   autosaveInterval = setInterval(() => { const key = `ANS_${user.ID}_${activeExamId}`; try { const stored = localStorage.getItem(key); if(stored) { let data = JSON.parse(decodeURIComponent(atob(stored))); gasAPI('autosave', {eid: activeExamId, uid: user.ID, j: JSON.stringify(data)}); } } catch(e){} }, 60000);
 }
 
@@ -896,7 +921,7 @@ function jump(i) {
     
     $('.q-slide').addClass('hidden'); 
     $(`#sl-${i}`).removeClass('hidden'); 
-    $('.q-nav-btn').removeClass('active-q'); 
+    $('.btn-nav-grid').removeClass('active-q'); 
     $(`#nb-${i}`).addClass('active-q'); 
     
     $('#chk-ragu').prop('checked', raguList.includes(i)); 
@@ -925,7 +950,7 @@ function toggleRagu() {
 
 function submitExamButton(force = false) {
   if (examSubmitting) return; if (force) { processSubmission(); return; }
-  let htmlText = `Anda telah menjawab <b>${$('.q-nav-btn.answered').length}</b> dari <b>${totalQ}</b> soal.`;
+  let htmlText = `Anda telah menjawab <b>${$('.btn-nav-grid.answered').length}</b> dari <b>${totalQ}</b> soal.`;
   if(raguList.length > 0) htmlText += `<br><br><span class="text-danger fw-bold">Ada ${raguList.length} soal yang masih ditandai Ragu-Ragu!</span>`;
   Swal.fire({ title: 'Selesai Ujian?', html: htmlText, icon: 'question', showCancelButton: true, confirmButtonText: 'Kirim Jawaban', confirmButtonColor: '#198754' }).then((result) => { if (result.isConfirmed) { processSubmission(); } });
 }
