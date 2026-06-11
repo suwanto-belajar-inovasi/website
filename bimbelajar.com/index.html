@@ -716,6 +716,9 @@ function kerjakanUlang(eid) {
   });
 }
 
+// -------------------------------------------------------------
+// FUNGSI RENDER PDF (PERBAIKAN WARNA CORET/HIJAU)
+// -------------------------------------------------------------
 function downloadPembahasan(eid, judul) {
   showLoad(true);
   gasAPI('getPembahasan', {eid: eid, userId: user.ID}).then(res => {
@@ -733,17 +736,60 @@ function downloadPembahasan(eid, judul) {
       <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"><\/script>
       </head><body>
       <div class="kop"><h1 style="margin:0; color:#0f172a;">BIMBELAJAR.COM</h1><p style="margin:5px 0 0 0; font-size:18px;">Pembahasan Tryout CAT CPNS: <b>${judul}</b></p></div>`;
+      
       res.data.forEach((q, i) => {
-        let kunciText = 'Tidak ada kunci'; try { let keyArr = JSON.parse(q.Key||"[]"); kunciText = keyArr.join(', '); } catch(e) {}
-        let optsHtml = ''; try { let optsArr = JSON.parse(q.Options||"[]"); if(optsArr.length > 0) { optsHtml = '<ol style="margin-top:10px;" type="A">';
-        optsArr.forEach(o => optsHtml += `<li style="margin-bottom:5px;">${o}</li>`); optsHtml += '</ol>'; } } catch(e) {}
+        let kunciText = 'Tidak ada kunci'; 
+        let keyArr = [];
+        try { 
+            keyArr = JSON.parse(q.Key||"[]"); 
+            kunciText = keyArr.join(', '); 
+        } catch(e) {}
+        
+        let optsHtml = ''; 
+        try { 
+            let optsArr = JSON.parse(q.Options||"[]"); 
+            if(optsArr.length > 0) { 
+                optsHtml = '<ol style="margin-top:10px;" type="A">';
+                optsArr.forEach(o => optsHtml += `<li style="margin-bottom:5px;">${o}</li>`); 
+                optsHtml += '</ol>'; 
+            } 
+        } catch(e) {}
+        
         let bahasHtml = q.Pembahasan ? `<div class="bahas"><b>Pembahasan:</b><br>${q.Pembahasan}</div>` : '';
         
+        // Logika Pemeriksaan Jawaban
         let jawabanPeserta = q.JawabanPeserta;
-        if (!jawabanPeserta || jawabanPeserta === '-') jawabanPeserta = 'Kosong / Tidak Menjawab';
+        let stylingJawaban = "";
 
-        html += `<div class="q-box"><h4 style="margin-top:0;">Soal No. ${q.Nomor || i+1} <span style="font-size:12px; color:#666;">(${q.Bagian || 'Manajerial'})</span></h4><div>${q.Pertanyaan}</div>${optsHtml}
-        <div class="kunci">Jawaban Anda: <b style="color: #047857;">${jawabanPeserta}</b> <br> Jawaban Benar: <b>${kunciText}</b></div>${bahasHtml}</div>`;
+        if (!jawabanPeserta || jawabanPeserta === '-') {
+            jawabanPeserta = 'Kosong / Tidak Menjawab';
+            stylingJawaban = `<b style="color: #64748b;">${jawabanPeserta}</b>`; // Abu-abu
+        } else {
+            let isCorrect = false;
+            if(q.Tipe === 'PGS' || q.Tipe === 'PGK') {
+                let ansArr = jawabanPeserta.split(',').map(s=>s.trim());
+                let kArr = keyArr.map(s=>s.trim());
+                isCorrect = ansArr.length > 0 && ansArr.length === kArr.length && ansArr.every(v => kArr.includes(v));
+            } else {
+                isCorrect = jawabanPeserta.trim().toLowerCase() === kunciText.trim().toLowerCase();
+            }
+
+            if (isCorrect) {
+                // Jawaban Benar (Warna Hijau)
+                stylingJawaban = `<b style="color: #10b981;">${jawabanPeserta}</b>`; 
+            } else {
+                // Jawaban Salah (Warna Merah & Dicoret)
+                stylingJawaban = `<b style="color: #ef4444; text-decoration: line-through;">${jawabanPeserta}</b>`; 
+            }
+        }
+
+        html += `<div class="q-box">
+            <h4 style="margin-top:0;">Soal No. ${q.Nomor || i+1} <span style="font-size:12px; color:#666;">(${q.Bagian || 'Manajerial'})</span></h4>
+            <div>${q.Pertanyaan}</div>
+            ${optsHtml}
+            <div class="kunci">Jawaban Anda: ${stylingJawaban} <br> Jawaban Benar: <b>${kunciText}</b></div>
+            ${bahasHtml}
+        </div>`;
       });
       html += `<script>window.onload = function() { setTimeout(window.print, 1500); }<\/script></body></html>`;
       const win = window.open('', '_blank'); win.document.write(html); win.document.close();
