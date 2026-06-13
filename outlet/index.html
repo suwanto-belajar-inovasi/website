@@ -15,9 +15,9 @@
             --text-dark: #1E293B;
             --text-muted: #64748B;
         }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--primary-bg); color: var(--text-dark); }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--primary-bg); color: var(--text-dark); overflow-x: hidden; }
         
-        /* Sidebar */
+        /* Sidebar Styling */
         .sidebar { width: 260px; height: 100vh; position: fixed; background: var(--sidebar-color); border-right: 1px solid #E2E8F0; display: flex; flex-direction: column; z-index: 1000; }
         .sidebar-menu { flex-grow: 1; overflow-y: auto; padding: 1.5rem; }
         .sidebar-footer { padding: 1.5rem; border-top: 1px solid #E2E8F0; }
@@ -26,15 +26,22 @@
         .nav-link i { width: 25px; }
         .nav-link:hover, .nav-link.active { background: #EEF2FF; color: var(--accent-color); font-weight: 600; }
         
-        /* Main */
-        .main-wrapper { margin-left: 260px; padding: 2rem; }
+        /* Main Layout */
+        .main-wrapper { margin-left: 260px; padding: 2rem; min-height: 100vh; }
         .card { border: none; border-radius: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+        
+        /* KPI Dashboard */
         .kpi-card { padding: 1.5rem; }
         .kpi-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; }
         
-        .view-section { display: none; animation: fadeIn 0.3s; }
+        /* SPA Transitions */
+        .view-section { display: none; animation: fadeIn 0.3s ease-in-out; }
         .view-section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Tables */
+        .table thead th { background: #F1F5F9; color: var(--text-muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: none; padding: 12px 15px; }
+        .table tbody td { vertical-align: middle; padding: 12px 15px; font-size: 14px; }
     </style>
 </head>
 <body>
@@ -42,21 +49,27 @@
 <div id="login-screen" class="d-flex align-items-center justify-content-center vh-100">
     <div class="card p-5 shadow-sm" style="width: 400px; border-radius: 20px;">
         <div class="text-center mb-4">
-            <h3 class="fw-bold text-primary">Belajar Inovasi</h3>
+            <div class="bg-warning rounded-circle d-inline-flex justify-content-center align-items-center mb-3" style="width: 60px; height: 60px;">
+                <i class="fas fa-sun text-white fs-3"></i>
+            </div>
+            <h3 class="fw-bold text-dark">Belajar Inovasi</h3>
             <p class="text-muted">Outlet Management System</p>
         </div>
-        <input type="text" id="user" class="form-control mb-3 p-3 rounded-3" placeholder="Username">
-        <input type="password" id="pass" class="form-control mb-4 p-3 rounded-3" placeholder="Password">
-        <button onclick="handleLogin()" class="btn btn-primary w-100 py-3 rounded-3 fw-bold">Sign In</button>
+        <input type="text" id="user" class="form-control mb-3 p-3 rounded-3" placeholder="Username" value="owner">
+        <input type="password" id="pass" class="form-control mb-4 p-3 rounded-3" placeholder="Password" value="123456">
+        <button onclick="handleLogin()" class="btn btn-primary w-100 py-3 rounded-3 fw-bold" style="background-color: var(--accent-color); border: none;">Sign In</button>
     </div>
 </div>
 
 <div id="app-screen" class="d-none">
+    
     <div class="sidebar">
         <div class="sidebar-menu">
-            <div class="d-flex align-items-center mb-5 gap-3">
-                <div class="bg-warning rounded-circle p-2"><i class="fas fa-sun text-white"></i></div>
-                <h5 class="fw-bold mb-0">Belajar Inovasi</h5>
+            <div class="d-flex align-items-center mb-5 gap-3 px-2">
+                <div class="bg-warning rounded-circle d-flex justify-content-center align-items-center" style="width: 35px; height: 35px;">
+                    <i class="fas fa-sun text-white"></i>
+                </div>
+                <h5 class="fw-bold mb-0 text-dark">Belajar Inovasi</h5>
             </div>
             
             <nav class="nav flex-column">
@@ -74,11 +87,11 @@
             </nav>
         </div>
         <div class="sidebar-footer">
-            <div class="d-flex justify-content-between align-items-center cursor-pointer" onclick="logout()">
+            <div class="d-flex justify-content-between align-items-center cursor-pointer" onclick="logout()" style="cursor: pointer;">
                 <div class="d-flex gap-2 align-items-center">
-                    <div class="bg-primary text-white rounded-circle d-flex justify-content-center align-items-center" style="width: 35px; height: 35px;" id="user-initial">A</div>
+                    <div class="bg-primary text-white rounded-circle d-flex justify-content-center align-items-center fw-bold" style="width: 40px; height: 40px;" id="user-initial">A</div>
                     <div>
-                        <small class="fw-bold d-block text-dark" id="user-name">Admin</small>
+                        <small class="fw-bold d-block text-dark" id="user-name" style="line-height: 1.2;">Admin</small>
                         <small class="text-muted" style="font-size: 11px;" id="user-role">Head Office</small>
                     </div>
                 </div>
@@ -104,7 +117,7 @@
             </div>
 
             <div class="row g-3 mb-4">
-                <div class="col">
+                <div class="col-md-4">
                     <div class="card kpi-card">
                         <div class="d-flex gap-3 align-items-center mb-2">
                             <div class="kpi-icon bg-primary bg-opacity-10 text-primary mb-0"><i class="fas fa-wallet"></i></div>
@@ -113,7 +126,7 @@
                         <h4 class="fw-bold mb-1" id="kpi-omset">Rp 0</h4>
                     </div>
                 </div>
-                <div class="col">
+                <div class="col-md-4">
                     <div class="card kpi-card">
                         <div class="d-flex gap-3 align-items-center mb-2">
                             <div class="kpi-icon bg-info bg-opacity-10 text-info mb-0"><i class="fas fa-shopping-cart"></i></div>
@@ -122,7 +135,7 @@
                         <h4 class="fw-bold mb-1" id="kpi-trans">0</h4>
                     </div>
                 </div>
-                <div class="col">
+                <div class="col-md-4">
                     <div class="card kpi-card">
                         <div class="d-flex gap-3 align-items-center mb-2">
                             <div class="kpi-icon bg-warning bg-opacity-10 text-warning mb-0"><i class="fas fa-arrow-trend-up"></i></div>
@@ -135,60 +148,154 @@
 
             <div class="row g-3 mb-4">
                 <div class="col-lg-8">
-                    <div class="card p-4">
+                    <div class="card p-4 h-100">
                         <h6 class="fw-bold mb-4">Traffic Penjualan Harian</h6>
                         <canvas id="trafficChart" height="100"></canvas>
                     </div>
                 </div>
                 <div class="col-lg-4">
-                    <div class="card p-4">
+                    <div class="card p-4 h-100">
                         <h6 class="fw-bold mb-4">Komposisi Penjualan</h6>
                         <canvas id="compChart"></canvas>
                     </div>
-                </div>
-            </div>
-            
-            <div class="card p-4">
-                <h6 class="fw-bold mb-3">Ranking KPI Outlet</h6>
-                <div class="table-responsive">
-                    <table class="table align-middle">
-                        <thead class="bg-light">
-                            <tr><th>#</th><th>Outlet</th><th>Omset (Rp)</th><th>Transaksi</th><th>Avg/Transaksi</th><th>Food Cost</th></tr>
-                        </thead>
-                        <tbody id="ranking-table"></tbody>
-                    </table>
                 </div>
             </div>
         </div>
 
         <div id="view-penjualan" class="view-section">
             <h4 class="fw-bold mb-4">Modul Penjualan</h4>
-            <div class="card p-5 text-center">
-                <h5 class="text-muted">Data Penjualan akan tampil di sini.</h5>
-            </div>
-        </div>
-
-        <div id="view-laporan" class="view-section">
-            <h4 class="fw-bold mb-4">Modul Laporan Harian</h4>
             <div class="card p-4">
-                <button class="btn btn-primary mb-3 w-auto d-inline-block" style="max-width: 200px;" onclick="salinLaporanTemplate()">Salin Template Laporan</button>
                 <div class="table-responsive">
                     <table class="table">
-                        <thead class="bg-light"><tr><th>Tanggal</th><th>Outlet</th><th>Total Sales</th><th>Cash</th><th>QRIS</th></tr></thead>
-                        <tbody id="table-laporan-body"><tr><td colspan="5" class="text-center">Memuat data...</td></tr></tbody>
+                        <thead><tr><th>ID</th><th>Tanggal</th><th>Outlet</th><th>Total Bill</th><th>Sales (Rp)</th></tr></thead>
+                        <tbody id="tbody-penjualan"></tbody>
                     </table>
                 </div>
             </div>
         </div>
-        
-        <div id="view-menu" class="view-section"><h4 class="fw-bold mb-4">Master Menu</h4><div class="card p-5 text-center"><p>Pengaturan Menu Produk</p></div></div>
-        <div id="view-outlet" class="view-section"><h4 class="fw-bold mb-4">Master Outlet</h4><div class="card p-5 text-center"><p>Daftar Cabang</p></div></div>
-        <div id="view-kpi" class="view-section"><h4 class="fw-bold mb-4">KPI Outlet</h4><div class="card p-5 text-center"><p>Key Performance Indicator</p></div></div>
-        <div id="view-pengeluaran" class="view-section"><h4 class="fw-bold mb-4">Pengeluaran</h4><div class="card p-5 text-center"><p>Pencatatan Biaya</p></div></div>
-        <div id="view-foodcost" class="view-section"><h4 class="fw-bold mb-4">Food Cost</h4><div class="card p-5 text-center"><p>Analisis HPP</p></div></div>
-        <div id="view-inventori" class="view-section"><h4 class="fw-bold mb-4">Inventori</h4><div class="card p-5 text-center"><p>Stok Barang</p></div></div>
-        <div id="view-pengguna" class="view-section"><h4 class="fw-bold mb-4">Pengguna</h4><div class="card p-5 text-center"><p>Manajemen SDM & Akses</p></div></div>
-        <div id="view-pengaturan" class="view-section"><h4 class="fw-bold mb-4">Pengaturan</h4><div class="card p-5 text-center"><p>Konfigurasi Sistem</p></div></div>
+
+        <div id="view-menu" class="view-section">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="fw-bold mb-0">Master Menu</h4>
+                <button class="btn btn-primary rounded-3" onclick="alert('Fitur tambah menu dalam pengembangan')">+ Tambah Menu</button>
+            </div>
+            <div class="card p-4">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead><tr><th>ID Menu</th><th>Kategori</th><th>Nama Produk</th><th>Harga (Rp)</th><th>Status</th></tr></thead>
+                        <tbody id="tbody-menu"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-outlet" class="view-section">
+            <h4 class="fw-bold mb-4">Master Outlet</h4>
+            <div class="card p-4">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead><tr><th>ID Outlet</th><th>Nama Outlet</th><th>Kota</th><th>PIC</th><th>Status</th></tr></thead>
+                        <tbody id="tbody-outlet"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-kpi" class="view-section">
+            <h4 class="fw-bold mb-4">KPI Outlet</h4>
+            <div class="card p-4">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead><tr><th>Tanggal</th><th>Outlet</th><th>Target Sales</th><th>Actual Sales</th><th>Skor KPI</th></tr></thead>
+                        <tbody id="tbody-kpi"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-laporan" class="view-section">
+            <h4 class="fw-bold mb-4">Laporan Harian</h4>
+            <div class="card p-4">
+                <div class="mb-3">
+                    <button class="btn btn-success rounded-3" onclick="salinLaporan()"><i class="fas fa-copy me-2"></i>Salin Template Laporan</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead><tr><th>Tanggal</th><th>Outlet</th><th>Sales</th><th>Cash</th><th>QRIS</th><th>Catatan</th></tr></thead>
+                        <tbody id="tbody-laporan"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-pengeluaran" class="view-section">
+            <h4 class="fw-bold mb-4">Pengeluaran</h4>
+            <div class="card p-4">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead><tr><th>Tanggal</th><th>Outlet</th><th>Kategori</th><th>Deskripsi</th><th>Nominal (Rp)</th></tr></thead>
+                        <tbody id="tbody-pengeluaran"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-foodcost" class="view-section">
+            <h4 class="fw-bold mb-4">Analisis Food Cost</h4>
+            <div class="card p-5 text-center bg-light">
+                <i class="fas fa-chart-pie text-muted fs-1 mb-3"></i>
+                <h5 class="text-muted">Modul kalkulasi HPP otomatis sedang dalam penyesuaian parameter.</h5>
+            </div>
+        </div>
+
+        <div id="view-inventori" class="view-section">
+            <h4 class="fw-bold mb-4">Inventori Gudang</h4>
+            <div class="card p-4">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead><tr><th>ID Item</th><th>Nama Bahan</th><th>Stok Awal</th><th>Masuk</th><th>Keluar</th><th>Sisa Akhir</th></tr></thead>
+                        <tbody id="tbody-inventori"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-pengguna" class="view-section">
+            <h4 class="fw-bold mb-4">Manajemen Pengguna</h4>
+            <div class="card p-4">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead><tr><th>User ID</th><th>Nama</th><th>Username</th><th>Role</th><th>Status</th></tr></thead>
+                        <tbody id="tbody-pengguna"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-pengaturan" class="view-section">
+            <h4 class="fw-bold mb-4">Pengaturan Sistem</h4>
+            <div class="card p-4">
+                <div class="row">
+                    <div class="col-md-6 border-end pe-4">
+                        <h6 class="fw-bold mb-3">Profil Bisnis</h6>
+                        <div class="mb-3"><label class="form-label text-muted">Nama Perusahaan</label><input type="text" class="form-control" value="Belajar Inovasi" readonly></div>
+                        <div class="mb-3"><label class="form-label text-muted">Zona Waktu</label><input type="text" class="form-control" value="WIB (Asia/Jakarta)" readonly></div>
+                    </div>
+                    <div class="col-md-6 ps-4">
+                        <h6 class="fw-bold mb-3">Pengaturan Aplikasi</h6>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" checked>
+                            <label class="form-check-label">Notifikasi Telegram</label>
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" checked>
+                            <label class="form-check-label">Auto Backup Spreadsheet</label>
+                        </div>
+                        <button class="btn btn-outline-primary mt-3 rounded-3">Simpan Perubahan</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </div>
 </div>
@@ -196,26 +303,23 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbzxFYr1spelkD6JEuc8zZply8WfYlYIDGfvdHRqTf8KGjgxLAcODulSOcrP3IiVkBLCZw/exec';
+    // MASUKKAN URL WEB APP ANDA DI SINI
+    const API_URL = 'https://script.google.com/macros/s/AKfycbztO1_NUm7nXfhP3aNyE9A-vaCXknkGDJ2AntKk3tyx0l-m13WtVdlCtZX31nO0rFOxrQ/exec';
     let currentUser = null;
     let trafficChart, compChart;
 
-    // FUNGSI API CORE (Fix CORS & Unexpected Token)
+    // API Engine
     async function apiCall(action, payload) {
-        Swal.showLoading();
+        if(action !== 'getDashboard') Swal.showLoading();
         try {
             const res = await fetch(API_URL, {
                 method: 'POST',
-                // Menggunakan text/plain mencegah CORS Preflight OPTIONS error di GAS
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify({ action, payload })
             });
-            
             const text = await res.text();
             let json;
-            try { json = JSON.parse(text); } 
-            catch (e) { throw new Error('Format balasan server salah. Pastikan Web App diset "Anyone".'); }
-
+            try { json = JSON.parse(text); } catch (e) { throw new Error('CORS/Format Error. Pastikan Web App diset ke "Anyone".'); }
             Swal.close();
             if(json.status === 'error') throw new Error(json.message);
             return json.data;
@@ -225,6 +329,7 @@
         }
     }
 
+    // Auth
     async function handleLogin() {
         const user = document.getElementById('user').value;
         const pass = document.getElementById('pass').value;
@@ -233,92 +338,63 @@
             document.getElementById('login-screen').classList.add('d-none');
             document.getElementById('app-screen').classList.remove('d-none');
             
-            // Set User Info
             document.getElementById('user-name').innerText = currentUser.Nama;
             document.getElementById('user-role').innerText = currentUser.Role;
             document.getElementById('user-initial').innerText = currentUser.Nama.charAt(0).toUpperCase();
             
             initApp();
         } catch (e) {
-            Swal.fire({ icon: 'error', title: 'Kesalahan', text: e.message, confirmButtonColor: '#6366F1' });
+            Swal.fire({ icon: 'error', title: 'Akses Ditolak', text: e.message });
         }
     }
 
-    function logout() {
-        location.reload();
-    }
+    function logout() { location.reload(); }
 
-    // ROUTER NAVIGATION
+    // Routing SPA
     function switchView(targetId, element) {
-        // Hide all views
         document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-        // Remove active class from all nav links
         document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
         
-        // Show target view & set active class
         document.getElementById(targetId).classList.add('active');
         if(element) element.classList.add('active');
 
-        // Jika modul laporan dibuka, ambil data
-        if(targetId === 'view-laporan') loadDataLaporan();
+        // Dynamic Data Fetching based on selected Menu
+        switch(targetId) {
+            case 'view-dashboard': loadDashboard(); break;
+            case 'view-penjualan': loadTableData('DAILY_REPORT', 'tbody-penjualan', ['ID', 'Tanggal', 'OutletID', 'TotalBill', 'Sales']); break;
+            case 'view-outlet': loadTableData('OUTLETS', 'tbody-outlet', ['OutletID', 'NamaOutlet', 'Kota', 'PIC', 'Status']); break;
+            case 'view-laporan': loadTableData('DAILY_REPORT', 'tbody-laporan', ['Tanggal', 'OutletID', 'Sales', 'Cash', 'QRIS', 'Catatan']); break;
+            case 'view-pengeluaran': loadTableData('EXPENSES', 'tbody-pengeluaran', ['Tanggal', 'OutletID', 'Kategori', 'Deskripsi', 'Nominal']); break;
+            case 'view-pengguna': loadTableData('USERS', 'tbody-pengguna', ['UserID', 'Nama', 'Username', 'Role', 'Status']); break;
+            case 'view-menu': loadTableData('MENU', 'tbody-menu', ['ID', 'Kategori', 'Nama', 'Harga', 'Status']); break;
+            case 'view-kpi': loadTableData('KPI', 'tbody-kpi', ['Tanggal', 'OutletID', 'TargetSales', 'ActualSales', 'SkorKPI']); break;
+            case 'view-inventori': loadTableData('INVENTORY', 'tbody-inventori', ['ID', 'Nama', 'StokAwal', 'Masuk', 'Keluar', 'SisaAkhir']); break;
+        }
     }
 
     async function initApp() {
         document.getElementById('filter-date').valueAsDate = new Date();
-        const outlets = await apiCall('getOutlets', {});
+        const outlets = await apiCall('getData', { sheetName: 'OUTLETS' });
         const select = document.getElementById('filter-outlet');
-        outlets.forEach(ot => {
-            select.innerHTML += `<option value="${ot.OutletID}">${ot.NamaOutlet}</option>`;
-        });
+        select.innerHTML = '<option value="ALL">Semua Outlet</option>';
+        if(outlets && outlets.length) {
+            outlets.forEach(ot => {
+                select.innerHTML += `<option value="${ot.OutletID}">${ot.NamaOutlet}</option>`;
+            });
+        }
         loadDashboard();
     }
 
+    // Dashboard Logic
     async function loadDashboard() {
         const outletId = document.getElementById('filter-outlet').value;
         const data = await apiCall('getDashboard', { outletId });
 
-        document.getElementById('kpi-omset').innerText = 'Rp ' + data.kpi.omset.toLocaleString('id-ID');
+        document.getElementById('kpi-omset').innerText = 'Rp ' + Number(data.kpi.omset).toLocaleString('id-ID');
         document.getElementById('kpi-trans').innerText = data.kpi.transactions;
-        document.getElementById('kpi-avg').innerText = 'Rp ' + data.kpi.avgBill.toLocaleString('id-ID');
+        document.getElementById('kpi-avg').innerText = 'Rp ' + Number(data.kpi.avgBill).toLocaleString('id-ID');
 
         updateCharts(data);
-
-        const tbody = document.getElementById('ranking-table');
-        tbody.innerHTML = '';
-        data.ranking.forEach((ot, i) => {
-            tbody.innerHTML += `
-                <tr>
-                    <td>${i+1}</td>
-                    <td class="fw-bold">${ot.name}</td>
-                    <td>Rp ${ot.omset.toLocaleString('id-ID')}</td>
-                    <td>${ot.bill}</td>
-                    <td>Rp ${ot.avg.toLocaleString('id-ID')}</td>
-                    <td class="text-success fw-bold">${ot.foodCost}%</td>
-                </tr>
-            `;
-        });
-    }
-
-    // FUNGSI MODUL LAPORAN
-    async function loadDataLaporan() {
-        try {
-            const data = await apiCall('getData', { sheetName: 'DAILY_REPORT' });
-            const tbody = document.getElementById('table-laporan-body');
-            tbody.innerHTML = '';
-            data.forEach(row => {
-                const date = new Date(row.Tanggal).toLocaleDateString('id-ID');
-                tbody.innerHTML += `<tr><td>${date}</td><td>${row.OutletID}</td><td>Rp ${Number(row.Sales).toLocaleString('id-ID')}</td><td>Rp ${Number(row.Cash).toLocaleString('id-ID')}</td><td>Rp ${Number(row.QRIS).toLocaleString('id-ID')}</td></tr>`;
-            });
-        } catch (e) {
-            document.getElementById('table-laporan-body').innerHTML = `<tr><td colspan="5" class="text-center text-danger">Gagal memuat data</td></tr>`;
-        }
-    }
-
-    function salinLaporanTemplate() {
-        const teks = "Laporan Harian Belajar Inovasi\nOutlet: \nTanggal: \nTotal Sales: Rp \nBahan Keluar: ";
-        navigator.clipboard.writeText(teks).then(() => {
-            Swal.fire({ icon: 'success', title: 'Disalin!', text: 'Format laporan berhasil disalin ke clipboard', timer: 1500, showConfirmButton: false });
-        });
     }
 
     function updateCharts(data) {
@@ -326,8 +402,8 @@
         if(trafficChart) trafficChart.destroy();
         trafficChart = new Chart(trafficCtx, {
             type: 'line',
-            data: { labels: data.chartTraffic.labels, datasets: [{ label: 'Omset (Juta)', data: data.chartTraffic.data, borderColor: '#6366F1', backgroundColor: 'rgba(99, 102, 241, 0.1)', tension: 0.4, fill: true }] },
-            options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+            data: { labels: data.chartTraffic.labels, datasets: [{ label: 'Omset', data: data.chartTraffic.data, borderColor: '#6366F1', backgroundColor: 'rgba(99, 102, 241, 0.1)', fill: true, tension: 0.4 }] },
+            options: { maintainAspectRatio: false, plugins: { legend: { display: false } } }
         });
 
         const compCtx = document.getElementById('compChart');
@@ -335,7 +411,49 @@
         compChart = new Chart(compCtx, {
             type: 'doughnut',
             data: { labels: ['Makanan', 'Minuman', 'Add On'], datasets: [{ data: data.chartComp, backgroundColor: ['#6366F1', '#F59E0B', '#10B981'] }] },
-            options: { cutout: '75%', plugins: { legend: { position: 'right' } } }
+            options: { maintainAspectRatio: false, cutout: '75%', plugins: { legend: { position: 'bottom' } } }
+        });
+    }
+
+    // Generic Table Loader Function
+    async function loadTableData(sheetName, tbodyId, columns) {
+        const tbody = document.getElementById(tbodyId);
+        tbody.innerHTML = '<tr><td colspan="'+columns.length+'" class="text-center py-4"><div class="spinner-border text-primary" role="status"></div></td></tr>';
+        
+        try {
+            const data = await apiCall('getData', { sheetName });
+            tbody.innerHTML = '';
+            
+            if(data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="${columns.length}" class="text-center text-muted">Belum ada data di sheet ${sheetName}</td></tr>`;
+                return;
+            }
+
+            data.forEach(row => {
+                let tr = document.createElement('tr');
+                columns.forEach(col => {
+                    let td = document.createElement('td');
+                    let val = row[col] || '-';
+                    // Format tampilan
+                    if (val && typeof val === 'string' && val.includes('GMT')) val = new Date(val).toLocaleDateString('id-ID');
+                    if (col.includes('Sales') || col.includes('Nominal') || col.includes('Harga')) {
+                        if (!isNaN(val)) val = 'Rp ' + Number(val).toLocaleString('id-ID');
+                    }
+                    td.innerText = val;
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+        } catch (e) {
+            tbody.innerHTML = `<tr><td colspan="${columns.length}" class="text-center text-danger">Gagal memuat data: ${e.message}</td></tr>`;
+        }
+    }
+
+    // Custom Feature: Salin Laporan
+    function salinLaporan() {
+        const text = `Laporan Harian - Belajar Inovasi\nTanggal: ${new Date().toLocaleDateString('id-ID')}\nOutlet: ${currentUser.OutletID || 'HO'}\n\nTotal Omset: Rp ...\nTotal Bill: ...\n\nCatatan: \n-`;
+        navigator.clipboard.writeText(text).then(() => {
+            Swal.fire({ icon: 'success', title: 'Berhasil Disalin!', text: 'Template telah disalin ke clipboard', timer: 2000, showConfirmButton: false });
         });
     }
 </script>
