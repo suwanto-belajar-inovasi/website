@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Semesin Enterprise | Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>Belajar Inovasi | Manajemen Outlet</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -15,228 +15,214 @@
             --text-dark: #1E293B;
             --text-muted: #64748B;
         }
-
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--primary-bg);
-            color: var(--text-dark);
-            overflow-x: hidden;
-        }
-
-        /* Sidebar Styling */
-        .sidebar {
-            width: 260px;
-            height: 100vh;
-            position: fixed;
-            background: var(--sidebar-color);
-            border-right: 1px solid #E2E8F0;
-            padding: 1.5rem;
-            z-index: 1000;
-            transition: all 0.3s;
-        }
-
-        .nav-link {
-            color: var(--text-muted);
-            padding: 12px 15px;
-            border-radius: 12px;
-            margin-bottom: 5px;
-            font-weight: 500;
-            transition: 0.2s;
-        }
-
-        .nav-link:hover, .nav-link.active {
-            background: #EEF2FF;
-            color: var(--accent-color);
-        }
-
-        /* Main Content */
-        .main-wrapper {
-            margin-left: 260px;
-            padding: 2rem;
-            transition: all 0.3s;
-        }
-
-        .card {
-            border: none;
-            border-radius: 20px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-            transition: transform 0.2s;
-        }
-
-        /* KPI Cards */
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--primary-bg); color: var(--text-dark); }
+        
+        /* Sidebar */
+        .sidebar { width: 260px; height: 100vh; position: fixed; background: var(--sidebar-color); border-right: 1px solid #E2E8F0; display: flex; flex-direction: column; z-index: 1000; }
+        .sidebar-menu { flex-grow: 1; overflow-y: auto; padding: 1.5rem; }
+        .sidebar-footer { padding: 1.5rem; border-top: 1px solid #E2E8F0; }
+        
+        .nav-link { color: var(--text-muted); padding: 12px 15px; border-radius: 12px; margin-bottom: 5px; font-weight: 500; font-size: 14px; cursor: pointer; transition: 0.2s; }
+        .nav-link i { width: 25px; }
+        .nav-link:hover, .nav-link.active { background: #EEF2FF; color: var(--accent-color); font-weight: 600; }
+        
+        /* Main */
+        .main-wrapper { margin-left: 260px; padding: 2rem; }
+        .card { border: none; border-radius: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
         .kpi-card { padding: 1.5rem; }
-        .kpi-icon {
-            width: 45px; height: 45px;
-            border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            margin-bottom: 1rem;
-        }
-
-        .trend-up { color: #10B981; font-size: 0.8rem; }
-        .trend-down { color: #EF4444; font-size: 0.8rem; }
-
-        /* Tables */
-        .table thead th {
-            background: #F1F5F9;
-            border: none;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            font-size: 11px;
-            letter-spacing: 0.5px;
-            padding: 15px;
-        }
-
-        .badge-soft-success { background: #DCFCE7; color: #15803D; }
-
-        @media (max-width: 992px) {
-            .sidebar { transform: translateX(-100%); }
-            .main-wrapper { margin-left: 0; }
-            .sidebar.active { transform: translateX(0); }
-        }
+        .kpi-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; }
+        
+        .view-section { display: none; animation: fadeIn 0.3s; }
+        .view-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
 <div id="login-screen" class="d-flex align-items-center justify-content-center vh-100">
-    <div class="card p-5 shadow-lg" style="width: 400px;">
+    <div class="card p-5 shadow-sm" style="width: 400px; border-radius: 20px;">
         <div class="text-center mb-4">
-            <h2 class="fw-bold">SEMESIN</h2>
-            <p class="text-muted">Manajemen Multi Cabang</p>
+            <h3 class="fw-bold text-primary">Belajar Inovasi</h3>
+            <p class="text-muted">Outlet Management System</p>
         </div>
-        <input type="text" id="user" class="form-control mb-3" placeholder="Username">
-        <input type="password" id="pass" class="form-control mb-4" placeholder="Password">
-        <button onclick="handleLogin()" class="btn btn-primary w-100 py-2 rounded-3">Sign In</button>
+        <input type="text" id="user" class="form-control mb-3 p-3 rounded-3" placeholder="Username">
+        <input type="password" id="pass" class="form-control mb-4 p-3 rounded-3" placeholder="Password">
+        <button onclick="handleLogin()" class="btn btn-primary w-100 py-3 rounded-3 fw-bold">Sign In</button>
     </div>
 </div>
 
 <div id="app-screen" class="d-none">
     <div class="sidebar">
-        <div class="mb-5 px-3">
-            <h3 class="fw-bold text-primary">SEMESIN</h3>
+        <div class="sidebar-menu">
+            <div class="d-flex align-items-center mb-5 gap-3">
+                <div class="bg-warning rounded-circle p-2"><i class="fas fa-sun text-white"></i></div>
+                <h5 class="fw-bold mb-0">Belajar Inovasi</h5>
+            </div>
+            
+            <nav class="nav flex-column">
+                <a class="nav-link active" onclick="switchView('view-dashboard', this)"><i class="fas fa-grid-2"></i> Dashboard</a>
+                <a class="nav-link" onclick="switchView('view-penjualan', this)"><i class="fas fa-receipt"></i> Penjualan</a>
+                <a class="nav-link" onclick="switchView('view-menu', this)"><i class="fas fa-utensils"></i> Menu</a>
+                <a class="nav-link" onclick="switchView('view-outlet', this)"><i class="fas fa-store"></i> Outlet</a>
+                <a class="nav-link" onclick="switchView('view-kpi', this)"><i class="fas fa-chart-line"></i> KPI Outlet</a>
+                <a class="nav-link" onclick="switchView('view-laporan', this)"><i class="fas fa-file-alt"></i> Laporan</a>
+                <a class="nav-link" onclick="switchView('view-pengeluaran', this)"><i class="fas fa-wallet"></i> Pengeluaran</a>
+                <a class="nav-link" onclick="switchView('view-foodcost', this)"><i class="fas fa-percentage"></i> Food Cost</a>
+                <a class="nav-link" onclick="switchView('view-inventori', this)"><i class="fas fa-boxes"></i> Inventori</a>
+                <a class="nav-link" onclick="switchView('view-pengguna', this)"><i class="fas fa-users"></i> Pengguna</a>
+                <a class="nav-link" onclick="switchView('view-pengaturan', this)"><i class="fas fa-cog"></i> Pengaturan</a>
+            </nav>
         </div>
-        <nav class="nav flex-column">
-            <a class="nav-link active" href="#"><i class="fas fa-grid-2 me-3"></i> Dashboard</a>
-            <a class="nav-link" href="#"><i class="fas fa-store me-3"></i> Outlet</a>
-            <a class="nav-link" href="#"><i class="fas fa-bullseye me-3"></i> KPI Outlet</a>
-            <a class="nav-link" href="#"><i class="fas fa-file-alt me-3"></i> Laporan</a>
-            <a class="nav-link" href="#"><i class="fas fa-wallet me-3"></i> Pengeluaran</a>
-            <a class="nav-link" href="#"><i class="fas fa-utensils me-3"></i> Food Cost</a>
-            <a class="nav-link" href="#"><i class="fas fa-users me-3"></i> SDM</a>
-            <a class="nav-link" href="#"><i class="fas fa-boxes me-3"></i> Inventori</a>
-            <hr>
-            <a class="nav-link text-danger" href="javascript:void(0)" onclick="location.reload()"><i class="fas fa-power-off me-3"></i> Logout</a>
-        </nav>
+        <div class="sidebar-footer">
+            <div class="d-flex justify-content-between align-items-center cursor-pointer" onclick="logout()">
+                <div class="d-flex gap-2 align-items-center">
+                    <div class="bg-primary text-white rounded-circle d-flex justify-content-center align-items-center" style="width: 35px; height: 35px;" id="user-initial">A</div>
+                    <div>
+                        <small class="fw-bold d-block text-dark" id="user-name">Admin</small>
+                        <small class="text-muted" style="font-size: 11px;" id="user-role">Head Office</small>
+                    </div>
+                </div>
+                <i class="fas fa-sign-out-alt text-danger"></i>
+            </div>
+        </div>
     </div>
 
     <div class="main-wrapper">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h4 class="fw-bold mb-0">Dashboard</h4>
-                <p class="text-muted small">Ringkasan performa bisnis hari ini</p>
-            </div>
-            <div class="d-flex gap-2">
-                <input type="date" id="filter-date" class="form-control border-0 shadow-sm rounded-3">
-                <select id="filter-outlet" class="form-select border-0 shadow-sm rounded-3" onchange="loadDashboard()">
-                    <option value="ALL">Semua Outlet</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="row g-3 mb-4">
-            <div class="col-md-4 col-xl-2">
-                <div class="card kpi-card">
-                    <div class="kpi-icon bg-primary bg-opacity-10 text-primary"><i class="fas fa-coins"></i></div>
-                    <small class="text-muted">Omset Hari Ini</small>
-                    <h5 class="fw-bold mb-1" id="kpi-omset">Rp 0</h5>
-                    <span class="trend-up"><i class="fas fa-arrow-up"></i> 12.5%</span>
+        
+        <div id="view-dashboard" class="view-section active">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h4 class="fw-bold mb-1">Dashboard</h4>
+                    <p class="text-muted small">Ringkasan performa bisnis hari ini</p>
                 </div>
-            </div>
-            <div class="col-md-4 col-xl-2">
-                <div class="card kpi-card">
-                    <div class="kpi-icon bg-success bg-opacity-10 text-success"><i class="fas fa-receipt"></i></div>
-                    <small class="text-muted">Transaksi</small>
-                    <h5 class="fw-bold mb-1" id="kpi-trans">0</h5>
-                    <span class="trend-up"><i class="fas fa-arrow-up"></i> 8.2%</span>
+                <div class="d-flex gap-2">
+                    <input type="date" id="filter-date" class="form-control bg-white shadow-sm border-0 rounded-3">
+                    <select id="filter-outlet" class="form-select bg-white shadow-sm border-0 rounded-3" onchange="loadDashboard()">
+                        <option value="ALL">Semua Outlet</option>
+                    </select>
                 </div>
-            </div>
-            <div class="col-md-4 col-xl-2">
-                <div class="card kpi-card">
-                    <div class="kpi-icon bg-warning bg-opacity-10 text-warning"><i class="fas fa-hand-holding-dollar"></i></div>
-                    <small class="text-muted">Rata-rata Transaksi</small>
-                    <h5 class="fw-bold mb-1" id="kpi-avg">Rp 0</h5>
-                    <span class="trend-down"><i class="fas fa-arrow-down"></i> 2.1%</span>
-                </div>
-            </div>
             </div>
 
-        <div class="row g-3 mb-4">
-            <div class="col-lg-8">
-                <div class="card p-4">
-                    <h6 class="fw-bold mb-4">Traffic Penjualan Harian</h6>
-                    <canvas id="trafficChart" height="250"></canvas>
-                </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="card p-4">
-                    <h6 class="fw-bold mb-4">Komposisi Penjualan</h6>
-                    <canvas id="compChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <div class="row g-3">
-            <div class="col-lg-8">
-                <div class="card p-4">
-                    <h6 class="fw-bold mb-3">Ranking KPI Outlet</h6>
-                    <div class="table-responsive">
-                        <table class="table align-middle">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Outlet</th>
-                                    <th>Omset</th>
-                                    <th>Transaksi</th>
-                                    <th>Food Cost</th>
-                                    <th>Skor</th>
-                                </tr>
-                            </thead>
-                            <tbody id="ranking-table">
-                                </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="card p-4 h-100 bg-white">
-                    <h6 class="fw-bold mb-4">Insight Hari Ini</h6>
-                    <div class="d-flex gap-3 mb-3">
-                        <div class="bg-primary bg-opacity-10 p-2 rounded"><i class="fas fa-lightbulb text-primary"></i></div>
-                        <div>
-                            <small class="fw-bold d-block">Omset naik 12%</small>
-                            <small class="text-muted">Berkat promo bundling kopi.</small>
+            <div class="row g-3 mb-4">
+                <div class="col">
+                    <div class="card kpi-card">
+                        <div class="d-flex gap-3 align-items-center mb-2">
+                            <div class="kpi-icon bg-primary bg-opacity-10 text-primary mb-0"><i class="fas fa-wallet"></i></div>
+                            <small class="text-muted fw-bold">Omset Hari Ini</small>
                         </div>
+                        <h4 class="fw-bold mb-1" id="kpi-omset">Rp 0</h4>
                     </div>
+                </div>
+                <div class="col">
+                    <div class="card kpi-card">
+                        <div class="d-flex gap-3 align-items-center mb-2">
+                            <div class="kpi-icon bg-info bg-opacity-10 text-info mb-0"><i class="fas fa-shopping-cart"></i></div>
+                            <small class="text-muted fw-bold">Transaksi</small>
+                        </div>
+                        <h4 class="fw-bold mb-1" id="kpi-trans">0</h4>
                     </div>
+                </div>
+                <div class="col">
+                    <div class="card kpi-card">
+                        <div class="d-flex gap-3 align-items-center mb-2">
+                            <div class="kpi-icon bg-warning bg-opacity-10 text-warning mb-0"><i class="fas fa-arrow-trend-up"></i></div>
+                            <small class="text-muted fw-bold">Rata-rata Trx</small>
+                        </div>
+                        <h4 class="fw-bold mb-1" id="kpi-avg">Rp 0</h4>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-3 mb-4">
+                <div class="col-lg-8">
+                    <div class="card p-4">
+                        <h6 class="fw-bold mb-4">Traffic Penjualan Harian</h6>
+                        <canvas id="trafficChart" height="100"></canvas>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card p-4">
+                        <h6 class="fw-bold mb-4">Komposisi Penjualan</h6>
+                        <canvas id="compChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card p-4">
+                <h6 class="fw-bold mb-3">Ranking KPI Outlet</h6>
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead class="bg-light">
+                            <tr><th>#</th><th>Outlet</th><th>Omset (Rp)</th><th>Transaksi</th><th>Avg/Transaksi</th><th>Food Cost</th></tr>
+                        </thead>
+                        <tbody id="ranking-table"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
+
+        <div id="view-penjualan" class="view-section">
+            <h4 class="fw-bold mb-4">Modul Penjualan</h4>
+            <div class="card p-5 text-center">
+                <h5 class="text-muted">Data Penjualan akan tampil di sini.</h5>
+            </div>
+        </div>
+
+        <div id="view-laporan" class="view-section">
+            <h4 class="fw-bold mb-4">Modul Laporan Harian</h4>
+            <div class="card p-4">
+                <button class="btn btn-primary mb-3 w-auto d-inline-block" style="max-width: 200px;" onclick="salinLaporanTemplate()">Salin Template Laporan</button>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead class="bg-light"><tr><th>Tanggal</th><th>Outlet</th><th>Total Sales</th><th>Cash</th><th>QRIS</th></tr></thead>
+                        <tbody id="table-laporan-body"><tr><td colspan="5" class="text-center">Memuat data...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div id="view-menu" class="view-section"><h4 class="fw-bold mb-4">Master Menu</h4><div class="card p-5 text-center"><p>Pengaturan Menu Produk</p></div></div>
+        <div id="view-outlet" class="view-section"><h4 class="fw-bold mb-4">Master Outlet</h4><div class="card p-5 text-center"><p>Daftar Cabang</p></div></div>
+        <div id="view-kpi" class="view-section"><h4 class="fw-bold mb-4">KPI Outlet</h4><div class="card p-5 text-center"><p>Key Performance Indicator</p></div></div>
+        <div id="view-pengeluaran" class="view-section"><h4 class="fw-bold mb-4">Pengeluaran</h4><div class="card p-5 text-center"><p>Pencatatan Biaya</p></div></div>
+        <div id="view-foodcost" class="view-section"><h4 class="fw-bold mb-4">Food Cost</h4><div class="card p-5 text-center"><p>Analisis HPP</p></div></div>
+        <div id="view-inventori" class="view-section"><h4 class="fw-bold mb-4">Inventori</h4><div class="card p-5 text-center"><p>Stok Barang</p></div></div>
+        <div id="view-pengguna" class="view-section"><h4 class="fw-bold mb-4">Pengguna</h4><div class="card p-5 text-center"><p>Manajemen SDM & Akses</p></div></div>
+        <div id="view-pengaturan" class="view-section"><h4 class="fw-bold mb-4">Pengaturan</h4><div class="card p-5 text-center"><p>Konfigurasi Sistem</p></div></div>
+
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    const API_URL = 'PASTE_URL_WEBAPP_DI_SINI';
+    const API_URL = 'MASUKKAN_URL_WEB_APP_DISINI';
     let currentUser = null;
     let trafficChart, compChart;
 
+    // FUNGSI API CORE (Fix CORS & Unexpected Token)
     async function apiCall(action, payload) {
-        const res = await fetch(API_URL, {
-            method: 'POST',
-            body: JSON.stringify({ action, payload })
-        });
-        const json = await res.json();
-        if(json.status === 'error') throw new Error(json.message);
-        return json.data;
+        Swal.showLoading();
+        try {
+            const res = await fetch(API_URL, {
+                method: 'POST',
+                // Menggunakan text/plain mencegah CORS Preflight OPTIONS error di GAS
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ action, payload })
+            });
+            
+            const text = await res.text();
+            let json;
+            try { json = JSON.parse(text); } 
+            catch (e) { throw new Error('Format balasan server salah. Pastikan Web App diset "Anyone".'); }
+
+            Swal.close();
+            if(json.status === 'error') throw new Error(json.message);
+            return json.data;
+        } catch (error) {
+            Swal.close();
+            throw error;
+        }
     }
 
     async function handleLogin() {
@@ -246,13 +232,39 @@
             currentUser = await apiCall('login', { user, pass });
             document.getElementById('login-screen').classList.add('d-none');
             document.getElementById('app-screen').classList.remove('d-none');
+            
+            // Set User Info
+            document.getElementById('user-name').innerText = currentUser.Nama;
+            document.getElementById('user-role').innerText = currentUser.Role;
+            document.getElementById('user-initial').innerText = currentUser.Nama.charAt(0).toUpperCase();
+            
             initApp();
         } catch (e) {
-            Swal.fire('Error', e.message, 'error');
+            Swal.fire({ icon: 'error', title: 'Kesalahan', text: e.message, confirmButtonColor: '#6366F1' });
         }
     }
 
+    function logout() {
+        location.reload();
+    }
+
+    // ROUTER NAVIGATION
+    function switchView(targetId, element) {
+        // Hide all views
+        document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+        // Remove active class from all nav links
+        document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+        
+        // Show target view & set active class
+        document.getElementById(targetId).classList.add('active');
+        if(element) element.classList.add('active');
+
+        // Jika modul laporan dibuka, ambil data
+        if(targetId === 'view-laporan') loadDataLaporan();
+    }
+
     async function initApp() {
+        document.getElementById('filter-date').valueAsDate = new Date();
         const outlets = await apiCall('getOutlets', {});
         const select = document.getElementById('filter-outlet');
         outlets.forEach(ot => {
@@ -265,28 +277,47 @@
         const outletId = document.getElementById('filter-outlet').value;
         const data = await apiCall('getDashboard', { outletId });
 
-        // Update KPI
-        document.getElementById('kpi-omset').innerText = 'Rp ' + data.kpi.omset.toLocaleString();
+        document.getElementById('kpi-omset').innerText = 'Rp ' + data.kpi.omset.toLocaleString('id-ID');
         document.getElementById('kpi-trans').innerText = data.kpi.transactions;
-        document.getElementById('kpi-avg').innerText = 'Rp ' + data.kpi.avgBill.toLocaleString();
+        document.getElementById('kpi-avg').innerText = 'Rp ' + data.kpi.avgBill.toLocaleString('id-ID');
 
-        // Update Charts
         updateCharts(data);
 
-        // Update Table
         const tbody = document.getElementById('ranking-table');
         tbody.innerHTML = '';
         data.ranking.forEach((ot, i) => {
             tbody.innerHTML += `
                 <tr>
                     <td>${i+1}</td>
-                    <td><div class="fw-bold">${ot.name}</div></td>
-                    <td>Rp ${ot.omset.toLocaleString()}</td>
+                    <td class="fw-bold">${ot.name}</td>
+                    <td>Rp ${ot.omset.toLocaleString('id-ID')}</td>
                     <td>${ot.bill}</td>
-                    <td>${ot.foodCost}%</td>
-                    <td><span class="badge badge-soft-success">Sempurna</span></td>
+                    <td>Rp ${ot.avg.toLocaleString('id-ID')}</td>
+                    <td class="text-success fw-bold">${ot.foodCost}%</td>
                 </tr>
             `;
+        });
+    }
+
+    // FUNGSI MODUL LAPORAN
+    async function loadDataLaporan() {
+        try {
+            const data = await apiCall('getData', { sheetName: 'DAILY_REPORT' });
+            const tbody = document.getElementById('table-laporan-body');
+            tbody.innerHTML = '';
+            data.forEach(row => {
+                const date = new Date(row.Tanggal).toLocaleDateString('id-ID');
+                tbody.innerHTML += `<tr><td>${date}</td><td>${row.OutletID}</td><td>Rp ${Number(row.Sales).toLocaleString('id-ID')}</td><td>Rp ${Number(row.Cash).toLocaleString('id-ID')}</td><td>Rp ${Number(row.QRIS).toLocaleString('id-ID')}</td></tr>`;
+            });
+        } catch (e) {
+            document.getElementById('table-laporan-body').innerHTML = `<tr><td colspan="5" class="text-center text-danger">Gagal memuat data</td></tr>`;
+        }
+    }
+
+    function salinLaporanTemplate() {
+        const teks = "Laporan Harian Belajar Inovasi\nOutlet: \nTanggal: \nTotal Sales: Rp \nBahan Keluar: ";
+        navigator.clipboard.writeText(teks).then(() => {
+            Swal.fire({ icon: 'success', title: 'Disalin!', text: 'Format laporan berhasil disalin ke clipboard', timer: 1500, showConfirmButton: false });
         });
     }
 
@@ -295,32 +326,16 @@
         if(trafficChart) trafficChart.destroy();
         trafficChart = new Chart(trafficCtx, {
             type: 'line',
-            data: {
-                labels: data.chartTraffic.labels,
-                datasets: [{
-                    label: 'Omset',
-                    data: data.chartTraffic.data,
-                    borderColor: '#6366F1',
-                    tension: 0.4,
-                    fill: true,
-                    backgroundColor: 'rgba(99, 102, 241, 0.1)'
-                }]
-            },
-            options: { plugins: { legend: { display: false } } }
+            data: { labels: data.chartTraffic.labels, datasets: [{ label: 'Omset (Juta)', data: data.chartTraffic.data, borderColor: '#6366F1', backgroundColor: 'rgba(99, 102, 241, 0.1)', tension: 0.4, fill: true }] },
+            options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
         });
 
         const compCtx = document.getElementById('compChart');
         if(compChart) compChart.destroy();
         compChart = new Chart(compCtx, {
             type: 'doughnut',
-            data: {
-                labels: ['Food', 'Beverage', 'Others'],
-                datasets: [{
-                    data: data.chartComp,
-                    backgroundColor: ['#6366F1', '#10B981', '#F59E0B']
-                }]
-            },
-            options: { cutout: '70%' }
+            data: { labels: ['Makanan', 'Minuman', 'Add On'], datasets: [{ data: data.chartComp, backgroundColor: ['#6366F1', '#F59E0B', '#10B981'] }] },
+            options: { cutout: '75%', plugins: { legend: { position: 'right' } } }
         });
     }
 </script>
