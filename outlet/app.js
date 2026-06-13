@@ -1,5 +1,5 @@
 // GANTI DENGAN URL WEB APP GOOGLE APPS SCRIPT ANDA
-const API_URL = 'https://script.google.com/macros/s/AKfycbzkvLBjofJd10aauSvDTqHn0__fYsKIw24cgRzBOnQZbTgNs1NoeLqW9xuCU88h9gL1/exec'; 
+const API_URL = 'https://script.google.com/macros/s/AKfycbzxFYr1spelkD6JEuc8zZply8WfYlYIDGfvdHRqTf8KGjgxLAcODulSOcrP3IiVkBLCZw/exec'; 
 
 let currentUser = JSON.parse(localStorage.getItem('outletUser')) || null;
 let salesChart;
