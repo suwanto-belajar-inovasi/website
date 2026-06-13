@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Manajemen Outlet | Belajar Inovasi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-light">
+
+    <div id="login-view" class="container vh-100 d-flex justify-content-center align-items-center">
+        <div class="card shadow-sm p-4" style="width: 400px; border-radius: 15px;">
+            <div class="text-center mb-4">
+                <h3 class="fw-bold text-primary">Belajar Inovasi</h3>
+                <p class="text-muted">Outlet Management System</p>
+            </div>
+            <form id="login-form">
+                <div class="mb-3">
+                    <label class="form-label">Username</label>
+                    <input type="text" class="form-control" id="login-username" required>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-control" id="login-password" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 py-2" id="btn-login">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="app-view" class="d-none">
+        <div class="d-flex">
+            <div class="sidebar bg-dark text-white p-3 vh-100">
+                <h4 class="text-center mb-4 fw-bold text-warning">Belajar Inovasi</h4>
+                <hr>
+                <ul class="nav flex-column gap-2">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link text-white nav-menu active" data-target="dashboard"><i class="fas fa-chart-pie me-2"></i> Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link text-white nav-menu" data-target="laporan"><i class="fas fa-file-invoice-dollar me-2"></i> Laporan Harian</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link text-white" onclick="logout()"><i class="fas fa-sign-out-alt me-2 text-danger"></i> Logout</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="main-content flex-grow-1 p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 id="page-title" class="fw-bold">Dashboard</h2>
+                    <div class="user-profile">
+                        <span id="user-info" class="badge bg-primary fs-6 p-2">Role: Outlet</span>
+                    </div>
+                </div>
+
+                <div id="view-dashboard" class="view-section">
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <div class="card kpi-card bg-primary text-white shadow-sm h-100">
+                                <div class="card-body">
+                                    <h6>Total Omset</h6>
+                                    <h3 id="kpi-omset">Rp 0</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card kpi-card bg-success text-white shadow-sm h-100">
+                                <div class="card-body">
+                                    <h6>Total Bill</h6>
+                                    <h3 id="kpi-bill">0</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card kpi-card bg-info text-white shadow-sm h-100">
+                                <div class="card-body">
+                                    <h6>Average Bill</h6>
+                                    <h3 id="kpi-avgbill">Rp 0</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">Trend Sales Harian</h5>
+                            <canvas id="salesChart" height="100"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="view-laporan" class="view-section d-none">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Data Laporan Harian</h5>
+                            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalLaporan">+ Input Laporan</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table id="table-laporan" class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Tanggal</th>
+                                            <th>Outlet</th>
+                                            <th>Sales</th>
+                                            <th>Cash</th>
+                                            <th>QRIS</th>
+                                            <th>Total Bill</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbody-laporan"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalLaporan" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Input Laporan Harian</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="form-laporan">
+                        <div class="mb-2"><label>Tanggal</label><input type="date" id="lap-tanggal" class="form-control" required></div>
+                        <div class="mb-2"><label>Total Sales</label><input type="number" id="lap-sales" class="form-control" required></div>
+                        <div class="mb-2"><label>Cash</label><input type="number" id="lap-cash" class="form-control" required></div>
+                        <div class="mb-2"><label>QRIS</label><input type="number" id="lap-qris" class="form-control" required></div>
+                        <div class="mb-2"><label>Total Bill</label><input type="number" id="lap-bill" class="form-control" required></div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="saveLaporan()">Simpan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
