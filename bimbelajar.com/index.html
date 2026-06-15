@@ -35,37 +35,21 @@ body.exam-mode { overflow: hidden; user-select: none; }
 @media (max-width: 768px) { #sidebar { left: -260px; } #sidebar.active { left: 0; } #content { margin-left: 0; padding: 15px; } .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1040; display: none; } .overlay.active { display: block; } }
 
 /* =========================================
-   NEW MODERN CARDS (DASHBOARD & CATALOG)
+   NEW MODERN CARDS (DASHBOARD)
    ========================================= */
-.cbt-card { display: flex; align-items: center; background: #fff; border-radius: 12px; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.04); border: 1px solid #e2e8f0; margin-bottom: 15px; transition: transform 0.2s; }
-.cbt-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
-.cbt-icon { width: 55px; height: 55px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; color: #fff; flex-shrink: 0; margin-right: 15px; }
-.cbt-info { flex-grow: 1; display: flex; flex-direction: column; }
-.cbt-category { font-size: 0.8rem; font-weight: 700; color: #64748b; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 2px; }
-.cbt-title { font-size: 1.05rem; font-weight: 700; color: #1e293b; margin-bottom: 4px; line-height: 1.2; }
-.cbt-meta { font-size: 0.8rem; color: #64748b; }
-.cbt-action { flex-shrink: 0; margin-left: 15px; }
-.cbt-btn { background-color: #ef4444; color: #fff; font-weight: 700; font-size: 0.9rem; border-radius: 50px; padding: 8px 20px; border: none; transition: 0.2s; }
-.cbt-btn:hover { background-color: #dc2626; color: #fff; }
-.cbt-btn-retake { background-color: #f59e0b; }
-.cbt-btn-retake:hover { background-color: #d97706; }
-
-@media (max-width: 576px) {
-    .cbt-card { flex-direction: column; text-align: center; }
-    .cbt-icon { margin: 0 auto 10px auto; }
-    .cbt-action { margin: 15px 0 0 0; width: 100%; }
-    .cbt-btn { width: 100%; padding: 10px; }
-}
-
 .katalog-card { border-radius: 14px; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: transform 0.2s; overflow: hidden; background: #fff; display: flex; flex-direction: column; }
 .katalog-card:hover { transform: translateY(-5px); box-shadow: 0 12px 25px rgba(0,0,0,0.1); }
 .katalog-header { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); color: white; padding: 20px; text-align: center; }
-.katalog-price { font-size: 1.8rem; font-weight: 800; color: #f59e0b; margin: 10px 0; }
 .katalog-body { padding: 20px; flex-grow: 1; }
 .katalog-feature { display: flex; align-items: center; margin-bottom: 10px; font-size: 0.95rem; color: #475569; }
 .katalog-feature i { color: #10b981; margin-right: 10px; font-size: 1.1rem; }
 .btn-buy { background-color: #ef4444; color: white; border: none; border-radius: 8px; padding: 12px; font-weight: 700; width: 100%; transition: background 0.2s; }
 .btn-buy:hover { background-color: #dc2626; color: white; }
+.btn-buy-retake { background-color: #f59e0b; }
+.btn-buy-retake:hover { background-color: #d97706; }
+
+.folder-card { transition: transform 0.2s; }
+.folder-card:hover { transform: scale(1.05); }
 
 /* =========================================
    EXAM VIEW STYLES - PUSMENDIK EXACT MATCH 
@@ -204,6 +188,7 @@ body.exam-mode { overflow: hidden; user-select: none; }
 </ul>
 <ul class="list-unstyled components hidden" id="menu-peserta">
 <li><a onclick="loadPage('peserta-home')" class="nav-link active"><i class="fas fa-pencil-alt me-2"></i>Dashboard Ujian</a></li>
+<li><a onclick="loadPage('peserta-kelompok')" class="nav-link"><i class="fas fa-folder-open me-2"></i>Kelompok Tryout</a></li>
 </ul>
 <div class="p-3 mt-auto border-top border-secondary position-absolute bottom-0 w-100">
 <div class="mb-3 text-white small"><i class="fas fa-user-circle me-1"></i> <span id="u-name-disp" class="fw-bold">User</span></div>
@@ -399,7 +384,7 @@ body.exam-mode { overflow: hidden; user-select: none; }
 <script>
 // =========================================================================
 // PASTE URL WEB APP APPS SCRIPT ANDA DI SINI
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbxiy587xIquH69_Qyo9Qpe1U7kmQaEDmqoAfsoZQ34u0SBlZnbCzyGSUD9F2GWOTjJslg/exec'; 
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzTr_oTA2vpyBewt4qpBdzbxY_ueyPZYNFWrO0sVNZ772w2RSPwKhP8ygD4dm6BCjQsmg/exec'; 
 // =========================================================================
 
 let examSubmitting = false; let user = null; let gData = {};
@@ -410,33 +395,6 @@ let recapAllData = []; let recapDataStore = {}; let violationCount = 0; const ma
 let isExamFinished = false; let violationLock = false;
 let raguList = [];
 let currentPageTrack = '';
-
-// --- DATA KATALOG LENGKAP ---
-const dataKatalog = [
-    { title: "Ahli Pertama - Guru Bahasa Indonesia", tag: "GURU" },
-    { title: "Ahli Pertama - Guru Bahasa Inggris", tag: "GURU" },
-    { title: "Ahli Pertama - Guru Bimbingan dan Konseling", tag: "GURU" },
-    { title: "Ahli Pertama - Guru Biologi", tag: "GURU" },
-    { title: "Ahli Pertama - Guru Ekonomi", tag: "GURU" },
-    { title: "Ahli Pertama - Guru Fisika", tag: "GURU" },
-    { title: "Ahli Pertama - Guru Geografi", tag: "GURU" },
-    { title: "Ahli Pertama - Guru Ilmu Pengetahuan Alam", tag: "GURU" },
-    { title: "Ahli Pertama - Guru Ilmu Pengetahuan Sosial", tag: "GURU" },
-    { title: "Ahli Pertama - Guru Kelas (SD)", tag: "GURU" },
-    { title: "Ahli Pertama - Guru Kimia", tag: "GURU" },
-    { title: "Ahli Pertama - Guru Matematika", tag: "GURU" },
-    { title: "Ahli Pertama - Guru Pendidikan Jasmani Olahraga dan Kesehatan", tag: "GURU" },
-    { title: "Ahli Pertama - Guru Pendidikan Pancasila dan Kewarganegaraan", tag: "GURU" },
-    { title: "Ahli Pertama - Guru Sejarah", tag: "GURU" },
-    { title: "Ahli Pertama - Guru Seni Budaya", tag: "GURU" },
-    { title: "Ahli Pertama - Guru Sosiologi", tag: "GURU" },
-    { title: "Ahli Pertama - Guru Teknologi Informasi dan Komunikasi", tag: "GURU" },
-    { title: "Wali Asuh dengan Jabatan Penata Layanan Operasional", tag: "TEKNIS" },
-    { title: "Wali Asrama dengan Jabatan Penata Layanan Operasional", tag: "TEKNIS" },
-    { title: "Operator Sekolah dengan Jabatan Pengelola Layanan Operasional", tag: "TEKNIS" },
-    { title: "Pengelola Keuangan dengan Jabatan Pengelola Layanan Operasional", tag: "TEKNIS" },
-    { title: "Administrasi Perkantoran dengan Jabatan Operator Layanan Operasional", tag: "TEKNIS" }
-];
 
 async function gasAPI(action, payload = {}) {
   try {
@@ -471,7 +429,7 @@ function openExamModal(str) {
   if(str) {
     let d = JSON.parse(decodeURIComponent(str));
     $('#ex-id').val(d.ExamID); $('#ex-judul').val(d.Judul); $('#ex-mapel').val(d.Mapel);
-    $('#ex-kategori').val(d.TargetKelas || 'UMUM'); // Set dropdown kategori
+    $('#ex-kategori').val(d.TargetKelas || 'UMUM'); 
     $('#ex-durasi').val(d.Durasi); $('#ex-limit').val(d.Limit); $('#ex-start').val(d.StartDate.replace(' ','T'));
     $('#ex-end').val(d.EndDate.replace(' ','T')); $('#ex-keterangan').val(d.Keterangan || '');
     $('#ex-token').val(d.Token || ''); $('#ex-randomQ').prop('checked', d.RandomQ === 'Yes');
@@ -598,24 +556,6 @@ function loadPage(page) {
   });
 }
 
-function beliPaket(judul) {
-    let msg = encodeURIComponent(`Halo Admin BELAJAR INOVASI,\nSaya ingin melakukan pembayaran untuk Paket Tryout: *${judul}*.\nMohon info nomor rekening/e-wallet untuk pembayarannya sebesar Rp 49.000. Terima kasih.`);
-    let waUrl = `https://wa.me/6285895283075?text=${msg}`;
-    window.open(waUrl, '_blank');
-}
-
-// Map Icon dan Warna Kategori
-function getCategoryDesign(kategori) {
-    let cat = String(kategori).toUpperCase();
-    if (cat === 'CPNS') return { icon: 'fa-user-tie', color: 'bg-primary' };
-    if (cat === 'PPPK') return { icon: 'fa-users-cog', color: 'bg-success' };
-    if (cat === 'PPG') return { icon: 'fa-chalkboard-teacher', color: 'bg-warning' };
-    if (cat === 'KEDINASAN') return { icon: 'fa-university', color: 'bg-info' };
-    if (cat === 'POLRI') return { icon: 'fa-shield-alt', color: 'bg-dark' };
-    if (cat === 'BUMN') return { icon: 'fa-building', color: 'bg-danger' };
-    return { icon: 'fa-file-alt', color: 'bg-secondary' };
-}
-
 function renderContent(page) {
   const area = $('#content-area'); let h = '';
   if (page === 'admin-home') {
@@ -628,35 +568,66 @@ function renderContent(page) {
     });
     h += '</div>';
   }
-  else if (page === 'peserta-home') {
-    h = `<div class="card mb-4 border-0 shadow-sm bg-primary text-white" style="border-radius:12px;"><div class="card-body p-4"><h4 class="fw-bold">Selamat Datang, ${user.Nama}</h4><p class="mb-0 opacity-75">Pilih simulasi Tryout CAT di bawah ini atau beli paket latihan terbaru.</p></div></div>`;
+  // --- HALAMAN KELOMPOK TRYOUT BARU ---
+  else if (page === 'peserta-kelompok') {
+    h = `<h4 class="fw-bold mb-4 border-bottom pb-2 text-dark"><i class="fas fa-folder-open text-warning me-2"></i>Kelompok Ujian Tryout</h4><div class="row g-4" id="folder-container">`;
+    let groups = {};
+    if(gData.availableExams) {
+        gData.availableExams.forEach(e => {
+            let cat = e.TargetKelas || 'UMUM';
+            if(!groups[cat]) groups[cat] = [];
+            groups[cat].push(e);
+        });
+    }
     
-    // --- SECTION 1: JADWAL TRYOUT AKTIF (Desain Kartu Memanjang) ---
-    h += `<h5 class="fw-bold mb-3 border-bottom pb-2 mt-4 text-dark"><i class="fas fa-calendar-check text-success me-2"></i> Tryout Aktif Anda</h5><div class="row g-3 mb-5">`;
+    let cats = Object.keys(groups);
+    if(cats.length === 0) {
+        h += `<div class="col-12"><div class="alert alert-light border shadow-sm text-muted">Tidak ada kelompok ujian yang tersedia.</div></div>`;
+    } else {
+        cats.forEach(cat => {
+            h += `<div class="col-md-4 col-sm-6">
+                    <div class="card border-0 shadow-sm folder-card" style="cursor:pointer;" onclick="renderIsiKelompok('${cat}')">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-folder fa-3x text-warning mb-3"></i>
+                            <h5 class="fw-bold text-dark mb-2">${cat}</h5>
+                            <span class="badge bg-primary px-3 rounded-pill">${groups[cat].length} Tryout Tersedia</span>
+                        </div>
+                    </div>
+                  </div>`;
+        });
+    }
+    h += `</div><div id="isi-kelompok-container" class="mt-4 hidden"></div>`;
+  }
+  else if (page === 'peserta-home') {
+    h = `<div class="card mb-4 border-0 shadow-sm bg-primary text-white" style="border-radius:12px;"><div class="card-body p-4"><h4 class="fw-bold">Selamat Datang, ${user.Nama}</h4><p class="mb-0 opacity-75">Ini adalah tampilan riwayat dan tryout terbaru Anda.</p></div></div>`;
+    
+    // --- TRYOUT AKTIF DENGAN DESAIN KARTU PREMIUM ---
+    h += `<h5 class="fw-bold mb-3 border-bottom pb-2 mt-4 text-dark"><i class="fas fa-calendar-check text-success me-2"></i> Tryout Aktif Anda</h5><div class="row g-4 mb-5">`;
     if(!gData.availableExams || gData.availableExams.length === 0) { 
         h += '<div class="col-12"><div class="alert alert-light border shadow-sm text-center text-muted">Belum ada jadwal tryout aktif saat ini.</div></div>'; 
     } else {
       gData.availableExams.forEach(e => {
-        let btnText = 'Kerjakan'; let btnClass = 'cbt-btn';
-        if (e.IsFinished) { btnText = 'Kerjakan Ulang'; btnClass = 'cbt-btn cbt-btn-retake'; }
+        let btnText = 'KERJAKAN', btnClass = 'btn-buy';
+        if (e.IsFinished) { btnText = 'KERJAKAN ULANG'; btnClass = 'btn-buy btn-buy-retake'; }
         
-        let design = getCategoryDesign(e.TargetKelas);
-        
-        h += `<div class="col-12 col-xl-6">
-                <div class="cbt-card">
-                    <div class="cbt-icon ${design.color}">
-                        <i class="fas ${design.icon}"></i>
+        h += `<div class="col-md-6 col-lg-4">
+                <div class="katalog-card h-100">
+                    <div class="katalog-header">
+                        <span class="badge bg-light text-primary mb-2">${e.TargetKelas || 'UMUM'}</span>
+                        <h5 class="fw-bold mb-0 lh-base" style="font-size: 1.1rem;">${e.Judul}</h5>
                     </div>
-                    <div class="cbt-info">
-                        <div class="cbt-category">TRYOUT ${e.TargetKelas || 'UMUM'}</div>
-                        <div class="cbt-title">${e.Judul}</div>
-                        <div class="cbt-meta"><i class="fas fa-book me-1"></i> ${e.Mapel}</div>
-                        <div class="cbt-meta"><i class="fas fa-clock text-danger me-1"></i> ${e.Durasi} Menit</div>
-                    </div>
-                    <div class="cbt-action">
-                        <button class="${btnClass}" onclick="promptToken('${e.ExamID}', '${e.Judul}', '${e.Token}')">
-                            ${btnText}
-                        </button>
+                    <div class="katalog-body d-flex flex-column">
+                        <div class="mb-4 mt-2">
+                            <div class="katalog-feature"><i class="fas fa-book"></i> Mapel: ${e.Mapel}</div>
+                            <div class="katalog-feature"><i class="fas fa-clock"></i> Durasi: ${e.Durasi} Menit</div>
+                            <div class="katalog-feature"><i class="fas fa-check-circle"></i> Sesuai Kisi-kisi Terbaru</div>
+                            <div class="katalog-feature"><i class="fas fa-laptop-code"></i> Simulasi Sistem CAT</div>
+                        </div>
+                        <div class="mt-auto">
+                            <button class="${btnClass}" onclick="promptToken('${e.ExamID}', '${e.Judul}', '${e.Token}')">
+                                ${btnText} <i class="fas fa-arrow-right ms-2"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
               </div>`;
@@ -664,41 +635,7 @@ function renderContent(page) {
     }
     h += `</div>`;
 
-    // --- SECTION 2: KATALOG PAKET PEMBELAJARAN ---
-    h += `<h5 class="fw-bold mb-3 border-bottom pb-2 mt-5 text-dark"><i class="fas fa-shopping-bag text-danger me-2"></i> Katalog Paket Tryout Premium</h5>
-          <p class="text-muted small mb-4">Pilih dan beli formasi jabatan di bawah ini untuk mendapatkan soal ter-update.</p>
-          <div class="row g-4 mb-5">`;
-          
-    dataKatalog.forEach(item => {
-       h += `<div class="col-md-6 col-lg-4">
-                <div class="katalog-card h-100">
-                    <div class="katalog-header">
-                        <span class="badge bg-light text-primary mb-2">${item.tag}</span>
-                        <h5 class="fw-bold mb-0 lh-base" style="font-size: 1.1rem;">${item.title}</h5>
-                    </div>
-                    <div class="katalog-body d-flex flex-column">
-                        <div class="text-center mb-3">
-                            <p class="text-muted small mb-0">Hanya</p>
-                            <div class="katalog-price">Rp 49.000</div>
-                        </div>
-                        <div class="mb-4">
-                            <div class="katalog-feature"><i class="fas fa-check-circle"></i> Sesuai Kisi-kisi Terbaru</div>
-                            <div class="katalog-feature"><i class="fas fa-check-circle"></i> Simulasi Sistem CAT</div>
-                            <div class="katalog-feature"><i class="fas fa-check-circle"></i> File Pembahasan PDF Lengkap</div>
-                            <div class="katalog-feature"><i class="fas fa-check-circle"></i> Masa Aktif 1 Tahun</div>
-                        </div>
-                        <div class="mt-auto">
-                            <button class="btn-buy" onclick="beliPaket('${item.title}')">
-                                BELI SEKARANG / PAYMENT <i class="fas fa-arrow-right ms-2"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-             </div>`;
-    });
-    h += `</div>`;
-
-    // --- SECTION 3: RIWAYAT NILAI ---
+    // --- RIWAYAT NILAI ---
     h += `<h5 class="fw-bold mb-3 border-bottom pb-2 mt-5"><i class="fas fa-history me-2 text-primary"></i> Riwayat Nilai & Evaluasi</h5>`;
     if(!gData.history || gData.history.length === 0) { h += '<div class="alert alert-light border shadow-sm">Belum ada riwayat pengerjaan.</div>'; }
     else {
@@ -721,6 +658,48 @@ function renderContent(page) {
   area.html(h);
 }
 
+// Fungsi Render untuk isi folder Kategori
+function renderIsiKelompok(cat) {
+    $('#folder-container').addClass('hidden');
+    let exams = gData.availableExams.filter(e => (e.TargetKelas || 'UMUM') === cat);
+    
+    let h = `<button class="btn btn-sm btn-outline-secondary mb-3 shadow-sm rounded-pill px-3" onclick="$('#isi-kelompok-container').addClass('hidden').empty(); $('#folder-container').removeClass('hidden');"><i class="fas fa-arrow-left me-1"></i> Kembali ke Kategori</button>
+             <h5 class="fw-bold mb-4 text-dark">Daftar Tryout: <span class="text-primary">${cat}</span></h5><div class="row g-4 mb-4">`;
+    
+    if(exams.length === 0) {
+        h += `<div class="col-12"><div class="alert alert-light border shadow-sm text-muted">Belum ada soal pada kategori ini.</div></div>`;
+    } else {
+        exams.forEach(e => {
+            let btnText = 'KERJAKAN', btnClass = 'btn-buy';
+            if (e.IsFinished) { btnText = 'KERJAKAN ULANG'; btnClass = 'btn-buy btn-buy-retake'; }
+            
+            h += `<div class="col-md-6 col-lg-4">
+                    <div class="katalog-card h-100">
+                        <div class="katalog-header">
+                            <span class="badge bg-light text-primary mb-2">${e.TargetKelas || 'UMUM'}</span>
+                            <h5 class="fw-bold mb-0 lh-base" style="font-size: 1.1rem;">${e.Judul}</h5>
+                        </div>
+                        <div class="katalog-body d-flex flex-column">
+                            <div class="mb-4 mt-2">
+                                <div class="katalog-feature"><i class="fas fa-book"></i> Mapel: ${e.Mapel}</div>
+                                <div class="katalog-feature"><i class="fas fa-clock"></i> Durasi: ${e.Durasi} Menit</div>
+                                <div class="katalog-feature"><i class="fas fa-check-circle"></i> Sesuai Kisi-kisi Terbaru</div>
+                                <div class="katalog-feature"><i class="fas fa-laptop-code"></i> Simulasi Sistem CAT</div>
+                            </div>
+                            <div class="mt-auto">
+                                <button class="${btnClass}" onclick="promptToken('${e.ExamID}', '${e.Judul}', '${e.Token}')">
+                                    ${btnText} <i class="fas fa-arrow-right ms-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+        });
+    }
+    h += `</div>`;
+    $('#isi-kelompok-container').html(h).removeClass('hidden');
+}
+
 function promptToken(eid, judul, trueToken) {
   let msg = encodeURIComponent(`Halo Admin BELAJAR INOVASI,\nSaya telah melakukan pembayaran dan membutuhkan Akses Token untuk paket Tryout: *${judul}*.\nTerima kasih.`);
   let waUrl = `https://wa.me/6285895283075?text=${msg}`;
@@ -731,7 +710,7 @@ function promptToken(eid, judul, trueToken) {
     <input type="text" id="swal-token-input" class="form-control form-control-lg text-center fw-bold mb-4" placeholder="Ketik Token Disini" style="text-transform:uppercase;">
     <div class="bg-light p-3 rounded border text-start">
     <span class="small fw-bold">Belum punya token?</span><br>
-    <span class="small text-muted">Dapatkan token dengan membeli paket pada Menu Katalog di bawah.</span>
+    <span class="small text-muted">Dapatkan token dengan menghubungi Admin via WhatsApp.</span>
     <a href="${waUrl}" target="_blank" class="btn btn-success w-100 mt-3 fw-bold"><i class="fab fa-whatsapp me-2"></i>Minta Token via WhatsApp Admin</a>
     </div>
     `,
@@ -771,6 +750,9 @@ function kerjakanUlang(eid) {
   });
 }
 
+// -------------------------------------------------------------
+// FUNGSI RENDER PDF (PERBAIKAN WARNA CORET/HIJAU)
+// -------------------------------------------------------------
 function downloadPembahasan(eid, judul) {
   showLoad(true);
   gasAPI('getPembahasan', {eid: eid, userId: user.ID}).then(res => {
@@ -814,7 +796,7 @@ function downloadPembahasan(eid, judul) {
 
         if (!jawabanPeserta || jawabanPeserta === '-') {
             jawabanPeserta = 'Kosong / Tidak Menjawab';
-            stylingJawaban = `<b style="color: #64748b;">${jawabanPeserta}</b>`; // Abu-abu
+            stylingJawaban = `<b style="color: #64748b;">${jawabanPeserta}</b>`; 
         } else {
             let isCorrect = false;
             if(q.Tipe === 'PGS' || q.Tipe === 'PGK') {
@@ -1057,7 +1039,6 @@ function setFontSize(sz) {
   $(`.font-sizer.fs-${sz}`).addClass('active');
 }
 
-// Toggle Sidebar untuk HP / Tablet
 function toggleNavPanel() { $('#sidebar-grid').toggleClass('d-none'); }
 
 function runExam(qs, dur, isResume) {
