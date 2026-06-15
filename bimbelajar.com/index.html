@@ -37,9 +37,25 @@ body.exam-mode { overflow: hidden; user-select: none; }
 /* =========================================
    NEW MODERN CARDS (DASHBOARD & CATALOG)
    ========================================= */
-.dashboard-card { border-radius: 12px; transition: transform 0.2s, box-shadow 0.2s; background: #fff; border: 1px solid #e2e8f0; overflow: hidden; display: flex; flex-direction: column; }
-.dashboard-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.08) !important; }
-.card-icon-box { width: 55px; height: 55px; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; flex-shrink: 0; }
+.cbt-card { display: flex; align-items: center; background: #fff; border-radius: 12px; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.04); border: 1px solid #e2e8f0; margin-bottom: 15px; transition: transform 0.2s; }
+.cbt-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
+.cbt-icon { width: 55px; height: 55px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; color: #fff; flex-shrink: 0; margin-right: 15px; }
+.cbt-info { flex-grow: 1; display: flex; flex-direction: column; }
+.cbt-category { font-size: 0.8rem; font-weight: 700; color: #64748b; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 2px; }
+.cbt-title { font-size: 1.05rem; font-weight: 700; color: #1e293b; margin-bottom: 4px; line-height: 1.2; }
+.cbt-meta { font-size: 0.8rem; color: #64748b; }
+.cbt-action { flex-shrink: 0; margin-left: 15px; }
+.cbt-btn { background-color: #ef4444; color: #fff; font-weight: 700; font-size: 0.9rem; border-radius: 50px; padding: 8px 20px; border: none; transition: 0.2s; }
+.cbt-btn:hover { background-color: #dc2626; color: #fff; }
+.cbt-btn-retake { background-color: #f59e0b; }
+.cbt-btn-retake:hover { background-color: #d97706; }
+
+@media (max-width: 576px) {
+    .cbt-card { flex-direction: column; text-align: center; }
+    .cbt-icon { margin: 0 auto 10px auto; }
+    .cbt-action { margin: 15px 0 0 0; width: 100%; }
+    .cbt-btn { width: 100%; padding: 10px; }
+}
 
 .katalog-card { border-radius: 14px; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: transform 0.2s; overflow: hidden; background: #fff; display: flex; flex-direction: column; }
 .katalog-card:hover { transform: translateY(-5px); box-shadow: 0 12px 25px rgba(0,0,0,0.1); }
@@ -302,12 +318,27 @@ body.exam-mode { overflow: hidden; user-select: none; }
 <input type="hidden" id="ex-id" name="examId">
 <div class="mb-3"><label class="small fw-bold">Judul Ujian</label><input type="text" name="judul" id="ex-judul" class="form-control" required></div>
 <div class="row g-3 mb-3">
-<div class="col-md-6"><label class="small fw-bold">Kategori/Mapel</label><input type="text" name="mapel" id="ex-mapel" class="form-control" required></div>
-<div class="col-md-6"><label class="small fw-bold">Durasi (Menit)</label><input type="number" name="durasi" id="ex-durasi" class="form-control" required></div>
+<div class="col-md-6">
+    <label class="small fw-bold">Kategori Ujian</label>
+    <select name="kategori" id="ex-kategori" class="form-select" required>
+        <option value="CPNS">CPNS</option>
+        <option value="PPPK">PPPK</option>
+        <option value="PPG">PPG</option>
+        <option value="KEDINASAN">KEDINASAN</option>
+        <option value="POLRI">POLRI</option>
+        <option value="BUMN">BUMN</option>
+        <option value="UMUM">UMUM / LAINNYA</option>
+    </select>
+</div>
+<div class="col-md-6">
+    <label class="small fw-bold">Mata Pelajaran / Jabatan</label>
+    <input type="text" name="mapel" id="ex-mapel" class="form-control" placeholder="Contoh: Ahli Pertama - Guru Biologi" required>
+</div>
 </div>
 <div class="row g-3 mb-3">
-<div class="col-md-6"><label class="small fw-bold">Waktu Mulai</label><input type="datetime-local" name="start" id="ex-start" class="form-control" required></div>
-<div class="col-md-6"><label class="small fw-bold">Waktu Selesai</label><input type="datetime-local" name="end" id="ex-end" class="form-control" required></div>
+<div class="col-md-4"><label class="small fw-bold">Durasi (Menit)</label><input type="number" name="durasi" id="ex-durasi" class="form-control" required></div>
+<div class="col-md-4"><label class="small fw-bold">Waktu Mulai</label><input type="datetime-local" name="start" id="ex-start" class="form-control" required></div>
+<div class="col-md-4"><label class="small fw-bold">Waktu Selesai</label><input type="datetime-local" name="end" id="ex-end" class="form-control" required></div>
 </div>
 <div class="row g-3 mb-3">
 <div class="col-md-4"><label class="small fw-bold">Limit Mengerjakan</label><input type="number" name="limit" id="ex-limit" class="form-control" value="1"></div>
@@ -368,7 +399,7 @@ body.exam-mode { overflow: hidden; user-select: none; }
 <script>
 // =========================================================================
 // PASTE URL WEB APP APPS SCRIPT ANDA DI SINI
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbyj7ct3KJ6ZBWcvvxtlJ4vwbmBYSkYuI91K_5Bmlx0UowgIXKh1hWS_mY0CiLmVmE8N9w/exec'; 
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbxiy587xIquH69_Qyo9Qpe1U7kmQaEDmqoAfsoZQ34u0SBlZnbCzyGSUD9F2GWOTjJslg/exec'; 
 // =========================================================================
 
 let examSubmitting = false; let user = null; let gData = {};
@@ -380,7 +411,7 @@ let isExamFinished = false; let violationLock = false;
 let raguList = [];
 let currentPageTrack = '';
 
-// --- DATA KATALOG ---
+// --- DATA KATALOG LENGKAP ---
 const dataKatalog = [
     { title: "Ahli Pertama - Guru Bahasa Indonesia", tag: "GURU" },
     { title: "Ahli Pertama - Guru Bahasa Inggris", tag: "GURU" },
@@ -394,17 +425,17 @@ const dataKatalog = [
     { title: "Ahli Pertama - Guru Kelas (SD)", tag: "GURU" },
     { title: "Ahli Pertama - Guru Kimia", tag: "GURU" },
     { title: "Ahli Pertama - Guru Matematika", tag: "GURU" },
-    { title: "Ahli Pertama - Guru PJOK", tag: "GURU" },
-    { title: "Ahli Pertama - Guru PPKn", tag: "GURU" },
+    { title: "Ahli Pertama - Guru Pendidikan Jasmani Olahraga dan Kesehatan", tag: "GURU" },
+    { title: "Ahli Pertama - Guru Pendidikan Pancasila dan Kewarganegaraan", tag: "GURU" },
     { title: "Ahli Pertama - Guru Sejarah", tag: "GURU" },
     { title: "Ahli Pertama - Guru Seni Budaya", tag: "GURU" },
     { title: "Ahli Pertama - Guru Sosiologi", tag: "GURU" },
-    { title: "Ahli Pertama - Guru TIK", tag: "GURU" },
-    { title: "Wali Asuh - Penata Layanan Operasional", tag: "TEKNIS" },
-    { title: "Wali Asrama - Penata Layanan Operasional", tag: "TEKNIS" },
-    { title: "Operator Sekolah - Pengelola Layanan Operasional", tag: "TEKNIS" },
-    { title: "Pengelola Keuangan - Pengelola Layanan Operasional", tag: "TEKNIS" },
-    { title: "Admin Perkantoran - Operator Layanan Operasional", tag: "TEKNIS" }
+    { title: "Ahli Pertama - Guru Teknologi Informasi dan Komunikasi", tag: "GURU" },
+    { title: "Wali Asuh dengan Jabatan Penata Layanan Operasional", tag: "TEKNIS" },
+    { title: "Wali Asrama dengan Jabatan Penata Layanan Operasional", tag: "TEKNIS" },
+    { title: "Operator Sekolah dengan Jabatan Pengelola Layanan Operasional", tag: "TEKNIS" },
+    { title: "Pengelola Keuangan dengan Jabatan Pengelola Layanan Operasional", tag: "TEKNIS" },
+    { title: "Administrasi Perkantoran dengan Jabatan Operator Layanan Operasional", tag: "TEKNIS" }
 ];
 
 async function gasAPI(action, payload = {}) {
@@ -440,6 +471,7 @@ function openExamModal(str) {
   if(str) {
     let d = JSON.parse(decodeURIComponent(str));
     $('#ex-id').val(d.ExamID); $('#ex-judul').val(d.Judul); $('#ex-mapel').val(d.Mapel);
+    $('#ex-kategori').val(d.TargetKelas || 'UMUM'); // Set dropdown kategori
     $('#ex-durasi').val(d.Durasi); $('#ex-limit').val(d.Limit); $('#ex-start').val(d.StartDate.replace(' ','T'));
     $('#ex-end').val(d.EndDate.replace(' ','T')); $('#ex-keterangan').val(d.Keterangan || '');
     $('#ex-token').val(d.Token || ''); $('#ex-randomQ').prop('checked', d.RandomQ === 'Yes');
@@ -572,6 +604,18 @@ function beliPaket(judul) {
     window.open(waUrl, '_blank');
 }
 
+// Map Icon dan Warna Kategori
+function getCategoryDesign(kategori) {
+    let cat = String(kategori).toUpperCase();
+    if (cat === 'CPNS') return { icon: 'fa-user-tie', color: 'bg-primary' };
+    if (cat === 'PPPK') return { icon: 'fa-users-cog', color: 'bg-success' };
+    if (cat === 'PPG') return { icon: 'fa-chalkboard-teacher', color: 'bg-warning' };
+    if (cat === 'KEDINASAN') return { icon: 'fa-university', color: 'bg-info' };
+    if (cat === 'POLRI') return { icon: 'fa-shield-alt', color: 'bg-dark' };
+    if (cat === 'BUMN') return { icon: 'fa-building', color: 'bg-danger' };
+    return { icon: 'fa-file-alt', color: 'bg-secondary' };
+}
+
 function renderContent(page) {
   const area = $('#content-area'); let h = '';
   if (page === 'admin-home') {
@@ -580,41 +624,38 @@ function renderContent(page) {
   else if (page === 'admin-ujian') {
     h = `<div class="d-flex justify-content-between mb-3"><button class="btn btn-primary shadow-sm" onclick="openExamModal()">+ Buat Tryout Baru</button></div><div class="row g-4" id="admin-ujian-list">`;
     gData.exams.forEach(e => {
-      h += `<div class="col-md-6 col-lg-4 ujian-card"><div class="card h-100 shadow-sm border-0"><div class="card-body"><div class="d-flex justify-content-between mb-2"><span class="badge bg-primary">${e.Mapel}</span></div><h5 class="fw-bold text-dark">${e.Judul}</h5><div class="d-flex gap-2"><button class="btn btn-sm btn-outline-dark flex-fill" onclick="openExamModal('${encodeURIComponent(JSON.stringify(e))}')">Edit</button> <button class="btn btn-sm btn-outline-primary flex-fill" onclick="manageQ('${e.ExamID}')"><i class="fas fa-list me-1"></i> Soal</button> <button class="btn btn-sm btn-danger" onclick="delExam('${e.ExamID}')"><i class="fas fa-trash"></i></button></div></div></div></div>`;
+      h += `<div class="col-md-6 col-lg-4 ujian-card"><div class="card h-100 shadow-sm border-0"><div class="card-body"><div class="d-flex justify-content-between mb-2"><span class="badge bg-primary">${e.TargetKelas || 'UMUM'}</span></div><h5 class="fw-bold text-dark">${e.Judul}</h5><p class="text-muted small"><i class="fas fa-book me-1"></i> ${e.Mapel}</p><div class="d-flex gap-2"><button class="btn btn-sm btn-outline-dark flex-fill" onclick="openExamModal('${encodeURIComponent(JSON.stringify(e))}')">Edit</button> <button class="btn btn-sm btn-outline-primary flex-fill" onclick="manageQ('${e.ExamID}')"><i class="fas fa-list me-1"></i> Soal</button> <button class="btn btn-sm btn-danger" onclick="delExam('${e.ExamID}')"><i class="fas fa-trash"></i></button></div></div></div></div>`;
     });
     h += '</div>';
   }
   else if (page === 'peserta-home') {
-    h = `<div class="card mb-4 border-0 shadow-sm bg-primary text-white" style="border-radius:12px;"><div class="card-body p-4"><h4 class="fw-bold">Selamat Datang, ${user.Nama}</h4><p class="mb-0 opacity-75">Pilih simulasi Tryout CAT CPNS di bawah ini atau beli paket latihan terbaru.</p></div></div>`;
+    h = `<div class="card mb-4 border-0 shadow-sm bg-primary text-white" style="border-radius:12px;"><div class="card-body p-4"><h4 class="fw-bold">Selamat Datang, ${user.Nama}</h4><p class="mb-0 opacity-75">Pilih simulasi Tryout CAT di bawah ini atau beli paket latihan terbaru.</p></div></div>`;
     
-    // --- SECTION 1: JADWAL TRYOUT AKTIF (Ujian yang sudah di-assign / db) ---
-    h += `<h5 class="fw-bold mb-3 border-bottom pb-2 mt-4 text-dark"><i class="fas fa-calendar-check text-success me-2"></i> Tryout Aktif Anda</h5><div class="row g-4 mb-5">`;
+    // --- SECTION 1: JADWAL TRYOUT AKTIF (Desain Kartu Memanjang) ---
+    h += `<h5 class="fw-bold mb-3 border-bottom pb-2 mt-4 text-dark"><i class="fas fa-calendar-check text-success me-2"></i> Tryout Aktif Anda</h5><div class="row g-3 mb-5">`;
     if(!gData.availableExams || gData.availableExams.length === 0) { 
         h += '<div class="col-12"><div class="alert alert-light border shadow-sm text-center text-muted">Belum ada jadwal tryout aktif saat ini.</div></div>'; 
     } else {
       gData.availableExams.forEach(e => {
-        let btnText = 'MULAI TRYOUT', btnClass = 'btn-primary';
-        if (e.IsFinished) { btnText = 'KERJAKAN ULANG', btnClass = 'btn-outline-primary'; }
+        let btnText = 'Kerjakan'; let btnClass = 'cbt-btn';
+        if (e.IsFinished) { btnText = 'Kerjakan Ulang'; btnClass = 'cbt-btn cbt-btn-retake'; }
         
-        // Desain Card Mirip Aplikasi BKN/Pusmendik
-        h += `<div class="col-md-6 col-lg-4">
-                <div class="dashboard-card h-100">
-                    <div class="card-body p-4">
-                        <div class="d-flex align-items-start mb-3">
-                            <div class="card-icon-box bg-primary bg-opacity-10 text-primary">
-                                <i class="fas fa-laptop-code"></i>
-                            </div>
-                            <div class="ms-3 flex-grow-1">
-                                <span class="badge bg-success mb-2">Tersedia</span>
-                                <h6 class="fw-bold mb-0 lh-base text-dark">${e.Judul}</h6>
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-between mb-4 small fw-bold text-secondary">
-                            <span><i class="fas fa-book me-1"></i> ${e.Mapel}</span>
-                            <span><i class="fas fa-clock text-danger me-1"></i> ${e.Durasi} Mnt</span>
-                        </div>
-                        <button class="btn ${btnClass} w-100 fw-bold rounded-pill" onclick="promptToken('${e.ExamID}', '${e.Judul}', '${e.Token}')">
-                            <i class="fas fa-play me-2"></i>${btnText}
+        let design = getCategoryDesign(e.TargetKelas);
+        
+        h += `<div class="col-12 col-xl-6">
+                <div class="cbt-card">
+                    <div class="cbt-icon ${design.color}">
+                        <i class="fas ${design.icon}"></i>
+                    </div>
+                    <div class="cbt-info">
+                        <div class="cbt-category">TRYOUT ${e.TargetKelas || 'UMUM'}</div>
+                        <div class="cbt-title">${e.Judul}</div>
+                        <div class="cbt-meta"><i class="fas fa-book me-1"></i> ${e.Mapel}</div>
+                        <div class="cbt-meta"><i class="fas fa-clock text-danger me-1"></i> ${e.Durasi} Menit</div>
+                    </div>
+                    <div class="cbt-action">
+                        <button class="${btnClass}" onclick="promptToken('${e.ExamID}', '${e.Judul}', '${e.Token}')">
+                            ${btnText}
                         </button>
                     </div>
                 </div>
@@ -625,10 +666,9 @@ function renderContent(page) {
 
     // --- SECTION 2: KATALOG PAKET PEMBELAJARAN ---
     h += `<h5 class="fw-bold mb-3 border-bottom pb-2 mt-5 text-dark"><i class="fas fa-shopping-bag text-danger me-2"></i> Katalog Paket Tryout Premium</h5>
-          <p class="text-muted small mb-4">Pilih dan beli formasi jabatan di bawah ini untuk mendapatkan ribuan soal, pembahasan lengkap, dan simulasi CAT mirip aslinya.</p>
+          <p class="text-muted small mb-4">Pilih dan beli formasi jabatan di bawah ini untuk mendapatkan soal ter-update.</p>
           <div class="row g-4 mb-5">`;
           
-    // Loop Daftar Jabatan
     dataKatalog.forEach(item => {
        h += `<div class="col-md-6 col-lg-4">
                 <div class="katalog-card h-100">
@@ -656,7 +696,6 @@ function renderContent(page) {
                 </div>
              </div>`;
     });
-    
     h += `</div>`;
 
     // --- SECTION 3: RIWAYAT NILAI ---
@@ -732,9 +771,6 @@ function kerjakanUlang(eid) {
   });
 }
 
-// -------------------------------------------------------------
-// FUNGSI RENDER PDF (PERBAIKAN WARNA CORET/HIJAU)
-// -------------------------------------------------------------
 function downloadPembahasan(eid, judul) {
   showLoad(true);
   gasAPI('getPembahasan', {eid: eid, userId: user.ID}).then(res => {
@@ -773,7 +809,6 @@ function downloadPembahasan(eid, judul) {
         
         let bahasHtml = q.Pembahasan ? `<div class="bahas"><b>Pembahasan:</b><br>${q.Pembahasan}</div>` : '';
         
-        // Logika Pemeriksaan Jawaban (Hijau/Merah)
         let jawabanPeserta = q.JawabanPeserta;
         let stylingJawaban = "";
 
