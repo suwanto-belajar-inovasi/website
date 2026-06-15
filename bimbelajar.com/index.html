@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>BIMBELAJAR.COM - Tryout CAT CPNS</title>
+<title>BELAJAR INOVASI - Tryout CAT CPNS</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -13,7 +13,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.12.1/polyfill.min.js"></script>
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <style>
-:root { --primary: #1e3a8a; --secondary: #3b82f6; --accent: #10b981; --bg-body: #f1f5f9; }
+:root { --primary: #1e3a8a; --secondary: #3b82f6; --accent: #10b981; --bg-body: #f8fafc; }
 body { font-family: 'Poppins', sans-serif; background-color: var(--bg-body); color: #1e293b; overflow-x: hidden; }
 body.exam-mode { overflow: hidden; user-select: none; }
 .hidden { display: none !important; }
@@ -35,80 +35,38 @@ body.exam-mode { overflow: hidden; user-select: none; }
 @media (max-width: 768px) { #sidebar { left: -260px; } #sidebar.active { left: 0; } #content { margin-left: 0; padding: 15px; } .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1040; display: none; } .overlay.active { display: block; } }
 
 /* =========================================
+   NEW MODERN CARDS (DASHBOARD & CATALOG)
+   ========================================= */
+.dashboard-card { border-radius: 12px; transition: transform 0.2s, box-shadow 0.2s; background: #fff; border: 1px solid #e2e8f0; overflow: hidden; display: flex; flex-direction: column; }
+.dashboard-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.08) !important; }
+.card-icon-box { width: 55px; height: 55px; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; flex-shrink: 0; }
+
+.katalog-card { border-radius: 14px; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: transform 0.2s; overflow: hidden; background: #fff; display: flex; flex-direction: column; }
+.katalog-card:hover { transform: translateY(-5px); box-shadow: 0 12px 25px rgba(0,0,0,0.1); }
+.katalog-header { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); color: white; padding: 20px; text-align: center; }
+.katalog-price { font-size: 1.8rem; font-weight: 800; color: #f59e0b; margin: 10px 0; }
+.katalog-body { padding: 20px; flex-grow: 1; }
+.katalog-feature { display: flex; align-items: center; margin-bottom: 10px; font-size: 0.95rem; color: #475569; }
+.katalog-feature i { color: #10b981; margin-right: 10px; font-size: 1.1rem; }
+.btn-buy { background-color: #ef4444; color: white; border: none; border-radius: 8px; padding: 12px; font-weight: 700; width: 100%; transition: background 0.2s; }
+.btn-buy:hover { background-color: #dc2626; color: white; }
+
+/* =========================================
    EXAM VIEW STYLES - PUSMENDIK EXACT MATCH 
    ========================================= */
-#view-exam { 
-    position: fixed; 
-    top: 0; left: 0; right: 0; bottom: 0; 
-    z-index: 9999; 
-    background-color: #f0f4f8; 
-    display: flex; 
-    flex-direction: column; 
-}
-.exam-header-top { 
-    background-color: #1e3a8a; 
-    height: 60px; 
-    display: flex; 
-    align-items: center; 
-    padding: 0 20px; 
-    color: white; 
-    justify-content: space-between; 
-    flex-shrink: 0; 
-}
-.exam-main-wrap { 
-    flex-grow: 1; 
-    padding: 20px; 
-    max-width: 1400px; 
-    margin: 0 auto; 
-    width: 100%; 
-    overflow: hidden; 
-    display: flex;
-    gap: 20px;
-}
-
-/* Sub Header Elements */
-.exam-sub-header { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: flex-end; 
-    margin-bottom: 20px; 
-    flex-wrap: wrap; 
-    gap: 10px; 
-    flex-shrink: 0;
-}
+#view-exam { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 9999; background-color: #f0f4f8; display: flex; flex-direction: column; }
+.exam-header-top { background-color: #1e3a8a; height: 60px; display: flex; align-items: center; padding: 0 20px; color: white; justify-content: space-between; flex-shrink: 0; }
+.exam-main-wrap { flex-grow: 1; padding: 20px; max-width: 1400px; margin: 0 auto; width: 100%; overflow: hidden; display: flex; gap: 20px; }
+.exam-sub-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; flex-shrink: 0; }
 .font-sizer { cursor: pointer; margin: 0 8px; font-weight: bold; color: #64748b; font-family: serif; }
 .font-sizer:hover, .font-sizer.active { color: #1e3a8a; border-bottom: 2px solid #1e3a8a; padding-bottom: 2px; }
 .fs-small { font-size: 0.95rem; } .fs-medium { font-size: 1.15rem; } .fs-large { font-size: 1.35rem; }
 .timer-pusmendik { border: 2px solid #e11d48; border-radius: 50px; padding: 6px 20px; background: white; font-weight: bold; font-family: monospace; font-size: 1.1rem; }
 
-/* Main Question Box Areas */
-.q-box-container { 
-    background: white; 
-    border-radius: 8px; 
-    border: 1px solid #cbd5e1; 
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
-    display: flex; 
-    flex-direction: column; 
-    flex-grow: 1;
-    overflow: hidden;
-}
-.q-box-content { 
-    padding: 30px; 
-    flex-grow: 1; 
-    overflow-y: auto; 
-    color: #333; 
-}
-.q-box-footer { 
-    background: #f8fafc; 
-    padding: 15px 30px; 
-    border-top: 1px solid #cbd5e1; 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    flex-shrink: 0; 
-}
+.q-box-container { background: white; border-radius: 8px; border: 1px solid #cbd5e1; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; flex-direction: column; flex-grow: 1; overflow: hidden; }
+.q-box-content { padding: 30px; flex-grow: 1; overflow-y: auto; color: #333; }
+.q-box-footer { background: #f8fafc; padding: 15px 30px; border-top: 1px solid #cbd5e1; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
 
-/* Buttons Pill Style */
 .btn-pill-exam { border-radius: 50px; padding: 10px 25px; font-weight: bold; font-size: 0.95rem; border: none; box-shadow: 0 2px 4px rgba(0,0,0,0.1); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: opacity 0.2s; }
 .btn-pill-exam:hover { opacity: 0.9; }
 .btn-prev-soal { background-color: #e11d48; color: white; } 
@@ -116,49 +74,16 @@ body.exam-mode { overflow: hidden; user-select: none; }
 .btn-next-soal { background-color: #0ea5e9; color: white; }
 .btn-info-soal { background-color: #0ea5e9; color: white; border-radius: 50px; font-weight: bold; padding: 8px 20px; border: none; }
 
-/* Navigasi Panel Sidebar */
-.nav-panel-container { 
-    background: white; 
-    border-radius: 8px; 
-    border: 1px solid #cbd5e1; 
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
-    display: flex; 
-    flex-direction: column; 
-    height: 100%; 
-    flex-basis: 320px;
-    flex-shrink: 0;
-}
+.nav-panel-container { background: white; border-radius: 8px; border: 1px solid #cbd5e1; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; flex-direction: column; height: 100%; flex-basis: 320px; flex-shrink: 0; }
 .nav-panel-header { text-align: center; padding: 15px; font-weight: bold; border-bottom: 1px solid #cbd5e1; }
 .nav-panel-body { padding: 15px; overflow-y: auto; flex-grow: 1; }
 
-.q-grid { 
-    display: grid; 
-    grid-template-columns: repeat(5, 45px);
-    gap: 8px; 
-    justify-content: center; 
-    margin-bottom: 20px; 
-}
-.btn-nav-grid { 
-    width: 100%; 
-    height: 45px; 
-    border: 1px solid #94a3b8; 
-    background-color: white; 
-    color: #333; 
-    border-radius: 4px; 
-    font-weight: 600; 
-    font-size: 0.95rem;
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    cursor: pointer; 
-    padding: 0; 
-    transition: all 0.2s;
-}
+.q-grid { display: grid; grid-template-columns: repeat(5, 45px); gap: 8px; justify-content: center; margin-bottom: 20px; }
+.btn-nav-grid { width: 100%; height: 45px; border: 1px solid #94a3b8; background-color: white; color: #333; border-radius: 4px; font-weight: 600; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; transition: all 0.2s; }
 .btn-nav-grid.answered { background-color: #2563eb; color: white; border-color: #1d4ed8; }
 .btn-nav-grid.ragu { background-color: #eab308 !important; color: white !important; border-color: #ca8a04 !important; }
 .btn-nav-grid.active-q { outline: 3px solid #38bdf8; outline-offset: 1px; }
 
-/* Options Fixes */
 #q-slides-container .form-check-input { width: 1.2em !important; height: 1.2em !important; cursor: pointer; margin-top: 4px !important; }
 .clickable-opt { cursor: pointer; display: flex; align-items: flex-start; margin-bottom: 10px; transition: all 0.2s ease-in-out; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px; background-color: #fff; }
 .clickable-opt:hover { background-color: #f8fafc; border-color: var(--secondary); }
@@ -166,14 +91,7 @@ body.exam-mode { overflow: hidden; user-select: none; }
 @media (max-width: 991px) { 
     .exam-main-wrap { flex-direction: column; overflow-y: auto; } 
     .q-main-area { flex-shrink: 0; }
-    .nav-panel-container { 
-        position: absolute; 
-        right: 20px; 
-        top: 80px; 
-        bottom: 20px; 
-        z-index: 1000; 
-        box-shadow: -5px 0 15px rgba(0,0,0,0.1); 
-    } 
+    .nav-panel-container { position: absolute; right: 20px; top: 80px; bottom: 20px; z-index: 1000; box-shadow: -5px 0 15px rgba(0,0,0,0.1); } 
     .q-box-footer { flex-direction: column; gap: 10px; }
     .q-box-footer button, .q-box-footer label { width: 100%; text-align: center; }
 }
@@ -191,7 +109,7 @@ body.exam-mode { overflow: hidden; user-select: none; }
 <div id="view-landing" class="hidden">
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3">
 <div class="container">
-<a class="navbar-brand fw-bold text-primary" href="#"><i class="fas fa-graduation-cap me-2"></i>BIMBELAJAR.COM</a>
+<a class="navbar-brand fw-bold text-primary" href="#"><i class="fas fa-graduation-cap me-2"></i>BELAJAR INOVASI</a>
 <div>
 <button class="btn btn-outline-primary me-2 fw-bold" onclick="showAuth('login')">Masuk</button>
 <button class="btn btn-primary fw-bold" onclick="showAuth('register')">Daftar Akun</button>
@@ -200,10 +118,10 @@ body.exam-mode { overflow: hidden; user-select: none; }
 </nav>
 <div class="hero-section">
 <div class="container">
-<h1 class="display-4 fw-bold mb-4">BIMBELAJAR.COM – Bimbingan Belajar Online Terlengkap! 🚀 </h1>
-<p class="lead mb-4">Siap hadapi ujian? Dengan BIMBELAJAR.COM, Anda akan berlatih menggunakan CAT Online yang dirancang khusus untuk membantu menembus ujian TBS LPDP, PPG, PPPK, CPNS Guru & Non Guru.</p>
+<h1 class="display-4 fw-bold mb-4">BELAJAR INOVASI – Bimbingan Belajar Online Terlengkap! 🚀 </h1>
+<p class="lead mb-4">Siap hadapi ujian? Dengan BELAJAR INOVASI, Anda akan berlatih menggunakan CAT Online yang dirancang khusus untuk membantu menembus ujian TBS LPDP, PPG, PPPK, CPNS Guru & Non Guru.</p>
 <div class="text-start d-inline-block mx-auto mb-5 shadow" style="background: rgba(255,255,255,0.15); padding: 30px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.2);">
-<h4 class="fw-bold mb-4 text-warning"><i class="fas fa-lightbulb me-2"></i> Kenapa harus BIMBELAJAR.COM?</h4>
+<h4 class="fw-bold mb-4 text-warning"><i class="fas fa-lightbulb me-2"></i> Kenapa harus BELAJAR INOVASI?</h4>
 <ul class="list-unstyled mb-0">
 <li class="mb-3"><i class="fas fa-check-circle text-success me-3 fs-5"></i> Latihan soal dengan simulasi yang mirip soal ujian asli</li>
 <li class="mb-3"><i class="fas fa-check-circle text-success me-3 fs-5"></i> Video pembahasan terbaru + tips & trik menjawab cepat dan tepat</li>
@@ -221,7 +139,7 @@ body.exam-mode { overflow: hidden; user-select: none; }
 </div>
 </div>
 <footer class="bg-dark text-white text-center py-4">
-<p class="mb-0 fw-bold"> 🌟 BIMBELAJAR.COM – Teman Setia Menuju Kelulusan! © 2026 All rights reserved.</p>
+<p class="mb-0 fw-bold"> 🌟 BELAJAR INOVASI – Teman Setia Menuju Kelulusan! © 2026 All rights reserved.</p>
 </footer>
 </div>
 
@@ -229,7 +147,7 @@ body.exam-mode { overflow: hidden; user-select: none; }
 <div class="auth-card">
 <div class="text-center mb-4">
 <div id="logo-container"><img src="https://lh3.googleusercontent.com/d/1Udvay0kRIle364MvNswDCnLu5YbG5X_P" class="mb-3 rounded" width="100" alt="Logo"></div>
-<h4 class="fw-bold text-primary text-center"><span style="white-space: nowrap;">BIMBELAJAR.COM</span></h4>
+<h4 class="fw-bold text-primary text-center"><span style="white-space: nowrap;">BELAJAR INOVASI</span></h4>
 <p class="text-muted small" id="auth-subtitle">Login ke Akun Anda</p>
 </div>
 <form id="frm-login" onsubmit="event.preventDefault(); handleLogin(); return false;">
@@ -285,7 +203,7 @@ body.exam-mode { overflow: hidden; user-select: none; }
 <button class="btn btn-outline-primary btn-sm rounded-pill px-3" onclick="appRefresh()"><i class="fas fa-sync-alt"></i> Refresh</button>
 </nav>
 <div id="content-area"></div>
-<footer class="mt-4 text-center text-muted small pb-3 border-top pt-3">© 2026 BIMBELAJAR.COM</footer>
+<footer class="mt-4 text-center text-muted small pb-3 border-top pt-3">© 2026 BELAJAR INOVASI</footer>
 </div>
 </div>
 
@@ -294,7 +212,7 @@ body.exam-mode { overflow: hidden; user-select: none; }
         <div class="d-flex align-items-center">
             <i class="fas fa-graduation-cap fs-4 me-2"></i>
             <div>
-                <h6 class="m-0 fw-bold">BIMBELAJAR.COM</h6>
+                <h6 class="m-0 fw-bold">BELAJAR INOVASI</h6>
                 <small style="font-size: 0.75rem;">CBT Application</small>
             </div>
         </div>
@@ -303,7 +221,6 @@ body.exam-mode { overflow: hidden; user-select: none; }
     
     <div class="exam-main-wrap">
         <div class="d-flex flex-column q-main-area">
-            
             <div class="exam-sub-header">
                 <div>
                     <h3 class="mb-1 fw-bold text-dark" id="disp-no-soal">Soal nomor 1</h3>
@@ -333,12 +250,10 @@ body.exam-mode { overflow: hidden; user-select: none; }
                     <button class="btn-pill-exam btn-prev-soal" id="btn-prev" onclick="navSlide(-1)">
                         <i class="fas fa-chevron-left me-2"></i> Soal sebelumnya
                     </button>
-                    
                     <label class="btn-pill-exam btn-ragu-soal">
                         <input type="checkbox" id="chk-ragu" onchange="toggleRagu()" style="transform: scale(1.3); margin-top:2px;"> 
                         <span class="ms-2">Ragu - Ragu</span>
                     </label>
-                    
                     <div>
                         <button class="btn-pill-exam btn-next-soal" id="btn-next" onclick="navSlide(1)">
                             Selanjutnya <i class="fas fa-chevron-right ms-2"></i>
@@ -349,7 +264,6 @@ body.exam-mode { overflow: hidden; user-select: none; }
                     </div>
                 </div>
             </div>
-            
         </div>
         
         <div class="nav-panel-container d-none d-lg-flex" id="sidebar-grid">
@@ -454,7 +368,7 @@ body.exam-mode { overflow: hidden; user-select: none; }
 <script>
 // =========================================================================
 // PASTE URL WEB APP APPS SCRIPT ANDA DI SINI
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbxWMnAiC_y_BCCIqIL_FfrufwuDGbClkpKJ5GalOsS1F0PUyBTBIxUyUtFGQNC5BtpjvQ/exec'; 
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbyj7ct3KJ6ZBWcvvxtlJ4vwbmBYSkYuI91K_5Bmlx0UowgIXKh1hWS_mY0CiLmVmE8N9w/exec'; 
 // =========================================================================
 
 let examSubmitting = false; let user = null; let gData = {};
@@ -466,7 +380,33 @@ let isExamFinished = false; let violationLock = false;
 let raguList = [];
 let currentPageTrack = '';
 
-// --- FETCH WRAPPER ---
+// --- DATA KATALOG ---
+const dataKatalog = [
+    { title: "Ahli Pertama - Guru Bahasa Indonesia", tag: "GURU" },
+    { title: "Ahli Pertama - Guru Bahasa Inggris", tag: "GURU" },
+    { title: "Ahli Pertama - Guru Bimbingan dan Konseling", tag: "GURU" },
+    { title: "Ahli Pertama - Guru Biologi", tag: "GURU" },
+    { title: "Ahli Pertama - Guru Ekonomi", tag: "GURU" },
+    { title: "Ahli Pertama - Guru Fisika", tag: "GURU" },
+    { title: "Ahli Pertama - Guru Geografi", tag: "GURU" },
+    { title: "Ahli Pertama - Guru Ilmu Pengetahuan Alam", tag: "GURU" },
+    { title: "Ahli Pertama - Guru Ilmu Pengetahuan Sosial", tag: "GURU" },
+    { title: "Ahli Pertama - Guru Kelas (SD)", tag: "GURU" },
+    { title: "Ahli Pertama - Guru Kimia", tag: "GURU" },
+    { title: "Ahli Pertama - Guru Matematika", tag: "GURU" },
+    { title: "Ahli Pertama - Guru PJOK", tag: "GURU" },
+    { title: "Ahli Pertama - Guru PPKn", tag: "GURU" },
+    { title: "Ahli Pertama - Guru Sejarah", tag: "GURU" },
+    { title: "Ahli Pertama - Guru Seni Budaya", tag: "GURU" },
+    { title: "Ahli Pertama - Guru Sosiologi", tag: "GURU" },
+    { title: "Ahli Pertama - Guru TIK", tag: "GURU" },
+    { title: "Wali Asuh - Penata Layanan Operasional", tag: "TEKNIS" },
+    { title: "Wali Asrama - Penata Layanan Operasional", tag: "TEKNIS" },
+    { title: "Operator Sekolah - Pengelola Layanan Operasional", tag: "TEKNIS" },
+    { title: "Pengelola Keuangan - Pengelola Layanan Operasional", tag: "TEKNIS" },
+    { title: "Admin Perkantoran - Operator Layanan Operasional", tag: "TEKNIS" }
+];
+
 async function gasAPI(action, payload = {}) {
   try {
     const response = await fetch(GAS_URL, {
@@ -519,7 +459,7 @@ $(document).ready(() => {
         <div style="font-family: sans-serif; text-align: center; margin-top: 100px; padding: 20px;">
           <h1 style="color: #d32f2f;">AKSES DITOLAK</h1>
           <h3 style="color: #333;">${res.msg}</h3>
-          <p style="color: #666; margin-top: 20px;">Aplikasi CBT ini dilindungi hak cipta.<br>Silakan hubungi <b>BIMBELAJAR.COM</b> untuk aktivasi lisensi.</p>
+          <p style="color: #666; margin-top: 20px;">Aplikasi CBT ini dilindungi hak cipta.<br>Silakan hubungi <b>BELAJAR INOVASI</b> untuk aktivasi lisensi.</p>
         </div>
       `);
     } else {
@@ -626,6 +566,12 @@ function loadPage(page) {
   });
 }
 
+function beliPaket(judul) {
+    let msg = encodeURIComponent(`Halo Admin BELAJAR INOVASI,\nSaya ingin melakukan pembayaran untuk Paket Tryout: *${judul}*.\nMohon info nomor rekening/e-wallet untuk pembayarannya sebesar Rp 49.000. Terima kasih.`);
+    let waUrl = `https://wa.me/6285895283075?text=${msg}`;
+    window.open(waUrl, '_blank');
+}
+
 function renderContent(page) {
   const area = $('#content-area'); let h = '';
   if (page === 'admin-home') {
@@ -639,24 +585,95 @@ function renderContent(page) {
     h += '</div>';
   }
   else if (page === 'peserta-home') {
-    h = `<div class="card mb-4 border-0 shadow-sm bg-primary text-white"><div class="card-body"><h5 class="fw-bold">Selamat Datang, ${user.Nama}</h5><p class="mb-0 opacity-75">Pilih simulasi Tryout CAT CPNS di bawah ini.</p></div></div><h5 class="fw-bold mb-3 border-bottom pb-2">Jadwal Tryout Aktif</h5><div class="row g-4 mb-5">`;
-    if(!gData.availableExams || gData.availableExams.length === 0) { h += '<div class="col-12"><div class="alert alert-info border-0 shadow-sm text-center">Belum ada jadwal tryout aktif saat ini.</div></div>'; }
-    else {
+    h = `<div class="card mb-4 border-0 shadow-sm bg-primary text-white" style="border-radius:12px;"><div class="card-body p-4"><h4 class="fw-bold">Selamat Datang, ${user.Nama}</h4><p class="mb-0 opacity-75">Pilih simulasi Tryout CAT CPNS di bawah ini atau beli paket latihan terbaru.</p></div></div>`;
+    
+    // --- SECTION 1: JADWAL TRYOUT AKTIF (Ujian yang sudah di-assign / db) ---
+    h += `<h5 class="fw-bold mb-3 border-bottom pb-2 mt-4 text-dark"><i class="fas fa-calendar-check text-success me-2"></i> Tryout Aktif Anda</h5><div class="row g-4 mb-5">`;
+    if(!gData.availableExams || gData.availableExams.length === 0) { 
+        h += '<div class="col-12"><div class="alert alert-light border shadow-sm text-center text-muted">Belum ada jadwal tryout aktif saat ini.</div></div>'; 
+    } else {
       gData.availableExams.forEach(e => {
         let btnText = 'MULAI TRYOUT', btnClass = 'btn-primary';
-        if (e.IsFinished) { btnText = 'MULAI TRYOUT (RE-ATTEMPT)'; btnClass = 'btn-outline-primary'; }
-        h += `<div class="col-md-6 col-lg-4"><div class="card h-100 shadow-sm border-0 border-top border-4 border-primary"><div class="card-body"><h5 class="fw-bold text-dark mb-3">${e.Judul}</h5><div class="d-flex justify-content-between mb-4"><span class="badge bg-light text-primary border px-2 py-2"><i class="fas fa-book me-1"></i>${e.Mapel}</span><span class="badge bg-light text-danger border px-2 py-2"><i class="fas fa-stopwatch me-1"></i>${e.Durasi} Menit</span></div><button class="btn ${btnClass} w-100 fw-bold shadow-sm py-2" onclick="promptToken('${e.ExamID}', '${e.Judul}', '${e.Token}')"><i class="fas fa-play-circle me-2"></i>${btnText}</button></div></div></div>`;
+        if (e.IsFinished) { btnText = 'KERJAKAN ULANG', btnClass = 'btn-outline-primary'; }
+        
+        // Desain Card Mirip Aplikasi BKN/Pusmendik
+        h += `<div class="col-md-6 col-lg-4">
+                <div class="dashboard-card h-100">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-start mb-3">
+                            <div class="card-icon-box bg-primary bg-opacity-10 text-primary">
+                                <i class="fas fa-laptop-code"></i>
+                            </div>
+                            <div class="ms-3 flex-grow-1">
+                                <span class="badge bg-success mb-2">Tersedia</span>
+                                <h6 class="fw-bold mb-0 lh-base text-dark">${e.Judul}</h6>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between mb-4 small fw-bold text-secondary">
+                            <span><i class="fas fa-book me-1"></i> ${e.Mapel}</span>
+                            <span><i class="fas fa-clock text-danger me-1"></i> ${e.Durasi} Mnt</span>
+                        </div>
+                        <button class="btn ${btnClass} w-100 fw-bold rounded-pill" onclick="promptToken('${e.ExamID}', '${e.Judul}', '${e.Token}')">
+                            <i class="fas fa-play me-2"></i>${btnText}
+                        </button>
+                    </div>
+                </div>
+              </div>`;
       });
     }
-    h += '</div><h5 class="fw-bold mb-3 border-bottom pb-2 mt-5"><i class="fas fa-history me-2 text-success"></i>Riwayat & Pembahasan</h5>';
-    if(!gData.history || gData.history.length === 0) { h += '<div class="alert alert-light border">Belum ada riwayat.</div>'; }
+    h += `</div>`;
+
+    // --- SECTION 2: KATALOG PAKET PEMBELAJARAN ---
+    h += `<h5 class="fw-bold mb-3 border-bottom pb-2 mt-5 text-dark"><i class="fas fa-shopping-bag text-danger me-2"></i> Katalog Paket Tryout Premium</h5>
+          <p class="text-muted small mb-4">Pilih dan beli formasi jabatan di bawah ini untuk mendapatkan ribuan soal, pembahasan lengkap, dan simulasi CAT mirip aslinya.</p>
+          <div class="row g-4 mb-5">`;
+          
+    // Loop Daftar Jabatan
+    dataKatalog.forEach(item => {
+       h += `<div class="col-md-6 col-lg-4">
+                <div class="katalog-card h-100">
+                    <div class="katalog-header">
+                        <span class="badge bg-light text-primary mb-2">${item.tag}</span>
+                        <h5 class="fw-bold mb-0 lh-base" style="font-size: 1.1rem;">${item.title}</h5>
+                    </div>
+                    <div class="katalog-body d-flex flex-column">
+                        <div class="text-center mb-3">
+                            <p class="text-muted small mb-0">Hanya</p>
+                            <div class="katalog-price">Rp 49.000</div>
+                        </div>
+                        <div class="mb-4">
+                            <div class="katalog-feature"><i class="fas fa-check-circle"></i> Sesuai Kisi-kisi Terbaru</div>
+                            <div class="katalog-feature"><i class="fas fa-check-circle"></i> Simulasi Sistem CAT</div>
+                            <div class="katalog-feature"><i class="fas fa-check-circle"></i> File Pembahasan PDF Lengkap</div>
+                            <div class="katalog-feature"><i class="fas fa-check-circle"></i> Masa Aktif 1 Tahun</div>
+                        </div>
+                        <div class="mt-auto">
+                            <button class="btn-buy" onclick="beliPaket('${item.title}')">
+                                BELI SEKARANG / PAYMENT <i class="fas fa-arrow-right ms-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+             </div>`;
+    });
+    
+    h += `</div>`;
+
+    // --- SECTION 3: RIWAYAT NILAI ---
+    h += `<h5 class="fw-bold mb-3 border-bottom pb-2 mt-5"><i class="fas fa-history me-2 text-primary"></i> Riwayat Nilai & Evaluasi</h5>`;
+    if(!gData.history || gData.history.length === 0) { h += '<div class="alert alert-light border shadow-sm">Belum ada riwayat pengerjaan.</div>'; }
     else {
-      h += `<div class="table-responsive bg-white rounded shadow-sm p-3"><table class="table table-hover align-middle mb-0"><thead><tr><th>Tanggal</th><th>Tryout</th><th>Nilai</th><th>Aksi Evaluasi</th></tr></thead><tbody>`;
+      h += `<div class="table-responsive bg-white rounded shadow-sm p-3 border"><table class="table table-hover align-middle mb-0"><thead><tr><th>Tanggal & Waktu</th><th>Nama Tryout</th><th>Nilai Akhir</th><th>Aksi Evaluasi</th></tr></thead><tbody>`;
       gData.history.forEach(r => {
-        h += `<tr><td>${r.WaktuSubmit}</td><td><div class="fw-bold text-primary">${r.Judul}</div></td><td><span class="badge bg-success fs-6">${r.Nilai}</span></td><td>
-        <button class="btn btn-sm btn-outline-primary fw-bold me-1 mb-1" onclick="lihatHasil('${r.ExamID}', '${r.Judul}')"><i class="fas fa-eye me-1"></i> Lihat Hasil</button>
-        <button class="btn btn-sm btn-outline-danger fw-bold me-1 mb-1" onclick="downloadPembahasan('${r.ExamID}', '${r.Judul}')"><i class="fas fa-file-pdf me-1"></i> PDF</button>
-        <button class="btn btn-sm btn-warning fw-bold text-dark mb-1 shadow-sm" onclick="kerjakanUlang('${r.ExamID}')"><i class="fas fa-sync-alt me-1"></i> Kerjakan Ulang</button>
+        h += `<tr>
+        <td class="small text-muted">${r.WaktuSubmit}</td>
+        <td><div class="fw-bold text-dark">${r.Judul}</div></td>
+        <td><span class="badge bg-primary fs-6 px-3 py-2">${r.Nilai}</span></td>
+        <td>
+            <div class="d-flex gap-2">
+                <button class="btn btn-sm btn-outline-primary fw-bold" onclick="lihatHasil('${r.ExamID}', '${r.Judul}')"><i class="fas fa-eye"></i> Nilai</button>
+                <button class="btn btn-sm btn-outline-danger fw-bold" onclick="downloadPembahasan('${r.ExamID}', '${r.Judul}')"><i class="fas fa-file-pdf"></i> PDF Bahas</button>
+            </div>
         </td></tr>`;
       });
       h += `</tbody></table></div>`;
@@ -666,18 +683,17 @@ function renderContent(page) {
 }
 
 function promptToken(eid, judul, trueToken) {
-  let msg = encodeURIComponent(`Halo Admin BIMBELAJAR.COM,\nSaya ingin membeli Token Ujian untuk paket Tryout: *${judul}*.\nSaya siap melakukan pembayaran sebesar Rp 15.000. Mohon info nomor rekening/e-wallet untuk pembayarannya. Terima kasih.`);
+  let msg = encodeURIComponent(`Halo Admin BELAJAR INOVASI,\nSaya telah melakukan pembayaran dan membutuhkan Akses Token untuk paket Tryout: *${judul}*.\nTerima kasih.`);
   let waUrl = `https://wa.me/6285895283075?text=${msg}`;
   Swal.fire({
     title: 'Masukkan Token Ujian',
     html: `
-    <p class="text-muted small mb-4">Untuk memulai <b>${judul}</b>, silakan masukkan token yang valid.</p>
+    <p class="text-muted small mb-4">Mulai <b>${judul}</b> dengan memasukkan token yang valid.</p>
     <input type="text" id="swal-token-input" class="form-control form-control-lg text-center fw-bold mb-4" placeholder="Ketik Token Disini" style="text-transform:uppercase;">
     <div class="bg-light p-3 rounded border text-start">
     <span class="small fw-bold">Belum punya token?</span><br>
-    <span class="small text-muted">Dapatkan token dengan membeli paket tryout seharga <b>Rp 15.000</b>.
-    Klik tombol di bawah untuk konfirmasi pembayaran via WhatsApp Admin.</span>
-    <a href="${waUrl}" target="_blank" class="btn btn-success w-100 mt-3 fw-bold"><i class="fab fa-whatsapp me-2"></i>Beli Token via WhatsApp</a>
+    <span class="small text-muted">Dapatkan token dengan membeli paket pada Menu Katalog di bawah.</span>
+    <a href="${waUrl}" target="_blank" class="btn btn-success w-100 mt-3 fw-bold"><i class="fab fa-whatsapp me-2"></i>Minta Token via WhatsApp Admin</a>
     </div>
     `,
     showCancelButton: true, confirmButtonText: 'Mulai Ujian', cancelButtonText: 'Batal',
@@ -735,7 +751,7 @@ function downloadPembahasan(eid, judul) {
       <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.12.1/polyfill.min.js"><\/script>
       <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"><\/script>
       </head><body>
-      <div class="kop"><h1 style="margin:0; color:#0f172a;">BIMBELAJAR.COM</h1><p style="margin:5px 0 0 0; font-size:18px;">Pembahasan Tryout CAT CPNS: <b>${judul}</b></p></div>`;
+      <div class="kop"><h1 style="margin:0; color:#0f172a;">BELAJAR INOVASI</h1><p style="margin:5px 0 0 0; font-size:18px;">Pembahasan Tryout CAT CPNS: <b>${judul}</b></p></div>`;
       
       res.data.forEach((q, i) => {
         let kunciText = 'Tidak ada kunci'; 
@@ -757,7 +773,7 @@ function downloadPembahasan(eid, judul) {
         
         let bahasHtml = q.Pembahasan ? `<div class="bahas"><b>Pembahasan:</b><br>${q.Pembahasan}</div>` : '';
         
-        // Logika Pemeriksaan Jawaban
+        // Logika Pemeriksaan Jawaban (Hijau/Merah)
         let jawabanPeserta = q.JawabanPeserta;
         let stylingJawaban = "";
 
@@ -775,10 +791,8 @@ function downloadPembahasan(eid, judul) {
             }
 
             if (isCorrect) {
-                // Jawaban Benar (Warna Hijau)
                 stylingJawaban = `<b style="color: #10b981;">${jawabanPeserta}</b>`; 
             } else {
-                // Jawaban Salah (Warna Merah & Dicoret)
                 stylingJawaban = `<b style="color: #ef4444; text-decoration: line-through;">${jawabanPeserta}</b>`; 
             }
         }
@@ -974,7 +988,7 @@ function renderAdministrasi() {
 function printDaftarHadir() {
   const examId = $('#adm-exam-hadir').val(); if(!examId) return Swal.fire('Perhatian', 'Pilih Ujian terlebih dahulu.', 'warning');
   const exam = gAdminData.exams.find(e => String(e.ExamID) === String(examId)); let usersToPrint = gAdminData.users;
-  let html = `<html><head><title>Daftar Hadir Ujian</title><style> body { font-family: 'Times New Roman', Times, serif; padding: 30px; } .kop { display: flex; align-items: center; justify-content: center; border-bottom: 3px solid #000; padding-bottom: 15px; margin-bottom: 20px; text-align: center; } .kop img { width: 70px; height: 70px; margin-right: 20px; position: absolute; left: 40px; } .kop h2 { margin: 0; font-size: 20px; text-transform: uppercase; } h3 { text-align: center; text-decoration: underline; margin-bottom: 20px; } .data-table { width: 100%; border-collapse: collapse; font-size: 14px; } .data-table th, .data-table td { border: 1px solid #000; padding: 8px; } .data-table th { background: #f0f0f0; text-align: center; } .ttd-box { height: 35px; } @media print { .no-print { display: none; } } </style></head><body><div class="no-print" style="margin-bottom: 15px; text-align:right;"><button onclick="window.print()" style="padding:10px 20px; background:#0dcaf0; color:white; border:none; border-radius:5px;">Cetak</button></div><div class="kop"><img src="${user.LogoUrl || 'https://via.placeholder.com/70'}" alt="Logo"><div><h2>DAFTAR HADIR TRYOUT CAT CPNS</h2><p>BIMBELAJAR.COM</p></div></div><h3>DAFTAR HADIR PESERTA - ${exam.Judul}</h3><table class="data-table"><thead><tr><th width="5%">No</th><th width="20%">Username</th><th width="45%">Nama Peserta</th><th width="30%" colspan="2">Tanda Tangan</th></tr></thead><tbody>`;
+  let html = `<html><head><title>Daftar Hadir Ujian</title><style> body { font-family: 'Times New Roman', Times, serif; padding: 30px; } .kop { display: flex; align-items: center; justify-content: center; border-bottom: 3px solid #000; padding-bottom: 15px; margin-bottom: 20px; text-align: center; } .kop img { width: 70px; height: 70px; margin-right: 20px; position: absolute; left: 40px; } .kop h2 { margin: 0; font-size: 20px; text-transform: uppercase; } h3 { text-align: center; text-decoration: underline; margin-bottom: 20px; } .data-table { width: 100%; border-collapse: collapse; font-size: 14px; } .data-table th, .data-table td { border: 1px solid #000; padding: 8px; } .data-table th { background: #f0f0f0; text-align: center; } .ttd-box { height: 35px; } @media print { .no-print { display: none; } } </style></head><body><div class="no-print" style="margin-bottom: 15px; text-align:right;"><button onclick="window.print()" style="padding:10px 20px; background:#0dcaf0; color:white; border:none; border-radius:5px;">Cetak</button></div><div class="kop"><img src="${user.LogoUrl || 'https://via.placeholder.com/70'}" alt="Logo"><div><h2>DAFTAR HADIR TRYOUT CAT CPNS</h2><p>BELAJAR INOVASI</p></div></div><h3>DAFTAR HADIR PESERTA - ${exam.Judul}</h3><table class="data-table"><thead><tr><th width="5%">No</th><th width="20%">Username</th><th width="45%">Nama Peserta</th><th width="30%" colspan="2">Tanda Tangan</th></tr></thead><tbody>`;
   usersToPrint.forEach((u, i) => { html += `<tr><td style="text-align:center">${i + 1}</td><td style="text-align:center">${u.Username}</td><td>${u.Nama}</td><td class="ttd-box">${(i%2===0)?i+1+'.':''}</td><td class="ttd-box">${(i%2!==0)?i+1+'.':''}</td></tr>`; });
   html += `</tbody></table><script>window.onload = function() { window.print(); }<\/script></body></html>`;
   const win = window.open('', '', 'width=800,height=600'); win.document.write(html); win.document.close();
