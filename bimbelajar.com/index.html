@@ -349,9 +349,22 @@ body.exam-mode { overflow: hidden; user-select: none; }
 </div>
 <div class="modal-body p-4">
 <div class="container" style="max-width:900px">
-<div class="alert alert-info small mb-3"><b>Tips:</b> Gunakan tombol <b>Rumus</b> untuk memasukkan LaTeX jika butuh persamaan.</div>
-<div id="q-list-container"></div>
-<div class="text-center mt-5 mb-5"><button class="btn btn-lg btn-success rounded-pill px-5 shadow" onclick="addNewQuestionBlock()"><i class="fas fa-plus-circle me-2"></i> TAMBAH SOAL</button></div>
+    
+    <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center mb-3 bg-white p-3 rounded shadow-sm border border-primary">
+        <div>
+            <h6 class="fw-bold mb-1 text-primary"><i class="fas fa-file-excel me-1"></i> Import Soal via Excel</h6>
+            <small class="text-muted">Gunakan template yang disediakan untuk upload massal.</small>
+        </div>
+        <div>
+            <button class="btn btn-sm btn-outline-success fw-bold me-2" onclick="downloadTemplateExcel()"><i class="fas fa-download me-1"></i> Download Template</button>
+            <button class="btn btn-sm btn-primary fw-bold" onclick="document.getElementById('file-excel-q').click()"><i class="fas fa-upload me-1"></i> Upload Excel</button>
+            <input type="file" id="file-excel-q" class="hidden" accept=".xlsx, .xls" onchange="handleExcelUpload(event)">
+        </div>
+    </div>
+    
+    <div class="alert alert-info small mb-3"><b>Tips:</b> Gunakan tombol <b>Rumus</b> untuk memasukkan LaTeX jika butuh persamaan.</div>
+    <div id="q-list-container"></div>
+    <div class="text-center mt-5 mb-5"><button class="btn btn-lg btn-success rounded-pill px-5 shadow" onclick="addNewQuestionBlock()"><i class="fas fa-plus-circle me-2"></i> TAMBAH SOAL SECARA MANUAL</button></div>
 </div>
 </div>
 </div>
@@ -384,7 +397,7 @@ body.exam-mode { overflow: hidden; user-select: none; }
 <script>
 // =========================================================================
 // PASTE URL WEB APP APPS SCRIPT ANDA DI SINI
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbzVxasBCExIqHtqKA4PJWl7YJUDhWY8u9_Mqm5LeSiqG0_WBXU8rSw8ZaNAdQQnVLm96A/exec'; 
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbyyIov1dtFxZZHkogmMjf0wNH9Bt8UgasVHuNmCnPEMJ_joIYCaImePbCmZkbM3Wek0cA/exec'; 
 // =========================================================================
 
 let examSubmitting = false; let user = null; let gData = {};
@@ -590,7 +603,6 @@ function renderContent(page) {
     });
     h += '</div>';
   }
-  // --- HALAMAN KELOMPOK TRYOUT BARU ---
   else if (page === 'peserta-kelompok') {
     h = `<h4 class="fw-bold mb-4 border-bottom pb-2 text-dark"><i class="fas fa-folder-open text-warning me-2"></i>Kelompok Ujian Tryout</h4><div class="row g-4" id="folder-container">`;
     let groups = {};
@@ -623,7 +635,6 @@ function renderContent(page) {
   else if (page === 'peserta-home') {
     h = `<div class="card mb-4 border-0 shadow-sm bg-primary text-white" style="border-radius:12px;"><div class="card-body p-4"><h4 class="fw-bold">Selamat Datang, ${user.Nama}</h4><p class="mb-0 opacity-75">Ini adalah tampilan riwayat dan tryout terbaru Anda.</p></div></div>`;
     
-    // --- TRYOUT AKTIF DENGAN DESAIN KARTU PREMIUM ---
     h += `<h5 class="fw-bold mb-3 border-bottom pb-2 mt-4 text-dark"><i class="fas fa-calendar-check text-success me-2"></i> Tryout Aktif Anda</h5><div class="row g-4 mb-5">`;
     if(!gData.availableExams || gData.availableExams.length === 0) { 
         h += '<div class="col-12"><div class="alert alert-light border shadow-sm text-center text-muted">Belum ada jadwal tryout aktif saat ini.</div></div>'; 
@@ -657,7 +668,6 @@ function renderContent(page) {
     }
     h += `</div>`;
 
-    // --- RIWAYAT NILAI ---
     h += `<h5 class="fw-bold mb-3 border-bottom pb-2 mt-5"><i class="fas fa-history me-2 text-primary"></i> Riwayat Nilai & Evaluasi</h5>`;
     if(!gData.history || gData.history.length === 0) { h += '<div class="alert alert-light border shadow-sm">Belum ada riwayat pengerjaan.</div>'; }
     else {
@@ -680,7 +690,6 @@ function renderContent(page) {
   area.html(h);
 }
 
-// Fungsi Render untuk isi folder Kategori
 function renderIsiKelompok(cat) {
     $('#folder-container').addClass('hidden');
     let exams = gData.availableExams.filter(e => (e.TargetKelas || 'UMUM') === cat);
@@ -986,6 +995,84 @@ function deleteQBlock(uid) {
   Swal.fire({title:'Hapus Soal?',icon:'warning',showCancelButton:true}).then(r=>{
     if(r.isConfirmed){ $(`#block-${uid}`).fadeOut(); gasAPI('delQ', {id: id}); }
   });
+}
+
+// -----------------------------------------------------------------
+// FITUR BARU: DOWNLOAD TEMPLATE & IMPORT EXCEL
+// -----------------------------------------------------------------
+function downloadTemplateExcel() {
+    const ws_data = [
+        ["Nomor", "Tipe", "Bagian", "Pertanyaan", "Opsi", "Kunci Jawaban", "Skor", "Pembahasan"],
+        [1, "PGS", "Manajerial", "Berikut ini yang merupakan ibukota negara Indonesia adalah...", "Jakarta | Bandung | Surabaya | Semarang", "Jakarta", 10, "Sudah jelas ibukota Indonesia adalah Jakarta."],
+        [2, "PGK", "Sosial Kultural", "Pilihlah 2 warna yang ada di bendera Indonesia!", "Merah | Putih | Biru | Hijau", "Merah | Putih", 10, "Bendera Indonesia adalah Merah dan Putih."]
+    ];
+    const ws = XLSX.utils.aoa_to_sheet(ws_data);
+    ws['!cols'] = [ {wpx: 40}, {wpx: 60}, {wpx: 100}, {wpx: 250}, {wpx: 250}, {wpx: 150}, {wpx: 50}, {wpx: 250} ];
+    
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "TemplateSoal");
+    XLSX.writeFile(wb, "Template_Soal_Belajar_Inovasi.xlsx");
+}
+
+function handleExcelUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+        const data = new Uint8Array(evt.target.result);
+        const workbook = XLSX.read(data, {type: 'array'});
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+        const json = XLSX.utils.sheet_to_json(sheet);
+        
+        if (json.length === 0) {
+            Swal.fire('Kosong', 'File excel tidak berisi data soal.', 'warning');
+            return;
+        }
+        
+        let parsedQs = [];
+        json.forEach((row, index) => {
+            let opsiRaw = row['Opsi'] ? String(row['Opsi']).split('|').map(s => s.trim()) : [];
+            let kunciRaw = row['Kunci Jawaban'] ? String(row['Kunci Jawaban']).split('|').map(s => s.trim()) : [];
+            
+            parsedQs.push({
+                num: row['Nomor'] || (index + 1),
+                type: row['Tipe'] || 'PGS',
+                bagian: row['Bagian'] || 'Manajerial',
+                text: row['Pertanyaan'] || '',
+                options: opsiRaw,
+                key: kunciRaw,
+                score: row['Skor'] || 10,
+                pembahasan: row['Pembahasan'] || ''
+            });
+        });
+        
+        Swal.fire({
+            title: 'Konfirmasi Upload',
+            text: `Berhasil memindai ${parsedQs.length} soal dari Excel. Lanjutkan menyimpan ke sistem?`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Simpan Semua'
+        }).then((res) => {
+            if (res.isConfirmed) {
+                showLoad(true);
+                gasAPI('batchSaveQ', {eid: activeExamId, data: parsedQs, userId: user.ID}).then(r => {
+                    showLoad(false);
+                    document.getElementById('file-excel-q').value = ''; 
+                    if (r.status === 'success') {
+                        Swal.fire('Sukses', r.msg, 'success');
+                        loadQList(); 
+                    } else {
+                        Swal.fire('Error', r.msg, 'error');
+                    }
+                });
+            } else {
+                document.getElementById('file-excel-q').value = ''; 
+            }
+        });
+    };
+    reader.readAsArrayBuffer(file);
 }
 
 function renderRecapTable() {
