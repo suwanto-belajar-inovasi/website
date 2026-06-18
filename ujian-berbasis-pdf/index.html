@@ -309,10 +309,9 @@ align-items: center; backdrop-filter: blur(5px); }
 // ==========================================
 // KONFIGURASI API BACKEND (WAJIB DIGANTI!)
 // ==========================================
-const API_URL = "https://script.google.com/macros/s/AKfycbyWZrKV8rcrbohlK9GkqQ9gSyP58NZ6OZYrr9TWuBANDkksr22-JHN_F7xkFGHDfLPZ/exec"; // <- Ganti ini dengan URL deployment script terbaru Anda
+const API_URL = "https://script.google.com/macros/s/AKfycbxCtf8__jX42arK4kQq5DWD5jbQq2HBZ4xAGW19GQqAnmhcRYdM860xy7a8H2QEG_th/exec"; // <- Ganti ini dengan URL deployment script terbaru Anda
 
 // PROXY OTOMATIS: Menerjemahkan google.script.run menjadi HTTP POST ke Apps Script API.
-// Memungkinkan aplikasi berjalan murni di GitHub Pages tanpa merombak logika bawaan.
 window.google = {
     script: {
         get run() {
@@ -394,6 +393,7 @@ let editorPageNum = 1;
 let editorPageRendering = false;
 let editorPageNumPending = null;
 let editorPdfScale = 1.2;
+
 const MathButton = function (context) {
 const ui = $.summernote.ui;
 const button = ui.button({
@@ -446,6 +446,170 @@ $('#logo-container img').attr('src', user.LogoUrl || 'https://via.placeholder.co
 initDash(); checkResumeExam();
 }
 });
+
+// ==========================================
+// BLOK FUNGSI RENDER UI TAMBAHAN YANG HILANG
+// ==========================================
+
+function renderUsers(users) {
+  let h = `<div class="d-flex justify-content-between mb-3">
+    <h5 class="fw-bold">Data Peserta & Pengguna</h5>
+    <div>
+      <button class="btn btn-primary btn-sm" onclick="openUserModal()"><i class="fas fa-plus"></i> Tambah User</button>
+    </div>
+  </div>
+  <div class="bg-white p-3 rounded shadow-sm table-responsive">
+    <table class="table table-hover align-middle" id="tbl-users">
+      <thead class="table-light">
+        <tr><th>Nama</th><th>Username</th><th>Role</th><th>Kelas</th><th>Sekolah</th><th>Aksi</th></tr>
+      </thead>
+      <tbody>`;
+  users.forEach(u => {
+    const safeU = encodeURIComponent(JSON.stringify(u));
+    h += `<tr>
+      <td><div class="fw-bold">${u.Nama}</div></td>
+      <td>${u.Username}</td>
+      <td><span class="badge ${u.Role === 'admin' ? 'bg-danger' : (u.Role === 'guru' ? 'bg-primary' : 'bg-secondary')}">${u.Role}</span></td>
+      <td>${u.Kelas || '-'}</td>
+      <td>${u.Sekolah || '-'}</td>
+      <td>
+        <button class="btn btn-sm btn-outline-primary" onclick="editUser('${safeU}')"><i class="fas fa-edit"></i></button>
+        <button class="btn btn-sm btn-outline-danger" onclick="delUser('${u.ID}')"><i class="fas fa-trash"></i></button>
+      </td>
+    </tr>`;
+  });
+  h += `</tbody></table></div>`;
+  $('#content-area').html(h);
+}
+
+function openUserModal() {
+  $('#frm-user')[0].reset();
+  $('#mu-id').val('');
+  $('#modalUser').modal('show');
+}
+
+function renderRecapTable() {
+  let h = `<div class="d-flex justify-content-between mb-3">
+    <h5 class="fw-bold">Rekap Hasil Nilai</h5>
+    <button class="btn btn-success btn-sm" onclick="exportRecapExcel()"><i class="fas fa-file-excel"></i> Export Excel</button>
+  </div>
+  <div class="bg-white p-3 rounded shadow-sm table-responsive">
+    <table class="table table-hover align-middle" id="tbl-recap">
+      <thead class="table-light">
+        <tr><th>Waktu Submit</th><th>Siswa</th><th>Kelas</th><th>Ujian</th><th>Nilai</th><th>Aksi</th></tr>
+      </thead>
+      <tbody>`;
+  recapAllData.forEach(r => {
+    h += `<tr>
+      <td><small>${r.WaktuSubmit}</small></td>
+      <td><div class="fw-bold">${r.NamaSiswa}</div></td>
+      <td>${r.KelasSiswa}</td>
+      <td>${r.JudulUjian}</td>
+      <td><span class="badge bg-success fs-6">${r.TotalNilai}</span></td>
+      <td>
+        <button class="btn btn-sm btn-outline-danger" onclick="deleteResult('${r.ResultID}')" title="Hapus & Reset"><i class="fas fa-trash"></i></button>
+      </td>
+    </tr>`;
+  });
+  h += `</tbody></table></div>`;
+  $('#content-area').html(h);
+}
+
+function exportRecapExcel() {
+   let ws_data = [["Waktu Submit", "Nama Siswa", "Kelas", "Ujian", "Nilai", "Log Pelanggaran"]];
+   recapAllData.forEach(r => {
+       ws_data.push([r.WaktuSubmit, r.NamaSiswa, r.KelasSiswa, r.JudulUjian, r.TotalNilai, r.LogInfo]);
+   });
+   let ws = XLSX.utils.aoa_to_sheet(ws_data);
+   let wb = XLSX.utils.book_new();
+   XLSX.utils.book_append_sheet(wb, ws, "RekapNilai");
+   XLSX.writeFile(wb, "Rekap_Nilai_CBT.xlsx");
+}
+
+function renderAdministrasi() {
+  let examOpts = '<option value="">Pilih Jadwal Ujian...</option>';
+  gAdminData.exams.forEach(e => {
+      examOpts += `<option value="${e.ExamID}">${e.Judul} (${e.TargetKelas})</option>`;
+  });
+
+  let h = `<div class="d-flex justify-content-between mb-3">
+    <h5 class="fw-bold">Cetak Administrasi Ujian</h5>
+  </div>
+  <div class="bg-white p-4 rounded shadow-sm">
+    <div class="row g-3 mb-4">
+        <div class="col-md-8">
+            <label class="fw-bold small mb-1">Pilih Ujian</label>
+            <select id="admin-exam-sel" class="form-select">${examOpts}</select>
+        </div>
+        <div class="col-md-4 d-flex align-items-end">
+            <button class="btn btn-primary w-100" onclick="generateAdministrasi()"><i class="fas fa-print me-2"></i> Tampilkan</button>
+        </div>
+    </div>
+    <div id="admin-print-area" class="border p-4 d-none bg-light">
+        </div>
+  </div>`;
+  $('#content-area').html(h);
+}
+
+function generateAdministrasi() {
+   const eid = $('#admin-exam-sel').val();
+   if(!eid) return Swal.fire('Peringatan', 'Pilih ujian terlebih dahulu', 'warning');
+   const exam = gAdminData.exams.find(e => e.ExamID === eid);
+   if(!exam) return;
+
+   let targetKelas = String(exam.TargetKelas).split(',').map(k => k.trim().toLowerCase());
+   let filteredUsers = gAdminData.users;
+   if(!targetKelas.includes('all')) {
+       filteredUsers = gAdminData.users.filter(u => targetKelas.includes(String(u.Kelas).trim().toLowerCase()));
+   }
+
+   let printHtml = `
+   <div id="print-section" style="background: white; padding: 20px;">
+       <div class="text-center mb-4">
+           <h4 class="fw-bold text-uppercase">DAFTAR HADIR PESERTA UJIAN</h4>
+           <h5>${exam.Judul}</h5>
+           <p class="mb-0">Mata Pelajaran: ${exam.Mapel} | Kelas: ${exam.TargetKelas}</p>
+       </div>
+       <table class="table table-bordered border-dark" style="width: 100%; margin-bottom: 1rem; color: #212529; border-collapse: collapse;">
+           <thead class="text-center bg-light">
+               <tr>
+                   <th style="border: 1px solid #000; padding: 8px;" width="5%">No</th>
+                   <th style="border: 1px solid #000; padding: 8px;" width="25%">Username / NIS</th>
+                   <th style="border: 1px solid #000; padding: 8px;" width="40%">Nama Peserta</th>
+                   <th style="border: 1px solid #000; padding: 8px;" width="30%">Tanda Tangan</th>
+               </tr>
+           </thead>
+           <tbody>
+   `;
+   filteredUsers.sort((a,b) => String(a.Nama).localeCompare(String(b.Nama))).forEach((u, i) => {
+       printHtml += `
+       <tr>
+           <td style="border: 1px solid #000; padding: 8px;" class="text-center">${i+1}</td>
+           <td style="border: 1px solid #000; padding: 8px;" class="text-center">${u.Username}</td>
+           <td style="border: 1px solid #000; padding: 8px;">${u.Nama}</td>
+           <td style="border: 1px solid #000; padding: 8px;">${i+1}.</td>
+       </tr>`;
+   });
+   printHtml += `</tbody></table>
+   </div>
+   <div class="mt-3 text-end">
+    <button class="btn btn-success" onclick="printElement('print-section')"><i class="fas fa-print"></i> Cetak Daftar Hadir</button>
+   </div>
+   `;
+   $('#admin-print-area').removeClass('d-none').html(printHtml);
+}
+
+function printElement(elemId) {
+    let printContents = document.getElementById(elemId).innerHTML;
+    let originalContents = document.body.innerHTML;
+    document.body.innerHTML = printContents;
+    window.print();
+    document.body.innerHTML = originalContents;
+    location.reload();
+}
+
+// ==========================================
+
 function applyMathJax() { if (window.MathJax && MathJax.typesetPromise) { MathJax.typesetPromise().catch((err) => console.log('MathJax Error:', err)); } }
 function checkResumeExam() {
 let savedExam = null;
