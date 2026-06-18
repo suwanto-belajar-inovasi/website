@@ -384,7 +384,7 @@ body.exam-mode { overflow: hidden; user-select: none; }
 <script>
 // =========================================================================
 // PASTE URL WEB APP APPS SCRIPT ANDA DI SINI
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbzTr_oTA2vpyBewt4qpBdzbxY_ueyPZYNFWrO0sVNZ772w2RSPwKhP8ygD4dm6BCjQsmg/exec'; 
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzVxasBCExIqHtqKA4PJWl7YJUDhWY8u9_Mqm5LeSiqG0_WBXU8rSw8ZaNAdQQnVLm96A/exec'; 
 // =========================================================================
 
 let examSubmitting = false; let user = null; let gData = {};
@@ -556,6 +556,28 @@ function loadPage(page) {
   });
 }
 
+function duplicateExam(id, judul) {
+  Swal.fire({
+    title: 'Duplikat Ujian?',
+    text: `Anda akan menduplikasi ujian "${judul}" beserta seluruh soalnya. Lanjutkan?`,
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: 'Ya, Duplikat'
+  }).then((r) => {
+    if (r.isConfirmed) {
+      showLoad(true);
+      gasAPI('duplicateExam', { id: id, userId: user.ID }).then(res => {
+        showLoad(false);
+        if (res.status === 'success') {
+          Swal.fire('Berhasil', res.msg, 'success').then(() => loadPage('admin-ujian'));
+        } else {
+          Swal.fire('Gagal', res.msg, 'error');
+        }
+      });
+    }
+  });
+}
+
 function renderContent(page) {
   const area = $('#content-area'); let h = '';
   if (page === 'admin-home') {
@@ -564,7 +586,7 @@ function renderContent(page) {
   else if (page === 'admin-ujian') {
     h = `<div class="d-flex justify-content-between mb-3"><button class="btn btn-primary shadow-sm" onclick="openExamModal()">+ Buat Tryout Baru</button></div><div class="row g-4" id="admin-ujian-list">`;
     gData.exams.forEach(e => {
-      h += `<div class="col-md-6 col-lg-4 ujian-card"><div class="card h-100 shadow-sm border-0"><div class="card-body"><div class="d-flex justify-content-between mb-2"><span class="badge bg-primary">${e.TargetKelas || 'UMUM'}</span></div><h5 class="fw-bold text-dark">${e.Judul}</h5><p class="text-muted small"><i class="fas fa-book me-1"></i> ${e.Mapel}</p><div class="d-flex gap-2"><button class="btn btn-sm btn-outline-dark flex-fill" onclick="openExamModal('${encodeURIComponent(JSON.stringify(e))}')">Edit</button> <button class="btn btn-sm btn-outline-primary flex-fill" onclick="manageQ('${e.ExamID}')"><i class="fas fa-list me-1"></i> Soal</button> <button class="btn btn-sm btn-danger" onclick="delExam('${e.ExamID}')"><i class="fas fa-trash"></i></button></div></div></div></div>`;
+      h += `<div class="col-md-6 col-lg-4 ujian-card"><div class="card h-100 shadow-sm border-0"><div class="card-body"><div class="d-flex justify-content-between mb-2"><span class="badge bg-primary">${e.TargetKelas || 'UMUM'}</span></div><h5 class="fw-bold text-dark">${e.Judul}</h5><p class="text-muted small"><i class="fas fa-book me-1"></i> ${e.Mapel}</p><div class="d-flex gap-2 flex-wrap"><button class="btn btn-sm btn-outline-dark flex-fill" onclick="openExamModal('${encodeURIComponent(JSON.stringify(e))}')">Edit</button> <button class="btn btn-sm btn-outline-primary flex-fill" onclick="manageQ('${e.ExamID}')"><i class="fas fa-list me-1"></i> Soal</button> <button class="btn btn-sm btn-outline-info flex-fill" onclick="duplicateExam('${e.ExamID}', '${e.Judul}')"><i class="fas fa-copy"></i> Duplikat</button> <button class="btn btn-sm btn-danger" onclick="delExam('${e.ExamID}')"><i class="fas fa-trash"></i></button></div></div></div></div>`;
     });
     h += '</div>';
   }
@@ -750,9 +772,6 @@ function kerjakanUlang(eid) {
   });
 }
 
-// -------------------------------------------------------------
-// FUNGSI RENDER PDF (PERBAIKAN WARNA CORET/HIJAU)
-// -------------------------------------------------------------
 function downloadPembahasan(eid, judul) {
   showLoad(true);
   gasAPI('getPembahasan', {eid: eid, userId: user.ID}).then(res => {
@@ -828,7 +847,6 @@ function downloadPembahasan(eid, judul) {
   });
 }
 
-// ======================== ADMIN CRUD USERS ========================
 function renderUsers(users) {
   let h = `<div class="d-flex justify-content-between mb-3 flex-wrap gap-2">
   <div><button class="btn btn-success shadow-sm me-2" onclick="$('#modalUser').modal('show');$('#modalUser form')[0].reset();$('#mu-id').val('');">+ Tambah User</button></div>
@@ -851,7 +869,6 @@ function editUser(s){ const u=JSON.parse(decodeURIComponent(s)); $('#modalUser')
 function saveUser(){ const d={id:$('#mu-id').val(), nama:$('#mu-nama').val(), username:$('#mu-user').val(), password:$('#mu-pass').val(), role:$('#mu-role').val(), sekolah:$('#mu-sekolah').val()}; showLoad(true); gasAPI('manageUser', {mode:'save', data:d}).then(()=>{showLoad(false);$('#modalUser').modal('hide'); loadPage('admin-users')}); }
 function delUser(id){ Swal.fire({title:'Hapus?', icon:'warning', showCancelButton:true}).then(r=>{if(r.isConfirmed) gasAPI('manageUser', {mode:'delete', data:{id:id}}).then(()=>{loadPage('admin-users')});}); }
 
-// ======================== ADMIN CRUD EXAMS & QUESTIONS ========================
 function saveExam() {
   const formEl = document.getElementById('frm-exam');
   const fd = new FormData(formEl); const d = Object.fromEntries(fd.entries());
@@ -971,7 +988,6 @@ function deleteQBlock(uid) {
   });
 }
 
-// ======================== ADMIN REKAP & MONITORING ========================
 function renderRecapTable() {
   let h = `<div class="card border-0 shadow-sm"><div class="card-body p-0"><div class="table-responsive"><table class="table table-hover align-middle mb-0" id="tbl-rekap"><thead class="table-light"><tr><th>Nama Peserta</th><th>Tryout</th><th>Nilai Akhir</th><th>Aksi</th></tr></thead><tbody id="tbl-rekap-body">`;
   rekapAllData.forEach(r => { h += `<tr><td><div class="fw-bold">${r.NamaSiswa}</div></td><td>${r.Mapel} - ${r.JudulUjian}</td><td><span class="badge bg-primary fs-6">${r.TotalNilai}</span></td><td><button class="btn btn-sm btn-outline-danger" onclick="deleteResult('${r.ResultID}')"><i class="fas fa-trash"></i></button></td></tr>`; });
@@ -1013,7 +1029,6 @@ function printDaftarHadir() {
 
 function handleResetCache() { Swal.fire({title:'Reset Cache?', text:"Membersihkan data sementara sistem.", icon:'warning', showCancelButton:true}).then((r)=>{ if(r.isConfirmed){ showLoad(true); gasAPI('resetCache').then(res => {showLoad(false);Swal.fire('Sukses',res.msg,'success')}); }}); }
 
-// ======================== EXAM ENGINE ========================
 function triggerViolation(msg) {
   if(violationLock || isExamFinished) return; violationLock = true; violationCount++;
   Swal.fire({ title: 'PELANGGARAN DETEKSI!', text: msg + ` (Peringatan ke-${violationCount} dari ${maxViolations})`, icon: 'warning', confirmButtonText: 'Saya Mengerti' }).then(() => {
