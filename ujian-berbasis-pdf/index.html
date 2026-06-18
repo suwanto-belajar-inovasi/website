@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Belajar Inovasi CBT</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.12.1/polyfill.min.js"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+<script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';</script>
+<style>
+:root { --primary: #1e3a8a; --secondary: #3b82f6; --accent: #10b981; --bg-body: #f1f5f9; }
+body { font-family: 'Poppins', sans-serif; background-color: var(--bg-body); color: #1e293b; overflow-x: hidden; }
+body.exam-mode { overflow: hidden; user-select: none; }
+.hidden { display: none !important; }
+.q-content img, .opt-content img { max-width: 100% !important; height: auto !important; border-radius: 6px; margin: 5px 0; }
+.auth-container {
+min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+background: linear-gradient(135deg, rgba(30,58,138,0.9) 0%, rgba(59,130,246,0.9) 100%);
+padding: 20px;
+}
+.auth-card { background: white; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); width: 100%; max-width: 420px; padding: 40px; z-index: 2; }
+.wrapper { display: flex; width: 100%; align-items: stretch; position: relative; }
+#sidebar { min-width: 260px; max-width: 260px; background: #1e293b; color: #fff; min-height: 100vh; position: fixed; z-index: 1050; transition: all 0.3s;
+left: 0; top: 0; }
+#sidebar.active { left: -260px; }
+#content { width: 100%; margin-left: 260px; padding: 20px; transition: all 0.3s; min-height: 100vh; display: flex; flex-direction: column; }
+#sidebar ul li a { padding: 15px 25px; display: block; color: #cbd5e1; text-decoration: none; border-left: 4px solid transparent; cursor: pointer;
+}
+#sidebar ul li a:hover, #sidebar ul li a.active { background: rgba(255,255,255,0.05); color: #fff; border-left-color: var(--accent); }
+@media (max-width: 768px) { #sidebar { left: -260px; } #sidebar.active { left: 0; } #content { margin-left: 0; padding: 15px;
+} .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1040; display: none;
+} .overlay.active { display: block; } }
+#view-exam { position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100vw; height: 100vh; z-index: 9999; background: #f8fafc;
+overflow: hidden; display: flex; flex-direction: column; }
+.exam-header { flex-shrink: 0; height: 60px; background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: space-between;
+padding: 0 20px; }
+.exam-container-split { flex-grow: 1; display: flex; gap: 20px; padding: 20px; overflow: hidden; }
+/* CSS PDF Area Umum */
+.pdf-area { background: #525659; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+.pdf-toolbar { background: #323639; color: white; padding: 10px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+.pdf-canvas-container { flex-grow: 1; overflow: auto; display: flex; justify-content: center; align-items: flex-start; padding: 20px; }
+canvas { box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
+/* Layout Split Layar Siswa */
+#view-exam .pdf-area { flex: 5; border-radius: 12px; }
+#view-exam .q-main-area { flex: 3; background: white; border-radius: 12px; padding: 25px; display: flex; flex-direction: column; overflow-y: auto; height: 100%; }
+#q-slides-container { flex-grow: 1; overflow-y: auto; }
+#view-exam .q-nav-area { flex: 1; background: white; border-radius: 12px; padding: 20px; overflow-y: auto; height: 100%; }
+@media (max-width: 992px) { .exam-container-split { flex-direction: column; padding: 10px; gap: 10px; } .pdf-area { flex: 1; min-height: 40vh;
+} .q-main-area { flex: 1; } .q-nav-area { display: none; } }
+.blur-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(255,255,255,0.95); z-index: 15000; display:none; flex-direction:column; justify-content:center; align-items:center; }
+.blur-overlay.active { display: flex; }
+.q-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)); gap: 8px; margin-top: 15px; }
+.q-nav-btn { aspect-ratio: 1; border: 1px solid #e2e8f0; background: #f8fafc; border-radius: 6px; cursor: pointer; }
+.q-nav-btn.active-q { background: var(--secondary); color: white; }
+.q-nav-btn.answered { background: var(--accent); color: white; }
+.loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); z-index: 10000; display: flex; justify-content: center;
+align-items: center; backdrop-filter: blur(5px); }
+.spinner { width: 50px; height: 50px; border: 5px solid #e2e8f0; border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { 100% { transform: rotate(360deg); } }
+.match-container { position: relative; width: 100%; min-height: 300px; display: flex; justify-content: space-between; padding: 10px; user-select: none; }
+.match-col { width: 40%; display: flex; flex-direction: column; gap: 15px; z-index: 2; }
+.match-item { background: #fff; border: 2px solid #e2e8f0; padding: 10px 15px; border-radius: 8px; cursor: pointer; transition: all 0.2s; position: relative;
+}
+.match-item:hover { border-color: var(--secondary); }
+.match-item.selected { border-color: var(--primary); background: #eff6ff; }
+.match-item.matched { border-color: var(--accent); background: #f0fdf4; opacity: 0.8; }
+.match-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+.tbl-pgkk th, .tbl-pgkk td { text-align: center; vertical-align: middle; }
+.tbl-pgkk td:first-child { text-align: left; }
+.swal2-container { z-index: 20000 !important; }
+.clickable-opt { cursor: pointer; transition: all 0.2s ease-in-out; margin-bottom: 0; }
+.clickable-opt:hover { background-color: #f1f5f9 !important; border-color: var(--secondary) !important; }
+.icon-eye-login { cursor: pointer; z-index: 10; font-size: 1.2rem; }
+</style>
+</head>
+<body>
+<div id="loader" class="loader hidden"><div class="spinner"></div></div>
+<div id="sidebar-overlay" class="overlay" onclick="toggleSidebar()"></div>
+<div id="blur-warning" class="blur-overlay">
+<i class="fas fa-exclamation-triangle text-danger" style="font-size: 5rem; margin-bottom: 20px;"></i>
+<h2 class="fw-bold text-danger">PERINGATAN PELANGGARAN</h2>
+<p class="fs-5 text-center">Anda meninggalkan layar ujian atau keluar dari mode layar penuh.<br>Silakan kembali untuk melanjutkan.</p>
+</div>
+<div id="view-auth" class="auth-container">
+<div class="auth-card">
+<div class="text-center mb-4">
+<div id="logo-container"><img src="https://lh3.googleusercontent.com/d/1OWPGumIzn-RRd3FfrMmYzPt6ZGOnNZpY" class="mb-3 rounded" width="100" alt="Logo"></div>
+<h4 class="fw-bold text-primary text-center">Belajar Inovasi CBT</h4>
+</div>
+<form id="frm-login" onsubmit="handleLogin(event)">
+<div class="form-floating mb-3"><input type="text" id="u-login" class="form-control" placeholder="User" required><label>Username</label></div>
+<div class="form-floating mb-4 position-relative">
+<input type="password" id="p-login" class="form-control" placeholder="Pass" required>
+<label>Password</label>
+<i class="fas fa-eye position-absolute top-50 end-0 translate-middle-y me-3 text-muted icon-eye-login" id="togglePassword"></i>
+</div>
+<button type="submit" class="btn btn-primary w-100 py-2 fw-bold shadow-sm">MASUK SEKARANG</button>
+</form>
+</div>
+<div class="text-center mt-3 text-white small z-3">© 2026 Belajar Inovasi</div>
+</div>
+<div id="view-dashboard" class="hidden wrapper">
+<nav id="sidebar">
+<div class="sidebar-header d-flex align-items-center justify-content-between p-3 border-bottom border-secondary">
+<div><h5 class="fw-bold mb-0 text-white">MENU UTAMA</h5><small class="text-white-50" id="user-role-disp"></small></div>
+</div>
+<ul class="list-unstyled components hidden" id="menu-admin">
+<li><a onclick="loadPage('admin-home')" class="nav-link active"><i class="fas fa-home me-2"></i>Dashboard</a></li>
+<li><a onclick="loadPage('admin-users')" class="nav-link"><i class="fas fa-users me-2"></i>Data Peserta</a></li>
+<li><a onclick="loadPage('admin-ujian')" class="nav-link"><i class="fas fa-calendar me-2"></i>Bank Soal</a></li>
+<li><a onclick="loadPage('hasil-rekap')" class="nav-link"><i class="fas fa-chart-bar me-2"></i>Hasil Nilai</a></li>
+<li><a onclick="loadPage('guru-monitoring')" class="nav-link"><i class="fas fa-tv me-2"></i>Monitoring</a></li>
+<li><a onclick="loadPage('admin-administrasi')" class="nav-link text-info"><i class="fas fa-print me-2"></i>Cetak Administrasi</a></li>
+<li><a onclick="handleResetCache()" class="nav-link text-warning"><i class="fas fa-bolt me-2"></i>Reset Cache</a></li>
+</ul>
+<ul class="list-unstyled components hidden" id="menu-guru">
+<li><a onclick="loadPage('admin-home')" class="nav-link active"><i class="fas fa-home me-2"></i>Dashboard</a></li>
+<li><a onclick="loadPage('admin-users')" class="nav-link"><i class="fas fa-users me-2"></i>Data Peserta</a></li>
+<li><a onclick="loadPage('admin-ujian')" class="nav-link"><i class="fas fa-file-alt me-2"></i>Bank Soal</a></li>
+<li><a onclick="loadPage('hasil-rekap')" class="nav-link"><i class="fas fa-poll me-2"></i>Hasil Nilai</a></li>
+<li><a onclick="loadPage('guru-monitoring')" class="nav-link"><i class="fas fa-desktop me-2"></i>Live Monitor</a></li>
+<li><a onclick="loadPage('admin-administrasi')" class="nav-link text-info"><i class="fas fa-print me-2"></i>Cetak Administrasi</a></li>
+</ul>
+<ul class="list-unstyled components hidden" id="menu-siswa">
+<li><a onclick="loadPage('siswa-home')" class="nav-link active"><i class="fas fa-pencil-alt me-2"></i>Ujian Saya</a></li>
+</ul>
+<div class="p-3 mt-auto border-top border-secondary position-absolute bottom-0 w-100">
+<div class="mb-3 text-white small"><i class="fas fa-user-circle me-1"></i> <span id="u-name-disp" class="fw-bold">User</span></div>
+<button onclick="handleLogout()" class="btn btn-danger btn-sm w-100">LOGOUT</button>
+</div>
+</nav>
+<div id="content">
+<nav class="navbar navbar-light bg-white rounded shadow-sm mb-4 p-2 d-flex justify-content-between align-items-center">
+<div class="d-flex align-items-center">
+<button id="menuToggle" class="btn btn-light me-2 border" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+<span class="navbar-brand mb-0 h1 fw-bold text-primary fs-5" id="page-title">DASHBOARD</span>
+</div>
+<button class="btn btn-outline-primary btn-sm rounded-pill px-3" onclick="appRefresh()"><i class="fas fa-sync-alt"></i> Refresh</button>
+</nav>
+<div id="content-area"></div>
+<footer class="mt-4 text-center text-muted small pb-3 border-top pt-3">© 2026 Belajar Inovasi CBT </footer>
+</div>
+</div>
+<div id="view-exam" class="hidden">
+<div class="exam-header">
+<div class="d-flex align-items-center">
+<i class="fas fa-laptop-code text-primary me-2 fs-4"></i>
+<div class="d-none d-md-block"><h6 class="fw-bold m-0" id="do-exam-title">Judul Ujian</h6></div>
+</div>
+<div class="d-flex align-items-center gap-2">
+<div class="badge bg-danger fs-6 p-2"><i class="fas fa-exclamation-triangle me-1"></i>Pelanggaran: <span id="viol-disp">0</span></div>
+<div class="badge bg-dark fs-6 p-2 font-monospace"><i class="fas fa-clock me-1"></i><span id="timer-disp">00:00</span></div>
+</div>
+</div>
+<div class="exam-container-split">
+<div class="pdf-area hidden" id="pdf-container">
+<div class="pdf-toolbar">
+<div>
+<button class="btn btn-sm btn-outline-light me-1" onclick="onPrevPage()"><i class="fas fa-chevron-left"></i></button>
+<button class="btn btn-sm btn-outline-light" onclick="onNextPage()"><i class="fas fa-chevron-right"></i></button>
+<span class="ms-2">Hal: <span id="page_num"></span> / <span id="page_count"></span></span>
+</div>
+<div>
+<button class="btn btn-sm btn-outline-light me-1" onclick="zoomPdf(-0.2)"><i class="fas fa-search-minus"></i></button>
+<button class="btn btn-sm btn-outline-light" onclick="zoomPdf(0.2)"><i class="fas fa-search-plus"></i></button>
+</div>
+</div>
+<div class="pdf-canvas-container"><canvas id="pdf-canvas"></canvas></div>
+</div>
+<div class="q-main-area">
+<div id="q-slides-container"></div>
+<div class="d-flex justify-content-between mt-4 pt-3 border-top">
+<button class="btn btn-outline-secondary px-3" onclick="navSlide(-1)"><i class="fas fa-chevron-left"></i> Prev</button>
+<button class="btn btn-primary px-3" onclick="navSlide(1)">Next <i class="fas fa-chevron-right"></i></button>
+<button class="btn btn-success px-4" onclick="submitExamButton(false)"><i class="fas fa-check-circle me-1"></i> KIRIM JAWABAN</button>
+</div>
+</div>
+<div class="q-nav-area shadow-sm">
+<h6 class="fw-bold border-bottom pb-2 mb-2 small text-muted">NAVIGASI SOAL</h6>
+<div id="nav-grid" class="q-grid"></div>
+</div>
+</div>
+</div>
+<div class="modal fade" id="modalExam" tabindex="-1">
+<div class="modal-dialog modal-lg">
+<div class="modal-content">
+<div class="modal-header bg-primary text-white"><h5 class="modal-title">Konfigurasi Ujian</h5><button class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<form id="frm-exam" onsubmit="event.preventDefault(); saveExam(); return false;" action="javascript:void(0);">
+<input type="hidden" id="ex-id" name="examId">
+<div class="mb-3"><label class="small fw-bold">Judul Ujian</label><input type="text" name="judul" id="ex-judul" class="form-control" required></div>
+<div class="row g-3 mb-3">
+<div class="col-md-6"><label class="small fw-bold">Mata Pelajaran</label><input type="text" name="mapel" id="ex-mapel" class="form-control" required></div>
+<div class="col-md-6"><label class="small fw-bold">Durasi (Menit)</label><input type="number" name="durasi" id="ex-durasi" class="form-control" required></div>
+</div>
+<div class="row g-3 mb-3">
+<div class="col-md-6"><label class="small fw-bold">Waktu Mulai</label><input type="datetime-local" name="start" id="ex-start" class="form-control" required></div>
+<div class="col-md-6"><label class="small fw-bold">Waktu Selesai</label><input type="datetime-local" name="end" id="ex-end" class="form-control" required></div>
+</div>
+<div class="row g-3 mb-3">
+<div class="col-md-4">
+<label class="small fw-bold">Target Kelas</label>
+<div id="kelas-container">
+<input type="text" name="targetKelas" id="ex-kelas" class="form-control" placeholder="Contoh: 7A, 7B, atau All" required>
+</div>
+</div>
+<div class="col-md-4"><label class="small fw-bold">Limit Mengerjakan</label><input type="number" name="limit" id="ex-limit" class="form-control" value="1"></div>
+<div class="col-md-4"><label class="small fw-bold">Token Submit (Opsional)</label><input type="text" name="token" id="ex-token" class="form-control" placeholder="Kosongkan jika tidak ada"></div>
+</div>
+<hr>
+<div class="mb-3">
+<label class="small fw-bold text-primary">Mode PDF Flipbook (Soal dalam PDF)</label>
+<select class="form-select" name="pdfMode" id="ex-pdfMode" onchange="togglePdfUpload(this.value)">
+<option value="No">Tidak (Gunakan Soal Manual/Excel)</option>
+<option value="Yes">Ya (Gunakan PDF Mode)</option>
+</select>
+</div>
+<div id="pdf-upload-container" class="mb-3 hidden p-3 border rounded bg-light">
+<label class="small fw-bold">Upload File PDF Soal</label>
+<input type="file" id="ex-pdfFile" class="form-control mb-2" accept=".pdf">
+<small class="text-muted" id="pdf-file-info">Abaikan jika tidak ingin mengubah PDF yang sudah ada. Max direkomendasikan 10MB.</small>
+<input type="hidden" id="ex-pdfBase64" name="pdfBase64">
+<input type="hidden" id="ex-pdfId" name="pdfId">
+<input type="hidden" id="ex-pdfUrl" name="pdfUrl">
+</div>
+<div class="d-flex gap-4 mb-3">
+<div class="form-check form-switch"><input class="form-check-input" type="checkbox" name="showStats" id="ex-showStats" value="Yes"><label class="small">Tampilkan Nilai</label></div>
+<div class="form-check form-switch"><input class="form-check-input" type="checkbox" name="randomQ" id="ex-randomQ" value="Yes"><label class="small">Acak Soal</label></div>
+</div>
+<button type="submit" class="btn btn-primary w-100 fw-bold">SIMPAN JADWAL</button>
+</form>
+</div>
+</div>
+</div>
+</div>
+<div class="modal fade" id="modalQ" tabindex="-1">
+<div class="modal-dialog modal-fullscreen">
+<div class="modal-content bg-light">
+<div class="modal-header bg-white shadow-sm">
+<h5 class="modal-title fw-bold text-primary">Editor Soal Bank</h5>
+<button class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+<div class="modal-body p-0 d-flex flex-column flex-lg-row">
+<div id="editor-pdf-area" class="pdf-area hidden" style="flex: 1; border-right: 2px solid #e2e8f0; border-radius: 0; height: calc(100vh - 60px);">
+<div class="pdf-toolbar">
+<div>
+<button class="btn btn-sm btn-outline-light me-1" onclick="onEditorPrevPage()"><i class="fas fa-chevron-left"></i></button>
+<button class="btn btn-sm btn-outline-light" onclick="onEditorNextPage()"><i class="fas fa-chevron-right"></i></button>
+<span class="ms-2">Hal: <span id="editor_page_num"></span> / <span id="editor_page_count"></span></span>
+</div>
+<div>
+<button class="btn btn-sm btn-outline-light me-1" onclick="zoomEditorPdf(-0.2)"><i class="fas fa-search-minus"></i></button>
+<button class="btn btn-sm btn-outline-light" onclick="zoomEditorPdf(0.2)"><i class="fas fa-search-plus"></i></button>
+</div>
+</div>
+<div class="pdf-canvas-container" style="background:#525659; flex-grow: 1; overflow: auto; display: flex; justify-content: center; padding: 20px;">
+<canvas id="editor-pdf-canvas"></canvas>
+</div>
+</div>
+<div id="editor-q-area" class="w-100" style="flex: 1; height: calc(100vh - 60px); overflow-y: auto; padding: 20px; background: #f8fafc;">
+<div class="container-fluid" style="max-width:900px">
+<div class="alert alert-info small mb-3">
+<b>Tips Mode PDF:</b> Gunakan file PDF di sebelah kiri sebagai acuan, lalu masukkan opsi Kunci Jawaban di sebelah kanan.
+</div>
+<div id="q-list-container"></div>
+<div class="text-center mt-5 mb-5">
+<button class="btn btn-lg btn-success rounded-pill px-5 shadow" onclick="addNewQuestionBlock()"><i class="fas fa-plus-circle me-2"></i> TAMBAH SOAL</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="modal fade" id="modalUser" tabindex="-1">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header bg-success text-white"><h5 class="modal-title">User Editor</h5><button class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<form id="frm-user" onsubmit="event.preventDefault(); saveUser(); return false;" action="javascript:void(0);">
+<input type="hidden" id="mu-id">
+<input type="text" id="mu-nama" class="form-control mb-2" placeholder="Nama Lengkap" required>
+<input type="text" id="mu-user" class="form-control mb-2" placeholder="Username" required>
+<input type="text" id="mu-pass" class="form-control mb-2" placeholder="Password" required>
+<div class="row g-2 mb-2">
+<div class="col"><select id="mu-role" class="form-select"><option value="siswa">Siswa</option><option value="guru">Guru</option><option value="admin">Admin</option></select></div>
+<div class="col"><input type="text" id="mu-kelas" class="form-control" placeholder="Kelas"></div>
+</div>
+<input type="text" id="mu-sekolah" class="form-control mb-2" placeholder="Sekolah (Opsional)">
+<button type="submit" class="btn btn-success w-100 mt-3">Simpan User</button>
+</form>
+</div>
+</div>
+</div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+
+<script>
+// ==========================================
+// KONFIGURASI API BACKEND (WAJIB DIGANTI!)
+// ==========================================
+const API_URL = "https://script.google.com/macros/s/AKfycbyWZrKV8rcrbohlK9GkqQ9gSyP58NZ6OZYrr9TWuBANDkksr22-JHN_F7xkFGHDfLPZ/exec"; // <- Ganti ini dengan URL deployment script terbaru Anda
+
+// PROXY OTOMATIS: Menerjemahkan google.script.run menjadi HTTP POST ke Apps Script API.
+// Memungkinkan aplikasi berjalan murni di GitHub Pages tanpa merombak logika bawaan.
+window.google = {
+    script: {
+        get run() {
+            const executor = {
+                sh: null,
+                fh: null,
+                withSuccessHandler: function(cb) { this.sh = cb; return this; },
+                withFailureHandler: function(cb) { this.fh = cb; return this; }
+            };
+
+            return new Proxy(executor, {
+                get: function(target, prop) {
+                    if (prop in target) return target[prop];
+                    return function(...args) {
+                        let storedUser = null;
+                        try { storedUser = JSON.parse(localStorage.getItem('cbt_user')); } catch(e){}
+
+                        fetch(API_URL, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'text/plain' },
+                            body: JSON.stringify({ action: prop, args: args, user_info: storedUser })
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                if (target.sh) target.sh(data.result);
+                            } else {
+                                if (target.fh) target.fh(new Error(data.error));
+                                else Swal.fire('System Error', data.error, 'error');
+                            }
+                        })
+                        .catch(err => {
+                            if (target.fh) target.fh(err);
+                            else console.error('API Error:', err);
+                        });
+                    };
+                }
+            });
+        }
+    }
+};
+
+// TAMBAHAN: Fungsi ekstrasi ID URL
+function extractFileId(str) {
+if(!str) return '';
+if(str.indexOf('drive.google.com') !== -1) {
+var m = str.match(/\/d\/([a-zA-Z0-9_-]+)/);
+if(m) return m[1];
+var m2 = str.match(/id=([a-zA-Z0-9_-]+)/);
+if(m2) return m2[1];
+}
+return str;
+}
+let examSubmitting = false;
+let user = null;
+let gData = {};
+let gAdminData = { exams: [], users: [] };
+let activeExamId = null;
+let timerInt, monitorInterval, autosaveInterval;
+let totalQ = 0;
+let currentQuestionsData = [];
+let currentQIdx = 0;
+let activeUid = '';
+let recapAllData = [];
+let recapDataStore = {};
+let violationCount = 0;
+const maxViolations = 3;
+let isExamFinished = false;
+let violationLock = false;
+let isCurrentExamPdf = false;
+let pdfDoc = null;
+let pageNum = 1;
+let pageRendering = false;
+let pageNumPending = null;
+let pdfScale = 1.2;
+let pageHistoryLog = {};
+let editorPdfDoc = null;
+let editorPageNum = 1;
+let editorPageRendering = false;
+let editorPageNumPending = null;
+let editorPdfScale = 1.2;
+const MathButton = function (context) {
+const ui = $.summernote.ui;
+const button = ui.button({
+contents: '<i class="fas fa-square-root-alt"></i> Rumus',
+tooltip: 'Tambahkan Rumus Matematika (LaTeX)',
+click: function () {
+Swal.fire({
+title: 'Editor Rumus (LaTeX)',
+html: `<div class="text-start small mb-2 text-muted">Pilih template cepat atau ketik format LaTeX secara manual:</div>
+<div class="d-flex flex-wrap gap-1 mb-3">
+<button class="btn btn-sm btn-outline-secondary" onclick="$('#swal-math-input').val($('#swal-math-input').val() + '\\\\frac{a}{b}')">Pecahan (a/b)</button>
+<button class="btn btn-sm btn-outline-secondary" onclick="$('#swal-math-input').val($('#swal-math-input').val() + 'x^{2}')">Pangkat</button>
+<button class="btn btn-sm btn-outline-secondary" onclick="$('#swal-math-input').val($('#swal-math-input').val() + '\\\\sqrt{x}')">Akar</button>
+<button class="btn btn-sm btn-outline-secondary" onclick="$('#swal-math-input').val($('#swal-math-input').val() + '\\\\sum')">Sigma</button>
+</div>
+<textarea id="swal-math-input" class="form-control font-monospace" rows="3" placeholder="Ketik rumus LaTeX di sini..."></textarea>`,
+showCancelButton: true,
+confirmButtonText: 'Sisipkan Rumus',
+cancelButtonText: 'Batal'
+}).then((result) => {
+if (result.isConfirmed) {
+const mathText = $('#swal-math-input').val();
+if(mathText) context.invoke('editor.insertText', ` $$ ${mathText} $$ `);
+}
+});
+}
+});
+return button.render();
+}
+const snConfig = {
+height: 180,
+toolbar: [
+['style', ['bold', 'italic', 'underline', 'clear']],
+['para', ['ul', 'ol']],
+['insert', ['picture', 'table', 'link', 'math']]
+],
+buttons: { math: MathButton }
+};
+$(document).ready(() => {
+$('#togglePassword').on('click', function() {
+const type = $('#p-login').attr('type') === 'password' ? 'text' : 'password';
+$('#p-login').attr('type', type);
+$(this).toggleClass('fa-eye fa-eye-slash');
+});
+let savedUser = null;
+try { savedUser = localStorage.getItem('cbt_user'); } catch (e) {}
+if(savedUser) {
+user = JSON.parse(savedUser);
+$('#logo-container img').attr('src', user.LogoUrl || 'https://via.placeholder.com/100');
+initDash(); checkResumeExam();
+}
+});
+function applyMathJax() { if (window.MathJax && MathJax.typesetPromise) { MathJax.typesetPromise().catch((err) => console.log('MathJax Error:', err)); } }
+function checkResumeExam() {
+let savedExam = null;
+try { savedExam = localStorage.getItem('cbt_active_exam'); } catch(e){}
+if(savedExam) {
+try {
+const examState = JSON.parse(savedExam);
+if(examState && examState.id) {
+Swal.fire({ title: 'Lanjutkan Ujian?', text: 'Terdeteksi sesi ujian yang belum selesai.', icon: 'info', confirmButtonText: 'Lanjutkan', allowOutsideClick: false }).then(() => {
+activeExamId = examState.id; totalQ = examState.qs.length; isCurrentExamPdf = examState.isPdfMode; currentQuestionsData = examState.qs;
+$('#do-exam-title').html(`${examState.judul} <span class="mx-2">|</span> ${user.Nama}`);
+if (document.documentElement.requestFullscreen) { document.documentElement.requestFullscreen().catch(()=>{}); }
+if(isCurrentExamPdf && (examState.pdfId || examState.pdfUrl)) {
+$('#pdf-container').removeClass('hidden'); $('.q-main-area').removeClass('w-100'); loadPDF(examState.pdfId || examState.pdfUrl);
+} else {
+$('#pdf-container').addClass('hidden'); $('.q-main-area').addClass('w-100');
+}
+runExam(examState.qs, examState.dur, true);
+});
+}
+} catch(e) { try { localStorage.removeItem('cbt_active_exam'); } catch(err){} }
+}
+}
+function toggleSidebar() { $('#sidebar').toggleClass('active'); $('#sidebar-overlay').toggleClass('active'); }
+function showLoad(s) { s ? $('#loader').removeClass('hidden') : $('#loader').addClass('hidden'); }
+function toast(icon, title) { Swal.mixin({toast: true, position: 'top-end', showConfirmButton: false, timer: 3000}).fire({icon: icon, title: title}); }
+function handleLogin(e) {
+if (e) e.preventDefault();
+const u = $('#u-login').val(); const p = $('#p-login').val();
+if (!u || !p) { Swal.fire('Info', 'Mohon isi Username dan Password terlebih dahulu.', 'warning'); return false; }
+showLoad(true);
+google.script.run
+.withSuccessHandler(res => {
+showLoad(false);
+if(res.status === 'success') {
+user = res.data; user.LogoUrl = res.logo;
+try { localStorage.setItem('cbt_user', JSON.stringify(user)); } catch(err) {}
+if(res.logo) $('#logo-container img').attr('src', res.logo);
+initDash();
+} else { Swal.fire('Akses Ditolak', res.msg, 'error'); }
+})
+.withFailureHandler((err) => {
+showLoad(false); Swal.fire('Error Koneksi', 'Koneksi ke server gagal. Pastikan URL API sudah benar.', 'error');
+})
+.loginUser(u, p);
+return false;
+}
+function handleLogout() {
+Swal.fire({ title: 'Logout?', icon: 'warning', showCancelButton: true, confirmButtonText: 'Ya', cancelButtonText: 'Batal' }).then((r) => {
+if(r.isConfirmed) {
+try { localStorage.clear(); } catch(e){}
+user = null;
+clearInterval(timerInt); clearInterval(monitorInterval); clearInterval(autosaveInterval); activeExamId = null;
+$('#view-dashboard').addClass('hidden'); $('#view-exam').addClass('hidden'); $('body').removeClass('exam-mode');
+$('#view-auth').show(); $('#u-login').val(''); $('#p-login').val('');
+$('#sidebar').removeClass('active'); $('#sidebar-overlay').removeClass('active');
+}
+});
+}
+function initDash() {
+$('#view-auth').hide(); $('#view-dashboard').removeClass('hidden'); $('#u-name-disp').text(user.Nama);
+const role = String(user.Role || '').trim().toLowerCase(); $('#user-role-disp').text(role.toUpperCase());
+$('.components').addClass('hidden');
+if(role === 'siswa') { $('#menu-siswa').removeClass('hidden'); loadPage('siswa-home'); }
+else if(role === 'guru') { $('#menu-guru').removeClass('hidden'); loadPage('admin-home'); }
+else if(role === 'admin') { $('#menu-admin').removeClass('hidden'); loadPage('admin-home'); }
+else { Swal.fire('Akses Ditolak', 'Role akun Anda tidak dikenali sistem.', 'error'); }
+}
+function appRefresh() { const activeLink = $('.nav-link.active'); if (activeLink.length > 0) { const onclickAttr = activeLink.attr('onclick');
+if(onclickAttr) { const match = onclickAttr.match(/'([^']+)'/); if(match) loadPage(match[1]); } } }
+function loadPage(page) {
+clearInterval(timerInt); clearInterval(monitorInterval); clearInterval(autosaveInterval); disableSecurity();
+$('#view-exam').addClass('hidden'); $('#view-dashboard').removeClass('hidden'); $('body').removeClass('exam-mode');
+$('#page-title').text(page.replace('-', ' ').toUpperCase());
+$('.nav-link').removeClass('active'); $(`a[onclick="loadPage('${page}')"]`).addClass('active');
+if(window.innerWidth <= 768) { $('#sidebar').removeClass('active'); $('#sidebar-overlay').removeClass('active'); }
+if(page === 'admin-users') {
+showLoad(true); google.script.run.withSuccessHandler(r => { showLoad(false); if(r.status === 'success') { renderUsers(r.data); } else { Swal.fire('Error', r.msg, 'error'); } }).withFailureHandler((e)=>{showLoad(false); Swal.fire('Error', e.message, 'error')}).getUserList(user.Role, user.ID);
+return;
+}
+if(page === 'hasil-rekap') {
+$('#content-area').html('<div class="text-center p-5"><div class="spinner"></div></div>');
+google.script.run.withSuccessHandler(r => { if(r.status === 'success') { recapAllData = r.data; renderRecapTable(); } else { $('#content-area').html(`<div class="alert alert-danger">${r.msg}</div>`); Swal.fire('Error', r.msg, 'error'); } }).withFailureHandler(e => { Swal.fire('Error', e.message, 'error'); }).getRecapList(user.Role, user.ID);
+return;
+}
+if(page === 'guru-monitoring') { renderMonitoring(); return; }
+if(page === 'admin-administrasi') {
+showLoad(true); google.script.run.withSuccessHandler(r => { showLoad(false); if(r.status === 'success') { gAdminData = r; renderAdministrasi(); } else { Swal.fire('Error', r.msg, 'error'); } }).withFailureHandler((e)=>{showLoad(false); Swal.fire('Error', e.message, 'error')}).getAdminData(user.Role, user.ID, user.Kelas);
+return;
+}
+showLoad(true);
+google.script.run.withSuccessHandler(res => {
+showLoad(false); if (res.status === 'success') { gData = res.data; renderContent(page); applyMathJax(); } else { Swal.fire('Error', res.msg, 'error'); }
+}).withFailureHandler((e)=>{showLoad(false); Swal.fire('Error', e.message || 'Gagal memuat dashboard', 'error')}).getDashboardData(user.Role, user.ID, user.Kelas);
+}
+function renderContent(page) {
+const area = $('#content-area'); let h = '';
+if (page === 'admin-home') {
+h = `<div class="row g-4"><div class="col-md-4"><div class="card p-3 shadow-sm border-0 border-start border-4 border-primary"><h3>${gData.stats.totalSiswa}</h3><small>Siswa di Kelas Anda</small></div></div><div class="col-md-4"><div class="card p-3 shadow-sm border-0 border-start border-4 border-success"><h3>${gData.stats.totalUjian}</h3><small>Ujian Saya</small></div></div></div>`;
+}
+else if (page === 'admin-ujian') {
+let uniqueMapel = [...new Set(gData.exams.map(e => e.Mapel))];
+let uniqueKelas = [...new Set(gData.exams.map(e => String(e.TargetKelas).trim()))];
+h = `<div class="d-flex justify-content-between mb-3"><button class="btn btn-primary shadow-sm" onclick="openExamModal()">+ Buat Jadwal Baru</button>
+<div class="d-flex gap-2">
+<select id="filter-mapel-ujian" class="form-select form-select-sm" onchange="filterAdminUjian()"><option value="">Semua Mapel</option>${uniqueMapel.map(m=>`<option value="${m}">${m}</option>`).join('')}</select>
+<select id="filter-kelas-ujian" class="form-select form-select-sm" onchange="filterAdminUjian()"><option value="">Semua Kelas</option>${uniqueKelas.map(k=>`<option value="${k}">${k}</option>`).join('')}</select>
+</div></div><div class="row g-4" id="admin-ujian-list">`;
+gData.exams.forEach(e => {
+const isOwner = (String(user.Role).trim().toLowerCase() === 'admin' || String(e.PembuatID) === String(user.ID));
+const modeBadge = e.PDFMode === 'Yes' ? '<span class="badge bg-danger ms-1">PDF Mode</span>' : '';
+const actionButtons = isOwner ? `<button class="btn btn-sm btn-outline-dark flex-fill" onclick="openExamModal('${encodeURIComponent(JSON.stringify(e))}')">Edit</button> <button class="btn btn-sm btn-outline-primary flex-fill" onclick="manageQ('${e.ExamID}', '${e.PDFMode}')"><i class="fas fa-list me-1"></i> Soal</button> <button class="btn btn-sm btn-danger" onclick="delExam('${e.ExamID}')"><i class="fas fa-trash"></i></button>` : `<div class="alert alert-light small m-0 p-1 text-center w-100">Read Only (Milik Guru Lain)</div>`;
+h += `<div class="col-md-6 col-lg-4 ujian-card" data-mapel="${e.Mapel}" data-kelas="${e.TargetKelas}"><div class="card h-100 shadow-sm border-0"><div class="card-body"><div class="d-flex justify-content-between mb-2"><span class="badge bg-primary">${e.Mapel}</span><span class="badge bg-light text-dark border">${e.TargetKelas}</span></div><h5 class="fw-bold text-dark">${e.Judul} ${modeBadge}</h5><div class="d-flex gap-2">${actionButtons}</div></div></div></div>`;
+});
+h += '</div>';
+}
+else if (page === 'siswa-home') {
+h = `<div class="card mb-4 border-0 shadow-sm bg-primary text-white"><div class="card-body"><h5 class="fw-bold">Halo, ${user.Nama}</h5></div></div><h5 class="fw-bold mb-3 border-bottom pb-2">Ujian Aktif</h5><div class="row g-4 mb-5">`;
+if(!gData.availableExams || gData.availableExams.length === 0) { h += '<div class="col-12"><div class="alert alert-info text-center">Tidak ada ujian aktif saat ini.</div></div>'; }
+else {
+gData.availableExams.forEach(e => {
+let btnState = '', btnText = 'MULAI UJIAN', btnClass = 'btn-primary';
+if (e.IsFinished) { btnState = 'disabled'; btnText = 'SUDAH DIKERJAKAN'; btnClass = 'btn-secondary'; }
+else if (e.IsExpired) { btnState = 'disabled'; btnText = 'WAKTU HABIS'; btnClass = 'btn-danger'; }
+h += `<div class="col-md-6 col-lg-4"><div class="card h-100 shadow-sm border-0"><div class="card-body"><h5 class="fw-bold text-primary">${e.Judul}</h5><div class="mb-2"><span class="badge bg-info">${e.Mapel}</span> <span class="badge bg-light text-dark border">${e.Durasi} Menit</span></div><button class="btn ${btnClass} w-100 fw-bold shadow-sm" onclick="startExam('${e.ExamID}')" ${btnState}>${btnText}</button></div></div></div>`;
+});
+}
+h += '</div><h5 class="fw-bold mb-3 border-bottom pb-2 mt-4"><i class="fas fa-history me-2"></i>Riwayat</h5>';
+if(!gData.history || gData.history.length === 0) { h += '<p class="text-muted fst-italic">Belum ada riwayat.</p>'; }
+else {
+h += `<div class="table-responsive bg-white rounded shadow-sm p-3"><table class="table table-hover align-middle mb-0"><thead><tr><th>Tanggal</th><th>Ujian</th><th>Nilai</th><th>Status</th></tr></thead><tbody>`;
+gData.history.forEach(r => { h += `<tr><td>${r.WaktuSubmit}</td><td><div class="fw-bold">${r.Judul}</div></td><td><span class="badge bg-warning text-dark">${r.Nilai}</span></td><td><span class="badge bg-success">Selesai</span></td></tr>`; });
+h += `</tbody></table></div>`;
+}
+}
+area.html(h);
+}
+function filterAdminUjian() {
+const m = $('#filter-mapel-ujian').val(); const k = $('#filter-kelas-ujian').val();
+$('.ujian-card').each(function() {
+const matchMapel = m === '' || $(this).data('mapel') === m;
+const matchKelas = k === '' || $(this).data('kelas') === k;
+$(this).toggle(matchMapel && matchKelas);
+});
+}
+function togglePdfUpload(val) { if(val === 'Yes') $('#pdf-upload-container').removeClass('hidden'); else $('#pdf-upload-container').addClass('hidden'); }
+function openExamModal(str) {
+$('#modalExam').modal('show');
+let d = null;
+if(str) {
+d = JSON.parse(decodeURIComponent(str));
+$('#ex-id').val(d.ExamID); $('#ex-judul').val(d.Judul); $('#ex-mapel').val(d.Mapel); $('#ex-durasi').val(d.Durasi);
+$('#ex-limit').val(d.Limit); $('#ex-start').val(d.StartDate.replace(' ','T')); $('#ex-end').val(d.EndDate.replace(' ','T'));
+$('#ex-token').val(d.Token || ''); $('#ex-randomQ').prop('checked', d.RandomQ === 'Yes'); $('#ex-showStats').prop('checked', d.ShowStats === 'Yes');
+$('#ex-pdfMode').val(d.PDFMode || 'No'); togglePdfUpload(d.PDFMode || 'No'); $('#ex-pdfId').val(d.PDFFileID || ''); $('#ex-pdfUrl').val(d.PDFFileURL || '');
+} else {
+$('#modalExam form')[0].reset(); $('#ex-id').val(''); $('#ex-token').val(''); togglePdfUpload('No');
+}
+const role = String(user.Role).trim().toLowerCase();
+const container = $('#kelas-container');
+if (role === 'guru') {
+const kelasArr = String(user.Kelas).split(',').map(k => k.trim()).filter(k => k);
+let selectedKelas = d ? String(d.TargetKelas).split(',').map(k => k.trim()) : kelasArr;
+let htmlKelas = `<div class="d-flex flex-wrap gap-2 mt-2">`;
+kelasArr.forEach(k => {
+const isChecked = selectedKelas.includes(k) ? 'checked' : '';
+htmlKelas += `<div class="form-check"><input class="form-check-input kls-cb" type="checkbox" value="${k}" id="cb-${k}" ${isChecked}><label class="form-check-label small" for="cb-${k}">${k}</label></div>`;
+});
+htmlKelas += `</div><input type="hidden" name="targetKelas" id="ex-kelas-hidden">`;
+container.html(htmlKelas);
+} else {
+let valKelas = d ? d.TargetKelas : '';
+container.html(`<input type="text" name="targetKelas" id="ex-kelas" class="form-control" placeholder="Contoh: 7A, 7B, atau All" value="${valKelas}" required>`);
+}
+}
+function saveExam() {
+const formEl = document.getElementById('frm-exam'); const fd = new FormData(formEl); const d = Object.fromEntries(fd.entries());
+if (String(user.Role).trim().toLowerCase() === 'guru') {
+let selectedKls = [];
+$('.kls-cb:checked').each(function() { selectedKls.push($(this).val()); });
+if (selectedKls.length === 0) return Swal.fire('Error', 'Pilih minimal 1 target kelas!', 'error');
+d.targetKelas = selectedKls.join(', ');
+}
+d.showStats = $('#ex-showStats').is(':checked') ? 'Yes' : 'No'; d.randomQ = $('#ex-randomQ').is(':checked') ? 'Yes' : 'No';
+d.userRole = user.Role; d.userClass = user.Kelas;
+if (!d.judul || !d.mapel || !d.start || !d.end || !d.targetKelas) { return Swal.fire('Error', 'Lengkapi data!', 'error'); }
+const fileInput = document.getElementById('ex-pdfFile');
+if (d.pdfMode === 'Yes' && fileInput && fileInput.files.length > 0) {
+const file = fileInput.files[0];
+if(file.size > 10485760) return Swal.fire('Error', 'Ukuran file PDF melebihi 10MB. Silakan kompres agar stabil.', 'error');
+const reader = new FileReader();
+reader.onload = function(e) { d.pdfBase64 = e.target.result; processSaveExam(d); };
+reader.readAsDataURL(file);
+} else {
+processSaveExam(d);
+}
+}
+function processSaveExam(d) {
+showLoad(true);
+google.script.run.withSuccessHandler((res) => {
+if(res.status === 'success') {
+$('#modalExam').modal('hide');
+google.script.run.withSuccessHandler(res2 => {
+showLoad(false);
+if (res2.status === 'success') { gData = res2.data; renderContent('admin-ujian'); toast('success', 'Jadwal Disimpan!'); }
+else { Swal.fire('Gagal', res2.msg, 'error'); }
+}).getDashboardData(user.Role, user.ID, user.Kelas);
+} else { showLoad(false); Swal.fire('Gagal', res.msg, 'error'); }
+}).adminSaveExam(d);
+}
+function delExam(id){ Swal.fire({title:'Hapus Jadwal?', icon:'warning', showCancelButton:true}).then(r=>{if(r.isConfirmed) google.script.run.withSuccessHandler(()=>loadPage('admin-ujian')).adminDeleteExam(id)}) }
+function manageQ(id, pdfMode) {
+activeExamId = id;
+const exam = gData.exams.find(e => e.ExamID === id);
+isCurrentExamPdf = (String(pdfMode).trim().toLowerCase() === 'yes') || (exam && String(exam.PDFMode).trim().toLowerCase() === 'yes');
+$('#modalQ').modal('show');
+if(isCurrentExamPdf) {
+$('#editor-pdf-area').removeClass('hidden');
+$('#editor-q-area').removeClass('w-100');
+if(exam && (exam.PDFFileID || exam.PDFFileURL)) {
+setTimeout(() => loadEditorPDF(exam.PDFFileID || exam.PDFFileURL), 500);
+} else {
+$('#editor-pdf-area .pdf-canvas-container').html('<div class="alert alert-warning m-3 text-center">File PDF belum diupload. Silakan tutup dan edit pengaturan ujian lalu pilih file PDF.</div>');
+}
+} else {
+$('#editor-pdf-area').addClass('hidden');
+$('#editor-q-area').addClass('w-100');
+}
+loadQList();
+}
+let lastQuestionNum = 0;
+function generateQuestionExcelTemplate() {
+const ws_data = [
+["Nomor", "Tipe", "Skor", "Pertanyaan", "Opsi (Pisahkan dgn |)", "Kunci (Pisahkan dgn |)", "Halaman PDF"],
+[1, "PGS", 10, "Apa ibukota Indonesia?", "Jakarta|Bandung|Surabaya|Bali", "Jakarta", 1],
+[2, "Uraian", 20, "Jelaskan proses fotosintesis", "", "Klorofil", 2]
+];
+const ws = XLSX.utils.aoa_to_sheet(ws_data);
+const wb = XLSX.utils.book_new();
+XLSX.utils.book_append_sheet(wb, ws, "TemplateSoal");
+XLSX.writeFile(wb, "Template_Upload_Soal.xlsx");
+}
+function handleUploadQuestionsExcel(e) {
+const file = e.target.files[0];
+if(!file) return;
+const reader = new FileReader();
+reader.onload = function(evt) {
+const data = evt.target.result;
+const workbook = XLSX.read(data, {type: 'binary'});
+const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+const json = XLSX.utils.sheet_to_json(worksheet);
+let formattedData = json.map(row => {
+let opsRaw = row['Opsi (Pisahkan dgn |)'] ? String(row['Opsi (Pisahkan dgn |)']).split('|') : [];
+let keyRaw = row['Kunci (Pisahkan dgn |)'] ? String(row['Kunci (Pisahkan dgn |)']).split('|') : [];
+return {
+num: row['Nomor'] || 1, type: row['Tipe'] || 'PGS', score: row['Skor'] || 10, text: row['Pertanyaan'] ||
+'', options: opsRaw, key: keyRaw, page: row['Halaman PDF'] || 1
+};
+}).filter(q => q.text !== '' || isCurrentExamPdf);
+if(formattedData.length === 0) return Swal.fire('Error', 'Format data tidak valid.', 'error');
+showLoad(true);
+google.script.run.withSuccessHandler(res => {
+showLoad(false);
+if(res.status === 'success') { Swal.fire('Sukses', res.msg, 'success'); loadQList(); }
+else Swal.fire('Gagal', res.msg, 'error');
+}).adminBatchSaveQuestions(activeExamId, formattedData, isCurrentExamPdf);
+};
+reader.readAsBinaryString(file);
+}
+function loadQList() {
+$('#q-list-container').html('<div class="text-center p-5"><div class="spinner"></div></div>');
+google.script.run.withSuccessHandler(qs => {
+let html = ''; lastQuestionNum = 0; currentQuestionsData = qs || [];
+let topActions = `
+<div class="d-flex justify-content-end mb-3 gap-2 flex-wrap">
+<button class="btn btn-outline-info shadow-sm" onclick="generateQuestionExcelTemplate()"><i class="fas fa-download"></i> Template Excel</button>
+<label class="btn btn-primary shadow-sm m-0"><i class="fas fa-upload"></i> Upload Excel <input type="file" hidden accept=".xlsx,.xls" onchange="handleUploadQuestionsExcel(event)"></label>
+<button class="btn btn-info text-white shadow-sm" onclick="previewAllQ()"><i class="fas fa-eye me-1"></i> Preview Semua</button>
+<button class="btn btn-primary shadow-sm" onclick="downloadAllQ()"><i class="fas fa-download me-1"></i> Download Ujian</button>
+</div>`;
+if (qs && qs.length > 0) {
+lastQuestionNum = Math.max(...qs.map(q => Number(q.Nomor) || 0));
+qs.forEach((q, idx) => { html += renderQuestionBlock(q, idx); });
+$('#q-list-container').html(topActions + html);
+applyMathJax();
+} else { $('#q-list-container').html(topActions + '<div class="alert alert-info text-center">Belum ada soal. Klik Tambah Soal atau Upload Excel.</div>'); }
+}).getExamQuestions(activeExamId);
+}
+function addNewQuestionBlock() {
+lastQuestionNum++; const newBlock = renderQuestionBlock({ Nomor: lastQuestionNum }, lastQuestionNum - 1);
+$('#q-list-container').append(newBlock); const uid = $(newBlock).attr('data-id');
+toggleEditQ(uid); $('#editor-q-area').animate({ scrollTop: $('#editor-q-area')[0].scrollHeight }, 500);
+}
+function renderQuestionBlock(q, idx) {
+const uid = q.QID ? q.QID : 'NEW_' + Math.random().toString(36).substr(2, 9);
+const nomor = q.Nomor || (idx + 1);
+const cleanPrev = isCurrentExamPdf ? `Kunci PDF Halaman ${q.PageNumber||1}` : (q.Pertanyaan || 'Soal Baru').replace(/<[^>]+>/g, '').substring(0, 80) + '...';
+const safeJson = encodeURIComponent(JSON.stringify(q));
+let kStr = ""; try { kStr = JSON.parse(q.Key||"[]").join(','); } catch(e){}
+let pdfFieldsHtml = isCurrentExamPdf ? `
+<div class="col-md-3"><label class="small fw-bold">Halaman PDF</label><input type="number" name="page" class="form-control" value="${q.PageNumber||1}"></div>
+<div class="col-md-3"><label class="small fw-bold">Kunci (ex: A, B)</label><input type="text" name="pdf_key" class="form-control" value="${kStr}" placeholder="A"></div>
+` : ``;
+let manualEditorHtml = isCurrentExamPdf ? '' : `
+<label class="small fw-bold mb-1 mt-2">Pertanyaan</label>
+<textarea id="sn-${uid}" name="text">${q.Pertanyaan || ''}</textarea>
+<div class="card mt-3 bg-light"><div class="card-body"><label class="small fw-bold mb-2">Jawaban & Kunci</label><div id="ans-area-${uid}"></div></div></div>
+`;
+return `
+<div class="card mb-4 border-0 shadow-sm q-block" id="block-${uid}" data-id="${uid}" data-q-obj="${safeJson}">
+<div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+<span class="badge bg-primary rounded-pill px-3">No. ${nomor}</span>
+<div><button class="btn btn-sm btn-outline-secondary me-2" onclick="toggleEditQ('${uid}')"><i class="fas fa-edit"></i> Edit</button><button class="btn btn-sm btn-outline-danger" onclick="deleteQBlock('${uid}')"><i class="fas fa-trash"></i></button></div>
+</div>
+<div class="card-body">
+<div class="q-preview mb-2 fw-bold text-muted">${cleanPrev}</div>
+<div class="q-form hidden" id="form-${uid}">
+<form id="frm-q-${uid}" onsubmit="event.preventDefault(); saveQBlock('${uid}'); return false;" action="javascript:void(0);">
+<input type="hidden" name="id" value="${q.QID || ''}">
+<div class="row g-2 align-items-end">
+<div class="col-md-2"><label class="small fw-bold">No</label><input type="number" name="num" class="form-control" value="${nomor}"></div>
+<div class="col-md-4"><label class="small fw-bold">Tipe</label>
+<select name="type" class="form-select q-type-sel" onchange="if(!isCurrentExamPdf) renderAnsFields('${uid}', this.value)" id="type-${uid}">
+<option value="PGS" ${q.Tipe=='PGS'?'selected':''}>Pilihan Ganda</option>
+<option value="PGK" ${q.Tipe=='PGK'?'selected':''}>PG Kompleks</option>
+<option value="PGKK" ${q.Tipe=='PGKK'?'selected':''}>Benar Salah</option>
+<option value="Menjodohkan" ${q.Tipe=='Menjodohkan'?'selected':''}>Menjodohkan</option>
+<option value="Uraian" ${q.Tipe=='Uraian'?'selected':''}>Uraian</option>
+</select>
+</div>
+<div class="col-md-3"><label class="small fw-bold">Skor</label><input type="number" step="0.1" name="score" class="form-control" value="${q.Skor || 10}"></div>
+${pdfFieldsHtml}
+</div>
+${manualEditorHtml}
+<div class="text-end mt-3"><button type="button" class="btn btn-secondary me-1" onclick="toggleEditQ('${uid}')">Tutup</button><button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Simpan</button></div>
+</form>
+</div>
+</div>
+</div>`;
+}
+function toggleEditQ(uid) {
+const form = $(`#form-${uid}`);
+if (form.hasClass('hidden')) {
+activeUid = uid; form.removeClass('hidden'); $(`#block-${uid}`).addClass('border-primary');
+if(!isCurrentExamPdf) { $(`#sn-${uid}`).summernote(snConfig); renderAnsFields(uid, $(`#type-${uid}`).val()); }
+} else {
+form.addClass('hidden'); $(`#block-${uid}`).removeClass('border-primary');
+if(!isCurrentExamPdf) { $(`#sn-${uid}`).summernote('destroy'); $(`#ans-area-${uid} .summernote-opt`).each(function(){ $(this).summernote('destroy'); }); }
+}
+}
+function renderAnsFields(uid, type) {
+if(isCurrentExamPdf) return;
+const block = $(`#block-${uid}`); let qData = {};
+try { qData = JSON.parse(decodeURIComponent(block.attr('data-q-obj')) || '{}'); } catch(e){}
+const opts = (qData.Tipe === type) ? JSON.parse(qData.Options || "[]") : [];
+const keys = (qData.Tipe === type) ? JSON.parse(qData.Key || "[]") : [];
+$(`#ans-area-${uid} .summernote-opt`).each(function(){ $(this).summernote('destroy'); }); let h = '';
+if (type === 'PGS' || type === 'PGK') {
+const inputType = type === 'PGS' ? 'radio' : 'checkbox';
+h = `<button type="button" class="btn btn-outline-primary btn-sm mb-2" onclick="addOptRow('${uid}', '${inputType}')">+ Opsi</button><div id="opts-wrap-${uid}">`;
+if(opts.length) opts.forEach(o => h+=genOptRow(uid, inputType, o, keys.map(k=>k.trim()).includes(o.trim())?'checked':''));
+else h+=genOptRow(uid, inputType); h+='</div>';
+} else if (type === 'PGKK') {
+h = `<table class="table table-sm"><thead><tr><th>Pernyataan</th><th>Kunci</th><th>X</th></tr></thead><tbody id="pgkk-tbody-${uid}">`;
+if(opts.length) opts.forEach((o,i)=>h+=genPGKKRow(o,keys[i])); else h+=genPGKKRow(); h+=`</tbody></table><button type="button" class="btn btn-sm btn-info" onclick="addPGKKRowTo('${uid}')">+ Baris</button>`;
+} else if (type === 'Menjodohkan') {
+h = `<table class="table table-sm"><thead><tr><th>Kiri</th><th>Kanan (Kunci)</th><th>X</th></tr></thead><tbody id="match-tbody-${uid}">`;
+if(opts.length) opts.forEach((o,i)=>h+=genMatchRow(o,keys[i])); else h+=genMatchRow(); h+=`</tbody></table><button type="button" class="btn btn-sm btn-info" onclick="addMatchRowTo('${uid}')">+ Pasangan</button>`;
+} else if (type === 'Uraian') {
+h = `<textarea class="form-control" name="essay_key" placeholder="Kata kunci penilaian (dipisah koma)">${keys.join(',')}</textarea>`;
+}
+$(`#ans-area-${uid}`).html(h);
+$(`#ans-area-${uid} .summernote-opt`).summernote(snConfig);
+}
+function genOptRow(uid, type, val='', checked='') { return `<div class="d-flex align-items-start mb-2 ans-row gap-2"><div class="mt-2"><input type="${type}" name="k_${uid}" class="form-check-input" ${checked}></div><div class="flex-grow-1"><textarea class="summernote-opt">${val}</textarea></div><button type="button" class="btn btn-outline-danger mt-1" onclick="removeOptRow(this)">X</button></div>`;
+}
+function genPGKKRow(q='', k='B') { return `<tr><td><textarea class="summernote-opt pgkk-q">${q}</textarea></td><td><select class="form-select pgkk-k"><option value="B" ${k=='B'?'selected':''}>Benar</option><option value="S" ${k=='S'?'selected':''}>Salah</option></select></td><td><button class="btn btn-danger btn-sm" onclick="$(this).closest('tr').remove()">X</button></td></tr>`; }
+function genMatchRow(l='', r='') { return `<tr><td><textarea class="summernote-opt match-l">${l}</textarea></td><td><textarea class="summernote-opt match-r">${r}</textarea></td><td><button class="btn btn-danger btn-sm" onclick="$(this).closest('tr').remove()">X</button></td></tr>`; }
+function addOptRow(uid, t) { const el = $(genOptRow(uid, t)); $(`#opts-wrap-${uid}`).append(el); el.find('.summernote-opt').summernote(snConfig); }
+function addPGKKRowTo(uid) { const el = $(genPGKKRow()); $(`#pgkk-tbody-${uid}`).append(el); el.find('.summernote-opt').summernote(snConfig); }
+function addMatchRowTo(uid) { const el = $(genMatchRow()); $(`#match-tbody-${uid}`).append(el); el.find('.summernote-opt').summernote(snConfig); }
+function removeOptRow(btn) { $(btn).closest('.ans-row').remove(); }
+function saveQBlock(uid) {
+const form = $(`#frm-q-${uid}`); const type = form.find('select[name="type"]').val();
+const score = form.find('input[name="score"]').val(); const num = form.find('input[name="num"]').val();
+const id = form.find('input[name="id"]').val(); let opts=[], keys=[], keyIndices=[], text='';
+if(isCurrentExamPdf) {
+opts = ['A','B','C','D','E'];
+keys = form.find('input[name="pdf_key"]').val().split(',');
+const pageVal = form.find('input[name="page"]').val();
+const payload={id:id, num:num, type:type, text:text, options:opts, key:keys, keyIndices:keyIndices, score:score, page:pageVal};
+const btn=form.find('button[type="submit"]'); btn.prop('disabled',true).text('Menyimpan...');
+google.script.run.withSuccessHandler(res=>{
+btn.prop('disabled',false).text('Simpan');
+if(res.status==='success'){
+toast('success','Soal Disimpan!');
+const newData={QID:res.id, Tipe:type, Pertanyaan:text, Options:JSON.stringify(opts), Key:JSON.stringify(keys), Skor:score, Nomor:num, PageNumber:pageVal};
+$(`#block-${uid}`).attr('data-q-obj', encodeURIComponent(JSON.stringify(newData))).find('input[name="id"]').val(res.id);
+$(`#block-${uid} .q-preview`).html('Kunci PDF Halaman ' + pageVal);
+toggleEditQ(uid);
+} else Swal.fire('Error',res.msg,'error');
+}).adminSaveSingleQuestion(activeExamId, payload, true);
+return;
+}
+text = $(`#sn-${uid}`).summernote('code');
+if (type === 'PGS' || type === 'PGK') {
+$(`#opts-wrap-${uid} .ans-row`).each(function(){
+const v = $(this).find('.summernote-opt').summernote('code');
+if(v && v !== '<p><br></p>'){ opts.push(v); if($(this).find('.form-check-input').is(':checked')) { keys.push(v); keyIndices.push(opts.length - 1); } }
+});
+} else if(type==='PGKK') {
+$(`#pgkk-tbody-${uid} tr`).each(function(){ const q = $(this).find('.pgkk-q').summernote('code'); if(q){ opts.push(q); keys.push($(this).find('.pgkk-k').val()); } });
+} else if(type==='Menjodohkan') {
+$(`#match-tbody-${uid} tr`).each(function(){ const l = $(this).find('.match-l').summernote('code'); const r = $(this).find('.match-r').summernote('code'); if(l && r){ opts.push(l); keys.push(r); } });
+} else { keys = form.find('textarea[name="essay_key"]').val().split(','); }
+const payload={id:id, num:num, type:type, text:text, options:opts, key:keys, keyIndices:keyIndices, score:score};
+const btn=form.find('button[type="submit"]'); btn.prop('disabled',true).text('Menyimpan...');
+google.script.run.withSuccessHandler(res=>{
+btn.prop('disabled',false).text('Simpan');
+if(res.status==='success'){
+toast('success','Soal Disimpan!');
+const newData={QID:res.id, Tipe:type, Pertanyaan:text, Options:JSON.stringify(opts), Key:JSON.stringify(keys), Skor:score, Nomor:num};
+$(`#block-${uid}`).attr('data-q-obj', encodeURIComponent(JSON.stringify(newData))).find('input[name="id"]').val(res.id);
+$(`#block-${uid} .q-preview`).html('Soal Tersimpan');
+toggleEditQ(uid);
+} else Swal.fire('Error',res.msg,'error');
+}).adminSaveSingleQuestion(activeExamId, payload, false);
+}
+function deleteQBlock(uid) {
+const id=$(`#block-${uid}`).find('input[name="id"]').val();
+if(!id){ $(`#block-${uid}`).remove(); return; }
+Swal.fire({title:'Hapus Soal?',icon:'warning',showCancelButton:true}).then(r=>{
+if(r.isConfirmed){
+$(`#block-${uid}`).fadeOut();
+google.script.run.adminDeleteQuestion(id, isCurrentExamPdf);
+currentQuestionsData = currentQuestionsData.filter(q => String(q.QID) !== String(id));
+}
+});
+}
+function loadEditorPDF(fileIdOrUrl) {
+const fileId = extractFileId(fileIdOrUrl);
+$('#editor-pdf-area .pdf-canvas-container').html('<div class="d-flex flex-column align-items-center justify-content-center text-white w-100" style="height: 100%;"><div class="spinner mb-3"></div><p>Menarik file PDF dari server...</p></div>');
+google.script.run.withSuccessHandler(res => {
+if(res.status === 'success') {
+$('#editor-pdf-area .pdf-canvas-container').html('<canvas id="editor-pdf-canvas"></canvas>');
+const pdfData = atob(res.base64);
+const uint8Array = new Uint8Array(pdfData.length);
+for (let i = 0; i < pdfData.length; i++) {
+uint8Array[i] = pdfData.charCodeAt(i);
+}
+const loadingTask = pdfjsLib.getDocument({data: uint8Array});
+loadingTask.promise.then(function(pdf) {
+editorPdfDoc = pdf;
+document.getElementById('editor_page_count').textContent = editorPdfDoc.numPages;
+renderEditorPage(editorPageNum);
+}).catch(err => {
+console.log(err); $('#editor-pdf-area .pdf-canvas-container').html('<div class="alert alert-danger m-4 text-center">Gagal merender PDF.<br>File mungkin rusak atau korup.</div>');
+});
+} else {
+$('#editor-pdf-area .pdf-canvas-container').html('<div class="alert alert-danger m-4 text-center">Gagal memuat PDF: ' + res.msg + '</div>');
+}
+}).withFailureHandler(err => {
+$('#editor-pdf-area .pdf-canvas-container').html('<div class="alert alert-danger m-4 text-center">Koneksi terputus ke server.</div>');
+}).getPdfBase64(fileId);
+}
+function renderEditorPage(num) {
+editorPageRendering = true;
+editorPdfDoc.getPage(num).then(function(page) {
+const viewport = page.getViewport({scale: editorPdfScale});
+const canvas = document.getElementById('editor-pdf-canvas'); const ctx = canvas.getContext('2d');
+canvas.height = viewport.height; canvas.width = viewport.width;
+const renderContext = { canvasContext: ctx, viewport: viewport };
+page.render(renderContext).promise.then(function() {
+editorPageRendering = false; if (editorPageNumPending !== null) { renderEditorPage(editorPageNumPending); editorPageNumPending = null; }
+});
+});
+document.getElementById('editor_page_num').textContent = num;
+}
+function queueRenderEditorPage(num) { if (editorPageRendering) { editorPageNumPending = num; } else { renderEditorPage(num); } }
+function onEditorPrevPage() { if (editorPageNum <= 1) return; editorPageNum--; queueRenderEditorPage(editorPageNum); }
+function onEditorNextPage() { if (editorPageNum >= editorPdfDoc.numPages) return; editorPageNum++; queueRenderEditorPage(editorPageNum); }
+function zoomEditorPdf(val) { editorPdfScale += val; if(editorPdfScale < 0.5) editorPdfScale = 0.5; if(editorPdfScale > 3) editorPdfScale = 3; queueRenderEditorPage(editorPageNum); }
+function startExam(eid) {
+const rules = `<div class="text-start small">
+<b>TATA CARA & ATURAN UJIAN:</b><br><br>
+1. Ujian ini menggunakan <b>Layar Penuh (Fullscreen)</b>.<br>
+2. Jangan keluar dari mode layar penuh selama ujian berlangsung.<br>
+3. Jangan membuka aplikasi, tab baru, atau split layar.<br>
+4. Sistem akan mendeteksi pelanggaran. Jika Anda melanggar lebih dari <b>3 kali</b>, maka jawaban akan <b>otomatis terkirim</b>.<br>
+5. Kerjakan dengan jujur dan fokus.
+</div>`;
+Swal.fire({ title: 'Peraturan Ujian', html: rules, icon: 'warning', showCancelButton: true, confirmButtonText: 'SETUJU & MULAI', confirmButtonColor: '#1e3a8a' }).then(r => {
+if(r.isConfirmed) {
+if (document.documentElement.requestFullscreen) { document.documentElement.requestFullscreen().catch((err) => {}); }
+showLoad(true);
+google.script.run.withSuccessHandler(res => {
+showLoad(false);
+if(res.status === 'success') {
+try { localStorage.removeItem(`ANS_${user.ID}_${eid}`); } catch(e){}
+activeExamId = eid; totalQ = res.data.length; isCurrentExamPdf = res.isPdfMode; currentQuestionsData = res.data;
+$('#do-exam-title').html(`${res.judul} <span class="mx-2">|</span> ${user.Nama}`);
+try { localStorage.setItem('cbt_active_exam', JSON.stringify({ id: eid, qs: res.data, dur: res.duration, start: Date.now(), judul: res.judul, token: res.token, isPdfMode: res.isPdfMode, pdfUrl: res.pdfUrl, pdfId: res.pdfId }));
+} catch(e) {}
+violationCount = 0; $('#viol-disp').text(violationCount); enableSecurity();
+if(isCurrentExamPdf && (res.pdfId || res.pdfUrl)) {
+$('#pdf-container').removeClass('hidden'); $('.q-main-area').removeClass('w-100'); loadPDF(res.pdfId || res.pdfUrl);
+} else {
+$('#pdf-container').addClass('hidden'); $('.q-main-area').addClass('w-100');
+}
+runExam(res.data, res.duration, false);
+} else Swal.fire('Gagal', res.msg, 'error');
+}).getExamPack(eid, user.ID);
+}
+});
+}
+function enableSecurity() {
+violationCount = 0; isExamFinished = false; violationLock = false;
+document.addEventListener("visibilitychange", handleVisibilityChange);
+window.addEventListener("blur", handleWindowBlur);
+document.addEventListener("fullscreenchange", handleFullscreenChange);
+$(document).on("contextmenu.exam", function(e) { e.preventDefault(); return false; });
+$(document).on("keydown.exam", function(e) { if (e.key === "PrintScreen" || (e.ctrlKey && e.key === "p") || (e.key === "F12")) { e.preventDefault(); return false; } });
+}
+function disableSecurity() { document.removeEventListener("visibilitychange", handleVisibilityChange); window.removeEventListener("blur", handleWindowBlur); document.removeEventListener("fullscreenchange", handleFullscreenChange); $(document).off(".exam"); }
+function handleVisibilityChange() { if (!isExamFinished && document.hidden) triggerViolation("Anda keluar dari tab ujian!"); }
+function handleWindowBlur() { if (!isExamFinished) triggerViolation("Anda meninggalkan halaman ujian!"); }
+function handleFullscreenChange() { if (!isExamFinished && !document.fullscreenElement) { triggerViolation("Anda keluar dari mode fullscreen!"); try{document.documentElement.requestFullscreen().catch(()=>{});}catch(e){} } }
+function triggerViolation(msg) {
+if(violationLock || isExamFinished) return;
+violationLock = true; violationCount++; $('#viol-disp').text(violationCount);
+$('#blur-warning').addClass('active');
+if (violationCount >= maxViolations) {
+isExamFinished = true; submitExamButton(true);
+} else {
+Swal.fire({ icon: 'warning', title: 'PERINGATAN PELANGGARAN!', text: `${msg} (${violationCount}/${maxViolations})`, confirmButtonText: 'KEMBALI KE UJIAN', allowOutsideClick: false
+}).then(() => { violationLock = false; $('#blur-warning').removeClass('active'); try{document.documentElement.requestFullscreen().catch(()=>{});}catch(e){} });
+}
+}
+function runExam(qs, dur, isResume) {
+$('#view-dashboard').addClass('hidden'); $('#view-exam').removeClass('hidden'); $('body').addClass('exam-mode');
+const c = $('#q-slides-container'); const g = $('#nav-grid'); c.empty(); g.empty();
+qs.forEach((q,i) => {
+let inp = '';
+if(isCurrentExamPdf && q.Tipe === 'PGS') {
+inp = `<div class="d-flex flex-wrap gap-2 justify-content-center mt-3">`;
+['A','B','C','D','E'].forEach(opt => {
+inp += `<label class="clickable-opt flex-fill text-center p-3 border fs-5 fw-bold" style="cursor:pointer; border-radius:8px;"><input type="radio" class="d-none form-check-input" name="ans-${q.QID}" value="${opt}" onchange="saveAnsLocal('${q.QID}', 'PGS', ${i})">${opt}</label>`;
+});
+inp += `</div>`;
+} else if(q.Tipe==='PGKK') {
+const opts = JSON.parse(q.Options||"[]");
+inp = `<table class="table table-bordered tbl-pgkk mt-3 bg-white"><thead><tr class="table-light"><th>PERNYATAAN</th><th width="15%">BENAR</th><th width="15%">SALAH</th></tr></thead><tbody>`;
+opts.forEach((o,x)=> inp+=`<tr><td><div class="opt-content">${o}</div></td><td style="padding:0; vertical-align:middle;"><label class="d-flex w-100 h-100 justify-content-center align-items-center m-0 clickable-opt" style="padding: 15px;"><input class="form-check-input m-0" type="radio" name="ans-${q.QID}-${x}" value="B" onchange="saveAnsLocal('${q.QID}', 'PGKK', ${i})"></label></td><td style="padding:0; vertical-align:middle;"><label class="d-flex w-100 h-100 justify-content-center align-items-center m-0 clickable-opt" style="padding: 15px;"><input class="form-check-input m-0" type="radio" name="ans-${q.QID}-${x}" value="S" onchange="saveAnsLocal('${q.QID}', 'PGKK', ${i})"></label></td></tr>`);
+inp += `</tbody></table>`;
+} else if(q.Tipe==='Menjodohkan') {
+const lItems = JSON.parse(q.Options||"[]"); const rItems = q.Extra || [];
+inp = `<div class="match-container" id="match-area-${i}"><input type="hidden" id="ans-in-${i}" onchange="saveAnsLocal('${q.QID}', 'MATCH', ${i})"><svg class="match-svg" id="svg-${i}"></svg><div class="match-col" id="col-l-${i}">${lItems.map((t,Idx)=>`<div class="match-item match-left" data-idx="${Idx}" onclick="matchClick(${i}, 'l', ${Idx}, this)"><div class="opt-content">${t}</div></div>`).join('')}</div><div class="match-col" id="col-r-${i}">${rItems.map((t,Idx)=>`<div class="match-item match-right" data-idx="${Idx}" data-val="${encodeURIComponent(t)}" onclick="matchClick(${i}, 'r', ${Idx}, this)"><div class="opt-content">${t}</div></div>`).join('')}</div></div><div class="text-end mt-2"><button class="btn btn-sm btn-outline-warning" onclick="resetMatch(${i})">Reset Garis</button></div>`;
+} else if(q.Tipe.includes('PG')) {
+const opts = JSON.parse(q.Options||"[]");
+opts.forEach(o => inp += `<label class="form-check p-3 border mb-2 rounded bg-white clickable-opt d-flex align-items-center w-100"><input class="form-check-input flex-shrink-0" type="${q.Tipe==='PGK'?'checkbox':'radio'}" name="ans-${q.QID}" value="${encodeURIComponent(o)}" onchange="saveAnsLocal('${q.QID}', '${q.Tipe}', ${i})"><div class="ms-3 flex-grow-1 opt-content mb-0">${o}</div></label>`);
+} else inp = `<textarea class="form-control" rows="5" name="ans-${q.QID}" onchange="saveAnsLocal('${q.QID}', 'ESSAY', ${i})"></textarea>`;
+let textDisplay = isCurrentExamPdf ? `<div class="alert alert-light border shadow-sm">Perhatikan soal pada <b>halaman PDF ${q.PageNumber||1}</b> dan pilih jawaban yang benar.</div>` : `<div class="mb-4 q-content lead">${q.Pertanyaan}</div>`;
+c.append(`<div class="q-slide hidden" id="sl-${i}" data-qid="${q.QID}" data-type="${q.Tipe}" data-pg="${q.PageNumber||1}"><div class="badge bg-primary mb-3 fs-6">Soal No. ${q.Nomor||i+1}</div>${textDisplay}${inp}</div>`);
+g.append(`<button id="nb-${i}" class="q-nav-btn ${i===0?'active-q':''}" onclick="jump(${i})">${i+1}</button>`);
+});
+restoreAnswers(qs); jump(0);
+applyMathJax();
+let startTime = Date.now();
+if(isResume) { try { const storedState = JSON.parse(localStorage.getItem('cbt_active_exam') || '{}'); if(storedState && storedState.start) startTime = storedState.start; } catch(e){} }
+const endTime = startTime + (dur * 60000);
+clearInterval(timerInt);
+timerInt = setInterval(() => {
+const diff = Math.floor((endTime - Date.now()) / 1000);
+if(diff <= 0) { submitExamButton(true); }
+else { let m = Math.floor(diff/60), s = diff%60; $('#timer-disp').text(`${m}:${s<10?'0':''}${s}`); if(diff < 300) $('#timer-disp').addClass('text-danger fw-bold'); }
+}, 1000);
+monitorInterval = setInterval(() => { google.script.run.updateClientProgress(activeExamId, user.ID, $('.q-nav-btn.answered').length, totalQ, pageNum); }, 15000);
+autosaveInterval = setInterval(() => {
+const key = `ANS_${user.ID}_${activeExamId}`;
+try { const stored = localStorage.getItem(key); if(stored) { let data = JSON.parse(decodeURIComponent(atob(stored))); google.script.run.autosaveAnswer(activeExamId, user.ID, JSON.stringify(data)); } } catch(e){}
+}, 60000);
+}
+function saveAnsLocal(qid, type, idx) {
+let val;
+if(isCurrentExamPdf && type==='PGS') {
+val = $(`input[name="ans-${qid}"]:checked`).val();
+$(`#sl-${idx} .clickable-opt`).removeClass('bg-secondary text-white border-secondary');
+$(`input[name="ans-${qid}"]:checked`).parent().addClass('bg-secondary text-white border-secondary');
+}
+else if(type.includes('PG')) { if(type==='PGK') { val=[]; $(`input[name="ans-${qid}"]:checked`).each(function(){ val.push(decodeURIComponent($(this).val())) }); } else val = decodeURIComponent($(`input[name="ans-${qid}"]:checked`).val()); }
+else if(type === 'PGKK') { val=[]; $(`#sl-${idx} tbody tr`).each(function(x){ val.push($(`input[name="ans-${qid}-${x}"]:checked`).val()||null) }); }
+else if(type === 'MATCH') { const raw = $(`#ans-in-${idx}`).val(); val = raw ? JSON.parse(raw) : []; }
+else val = $(`#sl-${idx} textarea`).val();
+const key = `ANS_${user.ID}_${activeExamId}`;
+let currentData = {};
+try { const stored = localStorage.getItem(key); if(stored) currentData = JSON.parse(decodeURIComponent(atob(stored))); } catch(e) {}
+currentData[qid] = val;
+try { localStorage.setItem(key, btoa(encodeURIComponent(JSON.stringify(currentData)))); } catch(e) {}
+markAns(idx);
+}
+function restoreAnswers(qs) {
+const key = `ANS_${user.ID}_${activeExamId}`;
+let saved = {};
+try { const stored = localStorage.getItem(key); if(stored) saved = JSON.parse(decodeURIComponent(atob(stored))); } catch(e) {}
+qs.forEach((q, idx) => {
+const val = saved[q.QID];
+if(val) {
+markAns(idx);
+if(isCurrentExamPdf && q.Tipe === 'PGS') {
+$(`input[name="ans-${q.QID}"][value="${val}"]`).prop('checked', true);
+$(`input[name="ans-${q.QID}"][value="${val}"]`).parent().addClass('bg-secondary text-white border-secondary');
+}
+else if(q.Tipe === 'PGS') $(`input[name="ans-${q.QID}"][value="${encodeURIComponent(val)}"]`).prop('checked', true);
+else if(q.Tipe === 'PGK') val.forEach(v => $(`input[name="ans-${q.QID}"][value="${encodeURIComponent(v)}"]`).prop('checked', true));
+else if(q.Tipe === 'Uraian') $(`textarea[name="ans-${q.QID}"]`).val(val);
+else if(q.Tipe === 'PGKK') { val.forEach((v, rIdx) => { if(v) $(`input[name="ans-${q.QID}-${rIdx}"][value="${v}"]`).prop('checked', true); }); }
+else if(q.Tipe === 'Menjodohkan') { $(`#ans-in-${idx}`).val(JSON.stringify(val)); setTimeout(() => redrawMatchLines(idx, val, q.Extra), 500); }
+}
+});
+}
+function markAns(i) { $(`#nb-${i}`).addClass('answered'); }
+function jump(i) {
+currentQIdx = i; $('.q-slide').addClass('hidden'); $(`#sl-${i}`).removeClass('hidden'); $('.q-nav-btn').removeClass('active-q'); $(`#nb-${i}`).addClass('active-q');
+if($(`#sl-${i}`).data('type')==='Menjodohkan') setTimeout(()=>drawLines(i), 50);
+applyMathJax();
+if (isCurrentExamPdf) {
+const targetPage = $(`#sl-${i}`).data('pg');
+if (targetPage && targetPage != pageNum) { pageNum = parseInt(targetPage); queueRenderPage(pageNum); }
+}
+}
+function navSlide(dir) { let next = currentQIdx + dir; if(next >= 0 && next < totalQ) jump(next); }
+function loadPDF(fileIdOrUrl) {
+const fileId = extractFileId(fileIdOrUrl);
+$('#pdf-container .pdf-canvas-container').html('<div class="d-flex flex-column align-items-center justify-content-center text-white w-100" style="height: 100%;"><div class="spinner mb-3"></div><p>Menarik file PDF dari server...</p></div>');
+google.script.run.withSuccessHandler(res => {
+if(res.status === 'success') {
+$('#pdf-container .pdf-canvas-container').html('<canvas id="pdf-canvas"></canvas>');
+const pdfData = atob(res.base64);
+const uint8Array = new Uint8Array(pdfData.length);
+for (let i = 0; i < pdfData.length; i++) {
+uint8Array[i] = pdfData.charCodeAt(i);
+}
+const loadingTask = pdfjsLib.getDocument({data: uint8Array});
+loadingTask.promise.then(function(pdf) {
+pdfDoc = pdf;
+document.getElementById('page_count').textContent = pdfDoc.numPages;
+renderPage(pageNum);
+}).catch(err => {
+console.log(err); $('#pdf-container .pdf-canvas-container').html('<div class="alert alert-danger m-4 text-center">Gagal merender PDF.<br>File mungkin rusak atau korup.</div>');
+});
+} else {
+$('#pdf-container .pdf-canvas-container').html('<div class="alert alert-danger m-4 text-center">Gagal memuat PDF: ' + res.msg + '</div>');
+}
+}).withFailureHandler(err => {
+$('#pdf-container .pdf-canvas-container').html('<div class="alert alert-danger m-4 text-center">Koneksi terputus ke server.</div>');
+}).getPdfBase64(fileId);
+}
+function renderPage(num) {
+pageRendering = true;
+pdfDoc.getPage(num).then(function(page) {
+const viewport = page.getViewport({scale: pdfScale});
+const canvas = document.getElementById('pdf-canvas'); const ctx = canvas.getContext('2d');
+canvas.height = viewport.height; canvas.width = viewport.width;
+const renderContext = { canvasContext: ctx, viewport: viewport };
+page.render(renderContext).promise.then(function() {
+pageRendering = false; if (pageNumPending !== null) { renderPage(pageNumPending); pageNumPending = null; }
+});
+});
+document.getElementById('page_num').textContent = num;
+pageHistoryLog[`Page_${num}`] = new Date().toLocaleTimeString();
+if(isCurrentExamPdf) {
+const qIdx = currentQuestionsData.findIndex(q => q.PageNumber == num);
+if(qIdx !== -1 && qIdx !== currentQIdx) { jump(qIdx); }
+}
+}
+function queueRenderPage(num) { if (pageRendering) { pageNumPending = num; } else { renderPage(num); } }
+function onPrevPage() { if (pageNum <= 1) return; pageNum--; queueRenderPage(pageNum); }
+function onNextPage() { if (pageNum >= pdfDoc.numPages) return; pageNum++; queueRenderPage(pageNum); }
+function zoomPdf(val) { pdfScale += val; if(pdfScale < 0.5) pdfScale = 0.5; if(pdfScale > 3) pdfScale = 3; queueRenderPage(pageNum); }
+function submitExamButton(force = false) {
+if (examSubmitting) return;
+if (force) { processSubmission(); return; }
+const answeredCount = $('.q-nav-btn.answered').length;
+let activeState = {}; try { activeState = JSON.parse(localStorage.getItem('cbt_active_exam') || '{}'); } catch(e){}
+const reqToken = activeState.token && activeState.token !== '-' ? String(activeState.token).trim().toUpperCase() : "";
+let inputPlace = reqToken ? 'Ketik Token Kirim...' : 'Ketik kata SELESAI...';
+let msgHtml = `<p class="mb-3">Anda telah mengerjakan <b>${answeredCount}</b> dari <b>${totalQ}</b> soal.</p>`;
+if(reqToken) { msgHtml += '<div class="alert alert-info small"><i class="fas fa-lock me-1"></i> Silakan masukkan <b>Token Kirim Jawaban</b> (Minta pada pengawas):</div>'; }
+else { msgHtml += '<div class="alert alert-warning small">Pastikan semua soal terjawab.<br>Ketik kata <b>SELESAI</b> di bawah ini untuk mengonfirmasi pengiriman:</div>'; }
+Swal.fire({
+title: 'Kirim Jawaban', html: `<div class="text-start">${msgHtml}</div>`, input: 'text', inputAttributes: { autocapitalize: 'characters', autocomplete: 'off' },
+inputPlaceholder: inputPlace, icon: 'question', showCancelButton: true, allowOutsideClick: false, allowEscapeKey: false,
+confirmButtonText: '<i class="fas fa-paper-plane me-1"></i> Kirim Sekarang', cancelButtonText: 'Batal', confirmButtonColor: '#198754',
+preConfirm: (inputValue) => {
+let val = (inputValue || '').trim().toUpperCase();
+if (reqToken) { if (val !== reqToken) { Swal.showValidationMessage('Token Kirim Salah!'); return false; } }
+else { if (val !== 'SELESAI') { Swal.showValidationMessage('Ketik kata SELESAI untuk mengirim.'); return false; } }
+return true;
+}
+}).then((result) => { if (result.isConfirmed) { processSubmission(); } });
+}
+function processSubmission(retryCount = 0) {
+if (examSubmitting && retryCount === 0) return;
+examSubmitting = true;
+const btn = $('#btn-finish'); const originalText = '<i class="fas fa-check-circle me-1"></i> KIRIM JAWABAN';
+if (retryCount === 0) {
+btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Mengirim...');
+clearInterval(timerInt); clearInterval(monitorInterval); clearInterval(autosaveInterval);
+isExamFinished = true; disableSecurity();
+}
+let ans = [];
+try {
+$('.q-slide').each(function(idx) {
+const qid = $(this).data('qid'); const t = $(this).data('type'); let v = null;
+if (isCurrentExamPdf && t === 'PGS') {
+const checked = $(this).find('input[type="radio"]:checked').val();
+if(checked) v = checked;
+}
+else if (t.includes('PG') && t !== 'PGKK') {
+if (t === 'PGK') { v = []; $(this).find('input:checked').each(function() { v.push(decodeURIComponent($(this).val())) }); }
+else { const checked = $(this).find('input:checked').val(); if(checked) v = decodeURIComponent(checked); }
+}
+else if (t === 'PGKK') { v = []; $(this).find('tbody tr').each(function(x) { v.push($(this).find('input:checked').val() || null) }); }
+else if (t === 'Menjodohkan') { const raw = $(`#ans-in-${idx}`).val(); v = raw ? JSON.parse(raw) : []; }
+else { v = $(this).find('textarea').val(); }
+if (v !== null && v !== undefined) ans.push({ qid: qid, answer: v });
+});
+} catch(e) { console.error("Error collecting", e); }
+google.script.run.withSuccessHandler((res) => {
+examSubmitting = false; btn.prop('disabled', false).html(originalText);
+if (res.status === 'success') {
+try { localStorage.removeItem('cbt_active_exam'); localStorage.removeItem(`ANS_${user.ID}_${activeExamId}`); } catch(e){}
+$('body').removeClass('exam-mode'); try { document.exitFullscreen().catch(()=>{}) } catch (e) {};
+Swal.fire({
+title: 'Selesai!',
+html: `<div class="mb-3 text-success" style="font-size: 4rem;"><i class="fas fa-check-circle"></i></div><h5 class="fw-bold">${res.msg === 'Sudah dikirim.' ?
+'Anda Sudah Pernah Mengirim Jawaban Sebelumnya' : violationCount >= maxViolations ?
+'Jawaban Otomatis Terkirim Karena Pelanggaran' : 'Jawaban Berhasil Dikirim'}</h5><p class="text-muted mt-2">Hasil pengerjaan Anda telah tersimpan di sistem.</p>`,
+confirmButtonText: 'KEMBALI KE BERANDA', confirmButtonColor: '#1e3a8a', allowOutsideClick: false, allowEscapeKey: false
+}).then(() => { $('#view-exam').addClass('hidden'); $('#view-dashboard').removeClass('hidden'); loadPage('siswa-home'); });
+} else { Swal.fire('Gagal', res.msg || 'Terjadi kesalahan sistem.', 'error'); }
+}).withFailureHandler((err) => {
+if (retryCount < 3) { setTimeout(() => processSubmission(retryCount + 1), 3000); }
+else { examSubmitting = false; btn.prop('disabled', false).html(originalText); Swal.fire('Koneksi Terputus', 'Gagal menghubungi server setelah beberapa percobaan. Silakan coba klik Kirim lagi.', 'error');
+}
+}).submitExam(user.ID, activeExamId, ans, violationCount, pageHistoryLog);
+}
+let matchState = {};
+function matchClick(qIdx, side, itemIdx, el) { if(!matchState[qIdx]) matchState[qIdx] = { sel: null, pairs: [] }; const st = matchState[qIdx];
+$(`#match-area-${qIdx} .match-${side}`).removeClass('selected'); $(el).addClass('selected'); if(side === 'l') { st.sel = { idx: itemIdx, el: el };
+} else { if(st.sel) { st.pairs = st.pairs.filter(p => p.left !== st.sel.idx); st.pairs.push({ left: st.sel.idx, right: itemIdx, rightVal: decodeURIComponent($(el).data('val')) });
+drawLines(qIdx); markAns(qIdx); st.sel = null; $(`#match-area-${qIdx} .match-item`).removeClass('selected'); saveAnsLocal($(`#sl-${qIdx}`).data('qid'), 'MATCH', qIdx); } } }
+function drawLines(qIdx) { if(!matchState[qIdx]) return; const svg = document.getElementById(`svg-${qIdx}`); const container = document.getElementById(`match-area-${qIdx}`); if(!container || !svg) return;
+const rectC = container.getBoundingClientRect(); let html = ''; let answerArr = []; const leftCount = $(`#col-l-${qIdx}`).children().length;
+for(let k=0; k<leftCount; k++) answerArr[k] = null; $(`#match-area-${qIdx} .match-item`).removeClass('matched'); matchState[qIdx].pairs.forEach(p => { const elL = $(`#col-l-${qIdx}`).children().eq(p.left)[0]; const elR = $(`#col-r-${qIdx}`).children().eq(p.right)[0]; if(elL && elR) { const rL = elL.getBoundingClientRect(); const rR = elR.getBoundingClientRect(); const x1 = rL.right - rectC.left; const y1 = (rL.top + rL.height/2) - rectC.top; const x2 = rR.left - rectC.left; const y2 = (rR.top + rR.height/2) - rectC.top; html += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#10b981" stroke-width="3" />`; $(elL).addClass('matched'); $(elR).addClass('matched'); answerArr[p.left] = p.rightVal; } });
+svg.innerHTML = html; $(`#ans-in-${qIdx}`).val(JSON.stringify(answerArr)); }
+function resetMatch(qIdx) { matchState[qIdx] = { sel: null, pairs: [] }; document.getElementById(`svg-${qIdx}`).innerHTML = ''; $(`#match-area-${qIdx} .match-item`).removeClass('matched selected'); $(`#ans-in-${qIdx}`).val('');
+saveAnsLocal($(`#sl-${qIdx}`).data('qid'), 'MATCH', qIdx); }
+function redrawMatchLines(qIdx, savedArr, rightItems) { if(!matchState[qIdx]) matchState[qIdx] = { sel: null, pairs: [] }; if(Array.isArray(savedArr)) { matchState[qIdx].pairs = [];
+savedArr.forEach((val, lIdx) => { if(val) { const rIdx = rightItems.indexOf(val); if(rIdx > -1) { matchState[qIdx].pairs.push({ left: lIdx, right: rIdx, rightVal: val }); } } });
+drawLines(qIdx); } }
+function editUser(s){ const u=JSON.parse(decodeURIComponent(s)); $('#modalUser').modal('show'); $('#mu-id').val(u.ID); $('#mu-nama').val(u.Nama); $('#mu-user').val(u.Username); $('#mu-pass').val(u.Password); $('#mu-role').val(u.Role); $('#mu-kelas').val(u.Kelas); $('#mu-sekolah').val(u.Sekolah); }
+function saveUser(e){ if (e) e.preventDefault(); const d={id:$('#mu-id').val(), nama:$('#mu-nama').val(), username:$('#mu-user').val(), password:$('#mu-pass').val(), role:$('#mu-role').val(), kelas:$('#mu-kelas').val(), sekolah:$('#mu-sekolah').val()}; showLoad(true); google.script.run.withSuccessHandler(()=>{showLoad(false);$('#modalUser').modal('hide'); loadPage('admin-users')}).adminManageUser('save',d); }
+function delUser(id){ if(confirm('Hapus User?')) google.script.run.withSuccessHandler(()=>{loadPage('admin-users')}).adminManageUser('delete',{id:id}); }
+function handleResetCache() { Swal.fire({title:'Reset Cache?', text:"Membersihkan data sementara sistem.", icon:'warning', showCancelButton:true}).then((r)=>{ if(r.isConfirmed){ showLoad(true); google.script.run.withSuccessHandler(r=>{showLoad(false);Swal.fire('Sukses',r.msg,'success')}).sysResetCache(); }}); }
+function deleteResult(rid) { Swal.fire({title:'Hapus & Reset Ujian?', text:'Data dihapus, cache/status ujian direset, dan siswa bisa ujian kembali.', icon:'warning', showCancelButton:true, confirmButtonColor:'#d33'}).then(r=>{ if(r.isConfirmed) { showLoad(true); google.script.run.withSuccessHandler(res=>{ showLoad(false); if(res.status==='success'){ Swal.fire('Berhasil',res.msg,'success'); loadPage('hasil-rekap'); } else Swal.fire('Gagal',res.msg,'error'); }).adminDeleteResult(rid); } });
+}
+function renderMonitoring(){ showLoad(true); google.script.run.withSuccessHandler(r=>{ showLoad(false); let h=`<div class="row g-2 mb-3"><div class="col-md-5"><select id="mon-sel" class="form-select" onchange="startMon()"><option value="">Pilih Ujian...</option>`; r.data.exams.forEach(e=>h+=`<option value="${e.ExamID}">${e.Judul}</option>`); h+=`</select></div><div class="col-md-5"><input type="text" id="mon-search" class="form-control" placeholder="Cari..." onkeyup="filterTable('tbl-mon', this.value)"></div><div class="col-md-2"></div></div><div id="mon-area" class="bg-white p-3 rounded shadow-sm" style="min-height:200px">Silakan pilih ujian.</div>`; $('#content-area').html(h); }).getDashboardData('guru',user.ID,user.Kelas);
+}
+function startMon(){ const id=$('#mon-sel').val(); if(id){ fetchMon(id); clearInterval(monitorInterval); monitorInterval=setInterval(()=>fetchMon(id),10000); } else $('#mon-area').empty(); }
+function fetchMon(id){ google.script.run.withSuccessHandler(r=>{ if(r.status==='error') { $('#mon-area').html(`<div class="alert alert-warning">${r.msg}</div>`); return; } let h=`<table id="tbl-mon" class="table table-hover align-middle"><thead><tr class="table-light"><th>Nama</th><th>Progress</th><th>Halaman PDF</th><th>Status</th><th>Aksi</th></tr></thead><tbody>`; r.data.forEach(d=>{ const p=Math.round((d.terjawab/d.total)*100)||0; h+=`<tr data-uid="${d.id}" data-nama="${d.nama}"><td><div class="fw-bold">${d.nama}</div><small class="text-muted">${d.kelas}</small></td><td><div class="progress" style="height:20px"><div class="progress-bar bg-success" style="width:${p}%">${d.terjawab}/${d.total}</div></div></td><td>${d.page||'-'}</td><td>${d.status==='Online'?'<span class="badge bg-success">ON</span>':'<span class="badge bg-secondary">OFF</span>'}</td><td><button class="btn btn-sm btn-outline-danger" onclick="triggerReset('${d.id}', '${d.nama}')">Reset</button></td></tr>` }); $('#content-area').html(h+'</tbody></table>');
+const cur=$('#mon-search').val(); if(cur) filterTable('tbl-mon', cur); }).getLiveMonitoring(id); }
+function triggerReset(sId, sName) { const eId = $('#mon-sel').val(); if(!sId || !eId) return;
+Swal.fire({ title: 'Reset Siswa Ini?', text: `${sName} akan dikeluarkan dan harus login ulang.`, icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'Ya, Reset!' }).then(r => { if(r.isConfirmed) { Swal.fire({title: 'Memproses...', allowOutsideClick: false, didOpen: () => Swal.showLoading() }); google.script.run.withSuccessHandler(res => { if(res.status === 'success') { Swal.fire('Berhasil', res.msg, 'success'); fetchMon(eId); } else { Swal.fire('Gagal', res.msg, 'error'); } }).teacherResetStatus(user.ID, sId, eId); } });
+}
+function filterTable(tid, q) { const f=q.toLowerCase(); $(`#${tid} tbody tr`).each(function(){ const t=$(this).text().toLowerCase(); $(this).toggle(t.indexOf(f)>-1); }); }
+</script>
+</body>
+</html>
