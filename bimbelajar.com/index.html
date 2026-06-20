@@ -316,7 +316,7 @@ body.exam-mode { overflow: hidden; user-select: none; }
 </div>
 <div class="col-md-6">
     <label class="small fw-bold">Mata Pelajaran / Jabatan</label>
-    <input type="text" name="mapel" id="ex-mapel" class="form-control" placeholder="Contoh: Ahli Pertama - Guru Biologi" required>
+    <input type="text" name="Formasi" id="ex-Formasi" class="form-control" placeholder="Contoh: Ahli Pertama - Guru Biologi" required>
 </div>
 </div>
 <div class="row g-3 mb-3">
@@ -438,7 +438,7 @@ function openExamModal(str) {
   $('#modalExam').modal('show');
   if(str) {
     let d = JSON.parse(decodeURIComponent(str));
-    $('#ex-id').val(d.ExamID); $('#ex-judul').val(d.Judul); $('#ex-mapel').val(d.Mapel);
+    $('#ex-id').val(d.ExamID); $('#ex-judul').val(d.Judul); $('#ex-Formasi').val(d.Formasi);
     $('#ex-kategori').val(d.TargetKelas || 'UMUM'); 
     $('#ex-durasi').val(d.Durasi); $('#ex-limit').val(d.Limit); $('#ex-start').val(d.StartDate.replace(' ','T'));
     $('#ex-end').val(d.EndDate.replace(' ','T')); $('#ex-keterangan').val(d.Keterangan || '');
@@ -596,7 +596,7 @@ function renderContent(page) {
   else if (page === 'admin-ujian') {
     h = `<div class="d-flex justify-content-between mb-3"><button class="btn btn-primary shadow-sm" onclick="openExamModal()">+ Buat Tryout Baru</button></div><div class="row g-4" id="admin-ujian-list">`;
     gData.exams.forEach(e => {
-      h += `<div class="col-md-6 col-lg-4 ujian-card"><div class="card h-100 shadow-sm border-0"><div class="card-body"><div class="d-flex justify-content-between mb-2"><span class="badge bg-primary">${e.TargetKelas || 'UMUM'}</span></div><h5 class="fw-bold text-dark">${e.Judul}</h5><p class="text-muted small"><i class="fas fa-book me-1"></i> ${e.Mapel}</p><div class="d-flex gap-2 flex-wrap"><button class="btn btn-sm btn-outline-dark flex-fill" onclick="openExamModal('${encodeURIComponent(JSON.stringify(e))}')">Edit</button> <button class="btn btn-sm btn-outline-primary flex-fill" onclick="manageQ('${e.ExamID}')"><i class="fas fa-list me-1"></i> Soal</button> <button class="btn btn-sm btn-outline-info flex-fill" onclick="duplicateExam('${e.ExamID}', '${e.Judul}')"><i class="fas fa-copy"></i> Duplikat</button> <button class="btn btn-sm btn-danger" onclick="delExam('${e.ExamID}')"><i class="fas fa-trash"></i></button></div></div></div></div>`;
+      h += `<div class="col-md-6 col-lg-4 ujian-card"><div class="card h-100 shadow-sm border-0"><div class="card-body"><div class="d-flex justify-content-between mb-2"><span class="badge bg-primary">${e.TargetKelas || 'UMUM'}</span></div><h5 class="fw-bold text-dark">${e.Judul}</h5><p class="text-muted small"><i class="fas fa-book me-1"></i> ${e.Formasi}</p><div class="d-flex gap-2 flex-wrap"><button class="btn btn-sm btn-outline-dark flex-fill" onclick="openExamModal('${encodeURIComponent(JSON.stringify(e))}')">Edit</button> <button class="btn btn-sm btn-outline-primary flex-fill" onclick="manageQ('${e.ExamID}')"><i class="fas fa-list me-1"></i> Soal</button> <button class="btn btn-sm btn-outline-info flex-fill" onclick="duplicateExam('${e.ExamID}', '${e.Judul}')"><i class="fas fa-copy"></i> Duplikat</button> <button class="btn btn-sm btn-danger" onclick="delExam('${e.ExamID}')"><i class="fas fa-trash"></i></button></div></div></div></div>`;
     });
     h += '</div>';
   }
@@ -674,7 +674,7 @@ function renderIsiKelompok(cat) {
                         </div>
                         <div class="katalog-body d-flex flex-column">
                             <div class="mb-4 mt-2">
-                                <div class="katalog-feature"><i class="fas fa-book"></i> Mapel: ${e.Mapel}</div>
+                                <div class="katalog-feature"><i class="fas fa-book"></i> Formasi: ${e.Formasi}</div>
                                 <div class="katalog-feature"><i class="fas fa-clock"></i> Durasi: ${e.Durasi} Menit</div>
                                 <div class="katalog-feature"><i class="fas fa-check-circle"></i> Sesuai Kisi-kisi Terbaru</div>
                                 <div class="katalog-feature"><i class="fas fa-laptop-code"></i> Simulasi Sistem CAT</div>
@@ -1036,7 +1036,7 @@ function handleExcelUpload(e) {
 
 function renderRecapTable() {
   let h = `<div class="card border-0 shadow-sm"><div class="card-body p-0"><div class="table-responsive"><table class="table table-hover align-middle mb-0" id="tbl-rekap"><thead class="table-light"><tr><th>Nama Peserta</th><th>Tryout</th><th>Nilai Akhir</th><th>Aksi</th></tr></thead><tbody id="tbl-rekap-body">`;
-  rekapAllData.forEach(r => { h += `<tr><td><div class="fw-bold">${r.NamaSiswa}</div></td><td>${r.Mapel} - ${r.JudulUjian}</td><td><span class="badge bg-primary fs-6">${r.TotalNilai}</span></td><td><button class="btn btn-sm btn-outline-danger" onclick="deleteResult('${r.ResultID}')"><i class="fas fa-trash"></i></button></td></tr>`; });
+  rekapAllData.forEach(r => { h += `<tr><td><div class="fw-bold">${r.NamaSiswa}</div></td><td>${r.Formasi} - ${r.JudulUjian}</td><td><span class="badge bg-primary fs-6">${r.TotalNilai}</span></td><td><button class="btn btn-sm btn-outline-danger" onclick="deleteResult('${r.ResultID}')"><i class="fas fa-trash"></i></button></td></tr>`; });
   h += `</tbody></table></div></div></div>`; $('#content-area').html(h);
 }
 
