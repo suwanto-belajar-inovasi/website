@@ -60,12 +60,13 @@ body.exam-mode { overflow: hidden; user-select: none; }
 .katalog-card { border-radius: 14px; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: transform 0.2s; overflow: hidden; background: #fff; display: flex; flex-direction: column; }
 .katalog-card:hover { transform: translateY(-5px); box-shadow: 0 12px 25px rgba(0,0,0,0.1); }
 .katalog-header { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); color: white; padding: 20px; text-align: center; }
-.katalog-price { font-size: 1.8rem; font-weight: 800; color: #f59e0b; margin: 10px 0; }
 .katalog-body { padding: 20px; flex-grow: 1; }
 .katalog-feature { display: flex; align-items: center; margin-bottom: 10px; font-size: 0.95rem; color: #475569; }
 .katalog-feature i { color: #10b981; margin-right: 10px; font-size: 1.1rem; }
 .btn-buy { background-color: #ef4444; color: white; border: none; border-radius: 8px; padding: 12px; font-weight: 700; width: 100%; transition: background 0.2s; }
 .btn-buy:hover { background-color: #dc2626; color: white; }
+.btn-buy-retake { background-color: #f59e0b; }
+.btn-buy-retake:hover { background-color: #d97706; }
 
 .folder-card { transition: transform 0.2s; }
 .folder-card:hover { transform: scale(1.05); }
@@ -367,6 +368,7 @@ body.exam-mode { overflow: hidden; user-select: none; }
 </div>
 <div class="modal-body p-4">
 <div class="container" style="max-width:900px">
+    
     <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center mb-3 bg-white p-3 rounded shadow-sm border border-primary">
         <div>
             <h6 class="fw-bold mb-1 text-primary"><i class="fas fa-file-excel me-1"></i> Import Soal via Excel</h6>
@@ -378,6 +380,7 @@ body.exam-mode { overflow: hidden; user-select: none; }
             <input type="file" id="file-excel-q" class="hidden" accept=".xlsx, .xls" onchange="handleExcelUpload(event)">
         </div>
     </div>
+    
     <div class="alert alert-info small mb-3"><b>Tips:</b> Gunakan tombol <b>Rumus</b> untuk memasukkan LaTeX jika butuh persamaan.</div>
     <div id="q-list-container"></div>
     <div class="text-center mt-5 mb-5"><button class="btn btn-lg btn-success rounded-pill px-5 shadow" onclick="addNewQuestionBlock()"><i class="fas fa-plus-circle me-2"></i> TAMBAH SOAL SECARA MANUAL</button></div>
@@ -458,7 +461,7 @@ function openExamModal(str) {
   if(str) {
     let d = JSON.parse(decodeURIComponent(str));
     $('#ex-id').val(d.ExamID); $('#ex-judul').val(d.Judul); $('#ex-mapel').val(d.Mapel);
-    $('#ex-kategori').val(d.TargetKelas || 'UMUM'); 
+    $('#ex-kategori').val(d.TargetKelas || 'UMUM'); // Set dropdown kategori
     $('#ex-durasi').val(d.Durasi); $('#ex-limit').val(d.Limit); $('#ex-start').val(d.StartDate.replace(' ','T'));
     $('#ex-end').val(d.EndDate.replace(' ','T')); $('#ex-keterangan').val(d.Keterangan || '');
     $('#ex-token').val(d.Token || ''); $('#ex-randomQ').prop('checked', d.RandomQ === 'Yes');
@@ -679,7 +682,6 @@ function renderContent(page) {
         let hCats = Object.keys(hGroups);
         h += `<div class="row g-4" id="folder-history-container">`;
         hCats.forEach(cat => {
-            let design = getCategoryDesign(cat);
             h += `<div class="col-md-4 col-sm-6">
                     <div class="card border-0 shadow-sm folder-card" style="cursor:pointer;" onclick="renderIsiRiwayat('${cat}')">
                         <div class="card-body text-center p-4">
@@ -799,6 +801,16 @@ function executeStartExam(eid, tokenInput) {
       try { localStorage.setItem('cbt_active_exam', JSON.stringify({ id: eid, qs: res.data, dur: res.duration, start: Date.now(), judul: res.judul, token: res.token })); } catch(e) {}
       violationCount = 0; enableSecurity(); runExam(res.data, res.duration, false);
     } else { Swal.fire('Akses Ditolak', res.msg, 'error'); }
+  });
+}
+
+function kerjakanUlang(eid) {
+  Swal.fire({ title: 'Kerjakan Ulang?', text: 'Skor Anda sebelumnya tetap tersimpan. Yakin ingin mengulang tryout ini dari awal?', icon: 'question', showCancelButton: true, confirmButtonText: 'Ya, Retake', confirmButtonColor: '#10b981'
+  }).then((res) => {
+    if(res.isConfirmed) {
+      showLoad(true);
+      gasAPI('reqRetake', {eid: eid, userId: user.ID}).then(r => { showLoad(false); if(r.status === 'success') { Swal.fire('Sesi Direset', 'Sesi ujian berhasil dibuka kembali. Silakan klik Mulai Tryout.', 'success').then(()=>loadPage('peserta-home')); } });
+    }
   });
 }
 
@@ -1167,9 +1179,10 @@ function toggleNavPanel() { $('#sidebar-grid').toggleClass('d-none'); }
 function runExam(qs, dur, isResume) {
   $('#view-dashboard').addClass('hidden'); $('#view-exam').removeClass('hidden'); $('body').addClass('exam-mode');
   const c = $('#q-slides-container'); const g = $('#nav-grid'); c.empty(); g.empty();
-  const bagians = ["Manajerial", "Sosial Kultural", "Wawancara"];
   
-  bagians.forEach(b => { g.append(`<div class="q-nav-section-title w-100 mt-2 mb-2 text-center" style="font-size: 0.85rem; color: #64748b; font-weight: bold;">${b}</div><div class="q-grid w-100" id="grid-${b.replace(/\s+/g, '-')}"></div>`); });
+  // Ambil daftar Kategori secara otomatis dan susun UI Grid
+  const uniqueBagians = [...new Set(qs.map(item => item.Bagian || 'Manajerial'))];
+  uniqueBagians.forEach(b => { g.append(`<div class="q-nav-section-title w-100 mt-2 mb-2 text-center" style="font-size: 0.85rem; color: #64748b; font-weight: bold;">${b}</div><div class="q-grid w-100" id="grid-${b.replace(/\s+/g, '-')}"></div>`); });
   
   qs.forEach((q,i) => {
     let inp = '';
