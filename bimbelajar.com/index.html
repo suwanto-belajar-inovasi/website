@@ -37,39 +37,36 @@ body.exam-mode { overflow: hidden; user-select: none; }
 /* =========================================
    NEW MODERN CARDS (DASHBOARD)
    ========================================= */
-.cbt-card { display: flex; align-items: center; background: #fff; border-radius: 12px; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.04); border: 1px solid #e2e8f0; margin-bottom: 15px; transition: transform 0.2s; }
-.cbt-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
-.cbt-icon { width: 55px; height: 55px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; color: #fff; flex-shrink: 0; margin-right: 15px; }
-.cbt-info { flex-grow: 1; display: flex; flex-direction: column; }
-.cbt-category { font-size: 0.8rem; font-weight: 700; color: #64748b; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 2px; }
-.cbt-title { font-size: 1.05rem; font-weight: 700; color: #1e293b; margin-bottom: 4px; line-height: 1.2; }
-.cbt-meta { font-size: 0.8rem; color: #64748b; }
-.cbt-action { flex-shrink: 0; margin-left: 15px; }
-.cbt-btn { background-color: #ef4444; color: #fff; font-weight: 700; font-size: 0.9rem; border-radius: 50px; padding: 8px 20px; border: none; transition: 0.2s; }
-.cbt-btn:hover { background-color: #dc2626; color: #fff; }
-.cbt-btn-retake { background-color: #f59e0b; }
-.cbt-btn-retake:hover { background-color: #d97706; }
+.tryout-card-modern { background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 6px rgba(0,0,0,0.02); transition: transform 0.2s; gap: 15px; margin-bottom: 15px; }
+.tryout-card-modern:hover { transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+.radial-progress-box { display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 100px; }
+.radial-progress { width: 65px; height: 65px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 5px; position: relative; }
+.radial-progress::before { content: ""; position: absolute; inset: 6px; background: white; border-radius: 50%; }
+.prog-text { position: relative; font-weight: bold; font-size: 0.9rem; color: #1e293b; z-index: 1; }
+.prog-label { font-size: 0.75rem; color: #64748b; font-weight: 600; text-align: center; text-transform: uppercase; }
 
-@media (max-width: 576px) {
-    .cbt-card { flex-direction: column; text-align: center; }
-    .cbt-icon { margin: 0 auto 10px auto; }
-    .cbt-action { margin: 15px 0 0 0; width: 100%; }
-    .cbt-btn { width: 100%; padding: 10px; }
-}
+.tryout-info-box { border-left: 2px dashed #e2e8f0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; min-width: 220px; }
+.info-row { font-size: 0.85rem; color: #475569; display: flex; align-items: center; }
+.info-row i { color: #f59e0b; width: 20px; text-align: center; margin-right: 8px; font-size: 0.95rem; }
+.info-row b { color: #1e293b; margin-left: 5px; }
 
-.katalog-card { border-radius: 14px; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: transform 0.2s; overflow: hidden; background: #fff; display: flex; flex-direction: column; }
-.katalog-card:hover { transform: translateY(-5px); box-shadow: 0 12px 25px rgba(0,0,0,0.1); }
-.katalog-header { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); color: white; padding: 20px; text-align: center; }
-.katalog-body { padding: 20px; flex-grow: 1; }
-.katalog-feature { display: flex; align-items: center; margin-bottom: 10px; font-size: 0.95rem; color: #475569; }
-.katalog-feature i { color: #10b981; margin-right: 10px; font-size: 1.1rem; }
-.btn-buy { background-color: #ef4444; color: white; border: none; border-radius: 8px; padding: 12px; font-weight: 700; width: 100%; transition: background 0.2s; }
-.btn-buy:hover { background-color: #dc2626; color: white; }
-.btn-buy-retake { background-color: #f59e0b; }
-.btn-buy-retake:hover { background-color: #d97706; }
+.tryout-title-box { flex-grow: 1; border-left: 2px dashed #e2e8f0; padding-left: 20px; }
+.tryout-action-box { min-width: 160px; text-align: right; }
+
+.btn-tryout-do { background-color: #e11d48; color: white; border-radius: 50px; font-weight: bold; padding: 10px 25px; border: none; width: 100%; transition: 0.2s; box-shadow: 0 4px 6px rgba(225,29,72,0.2); }
+.btn-tryout-do:hover { background-color: #be123c; color: white; }
+.btn-tryout-retake { background-color: #f59e0b; color: white; border-radius: 50px; font-weight: bold; padding: 10px 25px; border: none; width: 100%; transition: 0.2s; box-shadow: 0 4px 6px rgba(245,158,11,0.2); }
+.btn-tryout-retake:hover { background-color: #d97706; color: white; }
 
 .folder-card { transition: transform 0.2s; }
 .folder-card:hover { transform: scale(1.05); }
+
+@media (max-width: 768px) {
+    .tryout-card-modern { flex-direction: column; text-align: center; padding: 15px; }
+    .tryout-info-box, .tryout-title-box { border-left: none; border-top: 1px dashed #e2e8f0; padding-left: 0; padding-top: 15px; width: 100%; }
+    .info-row { justify-content: center; }
+    .tryout-action-box { width: 100%; margin-top: 10px; }
+}
 
 /* =========================================
    EXAM VIEW STYLES - PUSMENDIK EXACT MATCH 
@@ -207,7 +204,7 @@ body.exam-mode { overflow: hidden; user-select: none; }
 <li><a onclick="handleResetCache()" class="nav-link text-warning"><i class="fas fa-bolt me-2"></i>Reset Cache</a></li>
 </ul>
 <ul class="list-unstyled components hidden" id="menu-peserta">
-<li><a onclick="loadPage('peserta-kelompok')" class="nav-link active"><i class="fas fa-folder-open me-2"></i>Kategori Tryout</a></li>
+<li><a onclick="loadPage('peserta-home')" class="nav-link active"><i class="fas fa-folder-open me-2"></i>Kategori Tryout</a></li>
 </ul>
 <div class="p-3 mt-auto border-top border-secondary position-absolute bottom-0 w-100">
 <div class="mb-3 text-white small"><i class="fas fa-user-circle me-1"></i> <span id="u-name-disp" class="fw-bold">User</span></div>
@@ -301,7 +298,7 @@ body.exam-mode { overflow: hidden; user-select: none; }
 <div class="container py-4">
 <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
 <h3 class="fw-bold text-primary"><i class="fas fa-poll me-2"></i>Hasil & Konfirmasi</h3>
-<button class="btn btn-outline-dark" onclick="$('#view-review').addClass('hidden'); loadPage('peserta-kelompok');"><i class="fas fa-arrow-left me-1"></i> Kembali ke Dashboard</button>
+<button class="btn btn-outline-dark" onclick="$('#view-review').addClass('hidden'); loadPage('peserta-home');"><i class="fas fa-arrow-left me-1"></i> Kembali ke Dashboard</button>
 </div>
 <div class="card shadow-sm border-0 mb-4 bg-primary text-white">
 <div class="card-body text-center">
@@ -416,7 +413,7 @@ body.exam-mode { overflow: hidden; user-select: none; }
 <script>
 // =========================================================================
 // PASTE URL WEB APP APPS SCRIPT ANDA DI SINI
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbyyIov1dtFxZZHkogmMjf0wNH9Bt8UgasVHuNmCnPEMJ_joIYCaImePbCmZkbM3Wek0cA/exec'; 
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwBFo77qGLHiW2tBg8i7W8jMM5wC5L-3PT8cIFHsGuSVd8LP_o0p5vwCVeJE9E9BiytWA/exec'; 
 // =========================================================================
 
 let examSubmitting = false; let user = null; let gData = {};
@@ -545,14 +542,14 @@ function initDash() {
   const role = String(user.Role || '').trim().toLowerCase();
   $('#user-role-disp').text(role.toUpperCase());
   $('.components').addClass('hidden');
-  if(role === 'peserta') { $('#menu-peserta').removeClass('hidden'); loadPage('peserta-kelompok'); }
+  if(role === 'peserta') { $('#menu-peserta').removeClass('hidden'); loadPage('peserta-home'); }
   else if(role === 'admin') { $('#menu-admin').removeClass('hidden'); loadPage('admin-home'); }
   else { Swal.fire('Akses Ditolak', 'Role akun Anda tidak dikenali.', 'error'); }
 }
 
 function appRefresh() {
   if(currentPageTrack) loadPage(currentPageTrack);
-  else { const role = String(user.Role || '').trim().toLowerCase(); loadPage(role === 'admin' ? 'admin-home' : 'peserta-kelompok'); }
+  else { const role = String(user.Role || '').trim().toLowerCase(); loadPage(role === 'admin' ? 'admin-home' : 'peserta-home'); }
 }
 
 function hasilUjianRedirection() { loadPage('hasil-rekap'); }
@@ -586,23 +583,6 @@ function loadPage(page) {
     showLoad(false);
     if (res.status === 'success') { gData = res.data; renderContent(page); applyMathJax(); } else { Swal.fire('Error', res.msg, 'error'); }
   });
-}
-
-function delExam(id){ 
-  Swal.fire({title:'Hapus Jadwal?', text:'Jadwal dan semua soal di dalamnya akan dihapus permanen.', icon:'warning', showCancelButton:true, confirmButtonColor: '#d33'}).then(r=>{
-    if(r.isConfirmed) {
-      showLoad(true);
-      gasAPI('delExam', {id: id}).then((res)=>{
-        showLoad(false);
-        if(res.status === 'success') {
-          Swal.fire('Terhapus!', res.msg, 'success');
-          loadPage('admin-ujian');
-        } else {
-          Swal.fire('Error', res.msg, 'error');
-        }
-      });
-    }
-  }); 
 }
 
 function duplicateExam(id, judul) {
@@ -651,10 +631,11 @@ function renderContent(page) {
     });
     h += '</div>';
   }
-  else if (page === 'peserta-kelompok') {
-    h = `<div class="card mb-4 border-0 shadow-sm bg-primary text-white" style="border-radius:12px;"><div class="card-body p-4"><h4 class="fw-bold">Selamat Datang, ${user.Nama}</h4><p class="mb-0 opacity-75">Pilih kategori Tryout di bawah ini untuk memulai latihan.</p></div></div>`;
-    h += `<h5 class="fw-bold mb-4 border-bottom pb-2 text-dark"><i class="fas fa-folder-open text-warning me-2"></i>Kategori Ujian Tersedia</h5><div class="row g-4" id="folder-container">`;
+  else if (page === 'peserta-home') {
+    h = `<div class="card mb-4 border-0 shadow-sm bg-primary text-white" style="border-radius:12px;"><div class="card-body p-4"><h4 class="fw-bold">Selamat Datang, ${user.Nama}</h4><p class="mb-0 opacity-75">Pilih kelompok ujian Tryout di bawah ini untuk memulai latihan.</p></div></div>`;
     
+    // --- DASHBOARD SISWA AWAL BERUPA FOLDER ---
+    h += `<h5 class="fw-bold mb-4 border-bottom pb-2 text-dark"><i class="fas fa-folder-open text-warning me-2"></i>Kategori Ujian Tersedia</h5><div class="row g-4" id="folder-container">`;
     let groups = {};
     if(gData.availableExams) {
         gData.availableExams.forEach(e => {
@@ -666,7 +647,7 @@ function renderContent(page) {
     
     let cats = Object.keys(groups);
     if(cats.length === 0) {
-        h += `<div class="col-12"><div class="alert alert-light border shadow-sm text-muted">Tidak ada kelompok ujian yang tersedia.</div></div>`;
+        h += `<div class="col-12"><div class="alert alert-light border shadow-sm text-muted">Tidak ada kelompok ujian yang tersedia saat ini.</div></div>`;
     } else {
         cats.forEach(cat => {
             let design = getCategoryDesign(cat);
@@ -675,15 +656,15 @@ function renderContent(page) {
                         <div class="card-body text-center p-4">
                             <i class="fas ${design.icon} fa-3x text-primary mb-3"></i>
                             <h5 class="fw-bold text-dark mb-2">${cat}</h5>
-                            <span class="badge bg-secondary px-3 rounded-pill">${groups[cat].length} Tryout Tersedia</span>
+                            <span class="badge bg-secondary px-3 rounded-pill">${groups[cat].length} Tryout</span>
                         </div>
                     </div>
                   </div>`;
         });
     }
     h += `</div><div id="isi-kelompok-container" class="mt-4 hidden"></div>`;
-    
-    // --- RIWAYAT NILAI FOLDER ---
+
+    // --- RIWAYAT FOLDER ---
     h += `<h5 class="fw-bold mb-3 border-bottom pb-2 mt-5"><i class="fas fa-history me-2 text-primary"></i> Riwayat Nilai & Evaluasi</h5>`;
     if(!gData.history || gData.history.length === 0) { 
         h += '<div class="alert alert-light border shadow-sm text-muted">Belum ada riwayat pengerjaan.</div>'; 
@@ -714,38 +695,41 @@ function renderContent(page) {
   area.html(h);
 }
 
-// Fungsi Render untuk isi folder Ujian (Kategori)
+// Fungsi Render untuk isi folder Ujian
 function renderIsiKelompok(cat) {
     $('#folder-container').addClass('hidden');
     let exams = gData.availableExams.filter(e => (e.TargetKelas || 'UMUM') === cat);
     
-    let h = `<button class="btn btn-sm btn-outline-secondary mb-3 shadow-sm rounded-pill px-3" onclick="$('#isi-kelompok-container').addClass('hidden').empty(); $('#folder-container').removeClass('hidden');"><i class="fas fa-arrow-left me-1"></i> Kembali ke Kategori</button>
+    let h = `<button class="btn btn-sm btn-outline-secondary mb-3 shadow-sm rounded-pill px-3" onclick="$('#isi-kelompok-container').addClass('hidden').empty(); $('#folder-container').removeClass('hidden');"><i class="fas fa-arrow-left me-1"></i> Kembali</button>
              <h5 class="fw-bold mb-4 text-dark">Tryout Kategori: <span class="text-primary">${cat}</span></h5><div class="row g-3 mb-4">`;
     
     if(exams.length === 0) {
         h += `<div class="col-12"><div class="alert alert-light border shadow-sm text-muted">Belum ada soal pada kategori ini.</div></div>`;
     } else {
         exams.forEach(e => {
-            let btnText = 'KERJAKAN', btnClass = 'cbt-btn';
-            if (e.IsFinished) { btnText = 'KERJAKAN ULANG'; btnClass = 'cbt-btn cbt-btn-retake'; }
+            let btnText = 'KERJAKAN', btnClass = 'btn-tryout-do';
+            if (e.IsFinished) { btnText = 'KERJAKAN ULANG'; btnClass = 'btn-tryout-retake'; }
+            let persentase = (e.TargetNilai > 0) ? Math.round((e.LastScore / e.TargetNilai) * 100) : 0;
             
-            let design = getCategoryDesign(e.TargetKelas);
-            
-            h += `<div class="col-12 col-xl-6">
-                    <div class="cbt-card">
-                        <div class="cbt-icon ${design.color}">
-                            <i class="fas ${design.icon}"></i>
+            h += `<div class="col-12 mb-3">
+                    <div class="tryout-card-modern">
+                        <div class="radial-progress-box">
+                            <div class="radial-progress" style="background: conic-gradient(#10b981 ${persentase}%, #e2e8f0 0deg);">
+                                <span class="prog-text">${persentase}%</span>
+                            </div>
+                            <div class="prog-label">Passing Grade</div>
                         </div>
-                        <div class="cbt-info">
-                            <div class="cbt-category">TRYOUT ${e.TargetKelas || 'UMUM'}</div>
-                            <div class="cbt-title">${e.Judul}</div>
-                            <div class="cbt-meta"><i class="fas fa-book me-1"></i> ${e.Formasi}</div>
-                            <div class="cbt-meta"><i class="fas fa-clock text-danger me-1"></i> ${e.Durasi} Menit</div>
+                        <div class="tryout-info-box">
+                            <div class="info-row"><i class="fas fa-file-alt"></i> Total Soal: <b>${e.TotalSoal} SOAL</b></div>
+                            <div class="info-row"><i class="fas fa-bullseye"></i> Nilai Target: <b>${e.TargetNilai}</b></div>
+                            <div class="info-row"><i class="fas fa-clock"></i> Waktu Pengerjaan: <b>${e.Durasi} MENIT</b></div>
                         </div>
-                        <div class="cbt-action">
-                            <button class="${btnClass}" onclick="promptToken('${e.ExamID}', '${e.Judul}', '${e.Token}')">
-                                ${btnText}
-                            </button>
+                        <div class="tryout-title-box">
+                            <h5 class="fw-bold mb-1 text-dark">${e.Formasi}</h5>
+                            <p class="text-muted small mb-0">${e.Judul}</p>
+                        </div>
+                        <div class="tryout-action-box">
+                            <button class="${btnClass}" onclick="promptToken('${e.ExamID}', '${e.Judul}', '${e.Token}')">${btnText}</button>
                         </div>
                     </div>
                   </div>`;
@@ -781,7 +765,7 @@ function renderIsiRiwayat(cat) {
 }
 
 function promptToken(eid, judul, trueToken) {
-  let msg = encodeURIComponent(`Halo Admin BELAJAR INOVASI,\nSaya telah melakukan pembayaran dan membutuhkan Akses Token untuk paket Tryout: *${judul}*.\nTerima kasih.`);
+  let msg = encodeURIComponent(`Halo Admin BELAJAR INOVASI,\nSaya membutuhkan Akses Token untuk paket Tryout: *${judul}*.\nTerima kasih.`);
   let waUrl = `https://wa.me/6285895283075?text=${msg}`;
   Swal.fire({
     title: 'Masukkan Token Ujian',
@@ -790,7 +774,7 @@ function promptToken(eid, judul, trueToken) {
     <input type="text" id="swal-token-input" class="form-control form-control-lg text-center fw-bold mb-4" placeholder="Ketik Token Disini" style="text-transform:uppercase;">
     <div class="bg-light p-3 rounded border text-start">
     <span class="small fw-bold">Belum punya token?</span><br>
-    <span class="small text-muted">Dapatkan token dengan menghubungi Admin via WhatsApp.</span>
+    <span class="small text-muted">Hubungi Admin untuk mendapatkan Token akses.</span>
     <a href="${waUrl}" target="_blank" class="btn btn-success w-100 mt-3 fw-bold"><i class="fab fa-whatsapp me-2"></i>Minta Token via WhatsApp Admin</a>
     </div>
     `,
@@ -821,16 +805,13 @@ function executeStartExam(eid, tokenInput) {
 }
 
 function kerjakanUlang(eid) {
-  // Langsung panggil tanpa memblokir limit
-  Swal.fire({ title: 'Kerjakan Ulang?', text: 'Skor Anda sebelumnya tetap tersimpan di riwayat. Yakin ingin mengulang tryout ini dari awal?', icon: 'question', showCancelButton: true, confirmButtonText: 'Ya, Retake', confirmButtonColor: '#10b981'
-  }).then((res) => {
-    if(res.isConfirmed) {
-      showLoad(true);
-      gasAPI('reqRetake', {eid: eid, userId: user.ID}).then(r => { showLoad(false); if(r.status === 'success') { Swal.fire('Sesi Direset', 'Sesi ujian berhasil dibuka kembali. Silakan klik Mulai Ujian kembali.', 'success').then(()=>loadPage('peserta-kelompok')); } });
-    }
-  });
+  showLoad(true);
+  gasAPI('reqRetake', {eid: eid, userId: user.ID}).then(r => { showLoad(false); if(r.status === 'success') { Swal.fire('Sesi Direset', 'Sesi ujian berhasil dibuka kembali. Silakan klik Mulai Tryout.', 'success').then(()=>loadPage('peserta-home')); } });
 }
 
+// -------------------------------------------------------------
+// FUNGSI RENDER PDF (PERBAIKAN WARNA CORET/HIJAU)
+// -------------------------------------------------------------
 function downloadPembahasan(eid, judul) {
   showLoad(true);
   gasAPI('getPembahasan', {eid: eid, userId: user.ID}).then(res => {
