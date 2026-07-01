@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Keuangan Keluarga</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8f9fa; }
+        .card { border: none; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        .nav-pills .nav-link.active { background-color: #0d6efd; border-radius: 12px; }
+        .nav-link { color: #6c757d; font-weight: 500; border-radius: 12px; }
+        .form-control, .form-select { border-radius: 10px; padding: 12px 15px; }
+        .btn-primary { border-radius: 10px; padding: 12px; font-weight: 600; }
+        .loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); z-index: 9999; justify-content: center; align-items: center; }
+    </style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loader">
+    <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Memproses...</span></div>
+</div>
+
+<div class="container py-4 max-w-100">
+    <h3 class="fw-bold mb-4">Aplikasi Budgeting 💰</h3>
+    
+    <ul class="nav nav-pills mb-4 gap-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="dashboard-tab" data-bs-toggle="pill" data-bs-target="#dashboard" type="button"><i class="bi bi-grid-fill me-2"></i>Dashboard</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="input-tab" data-bs-toggle="pill" data-bs-target="#input-transaksi" type="button"><i class="bi bi-pencil-square me-2"></i>Catat Transaksi</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="setting-tab" data-bs-toggle="pill" data-bs-target="#pengaturan" type="button"><i class="bi bi-gear-fill me-2"></i>Pengaturan</button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="myTabContent">
+        
+        <div class="tab-pane fade show active" id="dashboard" role="tabpanel">
+            <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                    <div class="card bg-primary text-white p-4 h-100">
+                        <p class="mb-1 opacity-75">Total Saldo</p>
+                        <h3 class="fw-bold" id="txtSaldo">Rp 0</h3>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-success text-white p-4 h-100">
+                        <p class="mb-1 opacity-75">Pemasukan (Bulan Ini)</p>
+                        <h4 class="fw-bold" id="txtMasuk">Rp 0</h4>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-danger text-white p-4 h-100">
+                        <p class="mb-1 opacity-75">Pengeluaran (Bulan Ini)</p>
+                        <h4 class="fw-bold" id="txtKeluar">Rp 0</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="card p-4">
+                <h5 class="fw-bold mb-4">Tren Pemasukan & Pengeluaran</h5>
+                <canvas id="chartKeuangan" height="100"></canvas>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="input-transaksi" role="tabpanel">
+            <div class="card p-4">
+                <h5 class="fw-bold mb-3">Catat Transaksi Baru</h5>
+                <form id="formTransaksi">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Jenis Transaksi</label>
+                            <select class="form-select" id="jenis" required onchange="updateKategoriDropdown()">
+                                <option value="">Pilih Jenis...</option>
+                                <option value="Pemasukan">Pemasukan</option>
+                                <option value="Pengeluaran">Pengeluaran</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Tanggal Transaksi</label>
+                            <input type="date" class="form-control" id="tglTransaksi" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Kategori / Tujuan</label>
+                            <select class="form-select" id="kategori" required>
+                                <option value="">Pilih Jenis Transaksi Dulu</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Rekening / Bentuk Pembayaran</label>
+                            <select class="form-select" id="rekening" required></select>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Nominal (Rp)</label>
+                            <input type="number" class="form-control" id="nominal" placeholder="Contoh: 150000" required>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Uraian / Keterangan</label>
+                            <textarea class="form-control" id="uraian" rows="2" placeholder="Tulis rincian di sini..."></textarea>
+                        </div>
+                        <div class="col-12 mt-4">
+                            <button type="submit" class="btn btn-primary w-100">Simpan Transaksi</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="pengaturan" role="tabpanel">
+            <div class="card p-4">
+                <h5 class="fw-bold mb-3">Tambah Master Data</h5>
+                <form id="formMaster">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Tipe Data</label>
+                            <select class="form-select" id="tipeMaster" required>
+                                <option value="Kategori_Pemasukan">Kategori Pemasukan</option>
+                                <option value="Kategori_Pengeluaran">Kategori Pengeluaran</option>
+                                <option value="Rekening">Rekening Pembayaran</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Nama Item Baru</label>
+                            <input type="text" class="form-control" id="namaItem" required>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-dark w-100">Tambahkan ke Database</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // GANTI DENGAN URL WEB APP APPS SCRIPT ANDA
+    const API_URL = 'https://script.google.com/macros/s/AKfycbwPRGePxagL1nXPu2Kd-S_sDkf8v9TumWgN1piSNMbjMpAnsYS_nsqieaPWGenPw3St/exec';
+    
+    let masterDataCache = {};
+    let chartInstance = null;
+
+    // Inisialisasi saat aplikasi dimuat
+    document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById('tglTransaksi').valueAsDate = new Date(); // Default hari ini
+        fetchDataMaster();
+        fetchDashboard();
+    });
+
+    function showLoader(show) {
+        document.getElementById('loader').style.display = show ? 'flex' : 'none';
+    }
+
+    // Ambil Data Master (Untuk Dropdown)
+    async function fetchDataMaster() {
+        try {
+            const response = await fetch(`${API_URL}?action=getMasterData`);
+            masterDataCache = await response.json();
+            
+            // Render dropdown rekening
+            const rekSelect = document.getElementById('rekening');
+            rekSelect.innerHTML = '<option value="">Pilih Rekening...</option>';
+            masterDataCache.Rekening.forEach(r => rekSelect.innerHTML += `<option value="${r}">${r}</option>`);
+        } catch (error) {
+            console.error("Gagal memuat master data", error);
+        }
+    }
+
+    // Ambil Data Dashboard
+    async function fetchDashboard() {
+        try {
+            const response = await fetch(`${API_URL}?action=getDashboardData`);
+            const data = await response.json();
+            
+            document.getElementById('txtSaldo').innerText = 'Rp ' + data.saldo.toLocaleString('id-ID');
+            document.getElementById('txtMasuk').innerText = 'Rp ' + data.totalPemasukan.toLocaleString('id-ID');
+            document.getElementById('txtKeluar').innerText = 'Rp ' + data.totalPengeluaran.toLocaleString('id-ID');
+            
+            renderChart(data.totalPemasukan, data.totalPengeluaran);
+        } catch (error) {
+            console.error("Gagal memuat dashboard", error);
+        }
+    }
+
+    // Render Grafik Dummy/Sederhana (Bisa dikembangkan jadi array harian)
+    function renderChart(masuk, keluar) {
+        const ctx = document.getElementById('chartKeuangan').getContext('2d');
+        if(chartInstance) chartInstance.destroy();
+        
+        chartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Bulan Ini'],
+                datasets: [
+                    { label: 'Pemasukan', data: [masuk], backgroundColor: '#198754', borderRadius: 6 },
+                    { label: 'Pengeluaran', data: [keluar], backgroundColor: '#dc3545', borderRadius: 6 }
+                ]
+            },
+            options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+        });
+    }
+
+    // Logika Dropdown Dinamis
+    function updateKategoriDropdown() {
+        const jenis = document.getElementById('jenis').value;
+        const katSelect = document.getElementById('kategori');
+        katSelect.innerHTML = '<option value="">Pilih Kategori...</option>';
+        
+        const kunci = jenis === 'Pemasukan' ? 'Kategori_Pemasukan' : (jenis === 'Pengeluaran' ? 'Kategori_Pengeluaran' : null);
+        
+        if (kunci && masterDataCache[kunci]) {
+            masterDataCache[kunci].forEach(k => katSelect.innerHTML += `<option value="${k}">${k}</option>`);
+        }
+    }
+
+    // Simpan Transaksi
+    document.getElementById('formTransaksi').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        showLoader(true);
+        
+        const payload = {
+            action: 'simpanTransaksi',
+            jenis: document.getElementById('jenis').value,
+            tglTransaksi: document.getElementById('tglTransaksi').value,
+            kategori: document.getElementById('kategori').value,
+            rekening: document.getElementById('rekening').value,
+            nominal: document.getElementById('nominal').value,
+            uraian: document.getElementById('uraian').value
+        };
+
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            });
+            const resData = await response.json();
+            
+            showLoader(false);
+            if (resData.status === 'success') {
+                Swal.fire({ title: 'Berhasil!', text: resData.message, icon: 'success', confirmButtonText: 'Lanjut' });
+                document.getElementById('formTransaksi').reset();
+                document.getElementById('tglTransaksi').valueAsDate = new Date();
+                fetchDashboard(); // Update dashboard
+            }
+        } catch (error) {
+            showLoader(false);
+            Swal.fire({ title: 'Oops...', text: 'Koneksi gagal atau terjadi kesalahan.', icon: 'error' });
+        }
+    });
+
+    // Simpan Master Data
+    document.getElementById('formMaster').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        showLoader(true);
+        
+        const payload = {
+            action: 'simpanMaster',
+            tipe: document.getElementById('tipeMaster').value,
+            namaItem: document.getElementById('namaItem').value
+        };
+
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            });
+            const resData = await response.json();
+            
+            showLoader(false);
+            if (resData.status === 'success') {
+                Swal.fire({ title: 'Sip!', text: resData.message, icon: 'success', confirmButtonText: 'Tutup' });
+                document.getElementById('namaItem').value = '';
+                fetchDataMaster(); // Refresh cache dropdown
+            }
+        } catch (error) {
+            showLoader(false);
+            Swal.fire({ title: 'Oops...', text: 'Gagal menambah master data.', icon: 'error' });
+        }
+    });
+</script>
+</body>
+</html>
