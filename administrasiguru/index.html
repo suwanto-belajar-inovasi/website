@@ -46,7 +46,6 @@
   <div class="row g-0 h-100">
    <div class="col-lg-5 col-12 bg-white shadow-lg z-3 d-flex flex-column justify-content-center px-4 py-5">
     <div class="w-100 mx-auto" style="max-width: 400px;">
-     
      <div id="form-login">
        <h2 class="fw-bold mb-2">Masuk</h2>
        <p class="text-muted mb-4">Selamat datang kembali di AgendaGuru.</p>
@@ -68,26 +67,14 @@
        <h2 class="fw-bold mb-2">Daftar Baru</h2>
        <p class="text-muted mb-4">Bergabunglah dan kelola kelas Anda.</p>
        <form onsubmit="handleAuth(event, 'register')">
-        <div class="mb-3">
-         <label class="form-label fw-bold small text-secondary">Nama Lengkap & Gelar</label>
-         <input type="text" class="form-control form-control-lg bg-light border-0" id="regName" required placeholder="Cth: Ahmad Guru, S.Pd.">
-        </div>
-        <div class="mb-3">
-         <label class="form-label fw-bold small text-secondary">Email</label>
-         <input type="email" class="form-control form-control-lg bg-light border-0" id="regEmail" required placeholder="Cth: guru@sekolah.id">
-        </div>
-        <div class="mb-4">
-         <label class="form-label fw-bold small text-secondary">Buat Password</label>
-         <input type="password" class="form-control form-control-lg bg-light border-0" id="regPass" required placeholder="Minimal 4 karakter">
-        </div>
+        <div class="mb-3"><label class="form-label fw-bold small text-secondary">Nama Lengkap & Gelar</label><input type="text" class="form-control form-control-lg bg-light border-0" id="regName" required></div>
+        <div class="mb-3"><label class="form-label fw-bold small text-secondary">Email</label><input type="email" class="form-control form-control-lg bg-light border-0" id="regEmail" required></div>
+        <div class="mb-4"><label class="form-label fw-bold small text-secondary">Password</label><input type="password" class="form-control form-control-lg bg-light border-0" id="regPass" required></div>
         <button type="submit" class="btn btn-blue w-100 btn-lg mb-3 shadow-sm rounded-3">Buat Akun</button>
         <p class="text-center text-muted small">Sudah punya akun? <a href="javascript:void(0)" class="text-orange fw-bold text-decoration-none" onclick="toggleAuthMode('login')">Masuk di sini</a></p>
        </form>
      </div>
-     
-     <div class="text-center mt-4">
-       <small class="text-muted">Aplikasi oleh <b style="color: var(--primary-orange);">Belajar Inovasi</b></small>
-     </div>
+     <div class="text-center mt-4"><small class="text-muted">Aplikasi oleh <b style="color: var(--primary-orange);">Belajar Inovasi</b></small></div>
     </div>
    </div>
    <div class="col-lg-7 d-none d-lg-flex flex-column justify-content-center align-items-center position-relative overflow-hidden" style="background: linear-gradient(135deg, var(--primary-blue), #00c3ff);">
@@ -164,7 +151,7 @@
       </div>
       <div class="table-responsive">
        <table class="table table-bordered table-hover">
-        <thead class="table-light"><tr><th width="5%">No</th><th>Nama Siswa</th><th>No WA Ortu</th><th width="15%">Aksi</th></tr></thead>
+        <thead class="table-light"><tr><th width="5%">No</th><th>Nama Siswa</th><th>No WA Ortu</th><th width="20%">Aksi</th></tr></thead>
         <tbody id="table-students-body"><tr><td colspan="4" class="text-center text-muted">Pilih kelas terlebih dahulu</td></tr></tbody>
        </table>
       </div>
@@ -172,8 +159,44 @@
     </div>
    </div>
 
-   <div id="view-absensi" class="view-section"><div class="card-custom p-4 text-center"><h5 class="fw-bold">Fitur Absensi</h5><p class="text-muted">Akses melalui menu manajemen data lanjutan.</p></div></div>
-   <div id="view-nilai" class="view-section"><div class="card-custom p-4 text-center"><h5 class="fw-bold">Fitur Penilaian</h5><p class="text-muted">Akses melalui menu manajemen data lanjutan.</p></div></div>
+   <div id="view-absensi" class="view-section">
+    <div class="card-custom">
+      <div class="card-header-custom"><h5 class="fw-bold mb-0">Input Data Absensi</h5></div>
+      <div class="card-body">
+        <div class="row mb-3">
+          <div class="col-md-4 mb-2"><label class="form-label fw-bold">Tanggal</label><input type="date" class="form-control" id="absensi-date" onchange="renderAbsensiForm()"></div>
+          <div class="col-md-5 mb-2"><label class="form-label fw-bold">Pilih Kelas</label><select class="form-select border-primary" id="absensi-kelas" onchange="renderAbsensiForm()"></select></div>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead class="table-light"><tr><th width="5%">No</th><th>Nama Siswa</th><th width="30%">Status Absensi</th></tr></thead>
+            <tbody id="table-absensi-body"><tr><td colspan="3" class="text-center text-muted">Silakan pilih tanggal dan kelas.</td></tr></tbody>
+          </table>
+        </div>
+        <button class="btn btn-primary fw-bold" onclick="saveAbsensi()"><i class="bi bi-save"></i> Simpan Absensi</button>
+      </div>
+    </div>
+   </div>
+
+   <div id="view-nilai" class="view-section">
+    <div class="card-custom">
+      <div class="card-header-custom"><h5 class="fw-bold mb-0">Input Data Nilai</h5></div>
+      <div class="card-body">
+        <div class="row mb-3">
+          <div class="col-md-3 mb-2"><label class="form-label fw-bold">Tanggal</label><input type="date" class="form-control" id="nilai-date" onchange="renderNilaiForm()"></div>
+          <div class="col-md-4 mb-2"><label class="form-label fw-bold">Pilih Kelas</label><select class="form-select border-primary" id="nilai-kelas" onchange="renderNilaiForm()"></select></div>
+          <div class="col-md-5 mb-2"><label class="form-label fw-bold">Mata Pelajaran</label><select class="form-select border-primary" id="nilai-mapel" onchange="renderNilaiForm()"></select></div>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead class="table-light"><tr><th width="5%">No</th><th>Nama Siswa</th><th width="20%">Nilai (0-100)</th><th>Catatan</th></tr></thead>
+            <tbody id="table-nilai-body"><tr><td colspan="4" class="text-center text-muted">Pilih tanggal, kelas, dan mata pelajaran.</td></tr></tbody>
+          </table>
+        </div>
+        <button class="btn btn-primary fw-bold" onclick="saveNilai()"><i class="bi bi-save"></i> Simpan Nilai</button>
+      </div>
+    </div>
+   </div>
 
    <div id="view-jurnal" class="view-section">
     <div class="card-custom mb-4">
@@ -223,9 +246,9 @@
   // -------------------------------------------------------------
   // KONFIGURASI API (GANTI DENGAN URL WEB APP DARI APPS SCRIPT)
   // -------------------------------------------------------------
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwzTqARo5wUI3BsBt5yKrs0qyogSMEbc2QJ8TCpHMCJgaEgTroZ9slBz_oxCiecmSAM/exec"; 
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby3DOwKuJPCJTFp3EtAjlRfu33puRyAmlW1iZ3bE6WSurnVBB5wv3VJY3aKOa-yMd8/exec"; 
   
-  let db = { config: {}, classes: [], students: [], journal: [], subjects: [], attendance: [], grades: [], schedule: [], koku: [] };
+  let db = { config: {}, classes: [], students: [], journal: [], subjects: [], attendance: [], grades: [] };
   let editingJurnalId = null;
 
   document.addEventListener('DOMContentLoaded', () => {
@@ -234,22 +257,20 @@
 
   function fetchData() {
     document.getElementById('loading-overlay').style.display = 'flex';
-    
     fetch(SCRIPT_URL + "?action=getData", { method: 'GET' })
       .then(res => res.json())
       .then(data => {
-        // Safe binding untuk meminimalisir error properti undefined
         if(data && typeof data === 'object') {
            db.config = data.config || {};
            db.classes = data.classes || [];
            db.students = data.students || [];
            db.journal = data.journal || [];
            db.subjects = data.subjects || [];
+           db.attendance = data.attendance || [];
+           db.grades = data.grades || [];
         }
 
         document.getElementById('loading-overlay').style.display = 'none';
-        
-        // Autentikasi
         if(localStorage.getItem('agenda_logged_in') === 'true' && db.config.registeredEmail) {
           showApp();
         } else if (db.config.registeredEmail) {
@@ -263,8 +284,7 @@
         }
       }).catch(err => {
         document.getElementById('loading-overlay').style.display = 'none';
-        console.error("Fetch Error:", err);
-        Swal.fire('Koneksi Error', 'Gagal terhubung dengan Spreadsheet. Pastikan URL Web App sudah benar dan berstatus Execute as Me, Access Anyone.', 'error');
+        Swal.fire('Koneksi Error', 'Gagal memuat data. Pastikan URL Web App benar.', 'error');
       });
   }
 
@@ -273,31 +293,21 @@
     indicator.style.display = 'inline-flex';
     
     fetch(SCRIPT_URL, {
-      method: 'POST',
-      redirect: "follow",
+      method: 'POST', redirect: "follow",
       body: JSON.stringify({ action: "saveData", data: JSON.stringify(db) }),
       headers: { "Content-Type": "text/plain;charset=utf-8" }
-    })
-    .then(res => res.json())
-    .then(res => {
+    }).then(res => res.json()).then(res => {
       indicator.style.display = 'none';
       updateDashboard();
-    })
-    .catch(e => {
-      console.error("Sync Error:", e);
+    }).catch(e => {
       indicator.innerHTML = '<i class="bi bi-x-circle-fill text-danger"></i> Gagal Simpan';
       setTimeout(() => indicator.style.display = 'none', 3000);
     });
   }
 
   function toggleAuthMode(mode) {
-    if(mode === 'register') {
-      document.getElementById('form-login').style.display = 'none';
-      document.getElementById('form-register').style.display = 'block';
-    } else {
-      document.getElementById('form-login').style.display = 'block';
-      document.getElementById('form-register').style.display = 'none';
-    }
+    document.getElementById('form-login').style.display = mode === 'register' ? 'none' : 'block';
+    document.getElementById('form-register').style.display = mode === 'register' ? 'block' : 'none';
   }
 
   function handleAuth(e, mode) {
@@ -306,19 +316,15 @@
       const email = document.getElementById('loginUser').value;
       const pass = document.getElementById('loginPass').value;
       if (email === db.config.registeredEmail && pass === db.config.registeredPassword) {
-        localStorage.setItem('agenda_logged_in', 'true');
-        showApp();
-      } else {
-        Swal.fire('Gagal', 'Email atau Password salah!', 'error');
-      }
-    } else if (mode === 'register') {
+        localStorage.setItem('agenda_logged_in', 'true'); showApp();
+      } else { Swal.fire('Gagal', 'Email atau Password salah!', 'error'); }
+    } else {
       db.config.userName = document.getElementById('regName').value;
       db.config.registeredEmail = document.getElementById('regEmail').value;
       db.config.registeredPassword = document.getElementById('regPass').value;
       db.config.userSchool = "Institusi Pendidikan";
-      syncData();
-      localStorage.setItem('agenda_logged_in', 'true');
-      Swal.fire({icon: 'success', title: 'Berhasil', text: 'Akun berhasil dibuat!', timer: 1500, showConfirmButton: false});
+      syncData(); localStorage.setItem('agenda_logged_in', 'true');
+      Swal.fire({icon: 'success', title: 'Berhasil', text: 'Akun dibuat!', timer: 1500, showConfirmButton: false});
       showApp();
     }
   }
@@ -328,9 +334,7 @@
     document.getElementById('app-view').style.display = 'block';
     document.getElementById('profile-name').innerText = db.config.userName || 'Admin Sistem';
     document.getElementById('profile-school').innerText = db.config.userSchool || 'Sekolah';
-    populateSelects();
-    switchView('beranda');
-    updateDashboard();
+    populateSelects(); switchView('beranda'); updateDashboard();
   }
 
   function toggleSidebar() { document.getElementById('sidebar-menu').classList.toggle('show'); }
@@ -347,32 +351,32 @@
     document.getElementById('topbar-title').innerText = titles[viewId];
     if(window.innerWidth < 992) document.getElementById('sidebar-menu').classList.remove('show');
     
-    if(viewId === 'jurnal') {
-      document.getElementById('jurnal-date').value = new Date().toISOString().split('T')[0];
-      renderJurnal();
-    } else if (viewId === 'kelas') {
-      renderStudentsTable();
-    }
+    let today = new Date().toISOString().split('T')[0];
+    if(viewId === 'jurnal') { document.getElementById('jurnal-date').value = today; renderJurnal(); }
+    if(viewId === 'absensi') { document.getElementById('absensi-date').value = today; renderAbsensiForm(); }
+    if(viewId === 'nilai') { document.getElementById('nilai-date').value = today; renderNilaiForm(); }
+    if(viewId === 'kelas') { renderStudentsTable(); }
   }
 
   function logout() {
     localStorage.removeItem('agenda_logged_in');
     document.getElementById('app-view').style.display = 'none';
     document.getElementById('login-view').style.display = 'block';
-    document.getElementById('loginUser').value = '';
-    document.getElementById('loginPass').value = '';
   }
 
   function populateSelects() {
-    let clsOpts = '<option value="">-- Pilih Kelas --</option><option value="All">Semua Kelas</option>';
+    let clsOpts = '<option value="">-- Pilih Kelas --</option>';
     db.classes.forEach(c => clsOpts += `<option value="${c.ClassID}">${c.ClassName}</option>`);
-    ['select-kelas-manajemen', 'jurnal-kelas', 'filter-jurnal-kelas'].forEach(id => {
+    ['select-kelas-manajemen', 'jurnal-kelas', 'filter-jurnal-kelas', 'absensi-kelas', 'nilai-kelas'].forEach(id => {
       if(document.getElementById(id)) document.getElementById(id).innerHTML = clsOpts;
     });
+    // Add "All" option to filter journals
+    if(document.getElementById('filter-jurnal-kelas')) document.getElementById('filter-jurnal-kelas').innerHTML = '<option value="">-- Pilih Kelas --</option><option value="All">Semua Kelas</option>' + clsOpts.replace('<option value="">-- Pilih Kelas --</option>', '');
 
     let mapelOpts = '<option value="">-- Pilih Mapel --</option>';
     db.subjects.forEach(m => mapelOpts += `<option value="${m}">${m}</option>`);
     if(document.getElementById('jurnal-mapel')) document.getElementById('jurnal-mapel').innerHTML = mapelOpts;
+    if(document.getElementById('nilai-mapel')) document.getElementById('nilai-mapel').innerHTML = mapelOpts;
   }
 
   function updateDashboard() {
@@ -381,39 +385,33 @@
     document.getElementById('stat-jurnal').innerText = db.journal.length;
   }
 
-  // --- MANAJEMEN KELAS & SISWA ---
+  // --- MANAJEMEN KELAS & SISWA & WA REPORT ---
   function addClass() {
-    Swal.fire({ title: 'Nama Kelas Baru', input: 'text', showCancelButton: true, confirmButtonText: 'Simpan' }).then(res => {
+    Swal.fire({ title: 'Nama Kelas Baru', input: 'text', showCancelButton: true }).then(res => {
       if(res.isConfirmed && res.value) {
         db.classes.push({ ClassID: "C" + Date.now(), ClassName: res.value });
         populateSelects(); syncData();
-        Swal.fire('Tersimpan', 'Kelas berhasil ditambahkan', 'success');
       }
     });
   }
 
   function addMapel() {
-    Swal.fire({ title: 'Nama Mapel Baru', input: 'text', showCancelButton: true, confirmButtonText: 'Simpan' }).then(res => {
+    Swal.fire({ title: 'Nama Mapel Baru', input: 'text', showCancelButton: true }).then(res => {
       if(res.isConfirmed && res.value) {
         db.subjects.push(res.value);
         populateSelects(); syncData();
-        Swal.fire('Tersimpan', 'Mapel berhasil ditambahkan', 'success');
       }
     });
   }
 
   function addStudent() {
     const cid = document.getElementById('select-kelas-manajemen').value;
-    if(!cid || cid === 'All') return Swal.fire('Perhatian', 'Pilih kelas spesifik terlebih dahulu di dropdown.', 'warning');
-    
+    if(!cid) return Swal.fire('Perhatian', 'Pilih kelas di dropdown.', 'warning');
     Swal.fire({
       title: 'Tambah Siswa',
       html: `<input type="text" id="swal-nama" class="form-control mb-2" placeholder="Nama Lengkap">
              <input type="text" id="swal-hp" class="form-control" placeholder="No WhatsApp Ortu (Cth: 0812...)">`,
-      showCancelButton: true, confirmButtonText: 'Simpan',
-      preConfirm: () => {
-        return [document.getElementById('swal-nama').value, document.getElementById('swal-hp').value];
-      }
+      showCancelButton: true, preConfirm: () => [document.getElementById('swal-nama').value, document.getElementById('swal-hp').value]
     }).then(res => {
       if(res.isConfirmed && res.value[0]) {
         db.students.push({ StudentID: "S" + Date.now(), ClassID: cid, StudentName: res.value[0], ParentPhone: res.value[1] });
@@ -423,68 +421,160 @@
   }
 
   function deleteStudent(id) {
-    Swal.fire({title: 'Hapus Siswa?', text: "Data tidak bisa dikembalikan!", icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'Hapus'}).then(result => {
-      if (result.isConfirmed) {
-        db.students = db.students.filter(s => s.StudentID !== id);
-        renderStudentsTable(); syncData();
-      }
+    Swal.fire({title: 'Hapus Siswa?', text: "Data hilang permanen!", icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'Hapus'}).then(res => {
+      if (res.isConfirmed) { db.students = db.students.filter(s => s.StudentID !== id); renderStudentsTable(); syncData(); }
     });
   }
 
   function renderStudentsTable() {
     const cid = document.getElementById('select-kelas-manajemen').value;
     const tbody = document.getElementById('table-students-body');
-    if(!cid || cid === 'All') { tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">Pilih kelas spesifik</td></tr>'; return; }
+    if(!cid) { tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">Pilih kelas spesifik</td></tr>'; return; }
     
     const stds = db.students.filter(s => String(s.ClassID) === String(cid));
     if(stds.length === 0) { tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">Belum ada siswa di kelas ini</td></tr>'; return; }
     
     let html = '';
     stds.forEach((s, i) => {
-      html += `<tr>
-      <td class="text-center align-middle">${i+1}</td>
+      html += `<tr><td class="text-center align-middle">${i+1}</td>
       <td class="align-middle fw-bold">${s.StudentName}</td>
       <td class="align-middle">${s.ParentPhone || '-'}</td>
       <td class="text-center align-middle">
-        <button class="btn btn-sm btn-outline-success me-1" onclick="copyWAReport('${s.StudentName}')" title="Salin Laporan"><i class="bi bi-clipboard"></i></button>
+        <button class="btn btn-sm btn-success me-1" onclick="sendWAReport('${s.StudentName}', '${s.ParentPhone}')" title="Kirim Laporan WA"><i class="bi bi-whatsapp"></i> WA</button>
         <button class="btn btn-sm btn-danger" onclick="deleteStudent('${s.StudentID}')" title="Hapus"><i class="bi bi-trash"></i></button>
-      </td>
-      </tr>`;
+      </td></tr>`;
     });
     tbody.innerHTML = html;
   }
 
-  function copyWAReport(studentName) {
+  // UPDATE: Kirim WA Langsung
+  function sendWAReport(studentName, parentPhone) {
+    if(!parentPhone || parentPhone.trim() === '') {
+        Swal.fire('Error', 'Nomor WA orang tua belum diisi pada data siswa!', 'error'); return;
+    }
+    let phone = parentPhone.replace(/\D/g, ''); // Bersihkan format
+    if(phone.startsWith('0')) phone = '62' + phone.substring(1);
+    
     let text = `Halo Bapak/Ibu Wali Murid dari *${studentName}*,\n\nBerikut adalah laporan progres kegiatan belajar dan administrasi ananda pada minggu ini.\n\nMohon bantuannya untuk terus mendampingi ananda belajar di rumah.\n\nTerima Kasih,\n*Belajar Inovasi*`;
-    navigator.clipboard.writeText(text).then(() => {
-        Swal.fire({icon: 'success', title: 'Tersalin!', text: 'Teks laporan telah disalin ke clipboard.', timer: 2000, showConfirmButton: false});
-    }).catch(err => {
-        Swal.fire('Error', 'Browser tidak mendukung fungsi salin teks otomatis.', 'error');
-    });
+    let waUrl = `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
+    window.open(waUrl, '_blank');
   }
 
-  // --- JURNAL HARIAN (CRUD) ---
+  // --- ABSENSI ---
+  function renderAbsensiForm() {
+    const cid = document.getElementById('absensi-kelas').value;
+    const tgl = document.getElementById('absensi-date').value;
+    const tbody = document.getElementById('table-absensi-body');
+    
+    if(!cid || !tgl) { tbody.innerHTML = '<tr><td colspan="3" class="text-center text-muted">Pilih tanggal dan kelas.</td></tr>'; return; }
+    
+    const stds = db.students.filter(s => String(s.ClassID) === String(cid));
+    if(stds.length === 0) { tbody.innerHTML = '<tr><td colspan="3" class="text-center text-muted">Tidak ada siswa.</td></tr>'; return; }
+    
+    let html = '';
+    stds.forEach((s, i) => {
+      let existing = db.attendance.find(a => a.Date === tgl && String(a.ClassID) === String(cid) && a.StudentID === s.StudentID);
+      let status = existing ? existing.Status : 'Hadir';
+      
+      html += `<tr><td class="text-center align-middle">${i+1}</td>
+      <td class="align-middle fw-bold">${s.StudentName}</td>
+      <td>
+        <select class="form-select status-absen" data-studentid="${s.StudentID}">
+          <option value="Hadir" ${status==='Hadir'?'selected':''}>Hadir</option>
+          <option value="Sakit" ${status==='Sakit'?'selected':''}>Sakit</option>
+          <option value="Izin" ${status==='Izin'?'selected':''}>Izin</option>
+          <option value="Alpa" ${status==='Alpa'?'selected':''}>Alpa</option>
+        </select>
+      </td></tr>`;
+    });
+    tbody.innerHTML = html;
+  }
+
+  function saveAbsensi() {
+    const cid = document.getElementById('absensi-kelas').value;
+    const tgl = document.getElementById('absensi-date').value;
+    if(!cid || !tgl) return Swal.fire('Peringatan', 'Lengkapi tanggal dan kelas', 'warning');
+    
+    const selects = document.querySelectorAll('.status-absen');
+    selects.forEach(sel => {
+        const sid = sel.getAttribute('data-studentid');
+        const stat = sel.value;
+        let idx = db.attendance.findIndex(a => a.Date === tgl && String(a.ClassID) === String(cid) && a.StudentID === sid);
+        if(idx > -1) { db.attendance[idx].Status = stat; } 
+        else { db.attendance.push({RecordID: "A" + Date.now() + sid, Date: tgl, ClassID: cid, StudentID: sid, Status: stat}); }
+    });
+    syncData();
+    Swal.fire({icon: 'success', title: 'Berhasil', text: 'Data Absensi Tersimpan', timer: 1500});
+  }
+
+  // --- NILAI ---
+  function renderNilaiForm() {
+    const cid = document.getElementById('nilai-kelas').value;
+    const tgl = document.getElementById('nilai-date').value;
+    const mpl = document.getElementById('nilai-mapel').value;
+    const tbody = document.getElementById('table-nilai-body');
+    
+    if(!cid || !tgl || !mpl) { tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">Pilih form secara lengkap.</td></tr>'; return; }
+    
+    const stds = db.students.filter(s => String(s.ClassID) === String(cid));
+    if(stds.length === 0) { tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">Tidak ada siswa.</td></tr>'; return; }
+    
+    let html = '';
+    stds.forEach((s, i) => {
+      let ex = db.grades.find(g => g.Date === tgl && String(g.ClassID) === String(cid) && g.Subject === mpl && g.StudentID === s.StudentID);
+      let score = ex ? ex.Score : '';
+      let notes = ex ? ex.Notes : '';
+      
+      html += `<tr><td class="text-center align-middle">${i+1}</td>
+      <td class="align-middle fw-bold">${s.StudentName}</td>
+      <td><input type="number" class="form-control val-score" data-studentid="${s.StudentID}" value="${score}" placeholder="0-100"></td>
+      <td><input type="text" class="form-control val-notes" data-studentid="${s.StudentID}" value="${notes}" placeholder="Opsional"></td></tr>`;
+    });
+    tbody.innerHTML = html;
+  }
+
+  function saveNilai() {
+    const cid = document.getElementById('nilai-kelas').value;
+    const tgl = document.getElementById('nilai-date').value;
+    const mpl = document.getElementById('nilai-mapel').value;
+    if(!cid || !tgl || !mpl) return Swal.fire('Peringatan', 'Lengkapi form input nilai.', 'warning');
+    
+    const scoreInputs = document.querySelectorAll('.val-score');
+    const noteInputs = document.querySelectorAll('.val-notes');
+    
+    for(let i=0; i<scoreInputs.length; i++) {
+        const sid = scoreInputs[i].getAttribute('data-studentid');
+        const sc = scoreInputs[i].value;
+        const nt = noteInputs[i].value;
+        
+        let idx = db.grades.findIndex(g => g.Date === tgl && String(g.ClassID) === String(cid) && g.Subject === mpl && g.StudentID === sid);
+        if(idx > -1) { 
+            db.grades[idx].Score = sc; 
+            db.grades[idx].Notes = nt; 
+        } else if(sc !== "") { 
+            db.grades.push({RecordID: "G" + Date.now() + sid, Date: tgl, ClassID: cid, Subject: mpl, StudentID: sid, Score: sc, Notes: nt}); 
+        }
+    }
+    syncData();
+    Swal.fire({icon: 'success', title: 'Berhasil', text: 'Data Nilai Tersimpan', timer: 1500});
+  }
+
+  // --- JURNAL ---
   function renderJurnal() {
     const cFilter = document.getElementById('filter-jurnal-kelas').value;
     const tbody = document.getElementById('jurnal-tbody');
     if (!cFilter) { tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">Pilih kelas dahulu di filter atas</td></tr>'; return; }
     
-    let filtered = db.journal.filter(j => String(j.ClassID) === String(cFilter) || j.ClassID === 'All');
+    let filtered = db.journal.filter(j => String(j.ClassID) === String(cFilter) || j.ClassID === 'All' || cFilter === 'All');
     if (filtered.length === 0) { tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">Belum ada jurnal untuk kelas ini</td></tr>'; return; }
     
     let html = '';
     filtered.forEach(j => {
       let className = j.ClassID === 'All' ? 'Semua Kelas' : (db.classes.find(c => String(c.ClassID) === String(j.ClassID))?.ClassName || j.ClassID);
-      html += `<tr>
-        <td class="fw-bold">${j.Date}</td>
-        <td><span class="badge bg-info text-dark">${className}</span></td>
-        <td class="fw-semibold text-primary">${j.Subject}</td>
-        <td><small>${j.Content}</small></td>
-        <td class="text-center">
-          <button class="btn btn-sm btn-warning text-white me-1 mb-1" onclick="editJurnal('${j.RecordID}')" title="Edit"><i class="bi bi-pencil-square"></i></button>
-          <button class="btn btn-sm btn-danger mb-1" onclick="deleteJurnal('${j.RecordID}')" title="Hapus"><i class="bi bi-trash"></i></button>
-        </td>
-      </tr>`;
+      html += `<tr><td class="fw-bold">${j.Date}</td><td><span class="badge bg-info text-dark">${className}</span></td>
+        <td class="fw-semibold text-primary">${j.Subject}</td><td><small>${j.Content}</small></td>
+        <td class="text-center"><button class="btn btn-sm btn-warning text-white me-1 mb-1" onclick="editJurnal('${j.RecordID}')"><i class="bi bi-pencil-square"></i></button>
+        <button class="btn btn-sm btn-danger mb-1" onclick="deleteJurnal('${j.RecordID}')"><i class="bi bi-trash"></i></button></td></tr>`;
     });
     tbody.innerHTML = html;
   }
@@ -495,38 +585,26 @@
     const m = document.getElementById('jurnal-mapel').value;
     const c = document.getElementById('jurnal-content').value;
     
-    if(!d || !k || !m || !c) return Swal.fire('Peringatan', 'Harap isi semua kolom jurnal secara lengkap.', 'warning');
-
+    if(!d || !k || !m || !c) return Swal.fire('Peringatan', 'Isi semua kolom jurnal.', 'warning');
     if (editingJurnalId) {
       let idx = db.journal.findIndex(j => j.RecordID === editingJurnalId);
-      if (idx > -1) {
-        db.journal[idx].Date = d;
-        db.journal[idx].ClassID = k;
-        db.journal[idx].Subject = m;
-        db.journal[idx].Content = c;
-      }
-    } else {
-      db.journal.push({ RecordID: "J" + Date.now(), Date: d, ClassID: k, Subject: m, Content: c, AttachmentUrl: "" });
-    }
+      if (idx > -1) { db.journal[idx].Date = d; db.journal[idx].ClassID = k; db.journal[idx].Subject = m; db.journal[idx].Content = c; }
+    } else { db.journal.push({ RecordID: "J" + Date.now(), Date: d, ClassID: k, Subject: m, Content: c, AttachmentUrl: "" }); }
     
     document.getElementById('filter-jurnal-kelas').value = k;
-    resetJurnalForm();
-    renderJurnal();
-    syncData();
-    Swal.fire({icon: 'success', title: 'Berhasil', text: 'Jurnal harian tersimpan', timer: 1500, showConfirmButton: false});
+    resetJurnalForm(); renderJurnal(); syncData();
+    Swal.fire({icon: 'success', title: 'Berhasil', text: 'Jurnal tersimpan', timer: 1500, showConfirmButton: false});
   }
 
   function editJurnal(id) {
     const j = db.journal.find(x => x.RecordID === id);
     if (!j) return;
-    
     editingJurnalId = id;
     document.getElementById('jurnal-form-title').innerText = "Edit Jurnal Harian";
     document.getElementById('jurnal-date').value = j.Date;
     document.getElementById('jurnal-kelas').value = j.ClassID;
     document.getElementById('jurnal-mapel').value = j.Subject;
     document.getElementById('jurnal-content').value = j.Content;
-    
     document.getElementById('btn-save-jurnal').innerHTML = "<i class='bi bi-check2-circle'></i> Update";
     document.getElementById('btn-cancel-jurnal').classList.remove('d-none');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -539,17 +617,13 @@
     document.getElementById('jurnal-kelas').value = '';
     document.getElementById('jurnal-mapel').value = '';
     document.getElementById('jurnal-content').value = '';
-    
     document.getElementById('btn-save-jurnal').innerText = "Simpan";
     document.getElementById('btn-cancel-jurnal').classList.add('d-none');
   }
 
   function deleteJurnal(id) {
-    Swal.fire({title: 'Hapus Jurnal?', text: "Data ini tidak bisa dikembalikan!", icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'Hapus'}).then((result) => {
-      if (result.isConfirmed) {
-        db.journal = db.journal.filter(j => j.RecordID !== id);
-        renderJurnal(); syncData();
-      }
+    Swal.fire({title: 'Hapus Jurnal?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'Hapus'}).then((res) => {
+      if (res.isConfirmed) { db.journal = db.journal.filter(j => j.RecordID !== id); renderJurnal(); syncData(); }
     });
   }
  </script>
