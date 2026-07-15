@@ -9,6 +9,7 @@
  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+ <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
  
  <style>
  :root { --primary-blue: #007BFF; --primary-orange: #FF7F00; --bg-color: #f4f7f6; --sidebar-width: 260px; --font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -37,9 +38,9 @@
  </style>
 </head>
 <body>
- <div id="loading-overlay">
+ <div id="loading-overlay" style="display: none;">
   <div class="spinner-border spinner-custom mb-3" role="status"></div>
-  <h4 style="color: var(--primary-blue); font-weight: bold;">Memuat Sistem...</h4>
+  <h4 style="color: var(--primary-blue); font-weight: bold;">Memproses...</h4>
  </div>
 
  <div id="login-view" class="container-fluid p-0 vh-100">
@@ -50,14 +51,8 @@
        <h2 class="fw-bold mb-2">Masuk</h2>
        <p class="text-muted mb-4">Selamat datang kembali di AgendaGuru.</p>
        <form onsubmit="handleAuth(event, 'login')">
-        <div class="mb-3">
-         <label class="form-label fw-bold small text-secondary">Email Terdaftar</label>
-         <input type="email" class="form-control form-control-lg bg-light border-0" id="loginUser" required placeholder="Masukkan Email Anda">
-        </div>
-        <div class="mb-4">
-         <label class="form-label fw-bold small text-secondary">Password</label>
-         <input type="password" class="form-control form-control-lg bg-light border-0" id="loginPass" required placeholder="Masukkan Password">
-        </div>
+        <div class="mb-3"><label class="form-label fw-bold small text-secondary">Email Terdaftar</label><input type="email" class="form-control form-control-lg bg-light border-0" id="loginUser" required></div>
+        <div class="mb-4"><label class="form-label fw-bold small text-secondary">Password</label><input type="password" class="form-control form-control-lg bg-light border-0" id="loginPass" required></div>
         <button type="submit" class="btn btn-orange w-100 btn-lg mb-3 shadow-sm rounded-3">Masuk Sekarang</button>
         <p class="text-center text-muted small">Belum punya akun? <a href="javascript:void(0)" class="text-primary fw-bold text-decoration-none" onclick="toggleAuthMode('register')">Daftar di sini</a></p>
        </form>
@@ -65,9 +60,10 @@
      
      <div id="form-register" style="display:none;">
        <h2 class="fw-bold mb-2">Daftar Baru</h2>
-       <p class="text-muted mb-4">Bergabunglah dan kelola kelas Anda.</p>
+       <p class="text-muted mb-4">Bergabunglah dan kelola kelas Anda dengan privasi aman.</p>
        <form onsubmit="handleAuth(event, 'register')">
         <div class="mb-3"><label class="form-label fw-bold small text-secondary">Nama Lengkap & Gelar</label><input type="text" class="form-control form-control-lg bg-light border-0" id="regName" required></div>
+        <div class="mb-3"><label class="form-label fw-bold small text-secondary">Nama Sekolah</label><input type="text" class="form-control form-control-lg bg-light border-0" id="regSchool" required></div>
         <div class="mb-3"><label class="form-label fw-bold small text-secondary">Email</label><input type="email" class="form-control form-control-lg bg-light border-0" id="regEmail" required></div>
         <div class="mb-4"><label class="form-label fw-bold small text-secondary">Password</label><input type="password" class="form-control form-control-lg bg-light border-0" id="regPass" required></div>
         <button type="submit" class="btn btn-blue w-100 btn-lg mb-3 shadow-sm rounded-3">Buat Akun</button>
@@ -101,9 +97,6 @@
     <li class="nav-item"><a class="nav-link" onclick="switchView('jurnal')"><i class="bi bi-journal-text"></i> Jurnal Harian</a></li>
     <li class="nav-item mt-5"><a class="nav-link text-danger" onclick="logout()"><i class="bi bi-box-arrow-left"></i> Keluar Akun</a></li>
    </ul>
-   <div class="text-center mt-5 pt-3 mb-2 px-3" style="border-top: 1px solid rgba(255,255,255,0.1);">
-    <small style="color: rgba(255,255,255,0.7); font-size: 0.7rem;">Dikembangkan oleh<br><span style="color: var(--primary-orange); font-weight: bold; font-size: 0.8rem;">Belajar Inovasi</span></small>
-   </div>
   </div>
 
   <div class="main-content">
@@ -124,7 +117,7 @@
 
    <div id="view-beranda" class="view-section active">
     <div class="card-custom text-white p-4 d-flex justify-content-between align-items-center" style="background: linear-gradient(45deg, var(--primary-blue), #4db8ff);">
-     <div><h2 class="fw-bold fs-3">Selamat Datang!</h2><p class="mb-0 opacity-75 small">Kelola absensi, nilai, jurnal, dan laporan kelas dengan mudah.</p></div>
+     <div><h2 class="fw-bold fs-3">Selamat Datang!</h2><p class="mb-0 opacity-75 small">Kelola absensi, nilai, jurnal, dan laporan kelas secara mandiri & privat.</p></div>
     </div>
     <div class="row">
      <div class="col-md-4 mb-3"><div class="card-custom p-3 text-center"><h3 class="fw-bold text-primary" id="stat-siswa">0</h3><p class="mb-0">Siswa Aktif</p></div></div>
@@ -140,6 +133,7 @@
       <div>
         <button class="btn btn-sm btn-outline-primary" onclick="addClass()"><i class="bi bi-plus"></i> Kelas</button>
         <button class="btn btn-sm btn-success" onclick="addStudent()"><i class="bi bi-person-plus"></i> Siswa</button>
+        <button class="btn btn-sm btn-info text-white" onclick="exportExcel('siswa')"><i class="bi bi-file-earmark-excel"></i> Excel</button>
       </div>
      </div>
      <div class="card-body">
@@ -161,7 +155,10 @@
 
    <div id="view-absensi" class="view-section">
     <div class="card-custom">
-      <div class="card-header-custom"><h5 class="fw-bold mb-0">Input Data Absensi</h5></div>
+      <div class="card-header-custom">
+        <h5 class="fw-bold mb-0">Input Data Absensi</h5>
+        <button class="btn btn-sm btn-info text-white" onclick="exportExcel('absensi')"><i class="bi bi-file-earmark-excel"></i> Rekap Excel</button>
+      </div>
       <div class="card-body">
         <div class="row mb-3">
           <div class="col-md-4 mb-2"><label class="form-label fw-bold">Tanggal</label><input type="date" class="form-control" id="absensi-date" onchange="renderAbsensiForm()"></div>
@@ -180,7 +177,10 @@
 
    <div id="view-nilai" class="view-section">
     <div class="card-custom">
-      <div class="card-header-custom"><h5 class="fw-bold mb-0">Input Data Nilai</h5></div>
+      <div class="card-header-custom">
+        <h5 class="fw-bold mb-0">Input Data Nilai</h5>
+        <button class="btn btn-sm btn-info text-white" onclick="exportExcel('nilai')"><i class="bi bi-file-earmark-excel"></i> Rekap Excel</button>
+      </div>
       <div class="card-body">
         <div class="row mb-3">
           <div class="col-md-3 mb-2"><label class="form-label fw-bold">Tanggal</label><input type="date" class="form-control" id="nilai-date" onchange="renderNilaiForm()"></div>
@@ -224,7 +224,10 @@
     </div>
 
     <div class="card-custom">
-     <div class="card-header-custom"><h5 class="fw-bold mb-0">Daftar Jurnal Harian</h5></div>
+     <div class="card-header-custom">
+        <h5 class="fw-bold mb-0">Daftar Jurnal Harian</h5>
+        <button class="btn btn-sm btn-info text-white" onclick="exportExcel('jurnal')"><i class="bi bi-file-earmark-excel"></i> Rekap Excel</button>
+     </div>
      <div class="card-body">
       <div class="row mb-3">
         <div class="col-md-4"><label class="form-label fw-bold text-primary">Pilih Kelas:</label><select class="form-select border-primary" id="filter-jurnal-kelas" onchange="renderJurnal()"></select></div>
@@ -246,45 +249,79 @@
   // -------------------------------------------------------------
   // KONFIGURASI API (GANTI DENGAN URL WEB APP DARI APPS SCRIPT)
   // -------------------------------------------------------------
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby3DOwKuJPCJTFp3EtAjlRfu33puRyAmlW1iZ3bE6WSurnVBB5wv3VJY3aKOa-yMd8/exec"; 
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzee5TCE5TcWt8H6Cg8cEybuqt9OoFrq2VjpuPicjtNmEDKbuRBdAqcYB1W3NNBMgs_/exec"; 
   
-  let db = { config: {}, classes: [], students: [], journal: [], subjects: [], attendance: [], grades: [] };
+  let currentUser = { email: "", name: "", school: "" };
+  let db = { classes: [], students: [], journal: [], subjects: [], attendance: [], grades: [] };
   let editingJurnalId = null;
 
   document.addEventListener('DOMContentLoaded', () => {
-    fetchData();
+    let savedEmail = localStorage.getItem('agenda_email');
+    let savedPass = localStorage.getItem('agenda_pass');
+    
+    if (savedEmail && savedPass) {
+        document.getElementById('loginUser').value = savedEmail;
+        document.getElementById('loginPass').value = savedPass;
+        doAuthRequest('login', savedEmail, savedPass);
+    } else {
+        document.getElementById('login-view').style.display = 'block';
+    }
   });
 
-  function fetchData() {
-    document.getElementById('loading-overlay').style.display = 'flex';
-    fetch(SCRIPT_URL + "?action=getData", { method: 'GET' })
-      .then(res => res.json())
-      .then(data => {
-        if(data && typeof data === 'object') {
-           db.config = data.config || {};
-           db.classes = data.classes || [];
-           db.students = data.students || [];
-           db.journal = data.journal || [];
-           db.subjects = data.subjects || [];
-           db.attendance = data.attendance || [];
-           db.grades = data.grades || [];
-        }
+  function toggleAuthMode(mode) {
+    document.getElementById('form-login').style.display = mode === 'register' ? 'none' : 'block';
+    document.getElementById('form-register').style.display = mode === 'register' ? 'block' : 'none';
+  }
 
-        document.getElementById('loading-overlay').style.display = 'none';
-        if(localStorage.getItem('agenda_logged_in') === 'true' && db.config.registeredEmail) {
-          showApp();
-        } else if (db.config.registeredEmail) {
-          document.getElementById('login-view').style.display = 'block';
-          document.getElementById('form-login').style.display = 'block';
-          document.getElementById('form-register').style.display = 'none';
-        } else {
-          document.getElementById('login-view').style.display = 'block';
-          document.getElementById('form-login').style.display = 'none';
-          document.getElementById('form-register').style.display = 'block';
-        }
+  function handleAuth(e, mode) {
+    e.preventDefault();
+    let payload = { action: mode };
+    
+    if (mode === 'login') {
+      payload.email = document.getElementById('loginUser').value;
+      payload.password = document.getElementById('loginPass').value;
+    } else {
+      payload.name = document.getElementById('regName').value;
+      payload.school = document.getElementById('regSchool').value;
+      payload.email = document.getElementById('regEmail').value;
+      payload.password = document.getElementById('regPass').value;
+    }
+    
+    doAuthRequest(mode, payload.email, payload.password, payload);
+  }
+
+  function doAuthRequest(mode, email, pass, payloadObj = null) {
+      document.getElementById('loading-overlay').style.display = 'flex';
+      
+      let payload = payloadObj || { action: mode, email: email, password: pass };
+      
+      fetch(SCRIPT_URL, {
+          method: 'POST', redirect: "follow",
+          body: JSON.stringify(payload),
+          headers: { "Content-Type": "text/plain;charset=utf-8" }
+      }).then(res => res.json()).then(res => {
+          document.getElementById('loading-overlay').style.display = 'none';
+          if (res.success) {
+              if (mode === 'login') {
+                  currentUser = res.user;
+                  db = res.data;
+                  localStorage.setItem('agenda_email', email);
+                  localStorage.setItem('agenda_pass', pass);
+                  showApp();
+              } else {
+                  Swal.fire({icon: 'success', title: 'Berhasil', text: 'Akun berhasil dibuat. Silakan login.', timer: 2000});
+                  toggleAuthMode('login');
+                  document.getElementById('loginUser').value = email;
+                  document.getElementById('loginPass').value = pass;
+              }
+          } else {
+              Swal.fire('Gagal', res.message, 'error');
+              document.getElementById('login-view').style.display = 'block';
+          }
       }).catch(err => {
-        document.getElementById('loading-overlay').style.display = 'none';
-        Swal.fire('Koneksi Error', 'Gagal memuat data. Pastikan URL Web App benar.', 'error');
+          document.getElementById('loading-overlay').style.display = 'none';
+          Swal.fire('Error', 'Gagal terhubung dengan server.', 'error');
+          document.getElementById('login-view').style.display = 'block';
       });
   }
 
@@ -292,9 +329,11 @@
     const indicator = document.getElementById('sync-indicator');
     indicator.style.display = 'inline-flex';
     
+    let payload = { action: "saveData", email: currentUser.email, data: JSON.stringify(db) };
+    
     fetch(SCRIPT_URL, {
       method: 'POST', redirect: "follow",
-      body: JSON.stringify({ action: "saveData", data: JSON.stringify(db) }),
+      body: JSON.stringify(payload),
       headers: { "Content-Type": "text/plain;charset=utf-8" }
     }).then(res => res.json()).then(res => {
       indicator.style.display = 'none';
@@ -305,35 +344,11 @@
     });
   }
 
-  function toggleAuthMode(mode) {
-    document.getElementById('form-login').style.display = mode === 'register' ? 'none' : 'block';
-    document.getElementById('form-register').style.display = mode === 'register' ? 'block' : 'none';
-  }
-
-  function handleAuth(e, mode) {
-    e.preventDefault();
-    if (mode === 'login') {
-      const email = document.getElementById('loginUser').value;
-      const pass = document.getElementById('loginPass').value;
-      if (email === db.config.registeredEmail && pass === db.config.registeredPassword) {
-        localStorage.setItem('agenda_logged_in', 'true'); showApp();
-      } else { Swal.fire('Gagal', 'Email atau Password salah!', 'error'); }
-    } else {
-      db.config.userName = document.getElementById('regName').value;
-      db.config.registeredEmail = document.getElementById('regEmail').value;
-      db.config.registeredPassword = document.getElementById('regPass').value;
-      db.config.userSchool = "Institusi Pendidikan";
-      syncData(); localStorage.setItem('agenda_logged_in', 'true');
-      Swal.fire({icon: 'success', title: 'Berhasil', text: 'Akun dibuat!', timer: 1500, showConfirmButton: false});
-      showApp();
-    }
-  }
-
   function showApp() {
     document.getElementById('login-view').style.display = 'none';
     document.getElementById('app-view').style.display = 'block';
-    document.getElementById('profile-name').innerText = db.config.userName || 'Admin Sistem';
-    document.getElementById('profile-school').innerText = db.config.userSchool || 'Sekolah';
+    document.getElementById('profile-name').innerText = currentUser.name;
+    document.getElementById('profile-school').innerText = currentUser.school;
     populateSelects(); switchView('beranda'); updateDashboard();
   }
 
@@ -359,9 +374,9 @@
   }
 
   function logout() {
-    localStorage.removeItem('agenda_logged_in');
-    document.getElementById('app-view').style.display = 'none';
-    document.getElementById('login-view').style.display = 'block';
+    localStorage.removeItem('agenda_email');
+    localStorage.removeItem('agenda_pass');
+    location.reload();
   }
 
   function populateSelects() {
@@ -370,7 +385,6 @@
     ['select-kelas-manajemen', 'jurnal-kelas', 'filter-jurnal-kelas', 'absensi-kelas', 'nilai-kelas'].forEach(id => {
       if(document.getElementById(id)) document.getElementById(id).innerHTML = clsOpts;
     });
-    // Add "All" option to filter journals
     if(document.getElementById('filter-jurnal-kelas')) document.getElementById('filter-jurnal-kelas').innerHTML = '<option value="">-- Pilih Kelas --</option><option value="All">Semua Kelas</option>' + clsOpts.replace('<option value="">-- Pilih Kelas --</option>', '');
 
     let mapelOpts = '<option value="">-- Pilih Mapel --</option>';
@@ -385,22 +399,21 @@
     document.getElementById('stat-jurnal').innerText = db.journal.length;
   }
 
-  // --- MANAJEMEN KELAS & SISWA & WA REPORT ---
+  function getClassName(cid) {
+    let c = db.classes.find(x => String(x.ClassID) === String(cid));
+    return c ? c.ClassName : cid;
+  }
+
+  // --- KELAS & SISWA & WA ---
   function addClass() {
     Swal.fire({ title: 'Nama Kelas Baru', input: 'text', showCancelButton: true }).then(res => {
-      if(res.isConfirmed && res.value) {
-        db.classes.push({ ClassID: "C" + Date.now(), ClassName: res.value });
-        populateSelects(); syncData();
-      }
+      if(res.isConfirmed && res.value) { db.classes.push({ ClassID: "C" + Date.now(), ClassName: res.value }); populateSelects(); syncData(); }
     });
   }
 
   function addMapel() {
     Swal.fire({ title: 'Nama Mapel Baru', input: 'text', showCancelButton: true }).then(res => {
-      if(res.isConfirmed && res.value) {
-        db.subjects.push(res.value);
-        populateSelects(); syncData();
-      }
+      if(res.isConfirmed && res.value) { db.subjects.push(res.value); populateSelects(); syncData(); }
     });
   }
 
@@ -421,7 +434,7 @@
   }
 
   function deleteStudent(id) {
-    Swal.fire({title: 'Hapus Siswa?', text: "Data hilang permanen!", icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'Hapus'}).then(res => {
+    Swal.fire({title: 'Hapus?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'Hapus'}).then(res => {
       if (res.isConfirmed) { db.students = db.students.filter(s => s.StudentID !== id); renderStudentsTable(); syncData(); }
     });
   }
@@ -436,28 +449,20 @@
     
     let html = '';
     stds.forEach((s, i) => {
-      html += `<tr><td class="text-center align-middle">${i+1}</td>
-      <td class="align-middle fw-bold">${s.StudentName}</td>
-      <td class="align-middle">${s.ParentPhone || '-'}</td>
-      <td class="text-center align-middle">
-        <button class="btn btn-sm btn-success me-1" onclick="sendWAReport('${s.StudentName}', '${s.ParentPhone}')" title="Kirim Laporan WA"><i class="bi bi-whatsapp"></i> WA</button>
-        <button class="btn btn-sm btn-danger" onclick="deleteStudent('${s.StudentID}')" title="Hapus"><i class="bi bi-trash"></i></button>
-      </td></tr>`;
+      html += `<tr><td class="text-center align-middle">${i+1}</td><td class="align-middle fw-bold">${s.StudentName}</td>
+      <td class="align-middle">${s.ParentPhone || '-'}</td><td class="text-center align-middle">
+      <button class="btn btn-sm btn-success me-1" onclick="sendWAReport('${s.StudentName}', '${s.ParentPhone}')" title="Kirim Laporan WA"><i class="bi bi-whatsapp"></i> WA</button>
+      <button class="btn btn-sm btn-danger" onclick="deleteStudent('${s.StudentID}')" title="Hapus"><i class="bi bi-trash"></i></button></td></tr>`;
     });
     tbody.innerHTML = html;
   }
 
-  // UPDATE: Kirim WA Langsung
   function sendWAReport(studentName, parentPhone) {
-    if(!parentPhone || parentPhone.trim() === '') {
-        Swal.fire('Error', 'Nomor WA orang tua belum diisi pada data siswa!', 'error'); return;
-    }
-    let phone = parentPhone.replace(/\D/g, ''); // Bersihkan format
+    if(!parentPhone || parentPhone.trim() === '') { Swal.fire('Error', 'Nomor WA orang tua belum diisi!', 'error'); return; }
+    let phone = parentPhone.replace(/\D/g, ''); 
     if(phone.startsWith('0')) phone = '62' + phone.substring(1);
-    
-    let text = `Halo Bapak/Ibu Wali Murid dari *${studentName}*,\n\nBerikut adalah laporan progres kegiatan belajar dan administrasi ananda pada minggu ini.\n\nMohon bantuannya untuk terus mendampingi ananda belajar di rumah.\n\nTerima Kasih,\n*Belajar Inovasi*`;
-    let waUrl = `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
-    window.open(waUrl, '_blank');
+    let text = `Halo Bapak/Ibu Wali Murid dari *${studentName}*,\n\nBerikut adalah laporan progres kegiatan belajar dan administrasi ananda pada minggu ini.\n\nMohon bantuannya untuk terus mendampingi ananda belajar di rumah.\n\nTerima Kasih,\n*${currentUser.name} - ${currentUser.school}*`;
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`, '_blank');
   }
 
   // --- ABSENSI ---
@@ -467,7 +472,6 @@
     const tbody = document.getElementById('table-absensi-body');
     
     if(!cid || !tgl) { tbody.innerHTML = '<tr><td colspan="3" class="text-center text-muted">Pilih tanggal dan kelas.</td></tr>'; return; }
-    
     const stds = db.students.filter(s => String(s.ClassID) === String(cid));
     if(stds.length === 0) { tbody.innerHTML = '<tr><td colspan="3" class="text-center text-muted">Tidak ada siswa.</td></tr>'; return; }
     
@@ -475,17 +479,13 @@
     stds.forEach((s, i) => {
       let existing = db.attendance.find(a => a.Date === tgl && String(a.ClassID) === String(cid) && a.StudentID === s.StudentID);
       let status = existing ? existing.Status : 'Hadir';
-      
-      html += `<tr><td class="text-center align-middle">${i+1}</td>
-      <td class="align-middle fw-bold">${s.StudentName}</td>
-      <td>
-        <select class="form-select status-absen" data-studentid="${s.StudentID}">
+      html += `<tr><td class="text-center align-middle">${i+1}</td><td class="align-middle fw-bold">${s.StudentName}</td>
+      <td><select class="form-select status-absen" data-studentid="${s.StudentID}">
           <option value="Hadir" ${status==='Hadir'?'selected':''}>Hadir</option>
           <option value="Sakit" ${status==='Sakit'?'selected':''}>Sakit</option>
           <option value="Izin" ${status==='Izin'?'selected':''}>Izin</option>
           <option value="Alpa" ${status==='Alpa'?'selected':''}>Alpa</option>
-        </select>
-      </td></tr>`;
+        </select></td></tr>`;
     });
     tbody.innerHTML = html;
   }
@@ -495,16 +495,13 @@
     const tgl = document.getElementById('absensi-date').value;
     if(!cid || !tgl) return Swal.fire('Peringatan', 'Lengkapi tanggal dan kelas', 'warning');
     
-    const selects = document.querySelectorAll('.status-absen');
-    selects.forEach(sel => {
+    document.querySelectorAll('.status-absen').forEach(sel => {
         const sid = sel.getAttribute('data-studentid');
         const stat = sel.value;
         let idx = db.attendance.findIndex(a => a.Date === tgl && String(a.ClassID) === String(cid) && a.StudentID === sid);
-        if(idx > -1) { db.attendance[idx].Status = stat; } 
-        else { db.attendance.push({RecordID: "A" + Date.now() + sid, Date: tgl, ClassID: cid, StudentID: sid, Status: stat}); }
+        if(idx > -1) { db.attendance[idx].Status = stat; } else { db.attendance.push({RecordID: "A" + Date.now() + sid, Date: tgl, ClassID: cid, StudentID: sid, Status: stat}); }
     });
-    syncData();
-    Swal.fire({icon: 'success', title: 'Berhasil', text: 'Data Absensi Tersimpan', timer: 1500});
+    syncData(); Swal.fire({icon: 'success', title: 'Berhasil', text: 'Data Absensi Tersimpan', timer: 1500});
   }
 
   // --- NILAI ---
@@ -515,20 +512,15 @@
     const tbody = document.getElementById('table-nilai-body');
     
     if(!cid || !tgl || !mpl) { tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">Pilih form secara lengkap.</td></tr>'; return; }
-    
     const stds = db.students.filter(s => String(s.ClassID) === String(cid));
     if(stds.length === 0) { tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">Tidak ada siswa.</td></tr>'; return; }
     
     let html = '';
     stds.forEach((s, i) => {
       let ex = db.grades.find(g => g.Date === tgl && String(g.ClassID) === String(cid) && g.Subject === mpl && g.StudentID === s.StudentID);
-      let score = ex ? ex.Score : '';
-      let notes = ex ? ex.Notes : '';
-      
-      html += `<tr><td class="text-center align-middle">${i+1}</td>
-      <td class="align-middle fw-bold">${s.StudentName}</td>
-      <td><input type="number" class="form-control val-score" data-studentid="${s.StudentID}" value="${score}" placeholder="0-100"></td>
-      <td><input type="text" class="form-control val-notes" data-studentid="${s.StudentID}" value="${notes}" placeholder="Opsional"></td></tr>`;
+      html += `<tr><td class="text-center align-middle">${i+1}</td><td class="align-middle fw-bold">${s.StudentName}</td>
+      <td><input type="number" class="form-control val-score" data-studentid="${s.StudentID}" value="${ex ? ex.Score : ''}" placeholder="0-100"></td>
+      <td><input type="text" class="form-control val-notes" data-studentid="${s.StudentID}" value="${ex ? ex.Notes : ''}" placeholder="Opsional"></td></tr>`;
     });
     tbody.innerHTML = html;
   }
@@ -539,24 +531,15 @@
     const mpl = document.getElementById('nilai-mapel').value;
     if(!cid || !tgl || !mpl) return Swal.fire('Peringatan', 'Lengkapi form input nilai.', 'warning');
     
-    const scoreInputs = document.querySelectorAll('.val-score');
-    const noteInputs = document.querySelectorAll('.val-notes');
-    
-    for(let i=0; i<scoreInputs.length; i++) {
-        const sid = scoreInputs[i].getAttribute('data-studentid');
-        const sc = scoreInputs[i].value;
-        const nt = noteInputs[i].value;
-        
+    let scores = document.querySelectorAll('.val-score');
+    let notes = document.querySelectorAll('.val-notes');
+    for(let i=0; i<scores.length; i++) {
+        const sid = scores[i].getAttribute('data-studentid');
+        const sc = scores[i].value; const nt = notes[i].value;
         let idx = db.grades.findIndex(g => g.Date === tgl && String(g.ClassID) === String(cid) && g.Subject === mpl && g.StudentID === sid);
-        if(idx > -1) { 
-            db.grades[idx].Score = sc; 
-            db.grades[idx].Notes = nt; 
-        } else if(sc !== "") { 
-            db.grades.push({RecordID: "G" + Date.now() + sid, Date: tgl, ClassID: cid, Subject: mpl, StudentID: sid, Score: sc, Notes: nt}); 
-        }
+        if(idx > -1) { db.grades[idx].Score = sc; db.grades[idx].Notes = nt; } else if(sc !== "") { db.grades.push({RecordID: "G" + Date.now() + sid, Date: tgl, ClassID: cid, Subject: mpl, StudentID: sid, Score: sc, Notes: nt}); }
     }
-    syncData();
-    Swal.fire({icon: 'success', title: 'Berhasil', text: 'Data Nilai Tersimpan', timer: 1500});
+    syncData(); Swal.fire({icon: 'success', title: 'Berhasil', text: 'Data Nilai Tersimpan', timer: 1500});
   }
 
   // --- JURNAL ---
@@ -570,7 +553,7 @@
     
     let html = '';
     filtered.forEach(j => {
-      let className = j.ClassID === 'All' ? 'Semua Kelas' : (db.classes.find(c => String(c.ClassID) === String(j.ClassID))?.ClassName || j.ClassID);
+      let className = j.ClassID === 'All' ? 'Semua Kelas' : getClassName(j.ClassID);
       html += `<tr><td class="fw-bold">${j.Date}</td><td><span class="badge bg-info text-dark">${className}</span></td>
         <td class="fw-semibold text-primary">${j.Subject}</td><td><small>${j.Content}</small></td>
         <td class="text-center"><button class="btn btn-sm btn-warning text-white me-1 mb-1" onclick="editJurnal('${j.RecordID}')"><i class="bi bi-pencil-square"></i></button>
@@ -580,16 +563,13 @@
   }
 
   function saveJurnal() {
-    const d = document.getElementById('jurnal-date').value;
-    const k = document.getElementById('jurnal-kelas').value;
-    const m = document.getElementById('jurnal-mapel').value;
-    const c = document.getElementById('jurnal-content').value;
-    
+    const d = document.getElementById('jurnal-date').value, k = document.getElementById('jurnal-kelas').value, m = document.getElementById('jurnal-mapel').value, c = document.getElementById('jurnal-content').value;
     if(!d || !k || !m || !c) return Swal.fire('Peringatan', 'Isi semua kolom jurnal.', 'warning');
+    
     if (editingJurnalId) {
       let idx = db.journal.findIndex(j => j.RecordID === editingJurnalId);
       if (idx > -1) { db.journal[idx].Date = d; db.journal[idx].ClassID = k; db.journal[idx].Subject = m; db.journal[idx].Content = c; }
-    } else { db.journal.push({ RecordID: "J" + Date.now(), Date: d, ClassID: k, Subject: m, Content: c, AttachmentUrl: "" }); }
+    } else { db.journal.push({ RecordID: "J" + Date.now(), Date: d, ClassID: k, Subject: m, Content: c }); }
     
     document.getElementById('filter-jurnal-kelas').value = k;
     resetJurnalForm(); renderJurnal(); syncData();
@@ -614,17 +594,88 @@
     editingJurnalId = null;
     document.getElementById('jurnal-form-title').innerText = "Input Jurnal Harian";
     document.getElementById('jurnal-date').value = new Date().toISOString().split('T')[0];
-    document.getElementById('jurnal-kelas').value = '';
-    document.getElementById('jurnal-mapel').value = '';
-    document.getElementById('jurnal-content').value = '';
-    document.getElementById('btn-save-jurnal').innerText = "Simpan";
-    document.getElementById('btn-cancel-jurnal').classList.add('d-none');
+    document.getElementById('jurnal-kelas').value = ''; document.getElementById('jurnal-mapel').value = ''; document.getElementById('jurnal-content').value = '';
+    document.getElementById('btn-save-jurnal').innerText = "Simpan"; document.getElementById('btn-cancel-jurnal').classList.add('d-none');
   }
 
   function deleteJurnal(id) {
     Swal.fire({title: 'Hapus Jurnal?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'Hapus'}).then((res) => {
       if (res.isConfirmed) { db.journal = db.journal.filter(j => j.RecordID !== id); renderJurnal(); syncData(); }
     });
+  }
+
+  // --- EXPORT KE EXCEL (XLSX) ---
+  function exportExcel(module) {
+    if(typeof XLSX === 'undefined') return Swal.fire('Gagal', 'Library Excel belum dimuat. Periksa koneksi internet.', 'error');
+    
+    let dataToExport = [];
+    let title = "";
+    let cid = "";
+
+    // Membentuk Kop Sekolah
+    let kopTitle = currentUser.school.toUpperCase();
+    let kopName = "Dicetak oleh: " + currentUser.name;
+    let exportDate = "Tanggal Cetak: " + new Date().toLocaleDateString('id-ID');
+    let kopArray = [ [kopTitle], [kopName], [exportDate], [] ]; // Header Kop
+
+    if (module === 'siswa') {
+      cid = document.getElementById('select-kelas-manajemen').value;
+      if(!cid) return Swal.fire('Perhatian', 'Pilih kelas yang ingin diexport.', 'warning');
+      title = "Daftar_Siswa_" + getClassName(cid).replace(/\s/g, '_');
+      
+      dataToExport = [...kopArray, ["No", "Nama Siswa", "No WA Ortu"]];
+      let stds = db.students.filter(s => String(s.ClassID) === String(cid));
+      stds.forEach((s, i) => dataToExport.push([i+1, s.StudentName, s.ParentPhone]));
+      
+    } else if (module === 'absensi') {
+      cid = document.getElementById('absensi-kelas').value;
+      let tgl = document.getElementById('absensi-date').value;
+      if(!cid || !tgl) return Swal.fire('Perhatian', 'Pilih tanggal dan kelas di form absensi.', 'warning');
+      title = "Absensi_" + getClassName(cid).replace(/\s/g, '_') + "_" + tgl;
+      
+      dataToExport = [...kopArray, ["Tanggal Absensi:", tgl], [], ["No", "Nama Siswa", "Status Absensi"]];
+      let stds = db.students.filter(s => String(s.ClassID) === String(cid));
+      stds.forEach((s, i) => {
+        let ex = db.attendance.find(a => a.Date === tgl && String(a.ClassID) === String(cid) && a.StudentID === s.StudentID);
+        dataToExport.push([i+1, s.StudentName, ex ? ex.Status : '-']);
+      });
+
+    } else if (module === 'nilai') {
+      cid = document.getElementById('nilai-kelas').value;
+      let tgl = document.getElementById('nilai-date').value;
+      let mapel = document.getElementById('nilai-mapel').value;
+      if(!cid || !tgl || !mapel) return Swal.fire('Perhatian', 'Lengkapi form di daftar nilai terlebih dahulu.', 'warning');
+      title = "Nilai_" + mapel.replace(/\s/g, '_') + "_" + getClassName(cid).replace(/\s/g, '_');
+      
+      dataToExport = [...kopArray, ["Mata Pelajaran:", mapel], ["Tanggal:", tgl], [], ["No", "Nama Siswa", "Nilai", "Catatan"]];
+      let stds = db.students.filter(s => String(s.ClassID) === String(cid));
+      stds.forEach((s, i) => {
+        let ex = db.grades.find(g => g.Date === tgl && String(g.ClassID) === String(cid) && g.Subject === mapel && g.StudentID === s.StudentID);
+        dataToExport.push([i+1, s.StudentName, ex ? ex.Score : '', ex ? ex.Notes : '']);
+      });
+
+    } else if (module === 'jurnal') {
+      cid = document.getElementById('filter-jurnal-kelas').value;
+      if(!cid) return Swal.fire('Perhatian', 'Pilih kelas di filter jurnal.', 'warning');
+      let classTitle = cid === 'All' ? 'Semua_Kelas' : getClassName(cid).replace(/\s/g, '_');
+      title = "Jurnal_Harian_" + classTitle;
+      
+      dataToExport = [...kopArray, ["No", "Tanggal", "Kelas", "Mata Pelajaran", "Isi Jurnal"]];
+      let filtered = db.journal.filter(j => String(j.ClassID) === String(cid) || j.ClassID === 'All' || cid === 'All');
+      filtered.forEach((j, i) => dataToExport.push([i+1, j.Date, getClassName(j.ClassID), j.Subject, j.Content]));
+    }
+
+    if(dataToExport.length <= 4) { return Swal.fire('Perhatian', 'Tidak ada data untuk didownload.', 'warning'); }
+
+    // Proses pembuatan file Excel
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet(dataToExport);
+    
+    // Lebar Kolom
+    ws['!cols'] = [{ wch: 5 }, { wch: 25 }, { wch: 20 }, { wch: 30 }, { wch: 20 }];
+    
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+    XLSX.writeFile(wb, title + ".xlsx");
   }
  </script>
 </body>
