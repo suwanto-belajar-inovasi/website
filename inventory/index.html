@@ -5,86 +5,98 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Inventaris Gudang | Belajar Inovasi</title>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   :root{
     --blue:#2563eb; --blue-dark:#1d4ed8; --green:#16a34a; --red:#dc2626;
-    --bg:#f8fafc; --border:#e2e8f0; --text:#1e293b; --muted:#64748b;
+    --border:#e2e8f0; --text:#1e293b; --muted:#64748b;
   }
   *{box-sizing:border-box;}
-  body{ margin:0; font-family:'Segoe UI', Roboto, sans-serif; background:var(--bg); color:var(--text); }
+  body{ 
+    margin:0; 
+    font-family:'Segoe UI', Roboto, sans-serif; 
+    background: radial-gradient(circle at 50% 0%, #e0f2fe 0%, #f8fafc 70%);
+    color:var(--text);
+    min-height: 100vh;
+  }
   .wrap{ max-width:900px; margin:0 auto; padding:24px 16px 60px; }
-  h1{ font-size:24px; margin:0 0 4px; color: var(--blue-dark); }
+  h1{ font-size:26px; margin:0 0 6px; color: #0f172a; text-shadow: 0 1px 2px rgba(0,0,0,0.05); }
   .subtitle{ color:var(--muted); font-size:14px; margin-bottom:24px; }
   
-  /* Loading Overlay */
-  #loader { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.8); z-index: 9999; justify-content: center; align-items: center; flex-direction: column; }
-  .spinner { border: 4px solid var(--border); border-top: 4px solid var(--blue); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+  #loader { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.85); z-index: 9999; justify-content: center; align-items: center; flex-direction: column; backdrop-filter: blur(4px); }
+  .spinner { border: 4px solid var(--border); border-top: 4px solid var(--blue); border-radius: 50%; width: 45px; height: 45px; animation: spin 1s linear infinite; }
   @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
   .summary { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:20px; }
-  .summary-box { flex:1; min-width:140px; background:#fff; border:1px solid var(--border); border-radius:8px; padding:16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-  .summary-box .label { font-size:12.5px; color:var(--muted); margin-bottom:4px; }
-  .summary-box .value { font-size:24px; font-weight:700; }
+  .summary-box { flex:1; min-width:140px; background: rgba(255, 255, 255, 0.9); border:1px solid var(--border); border-radius:12px; padding:18px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); backdrop-filter: blur(8px); }
+  .summary-box .label { font-size:13px; color:var(--muted); margin-bottom:4px; font-weight: 500; }
+  .summary-box .value { font-size:26px; font-weight:700; color: #0f172a; }
   .summary-box.low .value { color:var(--red); }
 
-  .toolbar { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px; }
-  input, select, textarea { font-family:inherit; font-size:14px; padding:10px 12px; border:1px solid var(--border); border-radius:8px; background:#fff; width: 100%; }
+  .toolbar { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px; }
+  input, select, textarea { font-family:inherit; font-size:14px; padding:11px 14px; border:1px solid var(--border); border-radius:10px; background:#fff; width: 100%; box-shadow: inset 0 1px 2px rgba(0,0,0,0.02); }
   input:focus, textarea:focus { outline:2px solid var(--blue); outline-offset:-1px; }
   #searchInput { flex:1; min-width:180px; }
 
-  button { font-family:inherit; cursor:pointer; border:none; border-radius:8px; font-size:14px; font-weight:600; padding:10px 16px; transition: all 0.2s;}
-  .btn-main { background:var(--blue); color:#fff; }
-  .btn-main:hover { background:var(--blue-dark); }
+  button { font-family:inherit; cursor:pointer; border:none; border-radius:10px; font-size:14px; font-weight:600; padding:11px 18px; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; gap:6px; }
+  .btn-main { background:var(--blue); color:#fff; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2); }
+  .btn-main:hover { background:var(--blue-dark); transform: translateY(-1px); }
+  .btn-outline { background:#fff; border:1px solid var(--border); color:var(--text); box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+  .btn-outline:hover { background: #f8fafc; border-color: #cbd5e1; }
   
-  .tabs { display:flex; gap:4px; margin-bottom:16px; border-bottom:2px solid var(--border); }
-  .tab { background:none; border:none; padding:10px 12px; margin-right:10px; font-size:14px; font-weight:600; color:var(--muted); border-bottom:2px solid transparent; margin-bottom:-2px; border-radius:0; }
+  .toolbar-excel { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+  
+  .tabs { display:flex; gap:4px; margin-bottom:20px; border-bottom:2px solid var(--border); }
+  .tab { background:none; border:none; padding:12px 16px; margin-right:6px; font-size:14.5px; font-weight:600; color:var(--muted); border-bottom:2px solid transparent; margin-bottom:-2px; border-radius:0; }
   .tab.active { color:var(--blue); border-bottom-color:var(--blue); }
 
-  .item-card, .hist-item { background:#fff; border:1px solid var(--border); border-radius:10px; padding:16px; margin-bottom:10px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+  .item-card, .hist-item { background: rgba(255, 255, 255, 0.95); border:1px solid var(--border); border-radius:12px; padding:18px; margin-bottom:12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); transition: transform 0.2s, box-shadow 0.2s; }
+  .item-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); }
   .item-top { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap; margin-bottom:12px; }
-  .item-name { font-size:16px; font-weight:700; }
-  .item-loc { font-size:13px; color:var(--muted); margin-top:4px; }
+  .item-name { font-size:16.5px; font-weight:700; color:#0f172a; }
+  .item-loc { font-size:13.5px; color:var(--muted); margin-top:6px; }
   .item-stock { text-align:right; }
-  .item-stock .num { font-size:24px; font-weight:700; }
-  .item-stock .num.low { color:var(--red); }
-  .item-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border);}
+  .item-stock .num { font-size:26px; font-weight:700; }
+  .item-stock .num.low { color:var(--red); animation: pulse 2s infinite; }
+  .item-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border);}
   
-  .btn-in { background:#dcfce7; color:var(--green); } .btn-in:hover { background:#bbf7d0; }
-  .btn-out { background:#fee2e2; color:var(--red); } .btn-out:hover { background:#fecaca; }
+  .btn-in { background:#dcfce7; color:var(--green); width: 48%; flex-grow: 1; } .btn-in:hover { background:#bbf7d0; }
+  .btn-out { background:#fee2e2; color:var(--red); width: 48%; flex-grow: 1; } .btn-out:hover { background:#fecaca; }
 
-  .hist-item { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
-  .hist-badge { font-size:12px; font-weight:700; padding:6px 12px; border-radius:6px; min-width:70px; text-align:center; }
+  .hist-item { display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+  .hist-badge { font-size:12px; font-weight:700; padding:6px 12px; border-radius:8px; min-width:75px; text-align:center; text-transform: uppercase; }
   .hist-badge.masuk { background:#dcfce7; color:var(--green); }
   .hist-badge.keluar { background:#fee2e2; color:var(--red); }
-  .hist-info { flex:1; min-width:150px; }
-  .hist-info .n { font-weight:600; font-size:14.5px; }
-  .hist-info .c { font-size:13px; color:var(--muted); margin-top: 4px;}
-  .hist-qty { font-size:16px; font-weight:700; }
-  .hist-date { font-size:12px; color:var(--muted); width: 100%; text-align: right;}
+  .hist-info { flex:1; min-width:160px; }
+  .hist-info .n { font-weight:600; font-size:15px; color: #0f172a; }
+  .hist-info .c { font-size:13px; color:var(--muted); margin-top: 4px; font-style: italic;}
+  .hist-qty { font-size:17px; font-weight:700; }
+  .hist-date { font-size:12px; color:var(--muted); width: 100%; text-align: right; margin-top: 2px;}
 
-  .footer-brand { text-align: center; font-size: 13px; color: var(--muted); margin-top: 40px; }
+  .footer-brand { text-align: center; font-size: 13px; color: var(--muted); margin-top: 50px; border-top: 1px dashed var(--border); padding-top: 16px; }
   
-  @media (max-width:480px){ .item-top{flex-direction:column;} .item-stock, .hist-date{text-align:left;} }
+  @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+  @media (max-width:480px){ .item-top{flex-direction:column;} .item-stock, .hist-date{text-align:left;} .btn-in, .btn-out{width:100%;} }
 </style>
 </head>
 <body>
 
 <div id="loader">
   <div class="spinner"></div>
-  <p style="margin-top:16px; font-weight:600; color:var(--muted);">Sinkronisasi Data...</p>
+  <p style="margin-top:16px; font-weight:600; color:var(--muted);">Sinkronisasi Database Cloud...</p>
 </div>
 
 <div class="wrap">
   <h1>Inventaris Gudang</h1>
-  <div class="subtitle">Sistem Pencatatan Stok Otomatis</div>
+  <div class="subtitle">Manajemen Kontrol Barang, Lokasi, dan Alur Transaksi Finansial Terpadu</div>
 
   <div class="summary">
     <div class="summary-box">
-      <div class="label">Total Item</div>
+      <div class="label">Jenis Barang</div>
       <div class="value" id="statJenis">0</div>
     </div>
     <div class="summary-box">
-      <div class="label">Total Stok Fisik</div>
+      <div class="label">Total Unit Stok</div>
       <div class="value" id="statStok">0</div>
     </div>
     <div class="summary-box low">
@@ -94,8 +106,14 @@
   </div>
 
   <div class="toolbar">
-    <input type="text" id="searchInput" placeholder="Cari nama barang...">
-    <button class="btn-main" onclick="bukaModalTambah()">+ Tambah Barang</button>
+    <input type="text" id="searchInput" placeholder="Cari nama barang atau deskripsi lokasi...">
+    <button class="btn-main" onclick="bukaModalTambah()">📦 Tambah Barang</button>
+  </div>
+
+  <div class="toolbar-excel">
+    <button class="btn-outline" onclick="exportKeExcel()">📥 Ekspor File Excel</button>
+    <button class="btn-outline" onclick="triggerImportExcel()">📤 Impor File Excel</button>
+    <input type="file" id="fileImpor" accept=".xlsx,.xls" style="display:none;" onchange="prosesImportExcel(event)">
   </div>
 
   <div class="tabs">
@@ -112,22 +130,35 @@
   </div>
   
   <div class="footer-brand">
-    Powered by <b>Belajar Inovasi</b>
+    Sistem Aplikasi Dikembangkan oleh <b>Belajar Inovasi</b>
   </div>
 </div>
 
 <script>
-  // ==========================================
-  // KONFIGURASI API (GANTI DENGAN URL WEB APP)
-  // ==========================================
-  const API_URL = 'https://script.google.com/macros/s/AKfycbxBl92AStaiqJkzLD_9yBOnaJqsCTcYaSTsajyup-58999mPQXzXV7axA0JKIPscZR8Mw/exec'; 
+  // =======================================================
+  // KONFIGURASI LINK UTAMA URL DEPLOYMENT APPS SCRIPT ANDA
+  // =======================================================
+  const API_URL = 'https://script.google.com/macros/s/AKfycbx5vHE20dwpkQZKPFoN_Q0HUyuMR0sKZkcHdbj3PCRzu15q-FtxG8QMBQxijcRj1krhFg/exec'; 
   
   let DB_ITEMS = [];
   let DB_TRXS = [];
   const LOW_STOCK = 5;
 
-  // Render Engine
+  // SYSTEM SECURITY LAYER: ANTIVIEW INSPECT ELEMENT
+  document.addEventListener('contextmenu', e => e.preventDefault());
+  document.addEventListener('keydown', e => {
+    if (
+      e.key === 'F12' ||
+      (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) ||
+      (e.ctrlKey && (e.key === 'U' || e.key === 'u'))
+    ) {
+      e.preventDefault();
+      return false;
+    }
+  });
+
   function formatTgl(isoString) {
+    if(!isoString) return '-';
     const d = new Date(isoString);
     return `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getFullYear()} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
   }
@@ -140,14 +171,17 @@
 
   function renderUI() {
     renderStats();
-    
     const query = document.getElementById('searchInput').value.toLowerCase();
     
-    // Render Barang
+    // Render Halaman Daftar Barang
     const listBarang = document.getElementById('itemsList');
     listBarang.innerHTML = '';
-    const filteredItems = DB_ITEMS.filter(i => i.nama.toLowerCase().includes(query));
+    const filteredItems = DB_ITEMS.filter(i => i.nama.toLowerCase().includes(query) || i.lokasi.toLowerCase().includes(query));
     
+    if(filteredItems.length === 0) {
+      listBarang.innerHTML = `<div style="text-align:center; padding:32px; color:var(--muted);">Data barang tidak ditemukan.</div>`;
+    }
+
     filteredItems.forEach(item => {
       const isLow = item.stok <= LOW_STOCK;
       listBarang.innerHTML += `
@@ -155,51 +189,56 @@
           <div class="item-top">
             <div>
               <div class="item-name">${item.nama}</div>
-              <div class="item-loc">📍 Lokasi: ${item.lokasi || '-'}</div>
+              <div class="item-loc">📍 Lokasi Penempatan: <b>${item.lokasi || '-'}</b></div>
             </div>
             <div class="item-stock">
               <div class="num ${isLow ? 'low' : ''}">${item.stok}</div>
-              <div class="txt" style="font-size:12px; color:gray;">Unit</div>
+              <div class="txt" style="font-size:12px; color:var(--muted); font-weight:600;">Total Unit</div>
             </div>
           </div>
           <div class="item-actions">
-            <button class="btn-in" onclick="prosesTransaksi('${item.id}', '${item.nama}', 'masuk')">⬇ Barang Masuk</button>
-            <button class="btn-out" onclick="prosesTransaksi('${item.id}', '${item.nama}', 'keluar', ${item.stok})">⬆ Barang Keluar</button>
+            <button class="btn-in" onclick="prosesTransaksi('${item.id}', '${item.nama}', 'masuk')">➕ Barang Masuk</button>
+            <button class="btn-out" onclick="prosesTransaksi('${item.id}', '${item.nama}', 'keluar', ${item.stok})">➖ Barang Keluar</button>
           </div>
         </div>
       `;
     });
 
-    // Render Riwayat
+    // Render Halaman Riwayat Transaksi
     const listRiwayat = document.getElementById('histList');
     listRiwayat.innerHTML = '';
     const filteredTrx = DB_TRXS.filter(t => t.nama.toLowerCase().includes(query)).sort((a,b) => new Date(b.tanggal) - new Date(a.tanggal));
     
+    if(filteredTrx.length === 0) {
+      listRiwayat.innerHTML = `<div style="text-align:center; padding:32px; color:var(--muted);">Belum ada rekam jejak aktivitas log masuk/keluar.</div>`;
+    }
+
     filteredTrx.forEach(t => {
       listRiwayat.innerHTML += `
         <div class="hist-item">
-          <span class="hist-badge ${t.tipe}">${t.tipe.toUpperCase()}</span>
+          <span class="hist-badge ${t.tipe}">${t.tipe}</span>
           <div class="hist-info">
             <div class="n">${t.nama}</div>
-            <div class="c">${t.catatan || '-'}</div>
+            <div class="c">Catatan: ${t.catatan || '-'}</div>
           </div>
-          <div class="hist-qty" style="color: ${t.tipe === 'masuk' ? 'var(--green)' : 'var(--red)'}">${t.tipe === 'masuk' ? '+' : '-'}${t.jumlah}</div>
-          <div class="hist-date">${formatTgl(t.tanggal)}</div>
+          <div class="hist-qty" style="color: ${t.tipe === 'masuk' ? 'var(--green)' : 'var(--red)'}">
+            ${t.tipe === 'masuk' ? '▲ +' : '▼ -'}${t.jumlah}
+          </div>
+          <div class="hist-date">Waktu Sinkronisasi: ${formatTgl(t.tanggal)}</div>
         </div>
       `;
     });
   }
 
-  // Interaksi Tabs & Search
   function switchTab(tab) {
     document.getElementById('tabBtnBarang').className = tab === 'barang' ? 'tab active' : 'tab';
     document.getElementById('tabBtnRiwayat').className = tab === 'riwayat' ? 'tab active' : 'tab';
     document.getElementById('tabBarang').style.display = tab === 'barang' ? 'block' : 'none';
     document.getElementById('tabRiwayat').style.display = tab === 'riwayat' ? 'block' : 'none';
   }
+  
   document.getElementById('searchInput').addEventListener('input', renderUI);
 
-  // Komunikasi API dengan Fetch & SweetAlert2
   async function callAPI(payload) {
     document.getElementById('loader').style.display = 'flex';
     try {
@@ -213,7 +252,7 @@
       return data;
     } catch (err) {
       document.getElementById('loader').style.display = 'none';
-      Swal.fire('Error Koneksi', 'Gagal terhubung ke server', 'error');
+      Swal.fire({ icon: 'error', title: 'Koneksi Terputus', text: 'Gagal melakukan sinkronisasi dengan Apps Script API.' });
       throw err;
     }
   }
@@ -229,29 +268,66 @@
 
   async function bukaModalTambah() {
     const { value: formValues } = await Swal.fire({
-      title: 'Tambah Barang Baru',
+      title: 'Registrasi Barang Baru',
       html: `
-        <input id="swal-nama" class="swal2-input" placeholder="Nama Barang">
-        <input id="swal-lokasi" class="swal2-input" placeholder="Lokasi (ex: Rak A)">
-        <input id="swal-stok" type="number" class="swal2-input" placeholder="Stok Awal" min="0">
+        <input id="swal-nama" class="swal2-input" placeholder="Nama Lengkap Barang">
+        <input id="swal-lokasi" class="swal2-input" placeholder="Lokasi Penempatan Gudang">
+        <input id="swal-stok" type="number" class="swal2-input" placeholder="Stok Fisik Awal" min="0" value="0">
       `,
       focusConfirm: false,
       showCancelButton: true,
-      confirmButtonText: 'Simpan',
+      confirmButtonText: 'Simpan ke Gudang',
       confirmButtonColor: 'var(--blue)',
       preConfirm: () => {
         return {
-          nama: document.getElementById('swal-nama').value,
-          lokasi: document.getElementById('swal-lokasi').value,
+          nama: document.getElementById('swal-nama').value.trim(),
+          lokasi: document.getElementById('swal-lokasi').value.trim(),
           stokAwal: parseInt(document.getElementById('swal-stok').value) || 0
         }
       }
     });
 
     if (formValues) {
-      if (!formValues.nama) return Swal.fire('Gagal', 'Nama barang wajib diisi', 'warning');
+      if (!formValues.nama) return Swal.fire('Gagal validasi', 'Nama barang tidak boleh dibiarkan kosong!', 'warning');
       
       const res = await callAPI({ action: 'tambahBarang', data: formValues });
+      if (res.status === 'success') {
+        Swal.fire({ title: 'Tersimpan!', text: res.message, icon: 'success', timer: 1500, showConfirmButton: false });
+        loadData();
+      }
+    }
+  }
+
+  async function prosesTransaksi(itemId, namaBarang, tipe, currentStock) {
+    const label = tipe === 'masuk' ? 'Transaksi Barang Masuk' : 'Transaksi Barang Keluar';
+    
+    const { value: formValues } = await Swal.fire({
+      title: label,
+      text: `Produk: ${namaBarang}`,
+      html: `
+        <div style="text-align:left; margin-bottom:4px; font-size:13px; color:var(--muted);">Masukkan Kuantitas Unit:</div>
+        <input id="trx-qty" type="number" class="swal2-input" placeholder="Jumlah kuantitas" min="1" value="1">
+        <div style="text-align:left; margin-bottom:4px; font-size:13px; color:var(--muted); margin-top:10px;">Catatan Tambahan Opsional:</div>
+        <textarea id="trx-note" class="swal2-textarea" placeholder="Contoh: Supplier Utama / Alokasi Divisi..."></textarea>
+      `,
+      showCancelButton: true,
+      confirmButtonText: 'Kirim Log Data',
+      confirmButtonColor: tipe === 'masuk' ? 'var(--green)' : 'var(--red)',
+      preConfirm: () => {
+        return {
+          jumlah: parseInt(document.getElementById('trx-qty').value) || 0,
+          catatan: document.getElementById('trx-note').value.trim()
+        }
+      }
+    });
+
+    if (formValues) {
+      if (formValues.jumlah <= 0) return Swal.fire('Gagal Validasi', 'Jumlah kuantitas transaksi minimal adalah 1 unit!', 'warning');
+      if (tipe === 'keluar' && formValues.jumlah > currentStock) return Swal.fire('Stok Defisit', 'Jumlah unit keluar melebihi sisa persediaan fisik di gudang!', 'error');
+
+      const payloadData = { itemId: itemId, nama: namaBarang, tipe: tipe, jumlah: formValues.jumlah, catatan: formValues.catatan };
+      const res = await callAPI({ action: 'transaksi', data: payloadData });
+      
       if (res.status === 'success') {
         Swal.fire({ title: 'Berhasil!', text: res.message, icon: 'success', timer: 1500, showConfirmButton: false });
         loadData();
@@ -259,42 +335,110 @@
     }
   }
 
-  async function prosesTransaksi(itemId, namaBarang, tipe, currentStock) {
-    const label = tipe === 'masuk' ? 'Barang Masuk' : 'Barang Keluar';
-    
-    const { value: formValues } = await Swal.fire({
-      title: label,
-      text: namaBarang,
-      html: `
-        <input id="trx-qty" type="number" class="swal2-input" placeholder="Jumlah" min="1" value="1">
-        <textarea id="trx-note" class="swal2-textarea" placeholder="Catatan (Opsional)"></textarea>
-      `,
-      showCancelButton: true,
-      confirmButtonText: 'Proses',
-      confirmButtonColor: tipe === 'masuk' ? 'var(--green)' : 'var(--red)',
-      preConfirm: () => {
-        return {
-          jumlah: parseInt(document.getElementById('trx-qty').value) || 0,
-          catatan: document.getElementById('trx-note').value
-        }
-      }
-    });
-
-    if (formValues) {
-      if (formValues.jumlah <= 0) return Swal.fire('Gagal', 'Jumlah harus lebih dari 0', 'warning');
-      if (tipe === 'keluar' && formValues.jumlah > currentStock) return Swal.fire('Stok Tidak Cukup', 'Jumlah keluar melebihi stok yang ada', 'error');
-
-      const payloadData = { itemId: itemId, nama: namaBarang, tipe: tipe, jumlah: formValues.jumlah, catatan: formValues.catatan };
-      const res = await callAPI({ action: 'transaksi', data: payloadData });
-      
-      if (res.status === 'success') {
-        Swal.fire({ title: 'Tercatat!', text: res.message, icon: 'success', timer: 1500, showConfirmButton: false });
-        loadData();
-      }
+  // LOGIKA UTAMA EKSPORETASI DATA KE FILE EXCEL (.XLSX)
+  function exportKeExcel() {
+    if (DB_ITEMS.length === 0) {
+      return Swal.fire('Data Nihil', 'Tidak ada riwayat atau barang yang dapat diekspor saat ini.', 'info');
     }
+    
+    const sheetDataBarang = DB_ITEMS.map(i => ({
+      "ID Barang": i.id,
+      "Nama Barang": i.nama,
+      "Lokasi": i.lokasi || '',
+      "Stok": i.stok
+    }));
+    
+    const sheetDataRiwayat = DB_TRXS.map(t => ({
+      "ID Trx": t.id,
+      "ID Barang": t.itemId,
+      "Nama Barang": t.nama,
+      "Tipe": t.tipe,
+      "Jumlah": t.jumlah,
+      "Catatan": t.catatan || '',
+      "Tanggal": t.tanggal
+    }));
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(sheetDataBarang), "Barang");
+    XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(sheetDataRiwayat), "Riwayat");
+
+    const tglSekarang = new Date();
+    const stamp = `${tglSekarang.getFullYear()}${(tglSekarang.getMonth()+1).toString().padStart(2,'0')}${tglSekarang.getDate().toString().padStart(2,'0')}`;
+    XLSX.writeFile(workbook, `Backup-Inventaris-Gudang-${stamp}.xlsx`);
+    Swal.fire('Ekspor Berhasil', 'Unduhan file Excel Anda sedang berjalan.', 'success');
   }
 
-  // Load awal
+  // LOGIKA UTAMA IMPORTASI DATA DARI FILE EXCEL (.XLSX)
+  function triggerImportExcel() {
+    Swal.fire({
+      title: 'Konfirmasi Penimpaan Data',
+      text: 'Mengimpor file Excel baru akan menghapus dan menggantikan semua database barang & riwayat transaksi yang ada saat ini di Google Sheets. Tetap Lanjutkan?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Ya, Timpa Data Cloud',
+      cancelButtonText: 'Batalkan',
+      confirmButtonColor: 'var(--blue)'
+    }).then((res) => {
+      if (res.isConfirmed) {
+        document.getElementById('fileImpor').click();
+      }
+    });
+  }
+
+  function prosesImportExcel(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const fileReader = new FileReader();
+    fileReader.onload = async (e) => {
+      try {
+        const dataArr = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(dataArr, { type: 'array' });
+        
+        const shBarang = workbook.Sheets['Barang'];
+        const shRiwayat = workbook.Sheets['Riwayat'];
+        
+        if (!shBarang) {
+          return Swal.fire('Format Salah', 'Sheet bernama "Barang" tidak ditemukan pada susunan file Excel Anda.', 'error');
+        }
+
+        const rowsBarang = XLSX.utils.sheet_to_json(shBarang);
+        const rowsRiwayat = shRiwayat ? XLSX.utils.sheet_to_json(shRiwayat) : [];
+
+        const importedItems = rowsBarang.map(r => ({
+          id: String(r["ID Barang"] || 'BRG-' + Math.random().toString(36).substring(2, 9)),
+          nama: String(r["Nama Barang"] || '').trim(),
+          lokasi: String(r["Lokasi"] || '').trim(),
+          stok: parseInt(r["Stok"]) || 0
+        })).filter(i => i.nama !== '');
+
+        const importedTrxs = rowsRiwayat.map(r => ({
+          id: String(r["ID Trx"] || 'TRX-' + Math.random().toString(36).substring(2, 9)),
+          itemId: String(r["ID Barang"] || ''),
+          nama: String(r["Nama Barang"] || ''),
+          tipe: String(r["Tipe"] || 'masuk').toLowerCase(),
+          jumlah: parseInt(r["Jumlah"]) || 0,
+          catatan: String(r["Catatan"] || ''),
+          tanggal: String(r["Tanggal"] || new Date().toISOString())
+        }));
+
+        const responseCloud = await callAPI({
+          action: 'importExcelData',
+          data: { items: importedItems, trxs: importedTrxs }
+        });
+
+        if (responseCloud.status === 'success') {
+          Swal.fire('Impor Berhasil!', responseCloud.message, 'success');
+          loadData();
+        }
+      } catch (err) {
+        Swal.fire('Error Pemrosesan', 'Gagal memilah data dalam dokumen Excel. Pastikan format kolom sama dengan hasil ekspor sistem.', 'error');
+      }
+    };
+    fileReader.readAsArrayBuffer(file);
+    event.target.value = ''; 
+  }
+
   window.onload = loadData;
 </script>
 
