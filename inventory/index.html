@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inventaris Gudang | Belajar Inovasi</title>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+  :root{
+    --blue:#2563eb; --blue-dark:#1d4ed8; --green:#16a34a; --red:#dc2626;
+    --bg:#f8fafc; --border:#e2e8f0; --text:#1e293b; --muted:#64748b;
+  }
+  *{box-sizing:border-box;}
+  body{ margin:0; font-family:'Segoe UI', Roboto, sans-serif; background:var(--bg); color:var(--text); }
+  .wrap{ max-width:900px; margin:0 auto; padding:24px 16px 60px; }
+  h1{ font-size:24px; margin:0 0 4px; color: var(--blue-dark); }
+  .subtitle{ color:var(--muted); font-size:14px; margin-bottom:24px; }
+  
+  /* Loading Overlay */
+  #loader { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.8); z-index: 9999; justify-content: center; align-items: center; flex-direction: column; }
+  .spinner { border: 4px solid var(--border); border-top: 4px solid var(--blue); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+  .summary { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:20px; }
+  .summary-box { flex:1; min-width:140px; background:#fff; border:1px solid var(--border); border-radius:8px; padding:16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+  .summary-box .label { font-size:12.5px; color:var(--muted); margin-bottom:4px; }
+  .summary-box .value { font-size:24px; font-weight:700; }
+  .summary-box.low .value { color:var(--red); }
+
+  .toolbar { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px; }
+  input, select, textarea { font-family:inherit; font-size:14px; padding:10px 12px; border:1px solid var(--border); border-radius:8px; background:#fff; width: 100%; }
+  input:focus, textarea:focus { outline:2px solid var(--blue); outline-offset:-1px; }
+  #searchInput { flex:1; min-width:180px; }
+
+  button { font-family:inherit; cursor:pointer; border:none; border-radius:8px; font-size:14px; font-weight:600; padding:10px 16px; transition: all 0.2s;}
+  .btn-main { background:var(--blue); color:#fff; }
+  .btn-main:hover { background:var(--blue-dark); }
+  
+  .tabs { display:flex; gap:4px; margin-bottom:16px; border-bottom:2px solid var(--border); }
+  .tab { background:none; border:none; padding:10px 12px; margin-right:10px; font-size:14px; font-weight:600; color:var(--muted); border-bottom:2px solid transparent; margin-bottom:-2px; border-radius:0; }
+  .tab.active { color:var(--blue); border-bottom-color:var(--blue); }
+
+  .item-card, .hist-item { background:#fff; border:1px solid var(--border); border-radius:10px; padding:16px; margin-bottom:10px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+  .item-top { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap; margin-bottom:12px; }
+  .item-name { font-size:16px; font-weight:700; }
+  .item-loc { font-size:13px; color:var(--muted); margin-top:4px; }
+  .item-stock { text-align:right; }
+  .item-stock .num { font-size:24px; font-weight:700; }
+  .item-stock .num.low { color:var(--red); }
+  .item-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border);}
+  
+  .btn-in { background:#dcfce7; color:var(--green); } .btn-in:hover { background:#bbf7d0; }
+  .btn-out { background:#fee2e2; color:var(--red); } .btn-out:hover { background:#fecaca; }
+
+  .hist-item { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .hist-badge { font-size:12px; font-weight:700; padding:6px 12px; border-radius:6px; min-width:70px; text-align:center; }
+  .hist-badge.masuk { background:#dcfce7; color:var(--green); }
+  .hist-badge.keluar { background:#fee2e2; color:var(--red); }
+  .hist-info { flex:1; min-width:150px; }
+  .hist-info .n { font-weight:600; font-size:14.5px; }
+  .hist-info .c { font-size:13px; color:var(--muted); margin-top: 4px;}
+  .hist-qty { font-size:16px; font-weight:700; }
+  .hist-date { font-size:12px; color:var(--muted); width: 100%; text-align: right;}
+
+  .footer-brand { text-align: center; font-size: 13px; color: var(--muted); margin-top: 40px; }
+  
+  @media (max-width:480px){ .item-top{flex-direction:column;} .item-stock, .hist-date{text-align:left;} }
+</style>
+</head>
+<body>
+
+<div id="loader">
+  <div class="spinner"></div>
+  <p style="margin-top:16px; font-weight:600; color:var(--muted);">Sinkronisasi Data...</p>
+</div>
+
+<div class="wrap">
+  <h1>Inventaris Gudang</h1>
+  <div class="subtitle">Sistem Pencatatan Stok Otomatis</div>
+
+  <div class="summary">
+    <div class="summary-box">
+      <div class="label">Total Item</div>
+      <div class="value" id="statJenis">0</div>
+    </div>
+    <div class="summary-box">
+      <div class="label">Total Stok Fisik</div>
+      <div class="value" id="statStok">0</div>
+    </div>
+    <div class="summary-box low">
+      <div class="label">Stok Menipis (≤5)</div>
+      <div class="value" id="statLow">0</div>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <input type="text" id="searchInput" placeholder="Cari nama barang...">
+    <button class="btn-main" onclick="bukaModalTambah()">+ Tambah Barang</button>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('barang')" id="tabBtnBarang">Daftar Barang</button>
+    <button class="tab" onclick="switchTab('riwayat')" id="tabBtnRiwayat">Riwayat Transaksi</button>
+  </div>
+
+  <div id="tabBarang">
+    <div id="itemsList"></div>
+  </div>
+
+  <div id="tabRiwayat" style="display:none;">
+    <div id="histList"></div>
+  </div>
+  
+  <div class="footer-brand">
+    Powered by <b>Belajar Inovasi</b>
+  </div>
+</div>
+
+<script>
+  // ==========================================
+  // KONFIGURASI API (GANTI DENGAN URL WEB APP)
+  // ==========================================
+  const API_URL = 'https://script.google.com/macros/s/AKfycbxBl92AStaiqJkzLD_9yBOnaJqsCTcYaSTsajyup-58999mPQXzXV7axA0JKIPscZR8Mw/exec'; 
+  
+  let DB_ITEMS = [];
+  let DB_TRXS = [];
+  const LOW_STOCK = 5;
+
+  // Render Engine
+  function formatTgl(isoString) {
+    const d = new Date(isoString);
+    return `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getFullYear()} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+  }
+
+  function renderStats() {
+    document.getElementById('statJenis').innerText = DB_ITEMS.length;
+    document.getElementById('statStok').innerText = DB_ITEMS.reduce((sum, item) => sum + parseInt(item.stok), 0);
+    document.getElementById('statLow').innerText = DB_ITEMS.filter(item => item.stok <= LOW_STOCK).length;
+  }
+
+  function renderUI() {
+    renderStats();
+    
+    const query = document.getElementById('searchInput').value.toLowerCase();
+    
+    // Render Barang
+    const listBarang = document.getElementById('itemsList');
+    listBarang.innerHTML = '';
+    const filteredItems = DB_ITEMS.filter(i => i.nama.toLowerCase().includes(query));
+    
+    filteredItems.forEach(item => {
+      const isLow = item.stok <= LOW_STOCK;
+      listBarang.innerHTML += `
+        <div class="item-card">
+          <div class="item-top">
+            <div>
+              <div class="item-name">${item.nama}</div>
+              <div class="item-loc">📍 Lokasi: ${item.lokasi || '-'}</div>
+            </div>
+            <div class="item-stock">
+              <div class="num ${isLow ? 'low' : ''}">${item.stok}</div>
+              <div class="txt" style="font-size:12px; color:gray;">Unit</div>
+            </div>
+          </div>
+          <div class="item-actions">
+            <button class="btn-in" onclick="prosesTransaksi('${item.id}', '${item.nama}', 'masuk')">⬇ Barang Masuk</button>
+            <button class="btn-out" onclick="prosesTransaksi('${item.id}', '${item.nama}', 'keluar', ${item.stok})">⬆ Barang Keluar</button>
+          </div>
+        </div>
+      `;
+    });
+
+    // Render Riwayat
+    const listRiwayat = document.getElementById('histList');
+    listRiwayat.innerHTML = '';
+    const filteredTrx = DB_TRXS.filter(t => t.nama.toLowerCase().includes(query)).sort((a,b) => new Date(b.tanggal) - new Date(a.tanggal));
+    
+    filteredTrx.forEach(t => {
+      listRiwayat.innerHTML += `
+        <div class="hist-item">
+          <span class="hist-badge ${t.tipe}">${t.tipe.toUpperCase()}</span>
+          <div class="hist-info">
+            <div class="n">${t.nama}</div>
+            <div class="c">${t.catatan || '-'}</div>
+          </div>
+          <div class="hist-qty" style="color: ${t.tipe === 'masuk' ? 'var(--green)' : 'var(--red)'}">${t.tipe === 'masuk' ? '+' : '-'}${t.jumlah}</div>
+          <div class="hist-date">${formatTgl(t.tanggal)}</div>
+        </div>
+      `;
+    });
+  }
+
+  // Interaksi Tabs & Search
+  function switchTab(tab) {
+    document.getElementById('tabBtnBarang').className = tab === 'barang' ? 'tab active' : 'tab';
+    document.getElementById('tabBtnRiwayat').className = tab === 'riwayat' ? 'tab active' : 'tab';
+    document.getElementById('tabBarang').style.display = tab === 'barang' ? 'block' : 'none';
+    document.getElementById('tabRiwayat').style.display = tab === 'riwayat' ? 'block' : 'none';
+  }
+  document.getElementById('searchInput').addEventListener('input', renderUI);
+
+  // Komunikasi API dengan Fetch & SweetAlert2
+  async function callAPI(payload) {
+    document.getElementById('loader').style.display = 'flex';
+    try {
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      document.getElementById('loader').style.display = 'none';
+      return data;
+    } catch (err) {
+      document.getElementById('loader').style.display = 'none';
+      Swal.fire('Error Koneksi', 'Gagal terhubung ke server', 'error');
+      throw err;
+    }
+  }
+
+  async function loadData() {
+    const res = await callAPI({ action: 'read' });
+    if (res.status === 'success') {
+      DB_ITEMS = res.items;
+      DB_TRXS = res.trxs;
+      renderUI();
+    }
+  }
+
+  async function bukaModalTambah() {
+    const { value: formValues } = await Swal.fire({
+      title: 'Tambah Barang Baru',
+      html: `
+        <input id="swal-nama" class="swal2-input" placeholder="Nama Barang">
+        <input id="swal-lokasi" class="swal2-input" placeholder="Lokasi (ex: Rak A)">
+        <input id="swal-stok" type="number" class="swal2-input" placeholder="Stok Awal" min="0">
+      `,
+      focusConfirm: false,
+      showCancelButton: true,
+      confirmButtonText: 'Simpan',
+      confirmButtonColor: 'var(--blue)',
+      preConfirm: () => {
+        return {
+          nama: document.getElementById('swal-nama').value,
+          lokasi: document.getElementById('swal-lokasi').value,
+          stokAwal: parseInt(document.getElementById('swal-stok').value) || 0
+        }
+      }
+    });
+
+    if (formValues) {
+      if (!formValues.nama) return Swal.fire('Gagal', 'Nama barang wajib diisi', 'warning');
+      
+      const res = await callAPI({ action: 'tambahBarang', data: formValues });
+      if (res.status === 'success') {
+        Swal.fire({ title: 'Berhasil!', text: res.message, icon: 'success', timer: 1500, showConfirmButton: false });
+        loadData();
+      }
+    }
+  }
+
+  async function prosesTransaksi(itemId, namaBarang, tipe, currentStock) {
+    const label = tipe === 'masuk' ? 'Barang Masuk' : 'Barang Keluar';
+    
+    const { value: formValues } = await Swal.fire({
+      title: label,
+      text: namaBarang,
+      html: `
+        <input id="trx-qty" type="number" class="swal2-input" placeholder="Jumlah" min="1" value="1">
+        <textarea id="trx-note" class="swal2-textarea" placeholder="Catatan (Opsional)"></textarea>
+      `,
+      showCancelButton: true,
+      confirmButtonText: 'Proses',
+      confirmButtonColor: tipe === 'masuk' ? 'var(--green)' : 'var(--red)',
+      preConfirm: () => {
+        return {
+          jumlah: parseInt(document.getElementById('trx-qty').value) || 0,
+          catatan: document.getElementById('trx-note').value
+        }
+      }
+    });
+
+    if (formValues) {
+      if (formValues.jumlah <= 0) return Swal.fire('Gagal', 'Jumlah harus lebih dari 0', 'warning');
+      if (tipe === 'keluar' && formValues.jumlah > currentStock) return Swal.fire('Stok Tidak Cukup', 'Jumlah keluar melebihi stok yang ada', 'error');
+
+      const payloadData = { itemId: itemId, nama: namaBarang, tipe: tipe, jumlah: formValues.jumlah, catatan: formValues.catatan };
+      const res = await callAPI({ action: 'transaksi', data: payloadData });
+      
+      if (res.status === 'success') {
+        Swal.fire({ title: 'Tercatat!', text: res.message, icon: 'success', timer: 1500, showConfirmButton: false });
+        loadData();
+      }
+    }
+  }
+
+  // Load awal
+  window.onload = loadData;
+</script>
+
+</body>
+</html>
