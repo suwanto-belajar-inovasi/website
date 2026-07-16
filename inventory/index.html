@@ -43,6 +43,8 @@
   .btn-main:hover { background:var(--blue-dark); transform: translateY(-1px); }
   .btn-outline { background:#fff; border:1px solid var(--border); color:var(--text); box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
   .btn-outline:hover { background: #f8fafc; border-color: #cbd5e1; }
+  .btn-text { background:none; color:var(--blue); padding:6px; font-size:13px; font-weight:600; text-align:center; width:100%; margin-top:8px;}
+  .btn-text:hover { text-decoration:underline; }
   
   .toolbar-excel { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
   
@@ -54,7 +56,9 @@
   .item-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); }
   .item-top { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap; margin-bottom:12px; }
   .item-name { font-size:16.5px; font-weight:700; color:#0f172a; }
-  .item-loc { font-size:13.5px; color:var(--muted); margin-top:6px; }
+  .item-loc { font-size:13.5px; color:var(--muted); margin-top:6px; display:flex; align-items:center; }
+  .edit-icon { margin-left:8px; cursor:pointer; color:var(--blue); font-size:12px; opacity:0.7; transition:0.2s;}
+  .edit-icon:hover { opacity:1; text-decoration:underline; }
   .item-stock { text-align:right; }
   .item-stock .num { font-size:26px; font-weight:700; }
   .item-stock .num.low { color:var(--red); animation: pulse 2s infinite; }
@@ -83,7 +87,7 @@
 
 <div id="loader">
   <div class="spinner"></div>
-  <p style="margin-top:16px; font-weight:600; color:var(--muted);">Sinkronisasi Database Cloud...</p>
+  <p style="margin-top:16px; font-weight:600; color:var(--muted);">Memuat Database Cloud...</p>
 </div>
 
 <div class="wrap">
@@ -118,7 +122,7 @@
 
   <div class="tabs">
     <button class="tab active" onclick="switchTab('barang')" id="tabBtnBarang">Daftar Barang</button>
-    <button class="tab" onclick="switchTab('riwayat')" id="tabBtnRiwayat">Riwayat Transaksi</button>
+    <button class="tab" onclick="switchTab('riwayat')" id="tabBtnRiwayat">Semua Riwayat Transaksi</button>
   </div>
 
   <div id="tabBarang">
@@ -189,7 +193,10 @@
           <div class="item-top">
             <div>
               <div class="item-name">${item.nama}</div>
-              <div class="item-loc">📍 Lokasi Penempatan: <b>${item.lokasi || '-'}</b></div>
+              <div class="item-loc">
+                📍 Penempatan: <b>${item.lokasi || '-'}</b> 
+                <span class="edit-icon" onclick="editLokasiItem('${item.id}', '${item.lokasi || '-'}')">✏️ Edit</span>
+              </div>
             </div>
             <div class="item-stock">
               <div class="num ${isLow ? 'low' : ''}">${item.stok}</div>
@@ -197,8 +204,9 @@
             </div>
           </div>
           <div class="item-actions">
-            <button class="btn-in" onclick="prosesTransaksi('${item.id}', '${item.nama}', 'masuk')">➕ Barang Masuk</button>
-            <button class="btn-out" onclick="prosesTransaksi('${item.id}', '${item.nama}', 'keluar', ${item.stok})">➖ Barang Keluar</button>
+            <button class="btn-in" onclick="prosesTransaksi('${item.id}', '${item.nama}', 'masuk')">➕ Masuk</button>
+            <button class="btn-out" onclick="prosesTransaksi('${item.id}', '${item.nama}', 'keluar', ${item.stok})">➖ Keluar</button>
+            <button class="btn-text" onclick="lihatRiwayatPerItem('${item.id}', '${item.nama}')">🕒 Lihat Riwayat Item Ini</button>
           </div>
         </div>
       `;
@@ -224,7 +232,7 @@
           <div class="hist-qty" style="color: ${t.tipe === 'masuk' ? 'var(--green)' : 'var(--red)'}">
             ${t.tipe === 'masuk' ? '▲ +' : '▼ -'}${t.jumlah}
           </div>
-          <div class="hist-date">Waktu Sinkronisasi: ${formatTgl(t.tanggal)}</div>
+          <div class="hist-date">${formatTgl(t.tanggal)}</div>
         </div>
       `;
     });
@@ -239,31 +247,99 @@
   
   document.getElementById('searchInput').addEventListener('input', renderUI);
 
+  // Call API with Loading Spinner (Untuk Load Awal)
   async function callAPI(payload) {
     document.getElementById('loader').style.display = 'flex';
     try {
-      const res = await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(payload)
-      });
+      const res = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) });
       const data = await res.json();
       document.getElementById('loader').style.display = 'none';
       return data;
     } catch (err) {
       document.getElementById('loader').style.display = 'none';
-      Swal.fire({ icon: 'error', title: 'Koneksi Terputus', text: 'Gagal melakukan sinkronisasi dengan Apps Script API.' });
+      throw err;
+    }
+  }
+
+  // Call API without Spinner (Untuk Optimistic UI Background Sync)
+  async function callAPIBackground(payload) {
+    try {
+      const res = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) });
+      return await res.json();
+    } catch (err) {
       throw err;
     }
   }
 
   async function loadData() {
-    const res = await callAPI({ action: 'read' });
-    if (res.status === 'success') {
-      DB_ITEMS = res.items;
-      DB_TRXS = res.trxs;
-      renderUI();
+    try {
+      const res = await callAPI({ action: 'read' });
+      if (res.status === 'success') {
+        DB_ITEMS = res.items;
+        DB_TRXS = res.trxs;
+        renderUI();
+      }
+    } catch(err) {
+      Swal.fire({ icon: 'error', title: 'Koneksi Terputus', text: 'Gagal melakukan sinkronisasi dengan Cloud.' });
     }
+  }
+
+  // FITUR: Edit Lokasi dengan Optimistic Update (Super Cepat)
+  async function editLokasiItem(itemId, currLokasi) {
+    const { value: lokasiBaru } = await Swal.fire({
+      title: 'Perbarui Lokasi',
+      input: 'text',
+      inputValue: currLokasi === '-' ? '' : currLokasi,
+      showCancelButton: true,
+      confirmButtonText: 'Simpan',
+      confirmButtonColor: 'var(--blue)'
+    });
+
+    if (lokasiBaru !== undefined && lokasiBaru.trim() !== currLokasi) {
+      // 1. Ubah State Lokal & Render Langsung (Tanpa Loading)
+      const targetItem = DB_ITEMS.find(i => i.id === itemId);
+      targetItem.lokasi = lokasiBaru.trim() || '-';
+      renderUI();
+      
+      // 2. Sinkronisasi Latar Belakang
+      callAPIBackground({ action: 'editLokasi', data: { id: itemId, lokasiBaru: targetItem.lokasi } }).catch(() => {
+        Swal.fire('Sinkronisasi Gagal', 'Data gagal diupdate di Cloud. Memuat ulang...', 'error');
+        loadData();
+      });
+    }
+  }
+
+  // FITUR: Riwayat Per Item
+  function lihatRiwayatPerItem(itemId, namaBarang) {
+    const histItem = DB_TRXS.filter(t => t.itemId === itemId).sort((a,b) => new Date(b.tanggal) - new Date(a.tanggal));
+    
+    let html = '<div style="max-height: 350px; overflow-y: auto; text-align: left; padding:0 8px;">';
+    if(histItem.length === 0) {
+       html += '<div style="color:var(--muted); text-align:center; margin-top:20px;">Belum ada rekam transaksi untuk item ini.</div>';
+    } else {
+       histItem.forEach(t => {
+         const color = t.tipe === 'masuk' ? 'var(--green)' : 'var(--red)';
+         const sign = t.tipe === 'masuk' ? '+' : '-';
+         html += `
+           <div style="border-bottom:1px solid var(--border); padding:12px 0;">
+             <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+               <span style="font-weight:700; color:${color}">${t.tipe.toUpperCase()} (${sign}${t.jumlah})</span>
+               <span style="font-size:12px; color:var(--muted)">${formatTgl(t.tanggal)}</span>
+             </div>
+             <div style="font-size:13.5px; color:var(--text);">${t.catatan || '-'}</div>
+           </div>
+         `;
+       });
+    }
+    html += '</div>';
+
+    Swal.fire({
+      title: `<span style="font-size:18px;">Riwayat: ${namaBarang}</span>`,
+      html: html,
+      showConfirmButton: true,
+      confirmButtonText: 'Tutup',
+      confirmButtonColor: 'var(--blue)'
+    });
   }
 
   async function bukaModalTambah() {
@@ -289,7 +365,6 @@
 
     if (formValues) {
       if (!formValues.nama) return Swal.fire('Gagal validasi', 'Nama barang tidak boleh dibiarkan kosong!', 'warning');
-      
       const res = await callAPI({ action: 'tambahBarang', data: formValues });
       if (res.status === 'success') {
         Swal.fire({ title: 'Tersimpan!', text: res.message, icon: 'success', timer: 1500, showConfirmButton: false });
@@ -298,6 +373,7 @@
     }
   }
 
+  // FITUR: Transaksi dengan Optimistic Update (Super Cepat)
   async function prosesTransaksi(itemId, namaBarang, tipe, currentStock) {
     const label = tipe === 'masuk' ? 'Transaksi Barang Masuk' : 'Transaksi Barang Keluar';
     
@@ -325,38 +401,40 @@
       if (formValues.jumlah <= 0) return Swal.fire('Gagal Validasi', 'Jumlah kuantitas transaksi minimal adalah 1 unit!', 'warning');
       if (tipe === 'keluar' && formValues.jumlah > currentStock) return Swal.fire('Stok Defisit', 'Jumlah unit keluar melebihi sisa persediaan fisik di gudang!', 'error');
 
+      // 1. UPDATE STATE LOKAL SEKETIKA (Optimistic UI)
+      const targetItem = DB_ITEMS.find(i => i.id === itemId);
+      if (tipe === 'masuk') { targetItem.stok += formValues.jumlah; } 
+      else { targetItem.stok -= formValues.jumlah; }
+
       const payloadData = { itemId: itemId, nama: namaBarang, tipe: tipe, jumlah: formValues.jumlah, catatan: formValues.catatan };
-      const res = await callAPI({ action: 'transaksi', data: payloadData });
       
-      if (res.status === 'success') {
-        Swal.fire({ title: 'Berhasil!', text: res.message, icon: 'success', timer: 1500, showConfirmButton: false });
+      DB_TRXS.push({
+        id: 'TRX-TEMP',
+        itemId: itemId,
+        nama: namaBarang,
+        tipe: tipe,
+        jumlah: formValues.jumlah,
+        catatan: formValues.catatan,
+        tanggal: new Date().toISOString()
+      });
+
+      renderUI(); 
+      Swal.fire({ title: 'Tercatat!', text: 'Sistem sedang mensinkronkan ke Cloud...', icon: 'success', timer: 1200, showConfirmButton: false });
+
+      // 2. SINKRONISASI ASYNCHRONOUS BACKGROUND
+      callAPIBackground({ action: 'transaksi', data: payloadData }).catch(err => {
+        // Rollback jika gagal API
+        Swal.fire('Sinkronisasi Gagal', 'Data gagal dicatat di Cloud. Memuat ulang data server...', 'error');
         loadData();
-      }
+      });
     }
   }
 
-  // LOGIKA UTAMA EKSPORETASI DATA KE FILE EXCEL (.XLSX)
   function exportKeExcel() {
-    if (DB_ITEMS.length === 0) {
-      return Swal.fire('Data Nihil', 'Tidak ada riwayat atau barang yang dapat diekspor saat ini.', 'info');
-    }
+    if (DB_ITEMS.length === 0) { return Swal.fire('Data Nihil', 'Tidak ada riwayat atau barang yang dapat diekspor saat ini.', 'info'); }
     
-    const sheetDataBarang = DB_ITEMS.map(i => ({
-      "ID Barang": i.id,
-      "Nama Barang": i.nama,
-      "Lokasi": i.lokasi || '',
-      "Stok": i.stok
-    }));
-    
-    const sheetDataRiwayat = DB_TRXS.map(t => ({
-      "ID Trx": t.id,
-      "ID Barang": t.itemId,
-      "Nama Barang": t.nama,
-      "Tipe": t.tipe,
-      "Jumlah": t.jumlah,
-      "Catatan": t.catatan || '',
-      "Tanggal": t.tanggal
-    }));
+    const sheetDataBarang = DB_ITEMS.map(i => ({ "ID Barang": i.id, "Nama Barang": i.nama, "Lokasi": i.lokasi || '', "Stok": i.stok }));
+    const sheetDataRiwayat = DB_TRXS.map(t => ({ "ID Trx": t.id, "ID Barang": t.itemId, "Nama Barang": t.nama, "Tipe": t.tipe, "Jumlah": t.jumlah, "Catatan": t.catatan || '', "Tanggal": t.tanggal }));
 
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(sheetDataBarang), "Barang");
@@ -365,23 +443,18 @@
     const tglSekarang = new Date();
     const stamp = `${tglSekarang.getFullYear()}${(tglSekarang.getMonth()+1).toString().padStart(2,'0')}${tglSekarang.getDate().toString().padStart(2,'0')}`;
     XLSX.writeFile(workbook, `Backup-Inventaris-Gudang-${stamp}.xlsx`);
-    Swal.fire('Ekspor Berhasil', 'Unduhan file Excel Anda sedang berjalan.', 'success');
   }
 
-  // LOGIKA UTAMA IMPORTASI DATA DARI FILE EXCEL (.XLSX)
   function triggerImportExcel() {
     Swal.fire({
       title: 'Konfirmasi Penimpaan Data',
-      text: 'Mengimpor file Excel baru akan menghapus dan menggantikan semua database barang & riwayat transaksi yang ada saat ini di Google Sheets. Tetap Lanjutkan?',
+      text: 'Mengimpor file Excel baru akan menghapus semua database barang & riwayat yang ada saat ini. Tetap Lanjutkan?',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: 'Ya, Timpa Data Cloud',
-      cancelButtonText: 'Batalkan',
+      confirmButtonText: 'Ya, Timpa Data',
       confirmButtonColor: 'var(--blue)'
     }).then((res) => {
-      if (res.isConfirmed) {
-        document.getElementById('fileImpor').click();
-      }
+      if (res.isConfirmed) document.getElementById('fileImpor').click();
     });
   }
 
@@ -392,47 +465,30 @@
     const fileReader = new FileReader();
     fileReader.onload = async (e) => {
       try {
-        const dataArr = new Uint8Array(e.target.result);
-        const workbook = XLSX.read(dataArr, { type: 'array' });
-        
+        const workbook = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
         const shBarang = workbook.Sheets['Barang'];
         const shRiwayat = workbook.Sheets['Riwayat'];
         
-        if (!shBarang) {
-          return Swal.fire('Format Salah', 'Sheet bernama "Barang" tidak ditemukan pada susunan file Excel Anda.', 'error');
-        }
+        if (!shBarang) return Swal.fire('Format Salah', 'Sheet bernama "Barang" tidak ditemukan.', 'error');
 
-        const rowsBarang = XLSX.utils.sheet_to_json(shBarang);
-        const rowsRiwayat = shRiwayat ? XLSX.utils.sheet_to_json(shRiwayat) : [];
-
-        const importedItems = rowsBarang.map(r => ({
+        const importedItems = XLSX.utils.sheet_to_json(shBarang).map(r => ({
           id: String(r["ID Barang"] || 'BRG-' + Math.random().toString(36).substring(2, 9)),
-          nama: String(r["Nama Barang"] || '').trim(),
-          lokasi: String(r["Lokasi"] || '').trim(),
-          stok: parseInt(r["Stok"]) || 0
+          nama: String(r["Nama Barang"] || '').trim(), lokasi: String(r["Lokasi"] || '').trim(), stok: parseInt(r["Stok"]) || 0
         })).filter(i => i.nama !== '');
 
-        const importedTrxs = rowsRiwayat.map(r => ({
+        const importedTrxs = (shRiwayat ? XLSX.utils.sheet_to_json(shRiwayat) : []).map(r => ({
           id: String(r["ID Trx"] || 'TRX-' + Math.random().toString(36).substring(2, 9)),
-          itemId: String(r["ID Barang"] || ''),
-          nama: String(r["Nama Barang"] || ''),
-          tipe: String(r["Tipe"] || 'masuk').toLowerCase(),
-          jumlah: parseInt(r["Jumlah"]) || 0,
-          catatan: String(r["Catatan"] || ''),
-          tanggal: String(r["Tanggal"] || new Date().toISOString())
+          itemId: String(r["ID Barang"] || ''), nama: String(r["Nama Barang"] || ''), tipe: String(r["Tipe"] || 'masuk').toLowerCase(),
+          jumlah: parseInt(r["Jumlah"]) || 0, catatan: String(r["Catatan"] || ''), tanggal: String(r["Tanggal"] || new Date().toISOString())
         }));
 
-        const responseCloud = await callAPI({
-          action: 'importExcelData',
-          data: { items: importedItems, trxs: importedTrxs }
-        });
-
+        const responseCloud = await callAPI({ action: 'importExcelData', data: { items: importedItems, trxs: importedTrxs } });
         if (responseCloud.status === 'success') {
           Swal.fire('Impor Berhasil!', responseCloud.message, 'success');
           loadData();
         }
       } catch (err) {
-        Swal.fire('Error Pemrosesan', 'Gagal memilah data dalam dokumen Excel. Pastikan format kolom sama dengan hasil ekspor sistem.', 'error');
+        Swal.fire('Error Pemrosesan', 'Gagal memilah data dalam dokumen Excel.', 'error');
       }
     };
     fileReader.readAsArrayBuffer(file);
