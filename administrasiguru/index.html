@@ -8,6 +8,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
   <style>
@@ -158,7 +159,10 @@
         <div class="card-custom">
           <div class="card-header-custom">
             <h5 class="fw-bold mb-0">Input Data Absensi</h5>
-            <button class="btn btn-sm btn-info text-white" onclick="exportExcel('absensi')"><i class="bi bi-file-earmark-excel"></i> Rekap Excel</button>
+            <div>
+              <button class="btn btn-sm btn-secondary text-white" onclick="showPreviewAbsensi()"><i class="bi bi-eye"></i> Preview Rekap</button>
+              <button class="btn btn-sm btn-info text-white" onclick="exportExcel('absensi')"><i class="bi bi-file-earmark-excel"></i> Excel Harian</button>
+            </div>
           </div>
           <div class="card-body">
             <div class="row mb-3">
@@ -249,6 +253,30 @@
               </table>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modalPreviewAbsensi" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold">Preview Rekap Absensi Bulanan</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row mb-3">
+            <div class="col-md-3">
+              <label class="form-label fw-bold">Pilih Bulan & Tahun</label>
+              <input type="month" class="form-control border-primary" id="preview-month" onchange="generatePreviewAbsensi()">
+            </div>
+            <div class="col-md-9 text-end d-flex align-items-end justify-content-end">
+              <button class="btn btn-primary fw-bold" onclick="printPreview()"><i class="bi bi-printer"></i> Cetak / Simpan PDF</button>
+            </div>
+          </div>
+          <div class="table-responsive" id="print-area">
+            </div>
         </div>
       </div>
     </div>
@@ -388,6 +416,7 @@
         if(document.getElementById(id)) document.getElementById(id).innerHTML = clsOpts;
       });
       if(document.getElementById('filter-jurnal-kelas')) document.getElementById('filter-jurnal-kelas').innerHTML = '<option value="">-- Pilih Kelas --</option><option value="All">Semua Kelas</option>' + clsOpts.replace('<option value="">-- Pilih Kelas --</option>', '');
+      
       let mapelOpts = '<option value="">-- Pilih Mapel --</option>';
       db.subjects.forEach(m => mapelOpts += `<option value="${m}">${m}</option>`);
       if(document.getElementById('jurnal-mapel')) document.getElementById('jurnal-mapel').innerHTML = mapelOpts;
@@ -405,7 +434,7 @@
       return c ? c.ClassName : cid;
     }
 
-    // --- KELAS & SISWA & WA ---
+    // --- KELAS, SISWA, & MAPEL ---
     function addClass() {
       Swal.fire({ title: 'Nama Kelas Baru', input: 'text', showCancelButton: true }).then(res => {
         if(res.isConfirmed && res.value) { db.classes.push({ ClassID: "C" + Date.now(), ClassName: res.value }); populateSelects(); syncData(); }
@@ -434,7 +463,6 @@
       });
     }
 
-    // EDIT SISWA BARU
     function editStudent(id) {
       const student = db.students.find(s => s.StudentID === id);
       if(!student) return;
@@ -482,7 +510,6 @@
       tbody.innerHTML = html;
     }
 
-    // WA REPORT DIPERBAIKI (Gunakan ID agar parameter string aman dari tanda kutip)
     function sendWAReport(id) {
       const student = db.students.find(s => s.StudentID === id);
       if(!student || !student.ParentPhone || student.ParentPhone.trim() === '') { 
@@ -495,7 +522,6 @@
       window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`, '_blank');
     }
 
-    // UPLOAD EXCEL & DOWNLOAD TEMPLATE
     function downloadTemplateExcel() {
       if(typeof XLSX === 'undefined') return Swal.fire('Gagal', 'Tunggu sistem selesai dimuat.', 'error');
       const wb = XLSX.utils.book_new();
@@ -523,7 +549,7 @@
 
         let added = 0;
         for(let i = 1; i < rows.length; i++) {
-          if(rows[i][0]) { // Pastikan kolom Nama tidak kosong
+          if(rows[i][0]) { 
             let nama = String(rows[i][0]);
             let wa = rows[i][1] ? String(rows[i][1]) : "";
             db.students.push({ StudentID: "S" + Date.now() + i, ClassID: cid, StudentName: nama, ParentPhone: wa });
@@ -531,13 +557,12 @@
           }
         }
         if(added > 0) {
-          renderStudentsTable();
-          syncData();
+          renderStudentsTable(); syncData();
           Swal.fire('Berhasil', `${added} data siswa berhasil diupload ke kelas terpilih.`, 'success');
         } else {
           Swal.fire('Gagal', 'Tidak ada data valid yang ditemukan dalam file excel.', 'error');
         }
-        event.target.value = ""; // Reset input
+        event.target.value = "";
       };
       reader.readAsArrayBuffer(file);
     }
@@ -557,7 +582,7 @@
         let existing = db.attendance.find(a => a.Date === tgl && String(a.ClassID) === String(cid) && a.StudentID === s.StudentID);
         let status = existing ? existing.Status : 'Hadir';
         html += `<tr><td class="text-center align-middle">${i+1}</td><td class="align-middle fw-bold">${s.StudentName}</td>
-                 <td><select class="form-select status-absen" data-studentid="${s.StudentID}">
+                 <td><select class="form-select status-absen border-primary" data-studentid="${s.StudentID}">
                  <option value="Hadir" ${status==='Hadir'?'selected':''}>Hadir</option>
                  <option value="Sakit" ${status==='Sakit'?'selected':''}>Sakit</option>
                  <option value="Izin" ${status==='Izin'?'selected':''}>Izin</option>
@@ -582,7 +607,90 @@
       syncData(); Swal.fire({icon: 'success', title: 'Berhasil', text: 'Data Absensi Tersimpan', timer: 1500});
     }
 
-    // --- NILAI (Ditambah Jenis Formatif) ---
+    // --- PREVIEW & CETAK REKAP ABSENSI MATRIKS ---
+    function showPreviewAbsensi() {
+      const cid = document.getElementById('absensi-kelas').value;
+      if(!cid) return Swal.fire('Perhatian', 'Pilih kelas terlebih dahulu pada form Absensi.', 'warning');
+      
+      let today = new Date();
+      let m = (today.getMonth() + 1).toString().padStart(2, '0');
+      let y = today.getFullYear();
+      document.getElementById('preview-month').value = `${y}-${m}`;
+      
+      const modal = new bootstrap.Modal(document.getElementById('modalPreviewAbsensi'));
+      modal.show();
+      generatePreviewAbsensi();
+    }
+
+    function generatePreviewAbsensi() {
+      const cid = document.getElementById('absensi-kelas').value;
+      const ym = document.getElementById('preview-month').value; 
+      if(!cid || !ym) return;
+
+      let [year, month] = ym.split('-');
+      let daysInMonth = new Date(year, month, 0).getDate();
+      const stds = db.students.filter(s => String(s.ClassID) === String(cid));
+      
+      let html = `<div class="text-center mb-3">
+                    <h4 class="fw-bold m-0">REKAPITULASI ABSENSI SISWA</h4>
+                    <h5 class="m-0">${currentUser.school}</h5>
+                    <p class="m-0">Kelas: <b>${getClassName(cid)}</b> | Bulan: <b>${month}/${year}</b></p>
+                  </div>`;
+      html += `<table class="table table-bordered table-sm text-center align-middle" style="font-size:0.85rem; border-color:#000;">`;
+      html += `<thead class="table-light" style="border-bottom: 2px solid #000;">
+                <tr><th rowspan="2" class="align-middle">No</th><th rowspan="2" class="text-start align-middle">Nama Siswa</th><th colspan="${daysInMonth}">Tanggal</th><th colspan="4">Total</th></tr><tr>`;
+      for(let d=1; d<=daysInMonth; d++) html += `<th>${d}</th>`;
+      html += `<th class="text-success">H</th><th class="text-info">S</th><th class="text-warning">I</th><th class="text-danger">A</th></tr></thead><tbody>`;
+
+      stds.forEach((s, i) => {
+        html += `<tr><td>${i+1}</td><td class="text-start text-nowrap fw-bold">${s.StudentName}</td>`;
+        let totals = {H:0, S:0, I:0, A:0};
+        
+        for(let d=1; d<=daysInMonth; d++) {
+          let dateStr = `${year}-${month}-${d.toString().padStart(2, '0')}`;
+          let rec = db.attendance.find(a => a.Date === dateStr && String(a.ClassID) === String(cid) && a.StudentID === s.StudentID);
+          let stat = rec ? rec.Status : '';
+          
+          let mark = '';
+          if(stat === 'Hadir') { mark = '•'; totals.H++; }
+          else if(stat === 'Sakit') { mark = 'S'; totals.S++; }
+          else if(stat === 'Izin') { mark = 'I'; totals.I++; }
+          else if(stat === 'Alpa') { mark = 'A'; totals.A++; }
+          
+          html += `<td>${mark}</td>`;
+        }
+        html += `<td class="fw-bold">${totals.H}</td><td class="fw-bold">${totals.S}</td><td class="fw-bold">${totals.I}</td><td class="fw-bold">${totals.A}</td></tr>`;
+      });
+      html += `</tbody></table>`;
+      document.getElementById('print-area').innerHTML = html;
+    }
+
+    function printPreview() {
+      let printContents = document.getElementById('print-area').innerHTML;
+      let printWindow = window.open('', '_blank');
+      printWindow.document.write(`
+        <html>
+        <head>
+          <title>Cetak Rekap Absensi</title>
+          <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+          <style>
+            @media print {
+              @page { size: landscape; margin: 10mm; }
+              body { -webkit-print-color-adjust: exact; font-family: Arial, sans-serif; }
+            }
+            th, td { padding: 4px !important; border: 1px solid #000 !important; }
+            table { border-collapse: collapse; width: 100%; }
+          </style>
+        </head>
+        <body onload="setTimeout(function(){ window.print(); window.close(); }, 500);">
+          ${printContents}
+        </body>
+        </html>
+      `);
+      printWindow.document.close();
+    }
+
+    // --- NILAI ---
     function renderNilaiForm() {
       const cid = document.getElementById('nilai-kelas').value;
       const tgl = document.getElementById('nilai-date').value;
@@ -598,7 +706,7 @@
       stds.forEach((s, i) => {
         let ex = db.grades.find(g => g.Date === tgl && String(g.ClassID) === String(cid) && g.Subject === mpl && g.Jenis === jns && g.StudentID === s.StudentID);
         html += `<tr><td class="text-center align-middle">${i+1}</td><td class="align-middle fw-bold">${s.StudentName}</td>
-                 <td><input type="number" class="form-control val-score" data-studentid="${s.StudentID}" value="${ex ? ex.Score : ''}" placeholder="0-100"></td>
+                 <td><input type="number" class="form-control val-score border-primary" data-studentid="${s.StudentID}" value="${ex ? ex.Score : ''}" placeholder="0-100"></td>
                  <td><input type="text" class="form-control val-notes" data-studentid="${s.StudentID}" value="${ex ? ex.Notes : ''}" placeholder="Opsional"></td></tr>`;
       });
       tbody.innerHTML = html;
@@ -623,7 +731,7 @@
       syncData(); Swal.fire({icon: 'success', title: 'Berhasil', text: 'Data Nilai Tersimpan', timer: 1500});
     }
 
-    // --- JURNAL (Ditambah Materi Pokok) ---
+    // --- JURNAL ---
     function renderJurnal() {
       const cFilter = document.getElementById('filter-jurnal-kelas').value;
       const tbody = document.getElementById('jurnal-tbody');
@@ -698,7 +806,7 @@
       });
     }
 
-    // --- EXPORT KE EXCEL (XLSX) ---
+    // --- EXPORT KE EXCEL ---
     function exportExcel(module) {
       if(typeof XLSX === 'undefined') return Swal.fire('Gagal', 'Library Excel belum dimuat. Periksa koneksi internet.', 'error');
       let dataToExport = []; let title = ""; let cid = "";
@@ -719,7 +827,7 @@
         cid = document.getElementById('absensi-kelas').value;
         let tgl = document.getElementById('absensi-date').value;
         if(!cid || !tgl) return Swal.fire('Perhatian', 'Pilih tanggal dan kelas di form absensi.', 'warning');
-        title = "Absensi_" + getClassName(cid).replace(/\s/g, '_') + "_" + tgl;
+        title = "Absensi_Harian_" + getClassName(cid).replace(/\s/g, '_') + "_" + tgl;
         dataToExport = [...kopArray, ["Tanggal Absensi:", tgl], [], ["No", "Nama Siswa", "Status Absensi"]];
         let stds = db.students.filter(s => String(s.ClassID) === String(cid));
         stds.forEach((s, i) => {
