@@ -75,12 +75,12 @@
   .hist-info .n { font-weight:600; font-size:15px; color: #0f172a; }
   .hist-info .c { font-size:13px; color:var(--muted); margin-top: 4px; font-style: italic;}
   .hist-qty { font-size:17px; font-weight:700; }
-  .hist-date { font-size:12px; color:var(--muted); width: 100%; text-align: right; margin-top: 2px;}
+  .hist-date { font-size:12px; color:var(--muted); width: 100%; display: flex; justify-content: flex-end; align-items: center; gap: 12px; margin-top: 2px;}
 
   .footer-brand { text-align: center; font-size: 13px; color: var(--muted); margin-top: 50px; border-top: 1px dashed var(--border); padding-top: 16px; }
   
   @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
-  @media (max-width:480px){ .item-top{flex-direction:column;} .item-stock, .hist-date{text-align:left;} .btn-in, .btn-out{width:100%;} }
+  @media (max-width:480px){ .item-top{flex-direction:column;} .item-stock {text-align:left;} .btn-in, .btn-out{width:100%;} }
 </style>
 </head>
 <body>
@@ -206,7 +206,10 @@
           <div class="item-actions">
             <button class="btn-in" onclick="prosesTransaksi('${item.id}', '${item.nama}', 'masuk')">➕ Masuk</button>
             <button class="btn-out" onclick="prosesTransaksi('${item.id}', '${item.nama}', 'keluar', ${item.stok})">➖ Keluar</button>
-            <button class="btn-text" onclick="lihatRiwayatPerItem('${item.id}', '${item.nama}')">🕒 Lihat Riwayat Item Ini</button>
+            <div style="display:flex; width:100%; gap:4px;">
+              <button class="btn-text" onclick="lihatRiwayatPerItem('${item.id}', '${item.nama}')">🕒 Riwayat Item</button>
+              <button class="btn-text" style="color:var(--red);" onclick="konfirmasiHapusBarang('${item.id}', '${item.nama}')">🗑️ Hapus Barang</button>
+            </div>
           </div>
         </div>
       `;
@@ -232,7 +235,10 @@
           <div class="hist-qty" style="color: ${t.tipe === 'masuk' ? 'var(--green)' : 'var(--red)'}">
             ${t.tipe === 'masuk' ? '▲ +' : '▼ -'}${t.jumlah}
           </div>
-          <div class="hist-date">${formatTgl(t.tanggal)}</div>
+          <div class="hist-date">
+            <span>${formatTgl(t.tanggal)}</span>
+            <span onclick="konfirmasiHapusRiwayat('${t.id}', '${t.itemId}')" style="cursor:pointer; color:var(--red); text-decoration:underline;" title="Hapus Riwayat & Kembalikan Stok">Hapus</span>
+          </div>
         </div>
       `;
     });
@@ -247,7 +253,7 @@
   
   document.getElementById('searchInput').addEventListener('input', renderUI);
 
-  // Call API with Loading Spinner (Untuk Load Awal)
+  // API Calls
   async function callAPI(payload) {
     document.getElementById('loader').style.display = 'flex';
     try {
@@ -261,30 +267,90 @@
     }
   }
 
-  // Call API without Spinner (Untuk Optimistic UI Background Sync)
   async function callAPIBackground(payload) {
     try {
       const res = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) });
       return await res.json();
-    } catch (err) {
-      throw err;
-    }
+    } catch (err) { throw err; }
   }
 
   async function loadData() {
     try {
       const res = await callAPI({ action: 'read' });
-      if (res.status === 'success') {
-        DB_ITEMS = res.items;
-        DB_TRXS = res.trxs;
-        renderUI();
-      }
+      if (res.status === 'success') { DB_ITEMS = res.items; DB_TRXS = res.trxs; renderUI(); }
     } catch(err) {
       Swal.fire({ icon: 'error', title: 'Koneksi Terputus', text: 'Gagal melakukan sinkronisasi dengan Cloud.' });
     }
   }
 
-  // FITUR: Edit Lokasi dengan Optimistic Update (Super Cepat)
+  // FITUR: Hapus Barang (Optimistic UI)
+  async function konfirmasiHapusBarang(id, nama) {
+    const res = await Swal.fire({
+      title: 'Hapus Barang Permanen?',
+      text: `Menghapus "${nama}" akan sekaligus membuang semua log riwayat transaksinya. Anda yakin?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Ya, Hapus Data',
+      confirmButtonColor: 'var(--red)',
+      cancelButtonText: 'Batal'
+    });
+
+    if (res.isConfirmed) {
+      // Optimistic Update Lokal
+      DB_ITEMS = DB_ITEMS.filter(i => i.id !== id);
+      DB_TRXS = DB_TRXS.filter(t => t.itemId !== id);
+      renderUI();
+
+      // Eksekusi Background
+      callAPIBackground({ action: 'hapusBarang', data: { id: id } }).catch(() => {
+        Swal.fire('Sinkronisasi Gagal', 'Gagal menghapus data di Server. Memuat ulang...', 'error');
+        loadData();
+      });
+    }
+  }
+
+  // FITUR: Hapus Riwayat & Revert Stok (Optimistic UI)
+  async function konfirmasiHapusRiwayat(idTrx, itemId) {
+    const res = await Swal.fire({
+      title: 'Hapus Riwayat Transaksi?',
+      text: 'Menghapus log riwayat ini akan otomatis mengembalikan (revert) kalkulasi stok barang ke posisi sebelumnya. Lanjutkan?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Ya, Hapus & Kembalikan Stok',
+      confirmButtonColor: 'var(--red)',
+      cancelButtonText: 'Batal'
+    });
+
+    if(res.isConfirmed) {
+      // Tutup Pop-Up Riwayat Per Item jika sedang terbuka
+      if (Swal.isVisible()) Swal.close(); 
+
+      // Optimistic Update Lokal
+      const trxIndex = DB_TRXS.findIndex(t => t.id === idTrx);
+      if(trxIndex > -1) {
+        const trxData = DB_TRXS[trxIndex];
+        const itemTarget = DB_ITEMS.find(i => i.id === itemId);
+        
+        if (itemTarget) {
+          // Revert stok seketika
+          if (trxData.tipe === 'masuk') itemTarget.stok -= trxData.jumlah;
+          else itemTarget.stok += trxData.jumlah;
+          
+          if (itemTarget.stok < 0) itemTarget.stok = 0;
+        }
+        
+        DB_TRXS.splice(trxIndex, 1);
+        renderUI();
+      }
+
+      // Eksekusi Background
+      callAPIBackground({ action: 'hapusRiwayat', data: { idTrx: idTrx } }).catch(() => {
+        Swal.fire('Sinkronisasi Gagal', 'Gagal menghapus riwayat di Server. Memuat ulang...', 'error');
+        loadData();
+      });
+    }
+  }
+
   async function editLokasiItem(itemId, currLokasi) {
     const { value: lokasiBaru } = await Swal.fire({
       title: 'Perbarui Lokasi',
@@ -296,12 +362,10 @@
     });
 
     if (lokasiBaru !== undefined && lokasiBaru.trim() !== currLokasi) {
-      // 1. Ubah State Lokal & Render Langsung (Tanpa Loading)
       const targetItem = DB_ITEMS.find(i => i.id === itemId);
       targetItem.lokasi = lokasiBaru.trim() || '-';
       renderUI();
       
-      // 2. Sinkronisasi Latar Belakang
       callAPIBackground({ action: 'editLokasi', data: { id: itemId, lokasiBaru: targetItem.lokasi } }).catch(() => {
         Swal.fire('Sinkronisasi Gagal', 'Data gagal diupdate di Cloud. Memuat ulang...', 'error');
         loadData();
@@ -309,7 +373,6 @@
     }
   }
 
-  // FITUR: Riwayat Per Item
   function lihatRiwayatPerItem(itemId, namaBarang) {
     const histItem = DB_TRXS.filter(t => t.itemId === itemId).sort((a,b) => new Date(b.tanggal) - new Date(a.tanggal));
     
@@ -322,9 +385,12 @@
          const sign = t.tipe === 'masuk' ? '+' : '-';
          html += `
            <div style="border-bottom:1px solid var(--border); padding:12px 0;">
-             <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
                <span style="font-weight:700; color:${color}">${t.tipe.toUpperCase()} (${sign}${t.jumlah})</span>
-               <span style="font-size:12px; color:var(--muted)">${formatTgl(t.tanggal)}</span>
+               <div style="text-align:right;">
+                 <div style="font-size:11px; color:var(--muted)">${formatTgl(t.tanggal)}</div>
+                 <div onclick="konfirmasiHapusRiwayat('${t.id}', '${t.itemId}')" style="cursor:pointer; color:var(--red); text-decoration:underline; font-size:11px; margin-top:2px;">Hapus & Revert Stok</div>
+               </div>
              </div>
              <div style="font-size:13.5px; color:var(--text);">${t.catatan || '-'}</div>
            </div>
@@ -373,7 +439,6 @@
     }
   }
 
-  // FITUR: Transaksi dengan Optimistic Update (Super Cepat)
   async function prosesTransaksi(itemId, namaBarang, tipe, currentStock) {
     const label = tipe === 'masuk' ? 'Transaksi Barang Masuk' : 'Transaksi Barang Keluar';
     
@@ -401,7 +466,6 @@
       if (formValues.jumlah <= 0) return Swal.fire('Gagal Validasi', 'Jumlah kuantitas transaksi minimal adalah 1 unit!', 'warning');
       if (tipe === 'keluar' && formValues.jumlah > currentStock) return Swal.fire('Stok Defisit', 'Jumlah unit keluar melebihi sisa persediaan fisik di gudang!', 'error');
 
-      // 1. UPDATE STATE LOKAL SEKETIKA (Optimistic UI)
       const targetItem = DB_ITEMS.find(i => i.id === itemId);
       if (tipe === 'masuk') { targetItem.stok += formValues.jumlah; } 
       else { targetItem.stok -= formValues.jumlah; }
@@ -409,7 +473,7 @@
       const payloadData = { itemId: itemId, nama: namaBarang, tipe: tipe, jumlah: formValues.jumlah, catatan: formValues.catatan };
       
       DB_TRXS.push({
-        id: 'TRX-TEMP',
+        id: 'TRX-TEMP' + Math.random(), // id dummy agar tidak error saat hapus sebelum sync
         itemId: itemId,
         nama: namaBarang,
         tipe: tipe,
@@ -421,12 +485,12 @@
       renderUI(); 
       Swal.fire({ title: 'Tercatat!', text: 'Sistem sedang mensinkronkan ke Cloud...', icon: 'success', timer: 1200, showConfirmButton: false });
 
-      // 2. SINKRONISASI ASYNCHRONOUS BACKGROUND
-      callAPIBackground({ action: 'transaksi', data: payloadData }).catch(err => {
-        // Rollback jika gagal API
-        Swal.fire('Sinkronisasi Gagal', 'Data gagal dicatat di Cloud. Memuat ulang data server...', 'error');
-        loadData();
-      });
+      callAPIBackground({ action: 'transaksi', data: payloadData })
+        .then(res => { if(res.status === 'success') loadData(); }) // reload utk dapet ID TRX asli
+        .catch(err => {
+          Swal.fire('Sinkronisasi Gagal', 'Data gagal dicatat di Cloud. Memuat ulang data server...', 'error');
+          loadData();
+        });
     }
   }
 
