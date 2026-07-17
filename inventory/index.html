@@ -55,9 +55,9 @@
   .item-card, .hist-item { background: rgba(255, 255, 255, 0.95); border:1px solid var(--border); border-radius:12px; padding:18px; margin-bottom:12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); transition: transform 0.2s, box-shadow 0.2s; }
   .item-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); }
   .item-top { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap; margin-bottom:12px; }
-  .item-name { font-size:16.5px; font-weight:700; color:#0f172a; }
+  .item-name { font-size:16.5px; font-weight:700; color:#0f172a; display: flex; align-items: center; flex-wrap: wrap; }
   .item-loc { font-size:13.5px; color:var(--muted); margin-top:6px; display:flex; align-items:center; }
-  .edit-icon { margin-left:8px; cursor:pointer; color:var(--blue); font-size:12px; opacity:0.7; transition:0.2s;}
+  .edit-icon { margin-left:8px; cursor:pointer; color:var(--blue); font-size:12px; opacity:0.7; transition:0.2s; font-weight: 500;}
   .edit-icon:hover { opacity:1; text-decoration:underline; }
   .item-stock { text-align:right; }
   .item-stock .num { font-size:26px; font-weight:700; }
@@ -192,10 +192,13 @@
         <div class="item-card">
           <div class="item-top">
             <div>
-              <div class="item-name">${item.nama}</div>
+              <div class="item-name">
+                ${item.nama}
+                <span class="edit-icon" onclick="editNamaItem('${item.id}', '${item.nama.replace(/'/g, "\\'")}')">✏️ Edit</span>
+              </div>
               <div class="item-loc">
                 📍 Penempatan: <b>${item.lokasi || '-'}</b> 
-                <span class="edit-icon" onclick="editLokasiItem('${item.id}', '${item.lokasi || '-'}')">✏️ Edit</span>
+                <span class="edit-icon" onclick="editLokasiItem('${item.id}', '${(item.lokasi || '-').replace(/'/g, "\\'")}')">✏️ Edit</span>
               </div>
             </div>
             <div class="item-stock">
@@ -204,11 +207,11 @@
             </div>
           </div>
           <div class="item-actions">
-            <button class="btn-in" onclick="prosesTransaksi('${item.id}', '${item.nama}', 'masuk')">➕ Masuk</button>
-            <button class="btn-out" onclick="prosesTransaksi('${item.id}', '${item.nama}', 'keluar', ${item.stok})">➖ Keluar</button>
+            <button class="btn-in" onclick="prosesTransaksi('${item.id}', '${item.nama.replace(/'/g, "\\'")}', 'masuk')">➕ Masuk</button>
+            <button class="btn-out" onclick="prosesTransaksi('${item.id}', '${item.nama.replace(/'/g, "\\'")}', 'keluar', ${item.stok})">➖ Keluar</button>
             <div style="display:flex; width:100%; gap:4px;">
-              <button class="btn-text" onclick="lihatRiwayatPerItem('${item.id}', '${item.nama}')">🕒 Riwayat Item</button>
-              <button class="btn-text" style="color:var(--red);" onclick="konfirmasiHapusBarang('${item.id}', '${item.nama}')">🗑️ Hapus Barang</button>
+              <button class="btn-text" onclick="lihatRiwayatPerItem('${item.id}', '${item.nama.replace(/'/g, "\\'")}')">🕒 Riwayat Item</button>
+              <button class="btn-text" style="color:var(--red);" onclick="konfirmasiHapusBarang('${item.id}', '${item.nama.replace(/'/g, "\\'")}')">🗑️ Hapus Barang</button>
             </div>
           </div>
         </div>
@@ -283,6 +286,62 @@
     }
   }
 
+  // FITUR: Edit Nama Barang (Optimistic UI)
+  async function editNamaItem(itemId, currNama) {
+    const { value: namaBaru } = await Swal.fire({
+      title: 'Ubah Nama Barang',
+      input: 'text',
+      inputValue: currNama,
+      showCancelButton: true,
+      confirmButtonText: 'Simpan',
+      confirmButtonColor: 'var(--blue)'
+    });
+
+    if (namaBaru !== undefined && namaBaru.trim() !== '' && namaBaru.trim() !== currNama) {
+      const finalNama = namaBaru.trim();
+      
+      // Update UI Lokal
+      const targetItem = DB_ITEMS.find(i => i.id === itemId);
+      if(targetItem) targetItem.nama = finalNama;
+      
+      // Ubah nama di semua riwayat terkait agar konsisten
+      DB_TRXS.forEach(t => {
+        if(t.itemId === itemId) t.nama = finalNama;
+      });
+      
+      renderUI();
+      
+      // Sinkronisasi Latar Belakang
+      callAPIBackground({ action: 'editNama', data: { id: itemId, namaBaru: finalNama } }).catch(() => {
+        Swal.fire('Sinkronisasi Gagal', 'Data gagal diupdate di Cloud. Memuat ulang...', 'error');
+        loadData();
+      });
+    }
+  }
+
+  // FITUR: Edit Lokasi (Optimistic UI)
+  async function editLokasiItem(itemId, currLokasi) {
+    const { value: lokasiBaru } = await Swal.fire({
+      title: 'Perbarui Lokasi',
+      input: 'text',
+      inputValue: currLokasi === '-' ? '' : currLokasi,
+      showCancelButton: true,
+      confirmButtonText: 'Simpan',
+      confirmButtonColor: 'var(--blue)'
+    });
+
+    if (lokasiBaru !== undefined && lokasiBaru.trim() !== currLokasi) {
+      const targetItem = DB_ITEMS.find(i => i.id === itemId);
+      targetItem.lokasi = lokasiBaru.trim() || '-';
+      renderUI();
+      
+      callAPIBackground({ action: 'editLokasi', data: { id: itemId, lokasiBaru: targetItem.lokasi } }).catch(() => {
+        Swal.fire('Sinkronisasi Gagal', 'Data gagal diupdate di Cloud. Memuat ulang...', 'error');
+        loadData();
+      });
+    }
+  }
+
   // FITUR: Hapus Barang (Optimistic UI)
   async function konfirmasiHapusBarang(id, nama) {
     const res = await Swal.fire({
@@ -296,12 +355,10 @@
     });
 
     if (res.isConfirmed) {
-      // Optimistic Update Lokal
       DB_ITEMS = DB_ITEMS.filter(i => i.id !== id);
       DB_TRXS = DB_TRXS.filter(t => t.itemId !== id);
       renderUI();
 
-      // Eksekusi Background
       callAPIBackground({ action: 'hapusBarang', data: { id: id } }).catch(() => {
         Swal.fire('Sinkronisasi Gagal', 'Gagal menghapus data di Server. Memuat ulang...', 'error');
         loadData();
@@ -322,20 +379,16 @@
     });
 
     if(res.isConfirmed) {
-      // Tutup Pop-Up Riwayat Per Item jika sedang terbuka
       if (Swal.isVisible()) Swal.close(); 
 
-      // Optimistic Update Lokal
       const trxIndex = DB_TRXS.findIndex(t => t.id === idTrx);
       if(trxIndex > -1) {
         const trxData = DB_TRXS[trxIndex];
         const itemTarget = DB_ITEMS.find(i => i.id === itemId);
         
         if (itemTarget) {
-          // Revert stok seketika
           if (trxData.tipe === 'masuk') itemTarget.stok -= trxData.jumlah;
           else itemTarget.stok += trxData.jumlah;
-          
           if (itemTarget.stok < 0) itemTarget.stok = 0;
         }
         
@@ -343,31 +396,8 @@
         renderUI();
       }
 
-      // Eksekusi Background
       callAPIBackground({ action: 'hapusRiwayat', data: { idTrx: idTrx } }).catch(() => {
         Swal.fire('Sinkronisasi Gagal', 'Gagal menghapus riwayat di Server. Memuat ulang...', 'error');
-        loadData();
-      });
-    }
-  }
-
-  async function editLokasiItem(itemId, currLokasi) {
-    const { value: lokasiBaru } = await Swal.fire({
-      title: 'Perbarui Lokasi',
-      input: 'text',
-      inputValue: currLokasi === '-' ? '' : currLokasi,
-      showCancelButton: true,
-      confirmButtonText: 'Simpan',
-      confirmButtonColor: 'var(--blue)'
-    });
-
-    if (lokasiBaru !== undefined && lokasiBaru.trim() !== currLokasi) {
-      const targetItem = DB_ITEMS.find(i => i.id === itemId);
-      targetItem.lokasi = lokasiBaru.trim() || '-';
-      renderUI();
-      
-      callAPIBackground({ action: 'editLokasi', data: { id: itemId, lokasiBaru: targetItem.lokasi } }).catch(() => {
-        Swal.fire('Sinkronisasi Gagal', 'Data gagal diupdate di Cloud. Memuat ulang...', 'error');
         loadData();
       });
     }
@@ -473,7 +503,7 @@
       const payloadData = { itemId: itemId, nama: namaBarang, tipe: tipe, jumlah: formValues.jumlah, catatan: formValues.catatan };
       
       DB_TRXS.push({
-        id: 'TRX-TEMP' + Math.random(), // id dummy agar tidak error saat hapus sebelum sync
+        id: 'TRX-TEMP' + Math.random(),
         itemId: itemId,
         nama: namaBarang,
         tipe: tipe,
@@ -483,10 +513,10 @@
       });
 
       renderUI(); 
-      Swal.fire({ title: 'Tercatat!', text: 'Sistem sedang mensinkronkan ke Cloud...', icon: 'success', timer: 1200, showConfirmButton: false });
+      Swal.fire({ title: 'Tercatat!', text: 'Sistem mensinkronkan data...', icon: 'success', timer: 1200, showConfirmButton: false });
 
       callAPIBackground({ action: 'transaksi', data: payloadData })
-        .then(res => { if(res.status === 'success') loadData(); }) // reload utk dapet ID TRX asli
+        .then(res => { if(res.status === 'success') loadData(); })
         .catch(err => {
           Swal.fire('Sinkronisasi Gagal', 'Data gagal dicatat di Cloud. Memuat ulang data server...', 'error');
           loadData();
@@ -495,7 +525,7 @@
   }
 
   function exportKeExcel() {
-    if (DB_ITEMS.length === 0) { return Swal.fire('Data Nihil', 'Tidak ada riwayat atau barang yang dapat diekspor saat ini.', 'info'); }
+    if (DB_ITEMS.length === 0) { return Swal.fire('Data Nihil', 'Tidak ada riwayat atau barang yang dapat diekspor.', 'info'); }
     
     const sheetDataBarang = DB_ITEMS.map(i => ({ "ID Barang": i.id, "Nama Barang": i.nama, "Lokasi": i.lokasi || '', "Stok": i.stok }));
     const sheetDataRiwayat = DB_TRXS.map(t => ({ "ID Trx": t.id, "ID Barang": t.itemId, "Nama Barang": t.nama, "Tipe": t.tipe, "Jumlah": t.jumlah, "Catatan": t.catatan || '', "Tanggal": t.tanggal }));
@@ -512,7 +542,7 @@
   function triggerImportExcel() {
     Swal.fire({
       title: 'Konfirmasi Penimpaan Data',
-      text: 'Mengimpor file Excel baru akan menghapus semua database barang & riwayat yang ada saat ini. Tetap Lanjutkan?',
+      text: 'Mengimpor file Excel baru akan menghapus semua database barang & riwayat. Tetap Lanjutkan?',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Ya, Timpa Data',
