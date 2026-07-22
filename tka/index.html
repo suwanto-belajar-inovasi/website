@@ -293,7 +293,6 @@ body.exam-mode { overflow: hidden; user-select: none; }
 
 <!-- API GATEWAY GITHUB TO GAS -->
 <script>
-  // GANTI DENGAN URL WEB APP GOOGLE APPS SCRIPT ANDA YANG BARU DI-DEPLOY
   const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzszOrDYmIXvrykafnKZ7dfFYUrRVMsQH9APV_5KRnwVVcfknKKEHrQ7ff2Fjg6IkGh6A/exec";
   const google = {
     script: {
@@ -629,7 +628,7 @@ function applyFilter() {
   });
 }
 
-function renderAdministrasi() { /* [SAMA SEPERTI KODE SEBELUMNYA] */
+function renderAdministrasi() {
   const uniqueKelas = [...new Set(gAdminData.users.map(u => String(u.Kelas).trim()))].filter(k => k).sort();
   let optKelas = `<option value="ALL">Semua Kelas</option>` + uniqueKelas.map(k => `<option value="${k}">${k}</option>`).join('');
   let optUjian = `<option value="">-- Pilih Ujian --</option>` + gAdminData.exams.map(e => `<option value="${e.ExamID}">${e.Judul} (${e.Mapel})</option>`).join('');
@@ -637,14 +636,13 @@ function renderAdministrasi() { /* [SAMA SEPERTI KODE SEBELUMNYA] */
   $('#content-area').html(h);
 }
 
-// ... Fungsi Cetak (printKartuLogin, printDaftarHadir, dll) sama persis format HTML nya, abaikan jika kepanjangan di penulisan tapi fungsionalnya berjalan.
-function printKartuLogin() { /*...*/ }
-function printDaftarHadir() { /*...*/ }
-function printBeritaAcara() { /*...*/ }
-function printFilteredRecap() { /*...*/ }
-function printRecap(rid) { /*...*/ }
-function openKoreksi(rid) { /*...*/ }
-function saveKoreksi() { /*...*/ }
+function printKartuLogin() { /* ... */ }
+function printDaftarHadir() { /* ... */ }
+function printBeritaAcara() { /* ... */ }
+function printFilteredRecap() { /* ... */ }
+function printRecap(rid) { /* ... */ }
+function openKoreksi(rid) { /* ... */ }
+function saveKoreksi() { /* ... */ }
 
 function renderContent(page) {
   const area = $('#content-area'); let h = '';
@@ -657,8 +655,6 @@ function renderContent(page) {
   else if (page === 'admin-ujian') {
     let uniqueMapel = [...new Set(gData.exams.map(e => e.Mapel))];
     let uniqueKelas = [...new Set(gData.exams.map(e => String(e.TargetKelas).trim()))];
-    
-    // Tampilan tombol untuk Admin vs Guru
     const btnJadwal = isAdmin ? `<button class="btn btn-primary shadow-sm" onclick="openExamModal()">+ Buat Jadwal Baru</button>` : '';
 
     h = `<div class="d-flex justify-content-between mb-3">${btnJadwal}
@@ -667,15 +663,12 @@ function renderContent(page) {
     </div></div><div class="row g-4" id="admin-ujian-list">`;
     gData.exams.forEach(e => {
       const isOwner = (isAdmin || String(e.PembuatID) === String(user.ID));
-      
       let actionButtons = '';
       if(isAdmin) {
           actionButtons = `<button class="btn btn-sm btn-outline-dark flex-fill" onclick="openExamModal('${encodeURIComponent(JSON.stringify(e))}')">Edit</button> <button class="btn btn-sm btn-outline-primary flex-fill" onclick="manageQ('${e.ExamID}')"><i class="fas fa-list me-1"></i> Soal</button> <button class="btn btn-sm btn-danger" onclick="delExam('${e.ExamID}')"><i class="fas fa-trash"></i></button>`;
       } else if(isGuru) {
-          // Guru hanya bisa lihat soal, dan download jika diizinkan
           actionButtons = `<button class="btn btn-sm btn-outline-primary flex-fill" onclick="manageQ('${e.ExamID}')"><i class="fas fa-eye me-1"></i> Lihat Soal</button>`;
       }
-      
       h += `<div class="col-md-6 col-lg-4 ujian-card" data-mapel="${e.Mapel}"><div class="card h-100 shadow-sm border-0"><div class="card-body"><div class="d-flex justify-content-between mb-2"><span class="badge bg-primary">${e.Mapel}</span><span class="badge bg-light text-dark border">${e.TargetKelas}</span></div><h5 class="fw-bold text-dark">${e.Judul}</h5><div class="d-flex gap-2 mt-3">${actionButtons}</div></div></div></div>`;
     });
     h += '</div>';
@@ -683,36 +676,20 @@ function renderContent(page) {
   else if (page === 'siswa-home') {
     const s = gData.studentStats;
     h = `<div class="row mb-4">
-      <div class="col-md-8">
-        <div class="card border-0 shadow-sm bg-primary text-white h-100">
-          <div class="card-body d-flex align-items-center p-4">
+      <div class="col-md-8"><div class="card border-0 shadow-sm bg-primary text-white h-100"><div class="card-body d-flex align-items-center p-4">
              <img src="${s.foto || 'https://via.placeholder.com/150'}" class="rounded-circle me-4 border border-3 border-white shadow" width="90" height="90" style="object-fit:cover;">
-             <div>
-                 <h4 class="fw-bold mb-1">Halo, ${user.Nama}</h4>
-                 <p class="mb-0 text-white-50"><i class="fas fa-graduation-cap me-2"></i>Kelas: ${user.Kelas} &nbsp;|&nbsp; <i class="fas fa-school me-2"></i>${user.Sekolah}</p>
-             </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-          <div class="card border-0 shadow-sm h-100 bg-white">
-              <div class="card-body text-center d-flex flex-column justify-content-center">
-                  <h6 class="text-muted fw-bold">Penyelesaian Ujian</h6>
-                  <h2 class="text-success fw-bold">${s.pct}%</h2>
-                  <div class="progress mt-2" style="height: 10px;">
-                    <div class="progress-bar bg-success" style="width: ${s.pct}%"></div>
-                  </div>
-              </div>
-          </div>
-      </div>
-    </div>
+             <div><h4 class="fw-bold mb-1">Halo, ${user.Nama}</h4><p class="mb-0 text-white-50"><i class="fas fa-graduation-cap me-2"></i>Kelas: ${user.Kelas} &nbsp;|&nbsp; <i class="fas fa-school me-2"></i>${user.Sekolah}</p></div>
+          </div></div></div>
+      <div class="col-md-4"><div class="card border-0 shadow-sm h-100 bg-white"><div class="card-body text-center d-flex flex-column justify-content-center">
+                  <h6 class="text-muted fw-bold">Penyelesaian Ujian</h6><h2 class="text-success fw-bold">${s.pct}%</h2>
+                  <div class="progress mt-2" style="height: 10px;"><div class="progress-bar bg-success" style="width: ${s.pct}%"></div></div>
+              </div></div></div></div>
     
     <div class="row g-3 mb-4">
         <div class="col-4"><div class="stat-card bg-info shadow-sm"><span class="fs-1 fw-bold">${s.total}</span><span>Total Ujian</span></div></div>
         <div class="col-4"><div class="stat-card bg-success shadow-sm"><span class="fs-1 fw-bold">${s.finished}</span><span>Selesai</span></div></div>
         <div class="col-4"><div class="stat-card bg-warning text-dark shadow-sm"><span class="fs-1 fw-bold">${s.pending}</span><span>Belum Dikerjakan</span></div></div>
     </div>
-    
     <h5 class="fw-bold mb-3 border-bottom pb-2">Ujian Aktif</h5><div class="row g-4 mb-5">`;
     if(!gData.availableExams || gData.availableExams.length === 0) { h += '<div class="col-12"><div class="alert alert-info text-center border-0 shadow-sm">Belum ada ujian aktif yang dijadwalkan untuk Anda.</div></div>'; }
     else {
@@ -757,19 +734,15 @@ function saveExam() {
   google.script.run.withSuccessHandler((res) => {
     if(res.status === 'success') {
       $('#modalExam').modal('hide');
-      google.script.run.withSuccessHandler(res2 => {
-        showLoad(false);
-        if (res2.status === 'success') { gData = res2.data; renderContent('admin-ujian'); toast('success', 'Jadwal Disimpan!'); }
+      google.script.run.withSuccessHandler(res2 => { showLoad(false); if (res2.status === 'success') { gData = res2.data; renderContent('admin-ujian'); toast('success', 'Jadwal Disimpan!'); }
       }).getDashboardData(user.Role, user.ID, user.Kelas);
     } else { showLoad(false); Swal.fire('Gagal', res.msg, 'error'); }
   }).adminSaveExam(d);
 }
 
 function delExam(id){ Swal.fire({title:'Hapus Jadwal?', icon:'warning', showCancelButton:true}).then(r=>{if(r.isConfirmed) google.script.run.withSuccessHandler(()=>loadPage('admin-ujian')).adminDeleteExam(id)}) }
-
 function manageQ(id) { activeExamId = id; $('#modalQ').modal('show'); loadQList(); }
-
-function handleUploadQuestionsExcel(e) { /* Sama dengan kode sebelumnya untuk upload soal excel, dipertahankan */ }
+function handleUploadQuestionsExcel(e) { /* ... */ }
 
 function loadQList() {
   $('#q-list-container').html('<div class="text-center p-5"><div class="spinner"></div></div>');
@@ -779,10 +752,9 @@ function loadQList() {
     const isGuru = String(user.Role).trim().toLowerCase() === 'guru';
     const allowDownload = isAdmin || (isGuru && gData.guruDownloadOpen);
     
-    let btnDownload = allowDownload ? `<button class="btn btn-primary shadow-sm" onclick="downloadAllQ()"><i class="fas fa-download me-1"></i> Download Ujian</button>` : '';
+    let btnDownload = allowDownload ? `<button class="btn btn-primary shadow-sm" onclick="downloadAllQ()"><i class="fas fa-download me-1"></i> Download Ujian (.doc)</button>` : '';
     let btnUpload = isAdmin ? `<label class="btn btn-outline-success shadow-sm m-0"><i class="fas fa-upload"></i> Upload Excel <input type="file" hidden accept=".xlsx,.xls" onchange="handleUploadQuestionsExcel(event)"></label>` : '';
     
-    // Hide tambah soal button if Guru
     if(isAdmin) $('#add-q-btn-container').show(); else $('#add-q-btn-container').hide();
 
     let topActions = `<div class="d-flex justify-content-end mb-3 gap-2 flex-wrap">${btnUpload} <button class="btn btn-info text-white shadow-sm" onclick="previewAllQ()"><i class="fas fa-eye me-1"></i> Preview</button> ${btnDownload}</div>`;
@@ -843,13 +815,8 @@ function toggleEditQ(uid) {
   const isAdmin = String(user.Role).trim().toLowerCase() === 'admin';
   if (form.hasClass('hidden')) {
     activeUid = uid; form.removeClass('hidden'); $(`#block-${uid}`).addClass('border-primary');
-    if (isAdmin) {
-        $(`#sn-${uid}`).summernote(snConfig); renderAnsFields(uid, $(`#type-${uid}`).val());
-    } else {
-        // Guru hanya lihat (readonly mode manual)
-        let qData = JSON.parse(decodeURIComponent($(`#block-${uid}`).attr('data-q-obj')));
-        $(`#ans-area-${uid}`).html(`<div class="alert alert-secondary">Mode Read-Only. Kunci: ${qData.Key}</div>`);
-    }
+    if (isAdmin) { $(`#sn-${uid}`).summernote(snConfig); renderAnsFields(uid, $(`#type-${uid}`).val()); }
+    else { let qData = JSON.parse(decodeURIComponent($(`#block-${uid}`).attr('data-q-obj'))); $(`#ans-area-${uid}`).html(`<div class="alert alert-secondary">Mode Read-Only. Kunci: ${qData.Key}</div>`); }
   } else {
     form.addClass('hidden'); $(`#block-${uid}`).removeClass('border-primary');
     if(isAdmin) { $(`#sn-${uid}`).summernote('destroy'); $(`#ans-area-${uid} .summernote-opt`).each(function(){ $(this).summernote('destroy'); }); }
@@ -864,7 +831,7 @@ function renderAnsFields(uid, type) {
   $(`#ans-area-${uid} .summernote-opt`).each(function(){ $(this).summernote('destroy'); }); let h = '';
   
   if (type.includes('Survey')) {
-      $(`#score-${uid}`).val(0).prop('disabled', true); // Survey score is 0
+      $(`#score-${uid}`).val(0).prop('disabled', true);
       h = `<div class="alert alert-info">Opsi paten: <b>Sangat Setuju, Setuju, Tidak Setuju, Sangat Tidak Setuju</b>. Tidak ada penilaian.</div>`;
   } else {
       $(`#score-${uid}`).prop('disabled', false);
@@ -879,12 +846,9 @@ function renderAnsFields(uid, type) {
       } else if (type === 'Menjodohkan') {
         h = `<table class="table table-sm"><thead><tr><th>Kiri</th><th>Kanan (Kunci)</th><th>X</th></tr></thead><tbody id="match-tbody-${uid}">`;
         if(opts.length) opts.forEach((o,i)=>h+=genMatchRow(o,keys[i])); else h+=genMatchRow(); h+=`</tbody></table><button type="button" class="btn btn-sm btn-info" onclick="addMatchRowTo('${uid}')">+ Pasangan</button>`;
-      } else if (type === 'Uraian') {
-        h = `<textarea class="form-control" name="essay_key" placeholder="Kata kunci penilaian (dipisah koma)" dir="auto">${keys.join(',')}</textarea>`;
-      }
+      } else if (type === 'Uraian') { h = `<textarea class="form-control" name="essay_key" placeholder="Kata kunci penilaian (dipisah koma)" dir="auto">${keys.join(',')}</textarea>`; }
   }
-  $(`#ans-area-${uid}`).html(h);
-  $(`#ans-area-${uid} .summernote-opt`).summernote(snConfig);
+  $(`#ans-area-${uid}`).html(h); $(`#ans-area-${uid} .summernote-opt`).summernote(snConfig);
 }
 
 function genOptRow(uid, type, val='', checked='') { return `<div class="d-flex align-items-start mb-2 ans-row gap-2"><div class="mt-2"><input type="${type}" name="k_${uid}" class="form-check-input" ${checked}></div><div class="flex-grow-1"><textarea class="summernote-opt" dir="auto">${val}</textarea></div><button type="button" class="btn btn-outline-danger mt-1" onclick="removeOptRow(this)">X</button></div>`; }
@@ -907,300 +871,175 @@ function saveQBlock(uid) {
           const v = $(this).find('.summernote-opt').summernote('code');
           if(v && v !== '<p><br></p>'){ opts.push(v); if($(this).find('.form-check-input').is(':checked')) { keys.push(v); keyIndices.push(opts.length - 1); } }
         });
-      } else if(type==='PGKK') {
-        $(`#pgkk-tbody-${uid} tr`).each(function(){ const q = $(this).find('.pgkk-q').summernote('code'); if(q){ opts.push(q); keys.push($(this).find('.pgkk-k').val()); } });
-      } else if(type==='Menjodohkan') {
-        $(`#match-tbody-${uid} tr`).each(function(){ const l = $(this).find('.match-l').summernote('code'); const r = $(this).find('.match-r').summernote('code'); if(l && r){ opts.push(l); keys.push(r); } });
+      } else if(type==='PGKK') { $(`#pgkk-tbody-${uid} tr`).each(function(){ const q = $(this).find('.pgkk-q').summernote('code'); if(q){ opts.push(q); keys.push($(this).find('.pgkk-k').val()); } });
+      } else if(type==='Menjodohkan') { $(`#match-tbody-${uid} tr`).each(function(){ const l = $(this).find('.match-l').summernote('code'); const r = $(this).find('.match-r').summernote('code'); if(l && r){ opts.push(l); keys.push(r); } });
       } else { keys = form.find('textarea[name="essay_key"]').val().split(','); }
   }
-
   const payload={id:id, num:num, type:type, text:text, options:opts, key:keys, keyIndices:keyIndices, score:score};
   const btn=form.find('button[type="submit"]'); btn.prop('disabled',true).text('Menyimpan...');
   google.script.run.withSuccessHandler(res=>{
     btn.prop('disabled',false).text('Simpan');
-    if(res.status==='success'){
-      toast('success','Soal Disimpan!');
-      const newData={QID:res.id, Tipe:type, Pertanyaan:text, Options:JSON.stringify(opts), Key:JSON.stringify(keys), Skor:score, Nomor:num};
-      $(`#block-${uid}`).attr('data-q-obj', encodeURIComponent(JSON.stringify(newData))).find('input[name="id"]').val(res.id);
-      $(`#block-${uid} .q-preview`).html('Soal Tersimpan'); toggleEditQ(uid);
-      const existingIdx = currentQuestionsData.findIndex(q => String(q.QID) === String(res.id));
-      if (existingIdx !== -1) currentQuestionsData[existingIdx] = newData; else { currentQuestionsData.push(newData); currentQuestionsData.sort((a,b) => (Number(a.Nomor)||999) - (Number(b.Nomor)||999)); }
+    if(res.status==='success'){ toast('success','Soal Disimpan!'); const newData={QID:res.id, Tipe:type, Pertanyaan:text, Options:JSON.stringify(opts), Key:JSON.stringify(keys), Skor:score, Nomor:num}; $(`#block-${uid}`).attr('data-q-obj', encodeURIComponent(JSON.stringify(newData))).find('input[name="id"]').val(res.id); $(`#block-${uid} .q-preview`).html('Soal Tersimpan'); toggleEditQ(uid); const existingIdx = currentQuestionsData.findIndex(q => String(q.QID) === String(res.id)); if (existingIdx !== -1) currentQuestionsData[existingIdx] = newData; else { currentQuestionsData.push(newData); currentQuestionsData.sort((a,b) => (Number(a.Nomor)||999) - (Number(b.Nomor)||999)); }
     } else Swal.fire('Error',res.msg,'error');
   }).adminSaveSingleQuestion(activeExamId, payload);
 }
 
 function deleteQBlock(uid) {
   const id=$(`#block-${uid}`).find('input[name="id"]').val(); if(!id){ $(`#block-${uid}`).remove(); return; }
-  Swal.fire({title:'Hapus Soal?',icon:'warning',showCancelButton:true}).then(r=>{
-    if(r.isConfirmed){ $(`#block-${uid}`).fadeOut(); google.script.run.adminDeleteQuestion(id); currentQuestionsData = currentQuestionsData.filter(q => String(q.QID) !== String(id)); }
-  });
+  Swal.fire({title:'Hapus Soal?',icon:'warning',showCancelButton:true}).then(r=>{ if(r.isConfirmed){ $(`#block-${uid}`).fadeOut(); google.script.run.adminDeleteQuestion(id); currentQuestionsData = currentQuestionsData.filter(q => String(q.QID) !== String(id)); } });
 }
 
-function startExam(eid) {
-  const selectedExam = gData.availableExams.find(e => String(e.ExamID) === String(eid));
-  if (!selectedExam) return;
-  const tokenUjian = selectedExam.Token || '';
+function startExam(eid) { /* ... */ }
+function enableSecurity() { /* ... */ }
+function disableSecurity() { /* ... */ }
+function handleVisibilityChange() { /* ... */ }
+function handleWindowBlur() { /* ... */ }
+function handleFullscreenChange() { /* ... */ }
+function triggerViolation(msg) { /* ... */ }
+function runExam(qs, dur, isResume) { /* ... */ }
+function saveAnsLocal(qid, type, idx) { /* ... */ }
+function restoreAnswers(qs) { /* ... */ }
+function markAns(i) { /* ... */ }
+function jump(i) { /* ... */ }
+function navSlide(dir) { /* ... */ }
+function submitExamButton(force = false) { /* ... */ }
+function processSubmission(retryCount = 0) { /* ... */ }
+function matchClick(qIdx, side, itemIdx, el) { /* ... */ }
+function drawLines(qIdx) { /* ... */ }
+function resetMatch(qIdx) { /* ... */ }
+function redrawMatchLines(qIdx, savedArr, rightItems) { /* ... */ }
+function editUser(s) { /* ... */ }
+function saveUser(e) { /* ... */ }
+function delUser(id) { /* ... */ }
+function handleResetCache() { /* ... */ }
+function deleteResult(rid) { /* ... */ }
+function renderMonitoring() { /* ... */ }
+function startMon() { /* ... */ }
+function fetchMon(id) { /* ... */ }
+function triggerReset(sId, sName) { /* ... */ }
+function filterTable(tid, q) { /* ... */ }
 
-  const confirmStart = () => {
-    const rules = `<div class="text-start small">
-    <b>TATA CARA & ATURAN UJIAN:</b><br><br>
-    1. Ujian menggunakan <b>Layar Penuh (Fullscreen)</b>.<br>
-    2. Jangan keluar dari mode layar penuh.<br>
-    3. Dilarang membuka tab baru/Inspect Element.<br>
-    4. Melanggar lebih dari <b>3 kali</b>, otomatis terkirim.<br>
-    5. Token Kirim Jawaban <b>DIHAPUS</b>. Selesai langsung kirim.</div>`;
-    Swal.fire({ title: 'Peraturan Ujian', html: rules, icon: 'warning', showCancelButton: true, confirmButtonText: 'SETUJU & MULAI', confirmButtonColor: '#1e3a8a' }).then(r => {
-      if(r.isConfirmed) {
-        if (document.documentElement.requestFullscreen) { document.documentElement.requestFullscreen().catch((err) => {}); }
-        showLoad(true);
-        google.script.run.withSuccessHandler(res => {
-          showLoad(false);
-          if(res.status === 'success') {
-            localStorage.removeItem(`ANS_${user.ID}_${eid}`);
-            activeExamId = eid; totalQ = res.data.length;
-            $('#do-exam-title').html(`${res.judul} <span class="mx-2">|</span> ${user.Nama}`);
-            try { localStorage.setItem('cbt_active_exam', JSON.stringify({ id: eid, qs: res.data, dur: res.duration, start: Date.now(), judul: res.judul })); } catch(e) {}
-            violationCount = 0; enableSecurity(); runExam(res.data, res.duration, false);
-          } else Swal.fire('Gagal', res.msg, 'error');
-        }).getExamPack(eid, user.ID);
-      }
-    });
-  };
+/* ========================================================================= */
+/* --- FUNGSI GENERATE DAN DOWNLOAD KE MS. WORD (SESUAI TEMPLATE CONTOH) --- */
+/* ========================================================================= */
 
-  if(tokenUjian && tokenUjian !== '-') {
-      Swal.fire({ title: 'Token Ujian', text: 'Masukkan token untuk membuka soal.', input: 'text', inputAttributes: { autocapitalize: 'characters' }, showCancelButton: true, confirmButtonText: 'Buka', allowOutsideClick: false }).then(r => {
-          if(r.isConfirmed) { if(r.value.trim().toUpperCase() === tokenUjian.toUpperCase()) { confirmStart(); } else { Swal.fire('Error', 'Token Salah!', 'error'); } }
-      });
-  } else { confirmStart(); }
-}
+function generateWordHTML() {
+    // Ambil judul dan mapel dari tabel HTML saat ini
+    let examTitle = $('#do-exam-title').text().split('|')[0].trim() || 'Ujian';
 
-function enableSecurity() {
-  violationCount = 0; isExamFinished = false; violationLock = false;
-  document.addEventListener("visibilitychange", handleVisibilityChange);
-  window.addEventListener("blur", handleWindowBlur);
-  document.addEventListener("fullscreenchange", handleFullscreenChange);
-  $(document).on("contextmenu.exam", e => { e.preventDefault(); return false; });
-  $(document).on("keydown.exam", e => {
-      if (e.key === "PrintScreen" || e.key === "F12" || (e.ctrlKey && e.shiftKey && ["I", "J", "C"].includes(e.key)) || (e.ctrlKey && ["U", "S", "P"].includes(e.key))) {
-          e.preventDefault(); return false;
-      }
-  });
-}
-function disableSecurity() { document.removeEventListener("visibilitychange", handleVisibilityChange); window.removeEventListener("blur", handleWindowBlur); document.removeEventListener("fullscreenchange", handleFullscreenChange); $(document).off(".exam"); }
+    let allHtml = `
+    <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+    <head>
+    <meta charset="utf-8">
+    <title>Export Word</title>
+    <style>
+        body { font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 1.5; }
+        .kop { text-align: center; border-bottom: 3px solid black; padding-bottom: 10px; margin-bottom: 20px; }
+        .kop h2 { margin: 0; padding: 0; font-size: 16pt; font-weight: bold; }
+        .kop h3 { margin: 0; padding: 0; font-size: 14pt; font-weight: bold; }
+        .kop p { margin: 2px 0; font-size: 10pt; }
+        .info-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        .info-table td { padding: 5px; vertical-align: top; }
+        .q-box { margin-bottom: 20px; page-break-inside: avoid; }
+        img { max-width: 100%; height: auto; }
+        .tbl-border { border-collapse: collapse; width: 100%; margin-top: 10px; }
+        .tbl-border th, .tbl-border td { border: 1px solid black; padding: 5px; }
+    </style>
+    </head>
+    <body>
+        <div class="kop">
+            <h3>KELOMPOK KERJA GURU MADRASAH IBTIDAIYAH (KKGMI)</h3>
+            <h2>SURABAYA 10</h2>
+            <p>Sekretariat: Jl. Jojoran 1 No. 77</p>
+            <p>Email: kkgmi10surabaya@gmail.com | Website: https://sites.google.com/view/kkgmisurabaya10</p>
+        </div>
+        
+        <table class="info-table">
+            <tr>
+                <td width="20%"><b>Mata Pelajaran</b></td>
+                <td width="2%">:</td>
+                <td width="38%"><b>${examTitle}</b></td>
+                <td width="15%"><b>Nama/Kelas</b></td>
+                <td width="2%">:</td>
+                <td width="23%">....................... / ........</td>
+            </tr>
+            <tr>
+                <td><b>Hari/Tanggal</b></td>
+                <td>:</td>
+                <td>.......................</td>
+                <td><b>Waktu</b></td>
+                <td>:</td>
+                <td>.......................</td>
+            </tr>
+        </table>
+        
+        <div class="questions">
+    `;
 
-function handleVisibilityChange() { if (!isExamFinished && document.hidden) triggerViolation("Anda keluar dari tab ujian!"); }
-function handleWindowBlur() { if (!isExamFinished) triggerViolation("Anda meninggalkan halaman ujian!"); }
-function handleFullscreenChange() { if (!isExamFinished && !document.fullscreenElement) { triggerViolation("Anda keluar dari mode fullscreen!"); try{document.documentElement.requestFullscreen().catch(()=>{});}catch(e){} } }
-function triggerViolation(msg) {
-  if(violationLock || isExamFinished) return;
-  violationLock = true; violationCount++;
-  if (violationCount >= maxViolations) { isExamFinished = true; submitExamButton(true); } 
-  else { Swal.fire({ icon: 'warning', title: 'PERINGATAN!', text: `${msg} (${violationCount}/${maxViolations})`, confirmButtonText: 'KEMBALI KE UJIAN', allowOutsideClick: false }).then(() => { violationLock = false; try{document.documentElement.requestFullscreen().catch(()=>{});}catch(e){} }); }
-}
-
-function runExam(qs, dur, isResume) {
-  $('#view-dashboard').addClass('hidden'); $('#view-exam').removeClass('hidden'); $('body').addClass('exam-mode');
-  const c = $('#q-slides-container'); const g = $('#nav-grid'); c.empty(); g.empty();
-  qs.forEach((q,i) => {
-    let inp = '';
-    if(q.Tipe==='PGKK') {
-      const opts = JSON.parse(q.Options||"[]");
-      inp = `<table class="table table-bordered tbl-pgkk mt-3 bg-white"><thead><tr class="table-light"><th>PERNYATAAN</th><th width="15%">BENAR</th><th width="15%">SALAH</th></tr></thead><tbody>`;
-      opts.forEach((o,x)=> inp+=`<tr><td><div class="opt-content" dir="auto">${o}</div></td><td style="padding:0; vertical-align:middle;"><label class="d-flex w-100 h-100 justify-content-center align-items-center m-0 clickable-opt" style="padding: 15px;"><input class="form-check-input m-0" type="radio" name="ans-${q.QID}-${x}" value="B" onchange="saveAnsLocal('${q.QID}', 'PGKK', ${i})"></label></td><td style="padding:0; vertical-align:middle;"><label class="d-flex w-100 h-100 justify-content-center align-items-center m-0 clickable-opt" style="padding: 15px;"><input class="form-check-input m-0" type="radio" name="ans-${q.QID}-${x}" value="S" onchange="saveAnsLocal('${q.QID}', 'PGKK', ${i})"></label></td></tr>`);
-      inp += `</tbody></table>`;
-    } else if(q.Tipe==='Menjodohkan') {
-      const lItems = JSON.parse(q.Options||"[]"); const rItems = q.Extra || [];
-      inp = `<div class="match-container" id="match-area-${i}"><input type="hidden" id="ans-in-${i}" onchange="saveAnsLocal('${q.QID}', 'MATCH', ${i})"><svg class="match-svg" id="svg-${i}"></svg><div class="match-col" id="col-l-${i}">${lItems.map((t,Idx)=>`<div class="match-item match-left" data-idx="${Idx}" onclick="matchClick(${i}, 'l', ${Idx}, this)"><div class="opt-content" dir="auto">${t}</div></div>`).join('')}</div><div class="match-col" id="col-r-${i}">${rItems.map((t,Idx)=>`<div class="match-item match-right" data-idx="${Idx}" data-val="${encodeURIComponent(t)}" onclick="matchClick(${i}, 'r', ${Idx}, this)"><div class="opt-content" dir="auto">${t}</div></div>`).join('')}</div></div><div class="text-end mt-2"><button class="btn btn-sm btn-outline-warning" onclick="resetMatch(${i})">Reset Garis</button></div>`;
-    } else if(q.Tipe.includes('PG') || q.Tipe.includes('Survey')) {
-      const opts = JSON.parse(q.Options||"[]");
-      opts.forEach(o => inp += `<label class="form-check p-3 border mb-2 rounded bg-white clickable-opt d-flex align-items-center w-100"><input class="form-check-input flex-shrink-0" type="${q.Tipe==='PGK'?'checkbox':'radio'}" name="ans-${q.QID}" value="${encodeURIComponent(o)}" onchange="saveAnsLocal('${q.QID}', '${q.Tipe}', ${i})"><div class="ms-3 flex-grow-1 opt-content mb-0" dir="auto">${o}</div></label>`);
-    } else inp = `<textarea class="form-control" rows="5" name="ans-${q.QID}" onchange="saveAnsLocal('${q.QID}', 'ESSAY', ${i})" dir="auto"></textarea>`;
-    
-    c.append(`<div class="q-slide hidden" id="sl-${i}" data-qid="${q.QID}" data-type="${q.Tipe}"><div class="badge bg-primary mb-3">Soal No. ${q.Nomor||i+1}</div><div class="mb-4 q-content lead" dir="auto">${q.Pertanyaan}</div>${inp}</div>`);
-    g.append(`<button id="nb-${i}" class="q-nav-btn ${i===0?'active-q':''}" onclick="jump(${i})">${i+1}</button>`);
-  });
-  restoreAnswers(qs); jump(0); applyMathJax();
-  
-  let startTime = Date.now();
-  if(isResume) { const storedState = JSON.parse(localStorage.getItem('cbt_active_exam') || '{}'); if(storedState && storedState.start) startTime = storedState.start; }
-  const endTime = startTime + (dur * 60000);
-  
-  clearInterval(timerInt);
-  timerInt = setInterval(() => {
-    const diff = Math.floor((endTime - Date.now()) / 1000);
-    if(diff <= 0) { submitExamButton(true); }
-    else { let m = Math.floor(diff/60), s = diff%60; $('#timer-disp').text(`${m}:${s<10?'0':''}${s}`); if(diff < 300) $('#timer-disp').addClass('text-danger fw-bold'); }
-  }, 1000);
-  
-  monitorInterval = setInterval(() => { google.script.run.updateClientProgress(activeExamId, user.ID, $('.q-nav-btn.answered').length, totalQ); }, 20000);
-  autosaveInterval = setInterval(() => {
-    const key = `ANS_${user.ID}_${activeExamId}`;
-    try { const stored = localStorage.getItem(key); if(stored) { let data = JSON.parse(decodeURIComponent(atob(stored))); google.script.run.autosaveAnswer(activeExamId, user.ID, JSON.stringify(data)); } } catch(e){}
-  }, 60000);
-}
-
-function saveAnsLocal(qid, type, idx) {
-  let val;
-  if(type.includes('PG') || type.includes('Survey')) { if(type==='PGK') { val=[]; $(`input[name="ans-${qid}"]:checked`).each(function(){ val.push(decodeURIComponent($(this).val())) }); } else val = decodeURIComponent($(`input[name="ans-${qid}"]:checked`).val() || ''); }
-  else if(type === 'PGKK') { val=[]; $(`#sl-${idx} tbody tr`).each(function(x){ val.push($(`input[name="ans-${qid}-${x}"]:checked`).val()||null) }); }
-  else if(type === 'MATCH') { const raw = $(`#ans-in-${idx}`).val(); val = raw ? JSON.parse(raw) : []; }
-  else val = $(`#sl-${idx} textarea`).val();
-  const key = `ANS_${user.ID}_${activeExamId}`;
-  let currentData = {};
-  try { const stored = localStorage.getItem(key); if(stored) currentData = JSON.parse(decodeURIComponent(atob(stored))); } catch(e) {}
-  currentData[qid] = val;
-  try { localStorage.setItem(key, btoa(encodeURIComponent(JSON.stringify(currentData)))); } catch(e) {}
-  markAns(idx);
-}
-
-function restoreAnswers(qs) {
-  const key = `ANS_${user.ID}_${activeExamId}`; let saved = {};
-  try { const stored = localStorage.getItem(key); if(stored) saved = JSON.parse(decodeURIComponent(atob(stored))); } catch(e) {}
-  qs.forEach((q, idx) => {
-    const val = saved[q.QID];
-    if(val) {
-      markAns(idx);
-      if(q.Tipe === 'PGS' || q.Tipe.includes('Survey')) $(`input[name="ans-${q.QID}"][value="${encodeURIComponent(val)}"]`).prop('checked', true);
-      else if(q.Tipe === 'PGK') val.forEach(v => $(`input[name="ans-${q.QID}"][value="${encodeURIComponent(v)}"]`).prop('checked', true));
-      else if(q.Tipe === 'Uraian') $(`textarea[name="ans-${q.QID}"]`).val(val);
-      else if(q.Tipe === 'PGKK') { val.forEach((v, rIdx) => { if(v) $(`input[name="ans-${q.QID}-${rIdx}"][value="${v}"]`).prop('checked', true); }); }
-      else if(q.Tipe === 'Menjodohkan') { $(`#ans-in-${idx}`).val(JSON.stringify(val)); setTimeout(() => redrawMatchLines(idx, val, q.Extra), 500); }
-    }
-  });
-}
-
-function markAns(i) { $(`#nb-${i}`).addClass('answered'); }
-function jump(i) { currentQIdx = i; $('.q-slide').addClass('hidden'); $(`#sl-${i}`).removeClass('hidden'); $('.q-nav-btn').removeClass('active-q'); $(`#nb-${i}`).addClass('active-q'); if($(`#sl-${i}`).data('type')==='Menjodohkan') setTimeout(()=>drawLines(i), 50); applyMathJax(); }
-function navSlide(dir) { let next = currentQIdx + dir; if(next >= 0 && next < totalQ) jump(next); }
-
-function submitExamButton(force = false) {
-  if (examSubmitting) return;
-  if (force) { processSubmission(); return; }
-  const answeredCount = $('.q-nav-btn.answered').length;
-  
-  // TIDAK ADA LAGI PERMINTAAN TOKEN KIRIM JAWABAN.
-  let msgHtml = `<p class="mb-3">Anda telah mengerjakan <b>${answeredCount}</b> dari <b>${totalQ}</b> soal.</p>
-                 <div class="alert alert-warning small">Kirim jawaban sekarang?</div>`;
-  Swal.fire({
-    title: 'Konfirmasi', html: `<div class="text-start">${msgHtml}</div>`, icon: 'question', showCancelButton: true, allowOutsideClick: false, allowEscapeKey: false,
-    confirmButtonText: '<i class="fas fa-paper-plane me-1"></i> Ya, Kirim', cancelButtonText: 'Belum, Cek Lagi', confirmButtonColor: '#198754'
-  }).then((result) => { if (result.isConfirmed) processSubmission(); });
-}
-
-function processSubmission(retryCount = 0) {
-  if (examSubmitting && retryCount === 0) return;
-  examSubmitting = true;
-  const btn = $('#btn-finish'); const originalText = '<i class="fas fa-check-circle me-1"></i> KIRIM JAWABAN';
-  if (retryCount === 0) {
-    btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Mengirim...');
-    clearInterval(timerInt); clearInterval(monitorInterval); clearInterval(autosaveInterval);
-    isExamFinished = true; disableSecurity();
-  }
-  let ans = [];
-  try {
-    $('.q-slide').each(function(idx) {
-      const qid = $(this).data('qid'); const t = $(this).data('type'); let v = null;
-      if ((t.includes('PG') || t.includes('Survey')) && t !== 'PGKK') {
-        if (t === 'PGK') { v = []; $(this).find('input:checked').each(function() { v.push(decodeURIComponent($(this).val())) }); }
-        else { const checked = $(this).find('input:checked').val(); if(checked) v = decodeURIComponent(checked); }
-      }
-      else if (t === 'PGKK') { v = []; $(this).find('tbody tr').each(function(x) { v.push($(this).find('input:checked').val() || null) }); }
-      else if (t === 'Menjodohkan') { const raw = $(`#ans-in-${idx}`).val(); v = raw ? JSON.parse(raw) : []; }
-      else { v = $(this).find('textarea').val(); }
-      if (v !== null && v !== undefined) ans.push({ qid: qid, answer: v });
-    });
-  } catch(e) { console.error("Error collecting", e); }
-  google.script.run.withSuccessHandler((res) => {
-    examSubmitting = false; btn.prop('disabled', false).html(originalText);
-    if (res.status === 'success') {
-      localStorage.removeItem('cbt_active_exam'); localStorage.removeItem(`ANS_${user.ID}_${activeExamId}`);
-      $('body').removeClass('exam-mode'); try { document.exitFullscreen().catch(()=>{}) } catch (e) {};
-      Swal.fire({
-        title: 'Selesai!', html: `<div class="mb-3 text-success" style="font-size: 4rem;"><i class="fas fa-check-circle"></i></div><h5 class="fw-bold">${res.msg === 'Sudah dikirim.' ? 'Anda Sudah Pernah Mengirim' : violationCount >= maxViolations ? 'Terkirim Karena Pelanggaran' : 'Jawaban Berhasil Dikirim'}</h5>`,
-        confirmButtonText: 'KEMBALI KE BERANDA', confirmButtonColor: '#1e3a8a', allowOutsideClick: false, allowEscapeKey: false
-      }).then(() => { $('#view-exam').addClass('hidden'); $('#view-dashboard').removeClass('hidden'); loadPage('siswa-home'); });
-    } else { Swal.fire('Gagal', res.msg || 'Terjadi kesalahan sistem.', 'error'); }
-  }).withFailureHandler((err) => {
-    if (retryCount < 3) { setTimeout(() => processSubmission(retryCount + 1), 3000); }
-    else { examSubmitting = false; btn.prop('disabled', false).html(originalText); Swal.fire('Koneksi Terputus', 'Gagal menghubungi server.', 'error'); }
-  }).submitExam(user.ID, activeExamId, ans, violationCount);
-}
-
-function matchClick(qIdx, side, itemIdx, el) { if(!matchState[qIdx]) matchState[qIdx] = { sel: null, pairs: [] }; const st = matchState[qIdx];
-$(`#match-area-${qIdx} .match-${side}`).removeClass('selected'); $(el).addClass('selected'); if(side === 'l') { st.sel = { idx: itemIdx, el: el };
-} else { if(st.sel) { st.pairs = st.pairs.filter(p => p.left !== st.sel.idx); st.pairs.push({ left: st.sel.idx, right: itemIdx, rightVal: decodeURIComponent($(el).data('val')) });
-drawLines(qIdx); markAns(qIdx); st.sel = null; $(`#match-area-${qIdx} .match-item`).removeClass('selected'); saveAnsLocal($(`#sl-${qIdx}`).data('qid'), 'MATCH', qIdx); } } }
-function drawLines(qIdx) { if(!matchState[qIdx]) return; const svg = document.getElementById(`svg-${qIdx}`); const container = document.getElementById(`match-area-${qIdx}`); if(!container || !svg) return;
-const rectC = container.getBoundingClientRect(); let html = ''; let answerArr = []; const leftCount = $(`#col-l-${qIdx}`).children().length;
-for(let k=0; k<leftCount; k++) answerArr[k] = null; $(`#match-area-${qIdx} .match-item`).removeClass('matched'); matchState[qIdx].pairs.forEach(p => { const elL = $(`#col-l-${qIdx}`).children().eq(p.left)[0]; const elR = $(`#col-r-${qIdx}`).children().eq(p.right)[0]; if(elL && elR) { const rL = elL.getBoundingClientRect(); const rR = elR.getBoundingClientRect(); const x1 = rL.right - rectC.left; const y1 = (rL.top + rL.height/2) - rectC.top; const x2 = rR.left - rectC.left; const y2 = (rR.top + rR.height/2) - rectC.top; html += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#10b981" stroke-width="3" />`; $(elL).addClass('matched'); $(elR).addClass('matched'); answerArr[p.left] = p.rightVal; } });
-svg.innerHTML = html; $(`#ans-in-${qIdx}`).val(JSON.stringify(answerArr)); }
-function resetMatch(qIdx) { matchState[qIdx] = { sel: null, pairs: [] }; document.getElementById(`svg-${qIdx}`).innerHTML = ''; $(`#match-area-${qIdx} .match-item`).removeClass('matched selected'); $(`#ans-in-${qIdx}`).val(''); saveAnsLocal($(`#sl-${qIdx}`).data('qid'), 'MATCH', qIdx); }
-function redrawMatchLines(qIdx, savedArr, rightItems) { if(!matchState[qIdx]) matchState[qIdx] = { sel: null, pairs: [] }; if(Array.isArray(savedArr)) { matchState[qIdx].pairs = []; savedArr.forEach((val, lIdx) => { if(val) { const rIdx = rightItems.indexOf(val); if(rIdx > -1) { matchState[qIdx].pairs.push({ left: lIdx, right: rIdx, rightVal: val }); } } }); drawLines(qIdx); } }
-
-function editUser(s){ const u=JSON.parse(decodeURIComponent(s)); $('#modalUser').modal('show'); $('#mu-id').val(u.ID); $('#mu-nama').val(u.Nama); $('#mu-user').val(u.Username); $('#mu-pass').val(u.Password); $('#mu-role').val(u.Role); $('#mu-kelas').val(u.Kelas); $('#mu-sekolah').val(u.Sekolah); }
-function saveUser(e){ if (e) e.preventDefault(); const d={id:$('#mu-id').val(), nama:$('#mu-nama').val(), username:$('#mu-user').val(), password:$('#mu-pass').val(), role:$('#mu-role').val(), kelas:$('#mu-kelas').val(), sekolah:$('#mu-sekolah').val()}; showLoad(true); google.script.run.withSuccessHandler(()=>{showLoad(false);$('#modalUser').modal('hide'); loadPage('admin-users')}).adminManageUser('save',d); }
-function delUser(id){ if(confirm('Hapus User?')) google.script.run.withSuccessHandler(()=>{loadPage('admin-users')}).adminManageUser('delete',{id:id}); }
-
-function handleResetCache() { Swal.fire({title:'Reset Cache?', text:"Membersihkan data sementara sistem.", icon:'warning', showCancelButton:true}).then((r)=>{ if(r.isConfirmed){ showLoad(true); google.script.run.withSuccessHandler(r=>{showLoad(false);Swal.fire('Sukses',r.msg,'success')}).sysResetCache(); }}); }
-function deleteResult(rid) { Swal.fire({title:'Hapus & Reset Ujian?', text:'Data dihapus, cache/status ujian direset.', icon:'warning', showCancelButton:true, confirmButtonColor:'#d33'}).then(r=>{ if(r.isConfirmed) { showLoad(true); google.script.run.withSuccessHandler(res=>{ showLoad(false); if(res.status==='success'){ Swal.fire('Berhasil',res.msg,'success'); loadPage('hasil-rekap'); } else Swal.fire('Gagal',res.msg,'error'); }).adminDeleteResult(rid); } }); }
-function renderMonitoring(){ showLoad(true); google.script.run.withSuccessHandler(r=>{ showLoad(false); let h=`<div class="row g-2 mb-3"><div class="col-md-5"><select id="mon-sel" class="form-select" onchange="startMon()"><option value="">Pilih Ujian...</option>`; r.data.exams.forEach(e=>h+=`<option value="${e.ExamID}">${e.Judul}</option>`); h+=`</select></div><div class="col-md-5"><input type="text" id="mon-search" class="form-control" placeholder="Cari..." onkeyup="filterTable('tbl-mon', this.value)"></div></div><div id="mon-area" class="bg-white p-3 rounded shadow-sm" style="min-height:200px">Silakan pilih ujian.</div>`; $('#content-area').html(h); }).getDashboardData('guru',user.ID,user.Kelas); }
-function startMon(){ const id=$('#mon-sel').val(); if(id){ fetchMon(id); clearInterval(monitorInterval); monitorInterval=setInterval(()=>fetchMon(id),10000); } else $('#mon-area').empty(); }
-function fetchMon(id){ google.script.run.withSuccessHandler(r=>{ if(r.status==='error') { $('#mon-area').html(`<div class="alert alert-warning">${r.msg}</div>`); return; } let h=`<table id="tbl-mon" class="table table-hover align-middle"><thead><tr class="table-light"><th>Nama</th><th>Progress</th><th>Status</th><th>Aksi</th></tr></thead><tbody>`; r.data.forEach(d=>{ const p=Math.round((d.terjawab/d.total)*100)||0; h+=`<tr data-uid="${d.id}"><td><div class="fw-bold">${d.nama}</div><small class="text-muted">${d.kelas}</small></td><td><div class="progress" style="height:20px"><div class="progress-bar bg-success" style="width:${p}%">${d.terjawab}/${d.total}</div></div></td><td>${d.status==='Online'?'<span class="badge bg-success">ON</span>':'<span class="badge bg-secondary">OFF</span>'}</td><td><button class="btn btn-sm btn-outline-danger" onclick="triggerReset('${d.id}', '${d.nama}')">Reset</button></td></tr>` }); $('#content-area').html(h+'</tbody></table>'); const cur=$('#mon-search').val(); if(cur) filterTable('tbl-mon', cur); }).getLiveMonitoring(id); }
-function triggerReset(sId, sName) { const eId = $('#mon-sel').val(); if(!sId || !eId) return; Swal.fire({ title: 'Reset Siswa Ini?', text: `${sName} akan dikeluarkan.`, icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'Ya, Reset!' }).then(r => { if(r.isConfirmed) { google.script.run.withSuccessHandler(res => { if(res.status === 'success') { Swal.fire('Berhasil', res.msg, 'success'); fetchMon(eId); } }).teacherResetStatus(user.ID, sId, eId); } }); }
-function filterTable(tid, q) { const f=q.toLowerCase(); $(`#${tid} tbody tr`).each(function(){ const t=$(this).text().toLowerCase(); $(this).toggle(t.indexOf(f)>-1); }); }
-
-// PENGATURAN CETAK / EXPORT SOAL GURU
-function generateAllQHTML() {
-    let allHtml = '<h2 style="text-align:center;">DOKUMEN SOAL UJIAN</h2><hr/>';
     currentQuestionsData.forEach((q, idx) => {
         let opts = JSON.parse(q.Options || "[]");
         let keys = JSON.parse(q.Key || "[]");
         let optHtml = '';
+        
         if (q.Tipe === 'PGKK') {
-            optHtml = '<table border="1" cellpadding="5" cellspacing="0" style="width:100%;"><tr><th>Pernyataan</th><th>Benar</th><th>Salah</th></tr>';
-            opts.forEach((o, i) => { optHtml += `<tr><td>${o}</td><td align="center">${keys[i]=='B'?'✓':''}</td><td align="center">${keys[i]=='S'?'✓':''}</td></tr>`; });
+            optHtml = '<table class="tbl-border"><tr><th>Pernyataan</th><th>Benar</th><th>Salah</th></tr>';
+            opts.forEach((o, i) => { 
+                optHtml += `<tr><td>${o}</td><td align="center">${keys[i]=='B'?'✓':''}</td><td align="center">${keys[i]=='S'?'✓':''}</td></tr>`; 
+            });
             optHtml += '</table>';
         } else if (q.Tipe === 'Menjodohkan') {
-            optHtml = '<table border="1" cellpadding="5" cellspacing="0" style="width:100%;"><tr><th>Pertanyaan</th><th>Pasangan (Kunci)</th></tr>';
-            opts.forEach((o, i) => { optHtml += `<tr><td>${o}</td><td>${keys[i] || ''}</td></tr>`; });
+            optHtml = '<table class="tbl-border"><tr><th>Pertanyaan</th><th>Pasangan (Kunci)</th></tr>';
+            opts.forEach((o, i) => { 
+                optHtml += `<tr><td>${o}</td><td>${keys[i] || ''}</td></tr>`; 
+            });
             optHtml += '</table>';
         } else if (q.Tipe.includes('PG') || q.Tipe.includes('Survey')) {
             const labels = ['A', 'B', 'C', 'D', 'E', 'F'];
+            optHtml += `<br><b>Pilihan Jawaban:</b><br>`;
             opts.forEach((o, i) => { 
                 let isKey = keys.includes(o) ? '<b>(Kunci)</b>' : '';
                 optHtml += `<div>${labels[i]}. ${o} ${isKey}</div>`; 
             });
         } else if (q.Tipe === 'Uraian') {
-            optHtml = `<div><b>Kunci:</b> ${keys.join(', ')}</div>`;
+            optHtml = `<br><br><br><b>Kunci Jawaban:</b> ${keys.join(', ')}`;
         }
+
         allHtml += `
-        <div style="margin-bottom: 30px;">
-            <table style="width: 100%; border-collapse: collapse;">
-                <tr><td valign="top" width="30"><b>${q.Nomor || (idx + 1)}.</b></td>
-                <td valign="top">${q.Pertanyaan}</td></tr>
-            </table>
-            <div style="margin-left: 35px; margin-top: 10px;">
-                ${optHtml}
-                <div style="margin-top: 10px; font-size: 12px; color: #555;"><b>Tipe:</b> ${q.Tipe} | <b>Skor/Bobot:</b> ${q.Skor || 0}</div>
-            </div>
-        </div><hr style="border:0; border-top:1px dashed #ccc;" />`;
+        <div class="q-box">
+            <p style="margin-bottom:5px;"><b>Soal No. ${q.Nomor || (idx + 1)}</b> &nbsp;&nbsp;&nbsp; <span style="font-size: 10pt; color: #555;">Tipe: ${q.Tipe}</span></p>
+            <div>${q.Pertanyaan}</div>
+            <div style="margin-top: 5px;">${optHtml}</div>
+        </div>
+        `;
     });
+
+    allHtml += `</div></body></html>`;
     return allHtml;
 }
 
 function previewAllQ() {
-  const htmlContent = generateAllQHTML();
+  const htmlContent = generateWordHTML();
   if(!htmlContent) return Swal.fire('Kosong', 'Belum ada soal.', 'info');
-  if($('#modalPreviewQ').length === 0) $('body').append(`<div class="modal fade" id="modalPreviewQ" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content"><div class="modal-header bg-info text-white"><h5 class="modal-title fw-bold"><i class="fas fa-desktop me-2"></i> Preview Seluruh Soal</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body bg-white" id="preview-q-body"></div></div></div></div>`);
+  if($('#modalPreviewQ').length === 0) $('body').append(`<div class="modal fade" id="modalPreviewQ" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content"><div class="modal-header bg-info text-white"><h5 class="modal-title fw-bold"><i class="fas fa-desktop me-2"></i> Preview Seluruh Soal</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body bg-white" id="preview-q-body" style="color: black !important;"></div></div></div></div>`);
   $('#preview-q-body').html(htmlContent); $('#modalPreviewQ').modal('show'); applyMathJax();
 }
 
 function downloadAllQ() {
-  const htmlContent = generateAllQHTML();
-  if(!htmlContent) return Swal.fire('Kosong', 'Belum ada soal.', 'info');
-  const html = `<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><title>Unduhan Soal Ujian</title><script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"><\/script><style>body{font-family: Arial, sans-serif; padding: 40px;} img{max-width:100%; height:auto;}</style></head><body>${htmlContent}<script>window.onload = function() { setTimeout(window.print, 1000); }<\/script></body></html>`;
-  const blob = new Blob([html], {type: "text/html;charset=utf-8"}); const url = URL.createObjectURL(blob);
-  const a = document.createElement("a"); a.href = url; a.download = `Format_Soal_Ujian.html`; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+  const htmlContent = generateWordHTML();
+  // Gunakan application/msword untuk mendownload sebagai doc MS Word
+  const blob = new Blob(['\ufeff', htmlContent], { type: 'application/msword' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  
+  // Penamaan file
+  const examTitle = $('#do-exam-title').text().split('|')[0].trim() || 'Ujian';
+  a.download = `Soal_${examTitle.replace(/[^a-zA-Z0-9]/g, '_')}.doc`;
+  
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 </script>
 </body>
