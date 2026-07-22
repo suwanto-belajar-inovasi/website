@@ -1,0 +1,1544 @@
+<!DOCTYPE HTML>
+<html lang="id">
+<head>
+    <title>Sistem Keuangan | TK ISLAM PKK BLIMBING</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <base target="_top">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <style>
+        :root { 
+            --sidebar-bg: #4a235a;
+            --header-bg: linear-gradient(90deg, #8e44ad, #d2b4de);
+            --bg-light: linear-gradient(135deg, #fdebd0 0%, #f4ecf7 100%);
+        }
+        body, html { 
+            font-family: 'Poppins', sans-serif; 
+            background: var(--bg-light); background-attachment: fixed; 
+            font-size: 13px; color: #333; margin:0; padding:0;
+            height: 100%; height: 100dvh; overflow: hidden; /* Flex/MacBook Fix */
+        }
+        
+        .wrapper { display: flex; height: 100%; height: 100dvh; overflow: hidden; position: relative; width: 100%; }
+        #sidebar { width: 250px; background: var(--sidebar-bg); color: #fff; overflow-y: auto; transition: transform 0.3s ease; flex-shrink: 0; z-index: 1050; }
+        .sidebar-brand { background: #311432; padding: 15px 20px; text-align: center; }
+        .menu-header { font-size: 10px; text-transform: uppercase; color: #d7bde2; padding: 15px 20px 5px; font-weight: bold; }
+        .nav-link { color: #ebdef0; padding: 10px 20px; display: block; text-decoration: none; transition: 0.2s; cursor: pointer; }
+        .nav-link i { width: 25px; text-align: center; font-size: 14px;}
+        .nav-link:hover, .nav-link.active { background: #5b2c6f; color: #fff; border-left: 3px solid #ffdab9; }
+        .sidebar-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); z-index: 1040; }
+        
+        @media (max-width: 768px) {
+            #sidebar { position: fixed; height: 100dvh; transform: translateX(-100%); }
+            #sidebar.open { transform: translateX(0); }
+            .sidebar-overlay.show { display: block; }
+            .dash-card { margin-bottom: 15px; }
+            .btn-action { margin-bottom: 5px; }
+        }
+        
+        #content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; width: 100%; height: 100dvh; }
+        .top-navbar { background: var(--header-bg); min-height: 50px; display: flex; align-items: center; padding: 0 20px; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); z-index: 10; flex-shrink: 0; }
+        .main-container { padding: 20px; flex: 1; }
+        
+        .card-custom { background: rgba(255, 255, 255, 0.95); border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; border: none; }
+        .dash-card { padding: 20px; border-radius: 8px; color: #fff; position: relative; overflow: hidden; height: 100%; }
+        .dash-card h3 { margin: 0; font-weight: 700; font-size: 20px; }
+        .dash-card p { margin: 0; font-size: 12px; opacity: 0.9; }
+        .dash-card i { position: absolute; right: 15px; top: 15px; font-size: 40px; opacity: 0.2; }
+        .bg-blue { background: #3498db; } .bg-green { background: #2ecc71; } .bg-yellow { background: #f1c40f; color: #333;}
+        .bg-orange { background: #f39c12; } .bg-red { background: #e74c3c; } .bg-purple { background: #9b59b6; }
+        
+        [v-cloak] { display: none; }
+        .loading-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.8); z-index:9999; display:flex; flex-direction: column; align-items:center; justify-content:center; }
+        .modal-custom { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index: 1060; display:flex; align-items:center; justify-content:center; }
+        .modal-body-custom { background:#fff; width: 95%; max-width: 750px; border-radius: 10px; padding: 25px; max-height: 85vh; overflow-y: auto; }
+        .modal-body-custom.sm { max-width: 500px; }
+        .swal2-container { z-index: 99999 !important; }
+        
+        .table-bayar th { background-color: #f8f9fa; font-size: 12px; }
+        .table-bayar td { font-size: 13px; vertical-align: middle; }
+        .btn-action { width: 30px; height: 30px; padding: 0; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; transition: all 0.2s; }
+        .btn-action:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        
+        .row-parent { cursor: pointer; transition: background 0.2s; }
+        .row-parent:hover { background-color: #f5eef8 !important; }
+        .row-child-container { background-color: #fafbfc; padding: 15px; border-left: 4px solid #8e44ad; }
+        
+        .chip-filter { display: inline-block; padding: 4px 12px; border-radius: 15px; background: #ebdef0; color: #5b2c6f; font-size: 11px; cursor: pointer; transition: 0.2s; font-weight: 500; border: 1px solid #d7bde2; margin-right: 5px; margin-bottom: 5px; }
+        .chip-filter:hover { background: #8e44ad; color: #fff; }
+
+        #invoice-print-area, #riwayat-print-area { display: none; background: white; padding: 30px; font-family: Arial, sans-serif; color: black; }
+        .invoice-kop { display: flex; align-items: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; }
+        
+        @media print {
+            @page { size: auto; margin: 10mm; }
+            html, body { height: auto !important; overflow: visible !important; background: #ffffff !important; background-color: #ffffff !important; }
+            .wrapper, #content, .main-container { height: auto !important; min-height: auto !important; overflow: visible !important; background: #ffffff !important; background-color: #ffffff !important; width: 100% !important; display: block !important; }
+            #sidebar, .top-navbar, .no-print, .modal-custom, .swal2-container, .sidebar-overlay { display: none !important; }
+            .main-container { padding: 0 !important; margin: 0 !important; }
+            .card-custom { box-shadow: none !important; border: none !important; padding: 0 !important; margin: 0 !important; }
+            
+            #invoice-print-area, #riwayat-print-area { display: none !important; }
+            
+            .printing-invoice > div:not(#invoice-print-area) { display: none !important; }
+            .printing-invoice #invoice-print-area { display: block !important; width: 100% !important; }
+            
+            .printing-riwayat > div:not(#riwayat-print-area) { display: none !important; }
+            .printing-riwayat #riwayat-print-area { display: block !important; width: 100% !important; }
+            
+            .printing-tunggakan #tunggakan-print-area { display: block !important; width: 100% !important; }
+            
+            .table-responsive { overflow: visible !important; }
+            ::-webkit-scrollbar { display: none; }
+        }
+    </style>
+</head>
+<body>
+<div id="app" v-cloak>
+    
+    <div v-if="loading" class="loading-overlay">
+        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
+        <div class="mt-2 fw-bold" style="color: #8e44ad;">Memproses Data...</div>
+    </div>
+    
+    <div v-if="!isLoggedIn" class="d-flex align-items-center justify-content-center" style="height: 100dvh;">
+        <div class="card card-custom p-4 shadow-lg" style="width: 350px;">
+            <div class="text-center mb-4">
+                <img src="https://lh3.googleusercontent.com/d/1pYbWjf23--kf4pU2L9ofVeRouOv_HlOr" width="80" style="border-radius: 50%; margin-bottom: 10px;" onerror="this.src='https://via.placeholder.com/80/8e44ad/ffffff?text=BI'">
+                <h5 class="mt-3 fw-bold" style="color: #4a235a;">Login Sistem</h5>
+            </div>
+            
+            <div class="mb-3">
+                <div class="input-group">
+                    <span class="input-group-text bg-light"><i class="fa-solid fa-user text-muted"></i></span>
+                    <input v-model="form.user" type="text" class="form-control" placeholder="Username">
+                </div>
+            </div>
+            <div class="input-group mb-4">
+                <span class="input-group-text bg-light"><i class="fa-solid fa-lock text-muted"></i></span>
+                <input v-model="form.pass" :type="showPass ? 'text' : 'password'" class="form-control" @keyup.enter="doLogin" placeholder="Password">
+                <button class="btn btn-outline-secondary bg-light" type="button" @click="showPass = !showPass">
+                    <i :class="showPass ? 'fa-solid fa-eye-slash text-danger' : 'fa-solid fa-eye text-primary'"></i>
+                </button>
+            </div>
+            
+            <button @click="doLogin" class="btn w-100 fw-bold shadow-sm" style="background: #8e44ad; color: #fff;" :disabled="loading">
+                <span v-if="loading"><i class="fa-solid fa-circle-notch fa-spin me-2"></i> Memproses...</span>
+                <span v-else><i class="fa-solid fa-right-to-bracket me-2"></i> MASUK KE SISTEM</span>
+            </button>
+        </div>
+    </div>
+    
+    <div v-else class="wrapper">
+        <div class="sidebar-overlay" :class="{'show': sidebarOpen}" @click="sidebarOpen = false"></div>
+        
+        <nav id="sidebar" :class="{'open': sidebarOpen}">
+            <div class="sidebar-brand">
+                <h6 class="fw-bold m-0 text-white"><i class="fa-solid fa-building-columns me-2"></i>TK ISLAM PKK BLIMBING</h6>
+            </div>
+            <div class="text-center py-2 bg-dark bg-opacity-25" style="font-size:11px; color:#fdfefe;">
+                Login: <span class="fw-bold text-warning text-uppercase"><i class="fa-solid fa-user-shield me-1"></i> {{ session.role }}</span>
+                <div v-if="session.role === 'guru' && session.kelas" class="mt-1 text-info fw-bold"><i class="fa-solid fa-chalkboard-user"></i> {{ session.kelas }}</div>
+            </div>
+            
+            <div class="menu-header">Dashboard</div>
+            <a @click="go('dashboard')" :class="['nav-link', view === 'dashboard' ? 'active' : '']"><i class="fa-solid fa-chart-pie text-info"></i> Ringkasan Utama</a>
+            
+            <template v-if="session.role === 'admin' || session.role === 'bendahara' || session.role === 'guru'">
+                <div class="menu-header">Data Transaksi</div>
+                <a v-if="session.role !== 'guru'" @click="go('pendapatan')" :class="['nav-link', view === 'pendapatan' ? 'active' : '']"><i class="fa-solid fa-coins text-success"></i> Pendapatan Lain</a>
+                <a v-if="session.role !== 'guru'" @click="go('pembayaran_siswa')" :class="['nav-link', view === 'pembayaran_siswa' ? 'active' : '']"><i class="fa-solid fa-user-graduate text-success"></i> Riwayat Pembayaran</a>
+                <a @click="go('tabungan')" :class="['nav-link', view === 'tabungan' ? 'active' : '']"><i class="fa-solid fa-piggy-bank text-info"></i> Data Tabungan Siswa</a>
+                <a v-if="session.role !== 'guru'" @click="go('pengeluaran')" :class="['nav-link', view === 'pengeluaran' ? 'active' : '']"><i class="fa-solid fa-cart-shopping text-danger"></i> Pengeluaran Kas</a>
+                <a v-if="session.role !== 'guru'" @click="go('utang_pegawai')" :class="['nav-link', view === 'utang_pegawai' ? 'active' : '']"><i class="fa-solid fa-file-invoice-dollar text-warning"></i> Utang Pegawai</a>
+                
+                <div class="menu-header" v-if="session.role !== 'guru'">Master Data</div>
+                <a v-if="session.role === 'admin'" @click="go('users')" :class="['nav-link', view === 'users' ? 'active' : '']"><i class="fa-solid fa-users-gear text-primary"></i> Data Pengguna</a>
+                <a v-if="session.role !== 'guru'" @click="go('siswa')" :class="['nav-link', view === 'siswa' ? 'active' : '']"><i class="fa-solid fa-id-badge text-secondary"></i> Data Siswa</a>
+                <a v-if="session.role !== 'guru'" @click="go('tagihan_siswa')" :class="['nav-link', view === 'tagihan_siswa' ? 'active' : '']"><i class="fa-solid fa-file-signature text-primary"></i> Data Tagihan Siswa</a>
+                <a v-if="session.role !== 'guru'" @click="go('jenis_pendapatan')" :class="['nav-link', view === 'jenis_pendapatan' ? 'active' : '']"><i class="fa-solid fa-tags text-secondary"></i> Jenis Pendapatan</a>
+                <a v-if="session.role !== 'guru'" @click="go('kategori_pengeluaran')" :class="['nav-link', view === 'kategori_pengeluaran' ? 'active' : '']"><i class="fa-solid fa-layer-group text-secondary"></i> Kat. Pengeluaran</a>
+                
+                <div class="menu-header" v-if="session.role !== 'guru'">Laporan Cetak</div>
+                <a v-if="session.role !== 'guru'" @click="go('laporan_tunggakan')" :class="['nav-link', view === 'laporan_tunggakan' ? 'active' : '']"><i class="fa-solid fa-file-invoice-dollar text-white"></i> Laporan Tunggakan</a>
+            </template>
+            
+            <template v-if="session.role === 'siswa'">
+                <div class="menu-header">Menu Siswa</div>
+                <a @click="go('tagihan_siswa')" :class="['nav-link', view === 'tagihan_siswa' ? 'active' : '']"><i class="fa-solid fa-file-invoice-dollar text-warning"></i> Tagihan Saya</a>
+                <a @click="go('tabungan')" :class="['nav-link', view === 'tabungan' ? 'active' : '']"><i class="fa-solid fa-piggy-bank text-info"></i> History Tabungan Saya</a>
+                <a @click="go('pembayaran_siswa')" :class="['nav-link', view === 'pembayaran_siswa' ? 'active' : '']"><i class="fa-solid fa-clock-rotate-left text-success"></i> Riwayat Pembayaran</a>
+            </template>
+            <div class="mt-4 px-3 mb-4">
+                <button @click="logout" class="btn btn-danger btn-sm w-100 fw-bold shadow-sm"><i class="fa-solid fa-power-off me-1"></i> KELUAR SISTEM</button>
+            </div>
+        </nav>
+        
+        <div id="content">
+            <div class="top-navbar d-flex justify-content-between">
+                <div @click="sidebarOpen = !sidebarOpen" style="cursor:pointer; padding: 10px;"><i class="fa-solid fa-bars fs-4"></i></div>
+                <div class="fw-bold"><i class="fa-solid fa-circle-user fs-5 me-2 align-middle text-light"></i> {{ session.nama }}</div>
+            </div>
+            
+            <div class="main-container" :class="{'printing-invoice': printMode === 'invoice', 'printing-riwayat': printMode === 'riwayat', 'printing-tunggakan': printMode === 'tunggakan'}">
+                
+                <div v-show="view === 'dashboard'">
+                    <div class="alert alert-info py-2 mb-3 shadow-sm border-0" v-if="session.role === 'guru'" style="background-color: #ebdef0; color: #5b2c6f;">
+                        <i class="fa-solid fa-chalkboard-user me-2"></i> Dashboard difilter khusus untuk rekapan siswa kelas: <strong>{{ session.kelas }}</strong>
+                    </div>
+
+                    <!-- Bootstrap Fluid Grid Layout for Dashboard Cards (Optimized for Mac/Safari) -->
+                    <div class="row g-3 mb-4" v-if="session.role !== 'siswa'">
+                        <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6 col-6">
+                            <div class="dash-card bg-blue shadow"><i class="fa-solid fa-wallet"></i><h3>{{ formatRp(stats.summary.saldo) }}</h3><p>Saldo Kas</p></div>
+                        </div>
+                        <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6 col-6">
+                            <div class="dash-card bg-green shadow"><i class="fa-solid fa-hand-holding-dollar"></i><h3>{{ formatRp(stats.summary.pendapatan) }}</h3><p>Total Pemasukan</p></div>
+                        </div>
+                        <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6 col-6">
+                            <div class="dash-card bg-yellow shadow text-dark"><i class="fa-solid fa-file-invoice-dollar" style="opacity: 0.3;"></i><h3>{{ formatRp(stats.summary.tagihan) }}</h3><p>TOTAL TAGIHAN</p></div>
+                        </div>
+                        <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6 col-6">
+                            <div class="dash-card bg-orange shadow"><i class="fa-solid fa-cart-arrow-down"></i><h3>{{ formatRp(stats.summary.pengeluaran) }}</h3><p>Total Pengeluaran</p></div>
+                        </div>
+                        <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6 col-6">
+                            <div class="dash-card bg-red shadow"><i class="fa-solid fa-scale-balanced"></i><h3>{{ formatRp(stats.summary.labaRugi) }}</h3><p>Laba / Rugi Bersih</p></div>
+                        </div>
+                        <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6 col-6">
+                            <div class="dash-card bg-purple shadow"><i class="fa-solid fa-piggy-bank"></i><h3>{{ formatRp(stats.summary.totalTabungan) }}</h3><p>Total Tabungan</p></div>
+                        </div>
+                    </div>
+                    
+                    <div class="row g-3 mb-4" v-if="session.role === 'siswa'">
+                        <div class="col-md-3 col-6">
+                            <div class="dash-card bg-green shadow"><i class="fa-solid fa-hand-holding-dollar"></i><h3>{{ formatRp(stats.summary.pendapatan) }}</h3><p>Telah Dibayar</p></div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="dash-card bg-red shadow"><i class="fa-solid fa-triangle-exclamation"></i><h3>{{ formatRp(stats.summary.kurang) }}</h3><p>TOTAL KEKURANGAN</p></div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="dash-card bg-blue shadow"><i class="fa-solid fa-file-invoice-dollar"></i><h3>{{ formatRp(stats.summary.tagihan) }}</h3><p>TOTAL TAGIHAN</p></div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="dash-card bg-purple shadow"><i class="fa-solid fa-piggy-bank"></i><h3>{{ formatRp(stats.summary.totalTabungan) }}</h3><p>Total Tabungan</p></div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3" v-if="session.role !== 'siswa'">
+                        <div class="col-md-8">
+                            <div class="card-custom p-4 h-100">
+                                <h6 class="fw-bold mb-3"><i class="fa-solid fa-clock-rotate-left me-2" style="color: #8e44ad;"></i> Histori Transaksi Terbaru</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-hover align-middle">
+                                        <thead class="table-light"><tr><th>Nama</th><th>Keterangan</th><th>Nominal</th><th>Tanggal</th></tr></thead>
+                                        <tbody>
+                                            <tr v-for="(r, idx) in stats.recentPendapatan" :key="idx">
+                                                <td><i class="fa-regular fa-user text-muted me-2"></i>{{ r[1] }}</td>
+                                                <td style="white-space: pre-wrap;"><span class="badge bg-opacity-10 text-primary border border-primary" style="background-color: #ebdef0; color: #5b2c6f !important;">{{ r[2] === 'Siswa' ? r[4] : r[2] }}</span></td>
+                                                <td class="fw-bold text-success">{{ formatRp(r[5] || r[4]) }}</td>
+                                                <td><i class="fa-regular fa-calendar-days text-muted me-1"></i>{{ r[6] || r[5] }}</td>
+                                            </tr>
+                                            <tr v-if="stats.recentPendapatan.length === 0"><td colspan="4" class="text-center text-muted py-4">Belum ada transaksi</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card-custom p-4 h-100 text-center">
+                                <h6 class="fw-bold mb-3"><i class="fa-solid fa-chart-pie me-2" style="color: #8e44ad;"></i>Grafik Pendapatan</h6>
+                                <div style="position: relative; height: 220px; width: 100%;">
+                                    <canvas id="chartIncome"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div v-show="view === 'pembayaran_siswa'">
+                    <div class="card-custom p-4">
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 border-bottom pb-3">
+                            <h5 class="fw-bold m-0 mb-3 mb-md-0"><i class="fa-solid fa-cash-register text-success me-2"></i> Riwayat Pembayaran Siswa</h5>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <input type="text" class="form-control form-control-sm" placeholder="Cari Nama Siswa..." v-model="searchHistory">
+                                <button v-if="session.role !== 'siswa'" @click="bukaModalBayar" class="btn btn-success btn-sm shadow-sm" style="white-space: nowrap;"><i class="fa-solid fa-circle-plus me-1"></i> Input Bayar</button>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light"><tr><th style="width: 50px;"></th><th>Nama Siswa</th><th>Total Nominal Dibayar</th><th class="text-center" style="width: 140px;">Aksi / Cetak</th></tr></thead>
+                                <tbody v-for="(group, gIdx) in filteredGroupedHistory" :key="group.nama">
+                                    <tr class="row-parent" @click="toggleHistory(group.nama)">
+                                        <td class="text-center" style="color: #8e44ad;"><i :class="expandedHistory === group.nama ? 'fa-solid fa-chevron-down' : 'fa-solid fa-chevron-right'"></i></td>
+                                        <td class="fw-bold">{{ group.nama }}</td>
+                                        <td class="fw-bold text-success">{{ formatRp(group.totalBayar) }}</td>
+                                        <td class="text-center"><button class="btn btn-sm btn-outline-primary py-0 px-2 shadow-sm" style="border-color: #8e44ad; color: #8e44ad;" @click.stop="doPrintRiwayat(group)"><i class="fa-solid fa-print me-1"></i> Cetak Riwayat</button></td>
+                                    </tr>
+                                    <tr v-if="expandedHistory === group.nama">
+                                        <td colspan="4" class="p-0">
+                                            <div class="row-child-container">
+                                                <table class="table table-sm table-bordered bg-white mb-0">
+                                                    <thead class="bg-light"><tr><th>No. Invoice</th><th>Rincian Pembayaran</th><th>Nominal</th><th>Tanggal</th><th v-if="session.role !== 'siswa'" class="text-center">Aksi / Cetak</th></tr></thead>
+                                                    <tbody>
+                                                        <tr v-for="row in group.details" :key="row[0]">
+                                                            <td><span class="badge bg-secondary"><i class="fa-solid fa-receipt me-1"></i>{{ row[3] }}</span></td>
+                                                            <td style="white-space: pre-wrap;">{{ row[4] }}<br><small class="text-info">{{ row[7] }}</small></td>
+                                                            <td class="text-success fw-bold">{{ formatRp(row[5]) }}</td>
+                                                            <td>{{ row[6] }}</td>
+                                                            <td v-if="session.role !== 'siswa'" class="text-center" style="white-space: nowrap;">
+                                                                <button v-if="session.role === 'admin'" @click="openModal('edit', row)" class="btn btn-primary btn-action shadow-sm text-white" style="background:#8e44ad; border:none;" title="Edit Transaksi"><i class="fa-solid fa-pen-to-square"></i></button>
+                                                                <button @click="doPrintInvoice(row)" class="btn btn-info btn-action shadow-sm text-white ms-1" title="Cetak Invoice Ini"><i class="fa-solid fa-print"></i></button>
+                                                                <button v-if="session.role === 'admin'" @click="deleteData(row[0], 'pendapatan')" class="btn btn-danger btn-action shadow-sm text-white ms-1" title="Hapus"><i class="fa-solid fa-trash-can"></i></button>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tbody v-if="filteredGroupedHistory.length === 0">
+                                    <tr><td colspan="4" class="text-center p-4 text-muted"><i class="fa-solid fa-folder-open fs-2 mb-2 d-block"></i>Data tidak ditemukan.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div v-show="view === 'tagihan_siswa'">
+                    <div class="card-custom p-4">
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 border-bottom pb-3">
+                            <h5 class="fw-bold m-0 mb-3 mb-md-0"><i class="fa-solid fa-file-signature text-primary me-2"></i> Data Tagihan Siswa</h5>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <input type="text" class="form-control form-control-sm" placeholder="Cari Siswa..." v-model="searchTagihan">
+                                <button v-if="session.role !== 'siswa'" @click="bukaModalBuatTagihan" class="btn btn-primary btn-sm shadow-sm" style="white-space: nowrap; background: #8e44ad; border:none;"><i class="fa-solid fa-wand-magic-sparkles me-1"></i> Generate</button>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light"><tr><th style="width: 50px;"></th><th>Nama Siswa</th><th>Total Tagihan</th><th>Total Kekurangan</th><th class="text-center" style="width: 150px;">Aksi</th></tr></thead>
+                                <tbody v-for="g in filteredGroupedTagihan" :key="g.nama">
+                                    <tr class="row-parent" @click="toggleTagihan(g.nama)">
+                                        <td class="text-center" style="color:#8e44ad;"><i :class="expandedTagihan === g.nama ? 'fa-solid fa-chevron-down' : 'fa-solid fa-chevron-right'"></i></td>
+                                        <td class="fw-bold">{{ g.nama }}</td>
+                                        <td class="text-muted">{{ formatRp(g.totalTagihan) }}</td>
+                                        <td class="fw-bold text-danger">{{ formatRp(g.totalKurang) }}</td>
+                                        <td class="text-center">
+                                            <button class="btn btn-sm btn-outline-primary py-0 px-2 shadow-sm" style="border-color:#8e44ad; color:#8e44ad;">Rincian</button>
+                                            <button v-if="session.role !== 'siswa'" class="btn btn-sm btn-success py-0 px-2 ms-1 shadow-sm" @click.stop="kirimInfoTagihanWA(g)"><i class="fa-brands fa-whatsapp"></i> WA</button>
+                                        </td>
+                                    </tr>
+                                    <tr v-if="expandedTagihan === g.nama">
+                                        <td colspan="5" class="p-0">
+                                            <div class="row-child-container" style="border-left-color: #f39c12;">
+                                                <table class="table table-sm table-bordered bg-white mb-0">
+                                                    <thead class="bg-light"><tr><th>Rincian Pembayaran</th><th>Nilai Tagihan</th><th>Telah Dibayar</th><th>Sisa Tagihan</th><th v-if="session.role === 'admin'" class="text-center">Aksi</th></tr></thead>
+                                                    <tbody>
+                                                        <tr v-for="row in g.details" :key="row[0]">
+                                                            <td class="fw-bold">{{ row[3] }}</td>
+                                                            <td>{{ formatRp(row[4]) }}</td>
+                                                            <td class="text-success">{{ formatRp(row[5]) }}</td>
+                                                            <td class="text-danger fw-bold">{{ formatRp(row[6]) }}</td>
+                                                            <td v-if="session.role === 'admin'" class="text-center" style="white-space: nowrap;">
+                                                                <button @click="openModal('edit', row)" class="btn btn-primary btn-action shadow-sm text-white" style="background:#8e44ad; border:none;"><i class="fa-solid fa-pen-to-square"></i></button>
+                                                                <button @click="deleteData(row[0], view)" class="btn btn-danger btn-action shadow-sm text-white ms-1"><i class="fa-solid fa-trash-can"></i></button>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tbody v-if="filteredGroupedTagihan.length === 0">
+                                    <tr><td colspan="5" class="text-center p-4 text-muted"><i class="fa-solid fa-check-circle fs-2 mb-2 d-block text-success"></i>Tidak ada tagihan tertunggak.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div v-show="view === 'tabungan'">
+                    <div class="card-custom p-4">
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 border-bottom pb-3">
+                            <h5 class="fw-bold m-0 mb-3 mb-md-0"><i class="fa-solid fa-piggy-bank text-info me-2"></i> Data Tabungan Siswa <span v-if="session.role==='guru'" class="text-muted fs-6 d-block mt-1">(Kelas: {{ session.kelas || 'Semua' }})</span></h5>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <input type="text" class="form-control form-control-sm" placeholder="Cari Nama/Kelas..." v-model="searchTabungan">
+                                <button v-if="session.role !== 'siswa'" @click="openModal('add')" class="btn btn-primary btn-sm shadow-sm" style="white-space: nowrap; background: #8e44ad; border:none;"><i class="fa-solid fa-circle-plus me-1"></i> Tambah Data</button>
+                                <button @click="exportExcel" class="btn btn-success btn-sm shadow-sm"><i class="fa-solid fa-file-excel me-1"></i> Export XLSX</button>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3" v-if="session.role !== 'siswa' && session.role !== 'guru' && listKelas.length > 0">
+                            <span class="text-muted fw-bold small me-2"><i class="fa-solid fa-filter"></i> Rekomendasi Filter:</span>
+                            <span class="chip-filter" @click="searchTabungan=''">Semua Kelas</span>
+                            <span v-for="k in listKelas" :key="k" class="chip-filter" @click="searchTabungan=k">{{ k }}</span>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light"><tr><th style="width: 50px;"></th><th>Nama Siswa</th><th>Kelas</th><th>Saldo Akhir</th><th v-if="session.role === 'admin' || session.role === 'bendahara' || session.role === 'guru'" class="text-center" style="width: 100px;">Aksi</th></tr></thead>
+                                <tbody v-for="g in groupedTabungan" :key="g.nama">
+                                    <tr class="row-parent" @click="toggleTabungan(g.nama)">
+                                        <td class="text-center" style="color:#8e44ad;"><i :class="expandedTabungan === g.nama ? 'fa-solid fa-chevron-down' : 'fa-solid fa-chevron-right'"></i></td>
+                                        <td class="fw-bold">{{ g.nama }}</td>
+                                        <td>{{ g.kelas }}</td>
+                                        <td class="fw-bold" :class="g.currentSaldo >= 0 ? 'text-success' : 'text-danger'">{{ formatRp(g.currentSaldo) }}</td>
+                                        <td v-if="session.role === 'admin' || session.role === 'bendahara' || session.role === 'guru'" class="text-center"><button class="btn btn-sm btn-outline-primary py-0 px-2" style="border-color:#8e44ad; color:#8e44ad;" @click.stop="openModalAddTabungan(g.nama)">+ Mutasi</button></td>
+                                    </tr>
+                                    <tr v-if="expandedTabungan === g.nama">
+                                        <td colspan="5" class="p-0">
+                                            <div class="row-child-container">
+                                                <table class="table table-sm table-bordered bg-white mb-0">
+                                                    <thead class="bg-light"><tr><th>Tanggal</th><th>Mutasi</th><th>Sisa Saldo</th><th>Keterangan</th><th v-if="session.role === 'admin' || session.role === 'bendahara' || session.role === 'guru'" class="text-center">Aksi</th></tr></thead>
+                                                    <tbody>
+                                                        <tr v-for="row in g.details" :key="row[0]">
+                                                            <td>{{ row[idxTabungan.tgl !== -1 ? idxTabungan.tgl : 1] }}</td>
+                                                            <td :class="Number(row[idxTabungan.nominal !== -1 ? idxTabungan.nominal : 3]) < 0 ? 'text-danger fw-bold' : 'text-success fw-bold'">
+                                                                {{ Number(row[idxTabungan.nominal !== -1 ? idxTabungan.nominal : 3]) > 0 ? '+ ' : '' }}{{ formatRp(row[idxTabungan.nominal !== -1 ? idxTabungan.nominal : 3]) }}
+                                                            </td>
+                                                            <td class="fw-bold">{{ formatRp(idxTabungan.saldo !== -1 ? row[idxTabungan.saldo] : row._virtualSaldo) }}</td>
+                                                            <td style="white-space: pre-wrap;">{{ row[idxTabungan.ket !== -1 ? idxTabungan.ket : 4] }}</td>
+                                                            <td v-if="session.role === 'admin' || session.role === 'bendahara' || session.role === 'guru'" class="text-center" style="white-space: nowrap;">
+                                                                <button @click="openModal('edit', row)" class="btn btn-primary btn-action shadow-sm text-white" style="background:#8e44ad; border:none;"><i class="fa-solid fa-pen-to-square"></i></button>
+                                                                <button @click="deleteData(row[0], view)" class="btn btn-danger btn-action shadow-sm text-white ms-1"><i class="fa-solid fa-trash-can"></i></button>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tbody v-if="groupedTabungan.length === 0">
+                                    <tr><td colspan="5" class="text-center p-4 text-muted"><i class="fa-solid fa-piggy-bank fs-2 mb-2 d-block"></i>Data tabungan tidak ditemukan.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div v-show="['users', 'siswa', 'pendapatan', 'pengeluaran', 'utang_pegawai', 'jenis_pendapatan', 'kategori_pengeluaran'].includes(view)">
+                    <div class="card-custom p-4">
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+                            <h5 class="fw-bold text-capitalize m-0 mb-3 mb-md-0"><i class="fa-solid fa-table text-primary me-2"></i> Data {{ view.replace('_', ' ') }}</h5>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <button v-if="session.role !== 'siswa' && session.role !== 'guru'" @click="openModal('add')" class="btn btn-primary btn-sm shadow-sm" style="background: #8e44ad; border:none;"><i class="fa-solid fa-circle-plus me-1"></i> Tambah Data</button>
+                                <button @click="exportExcel" class="btn btn-success btn-sm shadow-sm"><i class="fa-solid fa-file-excel me-1"></i> Export XLSX</button>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th v-for="h in tableData.header" :key="h" class="text-uppercase text-muted small fw-bold">{{ h }}</th>
+                                        <th v-if="session.role === 'admin'" class="text-center" style="width: 100px;">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(row, rIdx) in tableData.body" :key="rIdx">
+                                        <td v-for="(cell, cIdx) in row" :key="cIdx">
+                                            <span v-if="(tableData.header[cIdx].toLowerCase().includes('jumlah') || tableData.header[cIdx].toLowerCase().includes('tagihan') || tableData.header[cIdx].toLowerCase().includes('utang') || tableData.header[cIdx].toLowerCase().includes('kurang') || tableData.header[cIdx].toLowerCase().includes('nominal') || tableData.header[cIdx].toLowerCase().includes('saldo') || (tableData.header[cIdx].toLowerCase().includes('bayar') && !tableData.header[cIdx].toLowerCase().includes('rincian') && !tableData.header[cIdx].toLowerCase().includes('tanggal') && !tableData.header[cIdx].toLowerCase().includes('tgl'))) && !isNaN(Number(cell)) && cell !== ''" class="fw-bold text-success">{{ formatRp(cell) }}</span>
+                                            <span v-else-if="tableData.header[cIdx].toLowerCase().includes('password')" class="text-muted fst-italic">***</span>
+                                            <span v-else>{{ cell }}</span>
+                                        </td>
+                                        <td v-if="session.role === 'admin'" class="text-center" style="white-space: nowrap;">
+                                            <button @click="openModal('edit', row)" class="btn btn-primary btn-action shadow-sm text-white" style="background:#8e44ad; border:none;" title="Edit"><i class="fa-solid fa-pen-to-square"></i></button>
+                                            <button @click="deleteData(row[0], view)" class="btn btn-danger btn-action shadow-sm text-white ms-1" title="Hapus"><i class="fa-solid fa-trash-can"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr v-if="tableData.body.length === 0">
+                                        <td :colspan="tableData.header.length + (session.role === 'admin' ? 1 : 0)" class="text-center text-muted p-4"><i class="fa-solid fa-folder-open fs-2 mb-2 d-block"></i>Data tidak tersedia.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div v-show="view === 'laporan_tunggakan'">
+                    <div class="card-custom p-4 no-print">
+                        <h5 class="fw-bold mb-4"><i class="fa-solid fa-file-invoice-dollar text-danger me-2"></i> Laporan Tunggakan Siswa</h5>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-3">
+                                <label class="small fw-bold text-muted">Periode (Nama Tagihan)</label>
+                                <input type="text" class="form-control form-control-sm" v-model="filterTunggakan.periode" placeholder="Cari bulan/tahun...">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="small fw-bold text-muted">Pelanggan/Siswa</label>
+                                <input type="text" class="form-control form-control-sm" v-model="filterTunggakan.siswa" placeholder="Cari nama/NIS...">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="small fw-bold text-muted">Status</label>
+                                <select class="form-select form-select-sm" v-model="filterTunggakan.status">
+                                    <option value="semua">Semua Status</option>
+                                    <option value="menunggak">Menunggak (Belum Lunas)</option>
+                                    <option value="lunas">Lunas</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 d-flex align-items-end gap-2">
+                                <button @click="printReport('tunggakan')" class="btn btn-secondary btn-sm w-100 shadow-sm"><i class="fa-solid fa-print me-1"></i> Print / PDF</button>
+                                <button @click="exportExcelTunggakan" class="btn btn-success btn-sm w-100 shadow-sm"><i class="fa-solid fa-file-excel me-1"></i> Excel</button>
+                            </div>
+                        </div>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <div class="p-3 bg-danger bg-opacity-10 border border-danger rounded text-center">
+                                    <h6 class="text-danger mb-1 fw-bold">Total Tunggakan Keseluruhan</h6>
+                                    <h4 class="text-danger mb-0 fw-bold">{{ formatRp(summaryTunggakan.total) }}</h4>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="p-3 bg-warning bg-opacity-10 border border-warning rounded text-center">
+                                    <h6 class="text-warning text-dark mb-1 fw-bold">Jumlah Siswa Menunggak</h6>
+                                    <h4 class="text-dark mb-0 fw-bold">{{ summaryTunggakan.jumlahSiswa }} Siswa</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-custom p-4" id="tunggakan-print-area" :class="{'d-block': printMode === 'tunggakan'}">
+                        <div class="d-none d-print-block text-center mb-4 border-bottom pb-3">
+                            <h3 class="fw-bold mb-1">LAPORAN TUNGGAKAN SISWA</h3>
+                            <p class="text-muted mb-0">Sistem Administrasi Terpadu</p>
+                            <div class="mt-2 d-flex justify-content-center gap-4">
+                                <span><strong>Total Tunggakan Keseluruhan:</strong> <span class="text-danger">{{ formatRp(summaryTunggakan.total) }}</span></span>
+                                <span><strong>Jumlah Siswa Menunggak:</strong> {{ summaryTunggakan.jumlahSiswa }} Siswa</span>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover align-middle table-sm">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>NIS</th>
+                                        <th>Nama Siswa</th>
+                                        <th>Kelas</th> 
+                                        <th>Rincian Tagihan</th>
+                                        <th class="text-end">Nominal Tagihan</th>
+                                        <th class="text-end">Telah Dibayar</th>
+                                        <th class="text-end">Sisa (Tunggakan)</th>
+                                        <th class="text-center">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody v-for="(group, gIdx) in groupedDataLaporanTunggakan" :key="'g'+gIdx" style="border-bottom: 2px solid #dee2e6;">
+                                    <tr v-for="(row, rIdx) in group.details" :key="row.id">
+                                        <td v-if="rIdx === 0" :rowspan="group.details.length" class="align-middle text-center">{{ group.nis }}</td>
+                                        <td v-if="rIdx === 0" :rowspan="group.details.length" class="align-middle fw-bold">{{ group.nama }}</td>
+                                        <td v-if="rIdx === 0" :rowspan="group.details.length" class="align-middle text-center">{{ group.kelas }}</td>
+                                        <td>{{ row.jenis }}</td>
+                                        <td class="text-end">{{ formatRp(row.nominal) }}</td>
+                                        <td class="text-end text-success">{{ formatRp(row.dibayar) }}</td>
+                                        <td class="text-end fw-bold" :class="row.sisa > 0 ? 'text-danger' : 'text-success'">{{ formatRp(row.sisa) }}</td>
+                                        <td class="text-center">
+                                            <span v-if="row.sisa > 0" class="badge bg-danger">Menunggak</span>
+                                            <span v-else class="badge bg-success">Lunas</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tbody v-if="groupedDataLaporanTunggakan.length === 0">
+                                    <tr>
+                                        <td colspan="8" class="text-center p-4 text-muted">Data tidak ditemukan.</td> 
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="d-none d-print-block row mt-5">
+                            <div class="col-8"></div>
+                            <div class="col-4 text-center">
+                                <p>Dicetak pada: {{ new Date().toLocaleDateString('id-ID') }}<br>Administrator</p><br><br><br>
+                                <p class="mb-0 text-decoration-underline fw-bold">{{ session.nama }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="invoice-print-area" v-if="cetakData">
+                    <div class="invoice-kop">
+                        <img src="https://lh3.googleusercontent.com/d/1pYbWjf23--kf4pU2L9ofVeRouOv_HlOr" width="80" style="margin-right: 15px;" onerror="this.style.display='none'">
+                        <div>
+                            <h3 class="m-0 fw-bold">BUKTI PEMBAYARAN</h3>
+                            <p class="m-0 text-muted small">Sistem Administrasi Terpadu</p>
+                        </div>
+                    </div>
+                    <div class="row mb-4 text-dark fs-6">
+                        <div class="col-6">
+                            <table class="table-sm table-borderless">
+                                <tr><td><strong>Nama Siswa</strong></td><td>: {{ cetakData[1] }}</td></tr>
+                                <tr><td><strong>No. Invoice</strong></td><td>: {{ cetakData[3] }}</td></tr>
+                            </table>
+                        </div>
+                        <div class="col-6 text-end">
+                            <table class="table-sm table-borderless float-end">
+                                <tr><td><strong>Tgl. Transaksi</strong></td><td>: {{ cetakData[6] }}</td></tr>
+                                <tr><td><strong>Penerima</strong></td><td>: {{ session.nama }}</td></tr>
+                            </table>
+                        </div>
+                    </div>
+                    <table class="table table-bordered text-dark fs-6">
+                        <thead class="table-light"><tr><th style="width:70%">Rincian Pembayaran</th><th class="text-end">Jumlah Bayar</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td style="white-space: pre-wrap;">{{ cetakData[4] }}<br><small class="text-muted">{{ cetakData[7] }}</small></td>
+                                <td class="text-end align-middle fw-bold">{{ formatRp(cetakData[5]) }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="row mt-5 text-dark">
+                        <div class="col-8"></div>
+                        <div class="col-4 text-center">
+                            <p>Dicetak: {{ cetakData[6] }}<br>Penerima</p><br><br>
+                            <p class="mb-0 text-decoration-underline fw-bold">{{ session.nama }}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="riwayat-print-area" v-if="cetakRiwayatData">
+                    <div class="invoice-kop">
+                        <img src="https://lh3.googleusercontent.com/d/1pYbWjf23--kf4pU2L9ofVeRouOv_HlOr" width="80" style="margin-right: 15px;" onerror="this.style.display='none'">
+                        <div>
+                            <h3 class="m-0 fw-bold">RIWAYAT PEMBAYARAN SISWA</h3>
+                            <p class="m-0 text-muted small">Sistem Administrasi Terpadu</p>
+                        </div>
+                    </div>
+                    <div class="row mb-4 text-dark fs-6">
+                        <div class="col-6">
+                            <table class="table-sm table-borderless">
+                                <tr><td><strong>Nama Siswa</strong></td><td>: {{ cetakRiwayatData.nama }}</td></tr>
+                                <tr><td><strong>Total Transaksi</strong></td><td>: {{ cetakRiwayatData.details.length }} Kali Pembayaran</td></tr>
+                            </table>
+                        </div>
+                    </div>
+                    <table class="table table-bordered text-dark fs-6">
+                        <thead class="table-light"><tr><th>No. Invoice</th><th>Rincian Pembayaran</th><th>Tanggal Bayar</th><th class="text-end">Nominal</th></tr></thead>
+                        <tbody>
+                            <tr v-for="row in cetakRiwayatData.details" :key="row[0]">
+                                <td>{{ row[3] }}</td><td style="white-space: pre-wrap;">{{ row[4] }}</td><td>{{ row[6] }}</td><td class="text-end">{{ formatRp(row[5]) }}</td>
+                            </tr>
+                            <tr class="fw-bold bg-light">
+                                <td colspan="3" class="text-end">TOTAL KESELURUHAN DIBAYAR :</td><td class="text-end">{{ formatRp(cetakRiwayatData.totalBayar) }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="row mt-5 text-dark">
+                        <div class="col-8"></div>
+                        <div class="col-4 text-center">
+                            <p>Dicetak Tanggal: {{ new Date().toLocaleDateString('id-ID') }}<br>Administrator</p><br><br>
+                            <p class="mb-0 text-decoration-underline fw-bold">{{ session.nama }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <footer class="text-center py-3 text-muted no-print" style="font-size: 11px;">
+                © 2026 <strong>Aplikasi Keuangan TK ISLAM PKK BLIMBING</strong> | Belajar Inovasi
+            </footer>
+        </div>
+        
+        <div v-if="modalBuatTagihan.show" class="modal-custom" style="z-index: 1065;">
+            <div class="modal-body-custom shadow-lg sm">
+                <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+                    <h5 class="m-0 fw-bold text-primary" style="color: #8e44ad !important;"><i class="fa-solid fa-wand-magic-sparkles me-2"></i> Generate Tagihan</h5>
+                    <i class="fa-solid fa-xmark cursor-pointer fs-5 text-secondary" @click="modalBuatTagihan.show = false"></i>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Sasaran Tagihan</label>
+                    <select class="form-select" v-model="formBuatTagihan.tipe">
+                        <option value="semua">Semua Siswa Aktif</option><option value="kelas">Berdasarkan Jenjang Kelas</option><option value="individu">Siswa Tertentu</option>
+                    </select>
+                </div>
+                <div class="mb-3" v-if="formBuatTagihan.tipe === 'kelas'">
+                    <label class="form-label fw-bold">Pilih Kelas</label>
+                    <select class="form-select" v-model="formBuatTagihan.kelasTarget">
+                        <option v-for="k in listKelas" :value="k">{{ k }}</option>
+                    </select>
+                </div>
+                <div class="mb-3" v-if="formBuatTagihan.tipe === 'individu'">
+                    <label class="form-label fw-bold">Pilih Siswa</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" v-model="searchSiswaInput" @input="formBuatTagihan.siswa = null" @keyup.enter="bukaModalPilihSiswa('tagihan')" placeholder="Ketik Nama/NIS Siswa...">
+                        <button class="btn btn-primary" style="background:#8e44ad; border:none;" @click="bukaModalPilihSiswa('tagihan')"><i class="fa-solid fa-magnifying-glass me-1"></i> Cari</button>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Jenis / Nama Tagihan</label>
+                    <input type="text" class="form-control" placeholder="Contoh: SPP Februari 2026" v-model="formBuatTagihan.jenis">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Nominal Tagihan (Rp)</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light fw-bold">Rp</span>
+                        <input type="number" class="form-control" placeholder="Contoh: 250000" v-model.number="formBuatTagihan.nominal">
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+                    <button @click="modalBuatTagihan.show = false" class="btn btn-light shadow-sm"><i class="fa-solid fa-xmark me-1"></i> Batal</button>
+                    <button @click="submitBuatTagihan" class="btn btn-primary shadow-sm px-4" style="background:#8e44ad; border:none;" :disabled="loading"><i class="fa-solid fa-circle-check me-1"></i> Generate</button>
+                </div>
+            </div>
+        </div>
+        
+        <div v-if="modalBayar.show" class="modal-custom">
+            <div class="modal-body-custom shadow-lg">
+                <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
+                    <h5 class="fw-bold m-0 text-success"><i class="fa-solid fa-cash-register me-2"></i> Form Pembayaran Siswa</h5>
+                    <i class="fa-solid fa-xmark fs-5 text-secondary cursor-pointer" @click="modalBayar.show = false"></i>
+                </div>
+                <div class="mb-3 row align-items-center">
+                    <label class="col-sm-3 col-form-label fw-bold">Pilih Siswa</label>
+                    <div class="col-sm-9">
+                        <div class="input-group">
+                            <input type="text" class="form-control" v-model="searchSiswaInput" @input="formBayar.siswa = null" @keyup.enter="bukaModalPilihSiswa('bayar')" placeholder="Ketik Nama/NIS Siswa...">
+                            <button @click="bukaModalPilihSiswa('bayar')" class="btn btn-primary" style="background:#8e44ad; border:none;"><i class="fa-solid fa-magnifying-glass me-1"></i> Cari</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3 row align-items-center">
+                    <label class="col-sm-3 col-form-label fw-bold">No. Invoice</label>
+                    <div class="col-sm-9"><input type="text" class="form-control bg-light" readonly v-model="formBayar.invoice"></div>
+                </div>
+                <div class="mb-3 row align-items-center">
+                    <label class="col-sm-3 col-form-label fw-bold">Tanggal Bayar</label>
+                    <div class="col-sm-9"><input type="date" class="form-control" v-model="formBayar.tglBayar"></div>
+                </div>
+                <div class="mb-3 row align-items-center">
+                    <label class="col-sm-3 col-form-label fw-bold">Rincian Tagihan</label>
+                    <div class="col-sm-9">
+                        <button @click="bukaModalJenisTagihan" class="btn btn-success btn-sm shadow-sm" :disabled="!formBayar.siswa">
+                            <i class="fa-solid fa-cart-plus me-1"></i> Tambah Tagihan
+                        </button>
+                    </div>
+                </div>
+                <div class="table-responsive mt-3" v-if="formBayar.items.length > 0">
+                    <table class="table table-bordered table-bayar mb-0">
+                        <thead><tr><th>Nama Pembayaran</th><th>Tagihan & Sisa</th><th>Nominal Bayar</th><th>Aksi</th></tr></thead>
+                        <tbody>
+                            <tr v-for="(item, idx) in formBayar.items" :key="idx">
+                                <td class="fw-bold">{{ item.jenis }}</td>
+                                <td class="text-end bg-light">{{ formatRp(item.tagihan) }}<br><small class="text-danger fw-bold">Sisa: {{ formatRp(item.sisa) }}</small></td>
+                                <td>
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text">Rp</span>
+                                        <input type="number" class="form-control text-end fw-bold" v-model.number="item.nilai_bayar">
+                                    </div>
+                                </td>
+                                <td class="text-center"><button @click="formBayar.items.splice(idx, 1)" class="btn btn-outline-danger btn-sm py-0 px-2"><i class="fa-solid fa-trash-can"></i></button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="row mt-3 pt-3 border-top">
+                        <div class="col-md-7">
+                            <h6 class="fw-bold mb-3"><i class="fa-solid fa-layer-group text-primary me-2"></i>Multi Metode Pembayaran</h6>
+                            <div class="row mb-2 align-items-center">
+                                <label class="col-4 small fw-bold text-muted">Tunai</label>
+                                <div class="col-8">
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text">Rp</span>
+                                        <input type="number" class="form-control" v-model.number="formBayar.metodeBayar.tunai">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-2 align-items-center">
+                                <label class="col-4 small fw-bold text-muted">Transfer Bank</label>
+                                <div class="col-8">
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text">Rp</span>
+                                        <input type="number" class="form-control" v-model.number="formBayar.metodeBayar.transfer">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-2 align-items-center">
+                                <label class="col-4 small fw-bold text-muted">QRIS/e-Wallet</label>
+                                <div class="col-8">
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text">Rp</span>
+                                        <input type="number" class="form-control" v-model.number="formBayar.metodeBayar.qris">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-2 align-items-center">
+                                <label class="col-4 small fw-bold text-muted">Potong Tabungan</label>
+                                <div class="col-8">
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text">Rp</span>
+                                        <input type="number" class="form-control" v-model.number="formBayar.metodeBayar.tabungan" :max="formBayar.saldoSiswa">
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-outline-primary btn-sm mt-2 w-100 fw-bold" style="border-color:#8e44ad; color:#8e44ad;" @click="setFullTunai">
+                                <i class="fa-solid fa-money-bill-wave me-1"></i> Isi Otomatis Set Full Tunai
+                            </button>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="p-2 rounded border mb-3 text-center" :class="formBayar.saldoSiswa >= formBayar.metodeBayar.tabungan ? 'bg-success bg-opacity-10 border-success text-success' : 'bg-danger bg-opacity-10 border-danger text-danger'">
+                                <i class="fa-solid fa-piggy-bank me-1 mb-1"></i> Saldo Tabungan Siswa:<br><strong class="fs-6">{{ formatRp(formBayar.saldoSiswa) }}</strong>
+                            </div>
+                            <div class="p-3 rounded border bg-light shadow-sm">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="small text-muted">Total Tagihan (Cart):</span>
+                                    <span class="fw-bold">{{ formatRp(totalTagihanCart) }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="small text-muted">Total Bayar (Metode):</span>
+                                    <span class="fw-bold">{{ formatRp(totalMultiBayar) }}</span>
+                                </div>
+                                <hr class="my-2 border-secondary">
+                                <div class="d-flex justify-content-between">
+                                    <span class="small fw-bold">Selisih Kekurangan:</span>
+                                    <span class="fw-bold" :class="totalTagihanCart === totalMultiBayar ? 'text-success' : 'text-danger'">{{ formatRp(totalTagihanCart - totalMultiBayar) }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+                    <button @click="modalBayar.show = false" class="btn btn-light shadow-sm"><i class="fa-solid fa-xmark me-1"></i> Batal</button>
+                    <button @click="submitPembayaranSiswa" class="btn btn-success px-4 shadow-sm" :disabled="formBayar.items.length === 0 || loading"><i class="fa-solid fa-circle-check me-1"></i> Proses Transaksi</button>
+                </div>
+            </div>
+        </div>
+        
+        <div v-if="modalSiswa.show" class="modal-custom" style="z-index: 1070;">
+            <div class="modal-body-custom shadow-lg">
+                <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+                    <h6 class="m-0 fw-bold text-primary" style="color:#8e44ad !important;"><i class="fa-solid fa-users me-2"></i> Pilih Data Siswa</h6><button @click="modalSiswa.show = false" class="btn-close"></button>
+                </div>
+                
+                <div class="mb-2" v-if="session.role !== 'guru' && listKelas.length > 0">
+                    <span class="text-muted fw-bold small me-2"><i class="fa-solid fa-filter"></i> Filter Kelas:</span>
+                    <span class="chip-filter" @click="searchSiswaInput=''">Semua</span>
+                    <span v-for="k in listKelas" :key="k" class="chip-filter" @click="searchSiswaInput=k">{{ k }}</span>
+                </div>
+
+                <div class="mb-2">
+                    <input type="text" class="form-control form-control-sm" v-model="searchSiswaInput" placeholder="Ketik filter Nama/NIS/Kelas di sini...">
+                </div>
+                <div class="table-responsive" style="max-height: 300px;">
+                    <table class="table table-hover table-sm align-middle">
+                        <thead class="table-light"><tr><th>NIS</th><th>Nama Siswa</th><th>Kelas</th><th class="text-center">Pilih</th></tr></thead>
+                        <tbody>
+                            <tr v-for="(s, idx) in filteredListSiswa" :key="idx">
+                                <td>{{ s.nis }}</td><td class="fw-bold">{{ s.nama }}</td><td>{{ s.kelas }}</td>
+                                <td class="text-center"><button @click="pilihSiswa(s)" class="btn btn-success btn-sm py-1 px-3 shadow-sm"><i class="fa-solid fa-check"></i></button></td>
+                            </tr>
+                            <tr v-if="filteredListSiswa.length === 0">
+                                <td colspan="4" class="text-center text-muted py-3">Siswa tidak ditemukan.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div v-if="modalTagihan.show" class="modal-custom" style="z-index: 1070;">
+            <div class="modal-body-custom shadow-lg">
+                <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3 text-white p-3 rounded" style="background:#8e44ad;">
+                    <h6 class="m-0 fw-bold"><i class="fa-solid fa-file-invoice-dollar me-2"></i> Tagihan Aktif: {{ formBayar.siswa.nama }}</h6>
+                    <i class="fa-solid fa-xmark cursor-pointer fs-5" @click="modalTagihan.show = false"></i>
+                </div>
+                <div class="table-responsive" style="max-height: 350px;">
+                    <table class="table table-bordered table-hover table-sm align-middle">
+                        <thead class="table-light"><tr><th>Jenis Pembayaran</th><th>Nilai Tagihan</th><th>Sisa Kurang</th><th>Pilih</th></tr></thead>
+                        <tbody>
+                            <tr v-for="(t, idx) in listTagihanAktif" :key="idx">
+                                <td class="fw-bold">{{ t.jenis }}</td><td class="text-end">{{ formatRp(t.tagihan) }}</td><td class="text-end text-danger fw-bold">{{ formatRp(t.sisa) }}</td>
+                                <td class="text-center"><button @click="tambahkanTagihanKeCart(t)" class="btn btn-success btn-sm py-1 px-3 shadow-sm"><i class="fa-solid fa-plus"></i></button></td>
+                            </tr>
+                            <tr v-if="listTagihanAktif.length === 0"><td colspan="4" class="text-center p-4 text-success fw-bold"><i class="fa-solid fa-circle-check fs-3 d-block mb-2"></i>Tidak ada tunggakan.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div v-if="modal.show" class="modal-custom">
+            <div class="modal-body-custom sm shadow-lg">
+                <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+                    <h5 class="fw-bold text-capitalize m-0 text-primary" style="color:#8e44ad !important;"><i :class="modal.action === 'add' ? 'fa-solid fa-circle-plus' : 'fa-solid fa-pen-to-square'"></i> {{ modal.action === 'add' ? 'Tambah' : 'Edit' }} Data</h5>
+                    <i class="fa-solid fa-xmark fs-4 text-secondary cursor-pointer" @click="modal.show = false"></i>
+                </div>
+                <div class="row g-3">
+                    <template v-for="(head, i) in tableData.header" :key="'main-'+i">
+                        <div class="col-12" v-if="!['catatan', 'keterangan', 'saldo'].includes(head.toLowerCase())">
+                            <label class="form-label fw-bold text-muted small mb-1">{{ head === 'No' && head.includes('Invoice') ? 'No. Invoice' : head }}</label>
+                            
+                            <select v-if="head.toLowerCase().includes('jenis') && view === 'pendapatan'" v-model="modal.formData[i]" class="form-select bg-light">
+                                <option value="" disabled>Pilih {{ head }}...</option>
+                                <option v-for="j in listJenisPendapatan" :value="j">{{ j }}</option>
+                            </select>
+                            
+                            <div v-else-if="head.toLowerCase().includes('nama') && view === 'tabungan'">
+                                <!-- PERBAIKAN: Gunakan datalist terpisah (siswaDatalist) khusus untuk filter tabungan -->
+                                <input type="text" :list="'datalist-siswa-' + i" v-model="modal.formData[i]" class="form-control bg-light" placeholder="Ketik/Pilih Nama Siswa...">
+                                <datalist :id="'datalist-siswa-' + i">
+                                    <option v-for="s in siswaDatalist" :value="s.nama">{{ s.nis }} - {{ s.kelas }}</option>
+                                </datalist>
+                            </div>
+                            <select v-else-if="(head.toLowerCase().includes('kategori') || head.toLowerCase().includes('jenis')) && view === 'pengeluaran'" v-model="modal.formData[i]" class="form-select bg-light">
+                                <option value="" disabled>Pilih {{ head }}...</option>
+                                <option v-for="k in listKategoriPengeluaran" :value="k">{{ k }}</option>
+                            </select>
+                            
+                            <input v-else-if="head.toLowerCase().includes('tgl') || head.toLowerCase().includes('tanggal')" type="date" v-model="modal.formData[i]" class="form-control bg-light">
+                            
+                            <input v-else v-model="modal.formData[i]" :type="head.toLowerCase().includes('password') ? 'password' : (head.toLowerCase().includes('nominal') ? 'number' : 'text')" class="form-control bg-light" :readonly="(i === 0 && modal.action === 'add') || (head.toLowerCase().includes('invoice') && modal.action === 'add')" :placeholder="(i === 0 && modal.action === 'add') || (head.toLowerCase().includes('invoice') && modal.action === 'add') ? 'Auto Generate' : 'Input ' + head">
+                            
+                            <small v-if="head.toLowerCase().includes('nominal') && view === 'tabungan'" class="text-muted mt-1 d-block"><i class="fa-solid fa-circle-info"></i> Isi dengan angka minus (-) untuk Penarikan / Pengambilan.</small>
+                        </div>
+                    </template>
+                    <template v-for="(head, i) in tableData.header" :key="'cat-'+i">
+                        <div class="col-12" v-if="head.toLowerCase().includes('catatan') || head.toLowerCase().includes('keterangan')">
+                            <label class="form-label fw-bold text-muted small mb-1">{{ head }}</label>
+                            <textarea v-model="modal.formData[i]" class="form-control bg-light" rows="3" placeholder="Input teks catatan/keterangan"></textarea>
+                        </div>
+                    </template>
+                </div>
+                <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+                    <button @click="modal.show = false" class="btn btn-light shadow-sm"><i class="fa-solid fa-xmark me-1"></i> Batal</button>
+                    <button @click="saveData" class="btn btn-primary shadow-sm px-4" style="background:#8e44ad; border:none;"><i class="fa-solid fa-floppy-disk me-1"></i> Simpan Data</button>
+                </div>
+            </div>
+        </div>
+    </div>
+<script>
+const SCRIPT_URL = 'URL_APPS_SCRIPT_ANDA_DISINI';
+let myChart = null;
+const getToday = () => { const d = new Date(); return d.toISOString().split('T')[0]; };
+const { createApp } = Vue;
+createApp({
+    data() {
+        return {
+            loading: false, isLoggedIn: false, view: 'dashboard', sidebarOpen: false, showPass: false, printMode: '',
+            form: { user: '', pass: '' },
+            session: {}, tableData: { header: [], body: [] },
+            stats: { summary: { saldo:0, pendapatan:0, pengeluaran:0, labaRugi:0, tagihan:0, kurang:0, totalTabungan:0 }, recentPendapatan: [], chartPendapatan: {labels:[], data:[]} },
+            modal: { show: false, action: 'add', identifier: null, formData: [] },
+            historyPembayaranSiswa: [], searchHistory: '', expandedHistory: null,
+            searchTagihan: '', expandedTagihan: null,
+            cetakData: null, cetakRiwayatData: null, listKelas: [],
+            listJenisPendapatan: [], listKategoriPengeluaran: [],
+            searchSiswaInput: '', searchTabungan: '', expandedTabungan: null,
+            filterTunggakan: { periode: '', siswa: '', status: 'menunggak' },
+            modalBuatTagihan: { show: false },
+            formBuatTagihan: { tipe: 'semua', kelasTarget: '', siswa: null, jenis: '', nominal: '' },
+            modalBayar: { show: false }, modalSiswa: { show: false, context: 'bayar' }, modalTagihan: { show: false },
+            listSiswa: [], listTagihanAktif: [],
+            formBayar: {
+                invoice: '', tglBayar: getToday(), siswa: null, items: [],
+                metodeBayar: { tunai: 0, transfer: 0, qris: 0, tabungan: 0 },
+                saldoSiswa: 0
+            }
+        }
+    },
+    computed: {
+        totalTagihanCart() { return this.formBayar.items.reduce((sum, item) => sum + Number(item.nilai_bayar || 0), 0); },
+        totalMultiBayar() {
+            return Number(this.formBayar.metodeBayar.tunai || 0) +
+                   Number(this.formBayar.metodeBayar.transfer || 0) +
+                   Number(this.formBayar.metodeBayar.qris || 0) +
+                   Number(this.formBayar.metodeBayar.tabungan || 0);
+        },
+        filteredListSiswa() {
+            let arr = this.listSiswa;
+            if (this.session.role === 'guru' && this.session.kelas) {
+                arr = arr.filter(x => x.kelas.toLowerCase() === this.session.kelas.toLowerCase());
+            }
+            if (!this.searchSiswaInput) return arr;
+            let s = this.searchSiswaInput.toLowerCase();
+            return arr.filter(x => x.nama.toLowerCase().includes(s) || x.nis.toString().toLowerCase().includes(s) || x.kelas.toLowerCase().includes(s));
+        },
+        // PERBAIKAN: Computed khusus untuk input manual mutasi tabungan
+        siswaDatalist() {
+            if (this.session.role === 'guru' && this.session.kelas) {
+                return this.listSiswa.filter(x => x.kelas.toLowerCase() === this.session.kelas.toLowerCase());
+            }
+            return this.listSiswa;
+        },
+        filteredGroupedHistory() {
+            let groups = {};
+            this.historyPembayaranSiswa.forEach(row => {
+                let nama = row[1];
+                if(!groups[nama]) groups[nama] = { nama: nama, totalBayar: 0, details: [] };
+                groups[nama].details.push(row);
+                groups[nama].totalBayar += Number(row[5] || 0);
+            });
+            let arr = Object.values(groups);
+            if(this.searchHistory) {
+                let s = this.searchHistory.toLowerCase();
+                arr = arr.filter(g => g.nama.toLowerCase().includes(s));
+            }
+            return arr;
+        },
+        filteredGroupedTagihan() {
+            if(this.view !== 'tagihan_siswa') return [];
+            let groups = {};
+            this.tableData.body.forEach(row => {
+                let nama = row[2];
+                if(!groups[nama]) groups[nama] = { nama: nama, totalTagihan: 0, totalKurang: 0, details: [] };
+                groups[nama].details.push(row);
+                groups[nama].totalTagihan += Number(row[4] || 0);
+                groups[nama].totalKurang += Number(row[6] || 0);
+            });
+            let arr = Object.values(groups);
+            if(this.searchTagihan) {
+                let s = this.searchTagihan.toLowerCase();
+                arr = arr.filter(g => g.nama.toLowerCase().includes(s));
+            }
+            return arr;
+        },
+        idxTabungan() {
+            let h = this.tableData.header;
+            if(!h || h.length === 0) return { tgl: 1, nominal: 3, saldo: -1, ket: 4 };
+            return {
+                tgl: h.findIndex(x => x.toLowerCase().includes('tgl') || x.toLowerCase().includes('tanggal')),
+                nominal: h.findIndex(x => x.toLowerCase().includes('nominal') || x.toLowerCase().includes('mutasi') || x.toLowerCase().includes('jumlah')),
+                saldo: h.findIndex(x => x.toLowerCase() === 'saldo' || x.toLowerCase().includes('sisa saldo')),
+                ket: h.findIndex(x => x.toLowerCase().includes('keterangan') || x.toLowerCase().includes('catatan'))
+            };
+        },
+        groupedTabungan() {
+            if (this.view !== 'tabungan') return [];
+            let groups = {};
+            
+            let iTgl = this.idxTabungan.tgl !== -1 ? this.idxTabungan.tgl : 1;
+            let iNominal = this.idxTabungan.nominal !== -1 ? this.idxTabungan.nominal : 3;
+            let iSaldo = this.idxTabungan.saldo;
+            this.tableData.body.forEach(row => {
+                let nama = row[2];
+                if (!groups[nama]) {
+                    let s = this.listSiswa.find(x => x.nama === nama);
+                    let kelas = s ? s.kelas : '-';
+                    groups[nama] = { nama: nama, kelas: kelas, currentSaldo: 0, details: [] };
+                }
+                groups[nama].details.push([...row]);
+            });
+            
+            let arr = Object.values(groups);
+            
+            if (this.session.role === 'guru' && this.session.kelas) {
+                arr = arr.filter(g => g.kelas.toLowerCase() === this.session.kelas.toLowerCase());
+            }
+
+            arr.forEach(g => {
+                let saldoSum = 0;
+                g.details.forEach(row => {
+                    let mutasi = Number(row[iNominal]) || 0;
+                    saldoSum += mutasi;
+                    if (iSaldo !== -1) { row[iSaldo] = saldoSum; } else { row._virtualSaldo = saldoSum; }
+                });
+                g.currentSaldo = saldoSum;
+            });
+            
+            if (this.searchTabungan) {
+                let s = this.searchTabungan.toLowerCase();
+                arr = arr.filter(g => g.nama.toLowerCase().includes(s) || g.kelas.toLowerCase().includes(s));
+            }
+            return arr;
+        },
+        dataLaporanTunggakan() {
+            if (this.view !== 'laporan_tunggakan') return [];
+            let data = this.tableData.body.map(r => {
+                let siswa = this.listSiswa.find(s => s.nama === r[2] || s.nis == r[1]);
+                return {
+                    id: r[0], nis: r[1], nama: r[2], kelas: siswa ? siswa.kelas : '-',
+                    jenis: r[3], nominal: Number(r[4]), dibayar: Number(r[5]), sisa: Number(r[6])
+                };
+            });
+            
+            if (this.filterTunggakan.siswa) {
+                let s = this.filterTunggakan.siswa.toLowerCase();
+                data = data.filter(d => d.nama.toLowerCase().includes(s) || d.nis.toString().toLowerCase().includes(s));
+            }
+            if (this.filterTunggakan.periode) {
+                let p = this.filterTunggakan.periode.toLowerCase();
+                data = data.filter(d => d.jenis.toLowerCase().includes(p));
+            }
+            if (this.filterTunggakan.status === 'menunggak') {
+                data = data.filter(d => d.sisa > 0);
+            } else if (this.filterTunggakan.status === 'lunas') {
+                data = data.filter(d => d.sisa <= 0);
+            }
+            return data;
+        },
+        groupedDataLaporanTunggakan() {
+            if (this.view !== 'laporan_tunggakan') return [];
+            let grouped = {};
+            this.dataLaporanTunggakan.forEach(row => {
+                if (!grouped[row.nama]) {
+                    grouped[row.nama] = { nis: row.nis, nama: row.nama, kelas: row.kelas, details: [] };
+                }
+                grouped[row.nama].details.push(row);
+            });
+            return Object.values(grouped);
+        },
+        summaryTunggakan() {
+            let total = 0;
+            let siswaSet = new Set();
+            this.dataLaporanTunggakan.forEach(d => {
+                if (d.sisa > 0) {
+                    total += d.sisa;
+                    siswaSet.add(d.nama);
+                }
+            });
+            return { total: total, jumlahSiswa: siswaSet.size };
+        }
+    },
+    watch: {
+        totalTagihanCart(newVal) {
+            if (this.formBayar.metodeBayar.transfer === 0 && this.formBayar.metodeBayar.qris === 0 && this.formBayar.metodeBayar.tabungan === 0) {
+                this.formBayar.metodeBayar.tunai = newVal;
+            }
+        },
+        'modal.formData': {
+            handler(newVal) {
+                if (this.view === 'tagihan_siswa' && this.modal.show) {
+                    let nominal = Number(newVal[4]) || 0;
+                    let dibayar = Number(newVal[5]) || 0;
+                    let calc = nominal - dibayar;
+                    if (newVal[6] !== calc) {
+                        this.modal.formData[6] = calc;
+                    }
+                }
+            },
+            deep: true
+        }
+    },
+    created() {
+        const localSess = localStorage.getItem('erp_session');
+        if (localSess) {
+            this.session = JSON.parse(localSess);
+            this.isLoggedIn = true;
+            this.fetchDropdowns();
+            this.go(this.session.lastView || 'dashboard');
+        }
+    },
+    mounted() {
+        if(window.innerWidth >= 768) { this.sidebarOpen = true; }
+        window.addEventListener('afterprint', () => { this.printMode = ''; });
+    },
+    methods: {
+        formatNoWA(no) {
+            if(!no) return '';
+            let formatted = no.toString().replace(/[^0-9]/g, '');
+            if(formatted.startsWith('0')) formatted = '62' + formatted.substring(1);
+            return formatted;
+        },
+        salinKeClipboard(text, jenisTeks) {
+            navigator.clipboard.writeText(text).then(() => {
+                Swal.fire({
+                    icon: 'success', title: 'Teks Pesan Disalin!',
+                    text: `Teks ${jenisTeks} telah disalin. Silakan Paste (Tempel) di WA.`,
+                    timer: 3000, showConfirmButton: false
+                });
+            }).catch(err => {
+                Swal.fire('Gagal', 'Sistem tidak dapat menyalin teks otomatis.', 'error');
+            });
+        },
+        kirimInfoTagihanWA(group) {
+            const siswa = this.listSiswa.find(s => s.nama === group.nama);
+            const noHp = siswa ? this.formatNoWA(siswa.noHp) : '';
+            
+            let text = `*INFO TAGIHAN TK ISLAM PKK BLIMBING*\nSistem Administrasi Terpadu - Belajar Inovasi\n\nNama Siswa: ${group.nama}\n\nRincian Tunggakan Belum Dibayar:\n`;
+            group.details.forEach((r, i) => {
+                text += `${i+1}. ${r[3]} (Sisa: ${this.formatRp(r[6])})\n`;
+            });
+            text += `\n*Total Kekurangan: ${this.formatRp(group.totalKurang)}*\n\nMohon untuk dapat segera diselesaikan. Terima kasih.`;
+            if(!noHp) {
+                Swal.fire('Info', 'Nomor HP tidak ditemukan di database untuk siswa ini. Teks pesan telah disalin ke clipboard.', 'warning');
+                this.salinKeClipboard(text, 'Tagihan');
+                return;
+            }
+            window.open(`https://wa.me/${noHp}?text=${encodeURIComponent(text)}`, '_blank');
+        },
+        async apiCall(action, payload = {}) {
+            if (SCRIPT_URL === 'URL_APPS_SCRIPT_ANDA_DISINI') {
+                Swal.fire('Konfigurasi Dibutuhkan', 'Ganti variabel SCRIPT_URL dengan Web App URL Google Apps Script', 'error');
+                throw new Error("Missing Web App URL");
+            }
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: action, ...payload })
+                });
+                return await response.json();
+            } catch (err) { throw new Error("Koneksi API gagal."); }
+        },
+        formatRp(angka) {
+            if(!angka || isNaN(angka)) return "0";
+            const val = Number(angka);
+            if(val < 0) return "- Rp " + Math.abs(val).toLocaleString('id-ID');
+            return "Rp " + val.toLocaleString('id-ID');
+        },
+        toast(title, icon = 'success') { Swal.fire({ toast: true, position: 'top-end', icon: icon, title: title, showConfirmButton: false, timer: 2000 }); },
+        toggleHistory(nama) { this.expandedHistory = this.expandedHistory === nama ? null : nama; },
+        toggleTagihan(nama) { this.expandedTagihan = this.expandedTagihan === nama ? null : nama; },
+        toggleTabungan(nama) { this.expandedTabungan = this.expandedTabungan === nama ? null : nama; },
+        
+        generateInvoice() {
+            const d = new Date();
+            const yyyy = d.getFullYear();
+            const mm = String(d.getMonth() + 1).padStart(2, '0');
+            const dd = String(d.getDate()).padStart(2, '0');
+            const randomSuffix = new Date().getTime().toString().slice(-6);
+            return `INV/${yyyy}${mm}${dd}/${randomSuffix}`;
+        },
+        
+        async fetchDropdowns() {
+            try {
+                const res = await this.apiCall('getDropdownData');
+                if(res.success) {
+                    this.listJenisPendapatan = res.jenisPendapatan;
+                    this.listKategoriPengeluaran = res.kategoriPengeluaran;
+                }
+            } catch(e) {}
+        },
+        async doLogin() {
+            if(!this.form.user || !this.form.pass) return;
+            this.loading = true;
+            try {
+                const res = await this.apiCall('login', { user: this.form.user, pass: this.form.pass });
+                this.loading = false;
+                if(res.success) {
+                    this.isLoggedIn = true; this.session = res;
+                    localStorage.setItem('erp_session', JSON.stringify(res));
+                    this.fetchDropdowns();
+                    this.go('dashboard');
+                } else Swal.fire('Gagal Login', res.message, 'error');
+            } catch (err) { this.loading = false; Swal.fire('Error API', err.message, 'error'); }
+        },
+        logout() { localStorage.removeItem('erp_session'); this.isLoggedIn = false; this.session = {}; this.form = { user: '', pass: '' }; },
+        
+        go(menu) {
+            this.view = menu;
+            this.session.lastView = menu;
+            localStorage.setItem('erp_session', JSON.stringify(this.session));
+            if(window.innerWidth < 768) this.sidebarOpen = false;
+            
+            if(menu === 'dashboard') this.loadDashboard();
+            else if (menu === 'pembayaran_siswa') this.fetchHistorySiswa();
+            else if(['users', 'siswa', 'tagihan_siswa', 'pendapatan', 'pengeluaran', 'utang_pegawai', 'jenis_pendapatan', 'kategori_pengeluaran', 'tabungan'].includes(menu)) {
+                this.fetchTableData();
+            } else if (menu === 'laporan_tunggakan') {
+                this.fetchTableData('tagihan_siswa');
+            }
+        },
+        async fetchHistorySiswa() {
+            this.loading = true;
+            this.expandedHistory = null;
+            try {
+                const res = await this.apiCall('getModuleData', { moduleName: 'pendapatan', role: this.session.role, namaUser: this.session.nama });
+                this.loading = false;
+                if(res.success) {
+                    this.tableData = { header: res.header, body: res.body };
+                    this.historyPembayaranSiswa = res.body.filter(r => r[2] === 'Siswa');
+                }
+            } catch(err) { this.loading = false; }
+        },
+        doPrintInvoice(row) {
+            this.cetakData = row;
+            this.printMode = 'invoice';
+            this.$nextTick(() => { window.print(); });
+        },
+        doPrintRiwayat(group) {
+            this.cetakRiwayatData = group;
+            this.printMode = 'riwayat';
+            this.$nextTick(() => { window.print(); });
+        },
+        printReport(type) {
+            this.printMode = type;
+            this.$nextTick(() => { window.print(); });
+        },
+        async fetchDaftarKelas() {
+            if(this.listKelas.length > 0) return; // Cache agar tidak redundant loading
+            try {
+                const res = await this.apiCall('getDaftarKelas');
+                this.listKelas = res;
+            } catch(e) {}
+        },
+        bukaModalBuatTagihan() {
+            this.formBuatTagihan = { tipe: 'semua', kelasTarget: '', siswa: null, jenis: '', nominal: '' };
+            this.searchSiswaInput = '';
+            this.modalBuatTagihan.show = true;
+        },
+        async submitBuatTagihan() {
+            if(!this.formBuatTagihan.jenis || !this.formBuatTagihan.nominal) return Swal.fire('Peringatan', 'Lengkapi Jenis dan Nominal Tagihan', 'warning');
+            if(this.formBuatTagihan.tipe === 'individu' && !this.formBuatTagihan.siswa) return Swal.fire('Peringatan', 'Pilih Siswa terlebih dahulu', 'warning');
+            if(this.formBuatTagihan.tipe === 'kelas' && !this.formBuatTagihan.kelasTarget) return Swal.fire('Peringatan', 'Pilih Jenjang Kelas', 'warning');
+            this.loading = true;
+            try {
+                const res = await this.apiCall('generateTagihan', { payload: this.formBuatTagihan });
+                this.loading = false;
+                if(res.success) {
+                    this.toast(res.message);
+                    this.modalBuatTagihan.show = false;
+                    this.formBuatTagihan = { tipe: 'semua', kelasTarget:'', siswa: null, jenis: '', nominal: '' };
+                    this.searchSiswaInput = '';
+                    if(this.view === 'tagihan_siswa') this.fetchTableData();
+                } else Swal.fire('Gagal', res.message, 'error');
+            } catch(err) { this.loading = false; Swal.fire('Error', err.message, 'error'); }
+        },
+        bukaModalBayar() {
+            this.formBayar = {
+                invoice: this.generateInvoice(), tglBayar: getToday(), siswa: null, items: [],
+                metodeBayar: { tunai: 0, transfer: 0, qris: 0, tabungan: 0 },
+                saldoSiswa: 0
+            };
+            this.searchSiswaInput = '';
+            this.modalBayar.show = true;
+        },
+        async fetchSaldoSiswa(namaSiswa) {
+            try {
+                const res = await this.apiCall('getSaldoTabungan', { namaSiswa: namaSiswa });
+                if(res.success) { this.formBayar.saldoSiswa = res.saldo; }
+            } catch(e) {}
+        },
+        async bukaModalPilihSiswa(context) {
+            this.modalSiswa.context = context;
+            
+            // PERBAIKAN: Gunakan local state jika list siswa sudah tersedia (Mempercepat load)
+            if(this.listSiswa.length > 0) {
+                this.modalSiswa.show = true;
+                if((context === 'tagihan' || context === 'bayar') && this.listKelas.length === 0) this.fetchDaftarKelas();
+                return;
+            }
+
+            this.loading = true;
+            try {
+                const res = await this.apiCall('getDaftarSiswa');
+                this.loading = false; this.listSiswa = res; this.modalSiswa.show = true;
+                if((context === 'tagihan' || context === 'bayar') && this.listKelas.length === 0) this.fetchDaftarKelas();
+            } catch(err) { this.loading = false; }
+        },
+        pilihSiswa(s) {
+            this.searchSiswaInput = s.nama + ' (' + s.nis + ')';
+            if(this.modalSiswa.context === 'bayar') {
+                this.formBayar.siswa = s;
+                this.formBayar.items = [];
+                this.formBayar.metodeBayar = { tunai: 0, transfer: 0, qris: 0, tabungan: 0 };
+                this.formBayar.saldoSiswa = 0;
+                this.fetchSaldoSiswa(s.nama);
+            } else {
+                this.formBuatTagihan.siswa = s;
+            }
+            this.modalSiswa.show = false;
+        },
+        async bukaModalJenisTagihan() {
+            if(!this.formBayar.siswa) return;
+            this.loading = true;
+            try {
+                const res = await this.apiCall('getTagihanSiswa', { nis: this.formBayar.siswa.nis });
+                this.loading = false; this.listTagihanAktif = res; this.modalTagihan.show = true;
+            } catch(err) { this.loading = false; }
+        },
+        setFullTunai() {
+            this.formBayar.metodeBayar.tunai = this.totalTagihanCart;
+            this.formBayar.metodeBayar.transfer = 0;
+            this.formBayar.metodeBayar.qris = 0;
+            this.formBayar.metodeBayar.tabungan = 0;
+        },
+        tambahkanTagihanKeCart(tagihan) {
+            const exists = this.formBayar.items.find(i => i.id === tagihan.id);
+            if(exists) return this.toast('Tagihan sudah masuk!', 'warning');
+            
+            this.formBayar.items.push({ ...tagihan, nilai_bayar: tagihan.sisa });
+            this.setFullTunai();
+            this.modalTagihan.show = false;
+        },
+        async submitPembayaranSiswa() {
+            if(this.totalTagihanCart !== this.totalMultiBayar) {
+                return Swal.fire('Nominal Tidak Sesuai', 'Total Bayar (Multi Metode) harus sama dengan Total Tagihan Keranjang (' + this.formatRp(this.totalTagihanCart) + '). Silakan cek kembali.', 'warning');
+            }
+            if(this.formBayar.metodeBayar.tabungan > 0 && this.formBayar.metodeBayar.tabungan > this.formBayar.saldoSiswa) {
+                return Swal.fire('Saldo Tidak Mencukupi', 'Nominal potongan tabungan melebihi sisa saldo tabungan siswa.', 'error');
+            }
+            this.loading = true;
+            const payload = {
+                siswa: this.formBayar.siswa, invoice: this.formBayar.invoice,
+                tglBayar: this.formBayar.tglBayar, metodeBayar: this.formBayar.metodeBayar,
+                items: this.formBayar.items, total: this.totalTagihanCart
+            };
+            try {
+                const res = await this.apiCall('prosesPembayaranSiswa', { payload: payload });
+                this.loading = false;
+                if(res.success) {
+                    let textWA = `*BUKTI PEMBAYARAN TK ISLAM PKK BLIMBING*\nSistem Administrasi Terpadu - Belajar Inovasi\n\nNama Siswa: ${payload.siswa.nama}\nNo. Invoice: ${payload.invoice}\nTanggal: ${payload.tglBayar}\n\nRincian Pembayaran:\n`;
+                    payload.items.forEach(i => { textWA += `- ${i.jenis} : ${this.formatRp(i.nilai_bayar)}\n`; });
+                    textWA += `\n*Total Dibayar: ${this.formatRp(payload.total)}*\n\nTerima kasih atas pembayarannya.`;
+                    
+                    let noHp = this.formatNoWA(payload.siswa.noHp);
+                    Swal.fire({
+                        title: 'Pembayaran Berhasil!', icon: 'success',
+                        showCancelButton: true, confirmButtonText: '<i class="fa-brands fa-whatsapp"></i> Kirim Bukti WA',
+                        confirmButtonColor: '#25D366', cancelButtonText: 'Tutup'
+                    }).then((result) => {
+                        this.modalBayar.show = false;
+                        this.fetchHistorySiswa();
+                        if (result.isConfirmed) {
+                            if(noHp) window.open(`https://wa.me/${noHp}?text=${encodeURIComponent(textWA)}`, '_blank');
+                            else {
+                                Swal.fire('Info', 'Nomor HP siswa tidak terdaftar di sistem. Rincian disalin ke clipboard.', 'warning');
+                                this.salinKeClipboard(textWA, 'Kwitansi');
+                            }
+                        }
+                    });
+                } else Swal.fire('Gagal', res.message, 'error');
+            } catch(err) { this.loading = false; Swal.fire('Error', err.message, 'error'); }
+        },
+        async fetchTableData(overrideModule) {
+            this.loading = true;
+            this.expandedTagihan = null;
+            this.expandedTabungan = null;
+            let targetModule = overrideModule ? overrideModule : this.view;
+            try {
+                const res = await this.apiCall('getModuleData', { moduleName: targetModule, role: this.session.role, namaUser: this.session.nama });
+                this.loading = false;
+                if(res.success) {
+                    this.tableData = { header: res.header, body: res.body };
+                    
+                    // PERBAIKAN: Gunakan data batching (res.extra) jika modul mengirimkannya, ini menghemat request API ~3-5 detik
+                    if (res.extra) {
+                        if (res.extra.listSiswa) this.listSiswa = res.extra.listSiswa;
+                        if (res.extra.listKelas) this.listKelas = res.extra.listKelas;
+                    } else if(targetModule === 'tagihan_siswa' || targetModule === 'tabungan') {
+                        if(this.listKelas.length === 0) this.fetchDaftarKelas();
+                        if(this.listSiswa.length === 0) {
+                            const resSiswa = await this.apiCall('getDaftarSiswa');
+                            this.listSiswa = resSiswa;
+                        }
+                    }
+                } else this.tableData = { header: [], body: [] };
+            } catch(err) { this.loading = false; this.tableData = { header: [], body: [] }; }
+        },
+        async loadDashboard() {
+            this.loading = true;
+            try {
+                const res = await this.apiCall('getDashboardStats', { role: this.session.role, namaUser: this.session.nama, kelas: this.session.kelas });
+                this.loading = false;
+                if(res.success) {
+                    this.stats = res;
+                    this.$nextTick(() => { if(this.view === 'dashboard' && this.session.role !== 'siswa') this.renderChart(); });
+                }
+            } catch(err) { this.loading = false; }
+        },
+        renderChart() {
+            if (myChart) myChart.destroy();
+            const ctx = document.getElementById('chartIncome');
+            if(ctx && this.stats.chartPendapatan.labels.length > 0) {
+                let chartColors = ['#8e44ad', '#2ecc71', '#f1c40f', '#e74c3c', '#9b59b6'];
+                if(this.session.role === 'siswa') chartColors = ['#e74c3c', '#2ecc71'];
+                myChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: this.stats.chartPendapatan.labels,
+                        datasets: [{ data: this.stats.chartPendapatan.data, backgroundColor: chartColors }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: {size: 10} } } } }
+                });
+            }
+        },
+        openModalAddTabungan(nama) {
+            this.openModal('add');
+            let idxNama = this.tableData.header.findIndex(h => h.toLowerCase().includes('nama'));
+            if(idxNama !== -1) {
+                this.modal.formData[idxNama] = nama;
+            }
+        },
+        openModal(action, row = null) {
+            this.modal.action = action;
+            if(action === 'edit' && row) {
+                this.modal.identifier = row[0];
+                this.modal.formData = [...row];
+            } else {
+                this.modal.identifier = null;
+                this.modal.formData = new Array(this.tableData.header.length).fill('');
+                
+                if (this.tableData.header.length > 0 && this.tableData.header[0].toLowerCase() === 'no') {
+                    let targetArr = this.view === 'pembayaran_siswa' ? this.historyPembayaranSiswa : this.tableData.body;
+                    this.modal.formData[0] = targetArr.length > 0 ? Number(targetArr[targetArr.length-1][0]) + 1 : 1;
+                }
+                
+                this.tableData.header.forEach((head, i) => {
+                    let h = head.toLowerCase();
+                    if (h.includes('invoice')) this.modal.formData[i] = this.generateInvoice();
+                    if (h.includes('tgl') || h.includes('tanggal')) this.modal.formData[i] = getToday();
+                });
+            }
+            this.modal.show = true;
+        },
+        async saveData() {
+            this.loading = true;
+            const targetModule = this.view === 'pembayaran_siswa' ? 'pendapatan' : this.view;
+            let dataToSave = [...this.modal.formData];
+            
+            if(this.view === 'tabungan') {
+                let idxSaldo = this.tableData.header.findIndex(h => h.toLowerCase() === 'saldo');
+                if(idxSaldo !== -1) dataToSave[idxSaldo] = 0; 
+            }
+            
+            if(targetModule === 'tagihan_siswa') {
+                let nominal = Number(dataToSave[4]) || 0;
+                let dibayar = Number(dataToSave[5]) || 0;
+                dataToSave[6] = nominal - dibayar;
+            }
+            try {
+                const res = await this.apiCall('crudOperation', { crudAction: this.modal.action, moduleName: targetModule, rowData: dataToSave, identifierStr: this.modal.identifier });
+                this.loading = false;
+                if(res.success) {
+                    this.modal.show = false; this.toast(res.message);
+                    if(this.view === 'pembayaran_siswa') this.fetchHistorySiswa(); else this.fetchTableData();
+                } else Swal.fire('Gagal!', res.message, 'error');
+            } catch(err) { this.loading = false; Swal.fire('Error', err.message, 'error'); }
+        },
+        async deleteData(id, moduleName) {
+            const result = await Swal.fire({ title: 'Hapus Data?', text: "Anda yakin ingin menghapus data ini secara permanen?", icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', cancelButtonColor: '#3085d6', confirmButtonText: 'Ya, Hapus!' });
+            if(!result.isConfirmed) return;
+            
+            this.loading = true;
+            try {
+                const res = await this.apiCall('crudOperation', { crudAction: 'delete', moduleName: moduleName, rowData: [], identifierStr: id });
+                this.loading = false;
+                if(res.success) { this.toast(res.message); if(this.view === 'pembayaran_siswa') this.fetchHistorySiswa(); else this.fetchTableData(); }
+            } catch(err) { this.loading = false; }
+        },
+        exportExcel() {
+            if(this.tableData.body.length === 0) return this.toast('Data tidak tersedia', 'warning');
+            const sheetData = this.tableData.body.map(row => {
+                let obj = {}; this.tableData.header.forEach((h, i) => obj[h] = row[i]); return obj;
+            });
+            const ws = XLSX.utils.json_to_sheet(sheetData); const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Data Export"); XLSX.writeFile(wb, `Export_${this.view}_${new Date().getTime()}.xlsx`);
+        },
+        exportExcelTunggakan() {
+            if(this.dataLaporanTunggakan.length === 0) return this.toast('Data tidak tersedia', 'warning');
+            const sheetData = this.dataLaporanTunggakan.map((row, index) => {
+                return {
+                    "No": index + 1,
+                    "NIS": row.nis,
+                    "Nama Siswa": row.nama,
+                    "Kelas": row.kelas,
+                    "Rincian Tagihan": row.jenis,
+                    "Nominal Tagihan (Rp)": row.nominal,
+                    "Telah Dibayar (Rp)": row.dibayar,
+                    "Sisa Tunggakan (Rp)": row.sisa,
+                    "Status": row.sisa > 0 ? "Menunggak" : "Lunas"
+                };
+            });
+            const ws = XLSX.utils.json_to_sheet(sheetData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Laporan Tunggakan");
+            XLSX.writeFile(wb, `Laporan_Tunggakan_${new Date().getTime()}.xlsx`);
+        }
+    }
+}).mount('#app');
+</script>
+</body>
+</html>
