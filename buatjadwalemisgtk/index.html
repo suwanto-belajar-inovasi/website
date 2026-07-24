@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Jadwal Madrasah Terpadu</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <style>
+        body { background-color: #f4f7f6; font-family: 'Segoe UI', Tahoma, sans-serif; display: flex; flex-direction: column; min-height: 100vh; }
+        .hidden { display: none !important; }
+        .card { border: none; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .bg-primary-grad { background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%); color: white; }
+        .select2-container .select2-selection--single { height: 38px; line-height: 38px; border: 1px solid #dee2e6; }
+        .select2-container--default .select2-selection--single .select2-selection__rendered { line-height: 38px; }
+        .loader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; }
+        .ref-input { min-width: 120px; }
+        .main-content-wrapper { flex: 1; }
+        footer { font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div id="loader" class="loader-overlay hidden">
+        <div class="spinner-border text-primary mb-3" role="status"></div>
+        <h5 id="loaderText">Memproses...</h5>
+    </div>
+    
+    <div class="main-content-wrapper">
+        <div id="authArea" class="container mt-5" style="max-width: 500px;">
+            <div class="card p-4">
+                <h3 class="text-center mb-4"><i class="fas fa-school text-primary"></i> Portal Madrasah</h3>
+                <div id="loginForm">
+                    <input type="text" id="logUser" class="form-control mb-3" placeholder="Username">
+                    <input type="password" id="logPass" class="form-control mb-3" placeholder="Password">
+                    <button class="btn btn-primary w-100 mb-2" onclick="login()">Masuk</button>
+                    <div class="text-center">Belum punya akun? <a href="#" onclick="toggleAuth('register')">Daftar di sini</a></div>
+                </div>
+                <div id="registerForm" class="hidden">
+                    <input type="text" id="regUser" class="form-control mb-3" placeholder="Username Baru">
+                    <input type="password" id="regPass" class="form-control mb-3" placeholder="Password Baru">
+                    <input type="text" id="regMadrasah" class="form-control mb-3" placeholder="Nama Madrasah">
+                    <button class="btn btn-success w-100 mb-2" onclick="register()">Daftar & Buat Database</button>
+                    <div class="text-center">Sudah punya akun? <a href="#" onclick="toggleAuth('login')">Masuk</a></div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="mainApp" class="hidden">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-primary-grad">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="#"><i class="fas fa-calendar-alt"></i> E-Jadwal <span id="namaMadrasahNav"></span></a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav me-auto">
+                            <li class="nav-item"><a class="nav-link active" href="#" id="nav-input" onclick="switchMenu('input')">Input Jadwal</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#" id="nav-dashboard" onclick="switchMenu('dashboard')">Dashboard Jadwal</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#" id="nav-jtm" onclick="switchMenu('jtm')">Dashboard JTM</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#" id="nav-referensi" onclick="switchMenu('referensi')">Edit Referensi</a></li>
+                        </ul>
+                        <div class="d-flex align-items-center me-3 my-2 my-lg-0">
+                            <span class="text-white me-2 fw-bold d-none d-lg-inline"><i class="fas fa-filter"></i> Semester:</span>
+                            <select id="globalSemester" class="form-select form-select-sm" onchange="changeSemester()" style="min-width: 160px; font-weight: bold;">
+                                <option value="2026/2027 Ganjil">2026/2027 Ganjil</option>
+                                <option value="2026/2027 Genap">2026/2027 Genap</option>
+                                <option value="2027/2028 Ganjil">2027/2028 Ganjil</option>
+                                <option value="2027/2028 Genap">2027/2028 Genap</option>
+                                <option value="2028/2029 Ganjil">2028/2029 Ganjil</option>
+                                <option value="2028/2029 Genap">2028/2029 Genap</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-danger btn-sm" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Keluar</button>
+                    </div>
+                </div>
+            </nav>
+            
+            <div class="container my-4">
+                <div id="viewInput">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="fw-bold">Hari</label>
+                                    <select id="selectHari" class="form-select">
+                                        <option value="Senin">Senin</option><option value="Selasa">Selasa</option>
+                                        <option value="Rabu">Rabu</option><option value="Kamis">Kamis</option>
+                                        <option value="Jumat">Jumat</option><option value="Sabtu">Sabtu</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="fw-bold">Rombel</label>
+                                    <select id="selectRombel" class="form-select"><option value="">-- Pilih Rombel --</option></select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <table class="table table-bordered align-middle">
+                                <thead class="table-light">
+                                    <tr><th>Jam</th><th>Mata Pelajaran (Ketik untuk filter)</th><th>Guru (Ketik untuk filter)</th></tr>
+                                </thead>
+                                <tbody id="tbodyJadwal"></tbody>
+                            </table>
+                            <button class="btn btn-primary w-100 mt-3" onclick="simpanJadwal()"><i class="fas fa-save"></i> Simpan & Render</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="viewDashboard" class="hidden">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Hasil Jadwal Seluruh Rombel</h5>
+                            <button class="btn btn-success" onclick="downloadExcel()"><i class="fas fa-file-excel"></i> Download Excel (Sesuai Semester)</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped" id="tabelDashboard">
+                                    <thead><tr><th>Hari</th><th>Rombel</th><th>Jam Ke</th><th>Mata Pelajaran</th><th>Guru</th></tr></thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="viewJTM" class="hidden">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Total Jam Mengajar Guru (JTM)</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered" id="tabelJTM">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th class="text-center" style="width: 10%;">No</th>
+                                            <th>Nama Guru</th>
+                                            <th class="text-center" style="width: 30%;">Total Jam Mengajar</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="viewReferensi" class="hidden">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Manajemen Data Referensi</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3 d-flex gap-2">
+                                <button class="btn btn-outline-primary active" id="btnRefPTK" onclick="renderTableReferensi('ptk')"><i class="fas fa-users"></i> Daftar Guru (PTK)</button>
+                                <button class="btn btn-outline-primary" id="btnRefRombel" onclick="renderTableReferensi('rombel')"><i class="fas fa-chalkboard"></i> Daftar Rombel</button>
+                            </div>
+                            <div class="table-responsive mb-3">
+                                <table class="table table-bordered">
+                                    <thead class="table-light" id="theadRef"></thead>
+                                    <tbody id="tbodyRef"></tbody>
+                                </table>
+                                <button class="btn btn-sm btn-success" onclick="tambahBarisRef()"><i class="fas fa-plus"></i> Tambah Baris Baru</button>
+                            </div>
+                            <div class="alert alert-info py-2"><small><i class="fas fa-info-circle"></i> Pastikan Anda mengklik "Simpan Perubahan" setelah mengedit atau menambah baris.</small></div>
+                            <button class="btn btn-primary w-100" onclick="simpanReferensi()"><i class="fas fa-save"></i> Simpan Perubahan Database</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="text-center py-4 text-muted bg-light border-top">
+        <div class="container">
+            <p class="mb-1 fw-bold text-dark"><i class="fas fa-laptop-code text-primary"></i> Belajar Inovasi</p>
+            <p class="small mb-2">Jika aplikasi ini bermanfaat, mohon berkenan untuk mendukung channel YouTube saya dengan subscribe dan share video-video saya:</p>
+            <a href="https://youtube.com/@suwanto_pakwanto?si=qEQw634UECwp7Mwg" target="_blank" class="btn btn-sm btn-danger text-white text-decoration-none rounded-pill px-3 shadow-sm">
+                <i class="fab fa-youtube"></i> Subscribe suwanto_pakwanto
+            </a>
+        </div>
+    </footer>
+
+    <script>
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxQ6V9HDgXZwpoIHwO4Oj6bJkNou0nAzQws2g5Rf0uOnnvle-r7iM0hRD4_mCLpgKyQ/exec'; 
+        let appData = { madrasah: '', ssId: '', ref: {}, jadwalGlobal: [], activeSemester: '' };
+        const headersPTK = ['ID PTK', 'Nama', 'NUPTK', 'NIK', 'Status', 'Fungsi'];
+        const headersRombel = ['Nama Rombel', 'Tingkat/Kelas', 'Singkatan'];
+        let currentRefType = 'ptk';
+        
+        window.onload = () => {
+            const savedSession = localStorage.getItem('jadwalSession');
+            if(savedSession) {
+                let session = JSON.parse(savedSession);
+                appData.madrasah = session.madrasah;
+                appData.ssId = session.ssId;
+                showApp();
+            }
+        };
+        
+        function showLoading(text) { $('#loaderText').text(text); $('#loader').removeClass('hidden'); }
+        function hideLoading() { $('#loader').addClass('hidden'); }
+        function toggleAuth(type) {
+            if(type === 'register') { $('#loginForm').addClass('hidden'); $('#registerForm').removeClass('hidden'); }
+            else { $('#registerForm').addClass('hidden'); $('#loginForm').removeClass('hidden'); }
+        }
+        
+        async function register() {
+            let user = $('#regUser').val(), pass = $('#regPass').val(), madrasah = $('#regMadrasah').val();
+            if(!user || !pass || !madrasah) return Swal.fire('Error', 'Isi semua data!', 'warning');
+            showLoading('Membuat Database Madrasah di Folder...');
+            let res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'register', username: user, password: pass, madrasah: madrasah }) }).then(r=>r.json());
+            hideLoading();
+            if(res.status === 'success') { Swal.fire('Berhasil', res.message, 'success'); toggleAuth('login'); }
+            else Swal.fire('Gagal', res.message, 'error');
+        }
+        
+        async function login() {
+            let user = $('#logUser').val(), pass = $('#logPass').val();
+            if(!user || !pass) return Swal.fire('Error', 'Isi username & password!', 'warning');
+            showLoading('Autentikasi...');
+            let res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'login', username: user, password: pass }) }).then(r=>r.json());
+            hideLoading();
+            if(res.status === 'success') {
+                appData.madrasah = res.madrasah; appData.ssId = res.ssId;
+                localStorage.setItem('jadwalSession', JSON.stringify({ madrasah: res.madrasah, ssId: res.ssId }));
+                showApp();
+            } else Swal.fire('Gagal', res.message, 'error');
+        }
+        
+        function logout() { localStorage.removeItem('jadwalSession'); location.reload(); }
+        
+        async function showApp() {
+            $('#authArea').addClass('hidden'); $('#mainApp').removeClass('hidden');
+            $('#namaMadrasahNav').text(`(${appData.madrasah})`);
+            
+            // Set active semester ke default dropdown
+            appData.activeSemester = $('#globalSemester').val();
+            
+            showLoading('Memuat Data & Jadwal Aktif...');
+            let res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'getData', ssId: appData.ssId }) }).then(r=>r.json());
+            
+            appData.ref = { ptk: res.ptk, mapel: res.mapel, rombel: res.rombel };
+            // Format fallback data jika semester kosong
+            appData.jadwalGlobal = res.jadwal.map(j => {
+                if (!j['Semester']) j['Semester'] = '2026/2027 Ganjil';
+                return j;
+            });
+            
+            hideLoading();
+            buildInterface();
+        }
+        
+        // Pemicu Filter Semester
+        function changeSemester() {
+            appData.activeSemester = $('#globalSemester').val();
+            
+            // Re-render UI sesuai menu aktif
+            if (!$('#viewInput').hasClass('hidden')) loadExistingJadwal();
+            if (!$('#viewDashboard').hasClass('hidden')) renderDashboard();
+            if (!$('#viewJTM').hasClass('hidden')) renderJTM();
+        }
+        
+        function switchMenu(menu) {
+            $('#viewInput, #viewDashboard, #viewReferensi, #viewJTM').addClass('hidden');
+            $('.nav-link').removeClass('active');
+            
+            if(menu === 'input') { $('#viewInput').removeClass('hidden'); $('#nav-input').addClass('active'); loadExistingJadwal(); }
+            else if(menu === 'dashboard') { $('#viewDashboard').removeClass('hidden'); $('#nav-dashboard').addClass('active'); renderDashboard(); }
+            else if(menu === 'jtm') { $('#viewJTM').removeClass('hidden'); $('#nav-jtm').addClass('active'); renderJTM(); }
+            else if(menu === 'referensi') { $('#viewReferensi').removeClass('hidden'); $('#nav-referensi').addClass('active'); renderTableReferensi('ptk'); }
+        }
+        
+        function buildInterface() {
+            $('#selectRombel').empty().append('<option value="">-- Pilih Rombel --</option>');
+            appData.ref.rombel.forEach(r => $('#selectRombel').append(`<option value="${r['Nama Rombel']}" data-kelas="${r['Tingkat/Kelas']}">${r['Nama Rombel']}</option>`));
+            let tbody = '';
+            for(let i=1; i<=10; i++) {
+                tbody += `<tr class="tr-jadwal" data-jam="${i}">
+                    <td class="text-center fw-bold bg-light">${i}</td>
+                    <td><select class="form-control sel2-mapel" style="width:100%"><option value=""></option></select></td>
+                    <td><select class="form-control sel2-ptk" style="width:100%"><option value=""></option></select></td>
+                </tr>`;
+            }
+            $('#tbodyJadwal').html(tbody);
+            $('.sel2-mapel').select2({ placeholder: "Ketik Nama Mapel...", data: appData.ref.mapel.map(m => ({id: m['ID Mapel'], text: m['Nama Mata Pelajaran']})) });
+            $('.sel2-ptk').select2({ placeholder: "Ketik Nama Guru...", data: appData.ref.ptk.map(p => ({id: p['ID PTK'], text: p['Nama']})) });
+            $('#selectHari, #selectRombel').on('change', loadExistingJadwal);
+            
+            $('.sel2-ptk').on('select2:select', function (e) {
+                let guruPilih = e.params.data.id;
+                let namaGuru = e.params.data.text;
+                let jamTabel = $(this).closest('tr').data('jam');
+                let hariTabel = $('#selectHari').val();
+                let rombelSkrg = $('#selectRombel').val();
+                
+                // Cek bentrok dengan memfilter semester aktif juga
+                let bentrok = appData.jadwalGlobal.find(j => 
+                    j['Semester'] === appData.activeSemester && 
+                    j['Hari'] == hariTabel && 
+                    j['Jam ke'] == jamTabel && 
+                    j['ID PTK'] == guruPilih && 
+                    j['Rombel'] != rombelSkrg
+                );
+                
+                if(bentrok) {
+                    Swal.fire({ icon: 'error', title: 'Jadwal Bentrok!', text: `${namaGuru} sudah memiliki jadwal di ${bentrok['Rombel']} pada Jam ke-${jamTabel} hari ${hariTabel} (${appData.activeSemester}).` });
+                    $(this).val(null).trigger('change'); 
+                }
+            });
+        }
+        
+        function loadExistingJadwal() {
+            let hari = $('#selectHari').val();
+            let rombel = $('#selectRombel').val();
+            
+            $('.sel2-mapel').val(null).trigger('change');
+            $('.sel2-ptk').val(null).trigger('change');
+            if (!hari || !rombel) return;
+            
+            // Filter berdasarkan input dan SEMESTER AKTIF
+            let existing = appData.jadwalGlobal.filter(j => j['Hari'] === hari && j['Rombel'] === rombel && j['Semester'] === appData.activeSemester);
+            
+            existing.forEach(j => {
+                let jam = j['Jam ke'];
+                let idMapel = j['ID Mapel'];
+                let idPtk = j['ID PTK'];
+                let $row = $(`.tr-jadwal[data-jam='${jam}']`);
+                if ($row.length > 0) {
+                    $row.find('.sel2-mapel').val(idMapel).trigger('change');
+                    $row.find('.sel2-ptk').val(idPtk).trigger('change');
+                }
+            });
+        }
+        
+        async function simpanJadwal() {
+            let rombel = $('#selectRombel').val();
+            let hari = $('#selectHari').val();
+            if(!rombel) return Swal.fire('Peringatan', 'Pilih Rombel dahulu', 'warning');
+            
+            let kelas = $('#selectRombel').find(':selected').data('kelas');
+            let dataJadwal = [];
+            
+            $('.tr-jadwal').each(function() {
+                let jam = $(this).data('jam');
+                let idMapel = $(this).find('.sel2-mapel').val();
+                let idPtk = $(this).find('.sel2-ptk').val();
+                if(idMapel && idPtk) dataJadwal.push({ jam, idMapel, idPtk }); 
+            });
+            
+            if(dataJadwal.length === 0) return Swal.fire('Info', 'Belum ada jadwal yang diisi.', 'info');
+            showLoading(`Menyimpan ke Database (${appData.activeSemester})...`);
+            
+            let payload = { 
+                action: 'saveSchedule', 
+                ssId: appData.ssId, 
+                hari, 
+                rombel, 
+                kelas, 
+                semester: appData.activeSemester, // Kirim semester ke backend
+                jadwal: dataJadwal 
+            };
+            
+            let res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) }).then(r=>r.json());
+            hideLoading();
+            
+            if(res.status === 'success') {
+                Swal.fire('Sukses', 'Jadwal berhasil disimpan.', 'success');
+                let refresh = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'getData', ssId: appData.ssId }) }).then(r=>r.json());
+                appData.jadwalGlobal = refresh.jadwal.map(j => {
+                    if (!j['Semester']) j['Semester'] = '2026/2027 Ganjil';
+                    return j;
+                });
+            }
+        }
+        
+        function renderDashboard() {
+            let tbody = '';
+            
+            // Filter list dasbor menurut semester yang dipilih global
+            let filtered = appData.jadwalGlobal.filter(j => j['Semester'] === appData.activeSemester);
+            let sorted = filtered.sort((a, b) => a['Hari'].localeCompare(b['Hari']) || a['Rombel'].localeCompare(b['Rombel']) || a['Jam ke'] - b['Jam ke']);
+            
+            sorted.forEach(j => {
+                let idMapel = j['ID Mapel'];
+                let idPtk = j['ID PTK'];
+                
+                let objMapel = appData.ref.mapel.find(m => m['ID Mapel'] == idMapel);
+                let namaMapelTampil = objMapel ? objMapel['Nama Mata Pelajaran'] : idMapel;
+                
+                let objPtk = appData.ref.ptk.find(p => p['ID PTK'] == idPtk);
+                let namaPtkTampil = objPtk ? objPtk['Nama'] : idPtk;
+                
+                tbody += `<tr>
+                            <td>${j['Hari']||'-'}</td>
+                            <td>${j['Rombel']||'-'}</td>
+                            <td>${j['Jam ke']||'-'}</td>
+                            <td class="fw-bold text-primary">${namaMapelTampil||'-'}</td>
+                            <td>${namaPtkTampil||'-'}</td>
+                          </tr>`;
+            });
+            $('#tabelDashboard tbody').html(tbody);
+        }
+        
+        function renderJTM() {
+            let jtmMap = {};
+            
+            // Perhitugan JTM berdasarkan semester
+            let filtered = appData.jadwalGlobal.filter(j => j['Semester'] === appData.activeSemester);
+            
+            filtered.forEach(j => {
+                let idPtk = j['ID PTK'];
+                if(idPtk) {
+                    if(!jtmMap[idPtk]) jtmMap[idPtk] = 0;
+                    jtmMap[idPtk]++;
+                }
+            });
+            
+            let tbody = '';
+            let no = 1;
+            appData.ref.ptk.forEach(p => {
+                let nama = p['Nama'];
+                let id = p['ID PTK'];
+                let totalJam = jtmMap[id] || 0;
+                
+                tbody += `<tr>
+                            <td class="text-center">${no++}</td>
+                            <td>${nama}</td>
+                            <td class="text-center fw-bold text-primary">${totalJam} Jam</td>
+                          </tr>`;
+            });
+            $('#tabelJTM tbody').html(tbody);
+        }
+        
+        async function downloadExcel() {
+            showLoading(`Menyiapkan file Excel untuk ${appData.activeSemester}...`);
+            try {
+                let payload = { 
+                    action: 'generateExcel', 
+                    ssId: appData.ssId, 
+                    madrasah: appData.madrasah,
+                    semester: appData.activeSemester 
+                };
+                let res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) }).then(r=>r.json());
+                hideLoading();
+                
+                if(res.status === 'success') {
+                    window.open(res.url, '_blank');
+                } else {
+                    Swal.fire('Gagal', res.message, 'error');
+                }
+            } catch(e) {
+                hideLoading();
+                Swal.fire('Error', 'Gagal memproses file Excel.', 'error');
+            }
+        }
+        
+        function renderTableReferensi(type) {
+            currentRefType = type;
+            $('#btnRefPTK').toggleClass('active', type === 'ptk');
+            $('#btnRefRombel').toggleClass('active', type === 'rombel');
+            let headers = type === 'ptk' ? headersPTK : headersRombel;
+            let data = type === 'ptk' ? appData.ref.ptk : appData.ref.rombel;
+            let thHtml = '<tr><th>No</th>';
+            headers.forEach(h => thHtml += `<th>${h}</th>`);
+            thHtml += '<th>Aksi</th></tr>';
+            $('#theadRef').html(thHtml);
+            let tbHtml = '';
+            data.forEach((row, idx) => {
+                tbHtml += `<tr><td class="text-center align-middle">${idx + 1}</td>`;
+                headers.forEach(h => {
+                    tbHtml += `<td><input type="text" class="form-control ref-input" value="${row[h] || ''}"></td>`;
+                });
+                tbHtml += `<td class="text-center"><button class="btn btn-sm btn-danger" onclick="$(this).closest('tr').remove()"><i class="fas fa-trash"></i></button></td></tr>`;
+            });
+            $('#tbodyRef').html(tbHtml);
+        }
+        
+        function tambahBarisRef() {
+            let headers = currentRefType === 'ptk' ? headersPTK : headersRombel;
+            let tbHtml = `<tr><td class="text-center align-middle">*</td>`;
+            headers.forEach(h => {
+                let val = (h === 'ID PTK') ? 'PTK' + Math.floor(Math.random() * 10000) : '';
+                tbHtml += `<td><input type="text" class="form-control ref-input" value="${val}"></td>`;
+            });
+            tbHtml += `<td class="text-center"><button class="btn btn-sm btn-danger" onclick="$(this).closest('tr').remove()"><i class="fas fa-trash"></i></button></td></tr>`;
+            $('#tbodyRef').append(tbHtml);
+        }
+        
+        async function simpanReferensi() {
+            let headers = currentRefType === 'ptk' ? headersPTK : headersRombel;
+            let sheetName = currentRefType === 'ptk' ? 'Daftar_PTK' : 'Daftar_Rombel';
+            
+            let dataToSave = [];
+            dataToSave.push(headers); 
+            $('#tbodyRef tr').each(function() {
+                let row = [];
+                let isRowEmpty = true;
+                $(this).find('.ref-input').each(function() {
+                    let val = $(this).val().trim();
+                    row.push(val);
+                    if(val !== '') isRowEmpty = false;
+                });
+                if(!isRowEmpty) dataToSave.push(row);
+            });
+            showLoading(`Menyimpan Data ${sheetName.replace('_', ' ')}...`);
+            let payload = { action: 'saveReference', ssId: appData.ssId, sheetName: sheetName, data: dataToSave };
+            
+            try {
+                let res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) }).then(r=>r.json());
+                
+                if(res.status === 'success') {
+                    let refresh = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'getData', ssId: appData.ssId }) }).then(r=>r.json());
+                    appData.ref = { ptk: refresh.ptk, mapel: refresh.mapel, rombel: refresh.rombel };
+                    
+                    appData.jadwalGlobal = refresh.jadwal.map(j => {
+                        if (!j['Semester']) j['Semester'] = '2026/2027 Ganjil';
+                        return j;
+                    });
+                    
+                    hideLoading();
+                    Swal.fire('Sukses', res.message, 'success');
+                    
+                    buildInterface(); 
+                    renderTableReferensi(currentRefType);
+                } else {
+                    hideLoading();
+                    Swal.fire('Error', res.message, 'error');
+                }
+            } catch(e) {
+                hideLoading();
+                Swal.fire('Koneksi Gagal', 'Pastikan koneksi internet stabil.', 'error');
+            }
+        }
+    </script>
+</body>
+</html>
