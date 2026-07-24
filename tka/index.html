@@ -42,7 +42,6 @@ body.exam-mode { overflow: hidden; user-select: none; }
 <body>
 <div id="loader" class="loader hidden"><div class="spinner"></div></div>
 
-<!-- AUTH VIEW -->
 <div id="view-auth" class="auth-container">
 <div class="auth-card">
 <div class="text-center mb-4">
@@ -61,7 +60,6 @@ body.exam-mode { overflow: hidden; user-select: none; }
 <div class="text-center mt-3 text-white small">© 2026 TKA KKGMI SURABAYA 10</div>
 </div>
 
-<!-- DASHBOARD VIEW -->
 <div id="view-dashboard" class="hidden wrapper">
 <nav id="sidebar">
 <div class="sidebar-header p-3 border-bottom border-secondary">
@@ -93,7 +91,6 @@ body.exam-mode { overflow: hidden; user-select: none; }
 </div>
 </div>
 
-<!-- EXAM VIEW -->
 <div id="view-exam" class="hidden">
 <div class="exam-header">
 <div class="d-flex align-items-center"><h6 class="fw-bold m-0" id="do-exam-title">Judul Ujian</h6></div>
@@ -123,32 +120,42 @@ body.exam-mode { overflow: hidden; user-select: none; }
 // HOSTING PHP API URL
 const HOSTING_API_URL = "https://cbt-belajar-inovasi.my.id/tkakkgmi/api.php";
 
+// FIX Proxy JavaScript Simulator - Mendukung Chaining Callbacks
 const google = {
   script: {
-    run: new Proxy({}, {
-      get: function(target, prop) {
-        return function(...args) {
-          const handler = {
-            _success: null, _failure: null,
-            withSuccessHandler: function(cb) { this._success = cb; return this; },
-            withFailureHandler: function(cb) { this._failure = cb; return this; }
-          };
-          setTimeout(() => {
-            fetch(`${HOSTING_API_URL}?action=${prop}`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ action: prop, args: args })
-            })
-            .then(res => res.json())
-            .then(data => { if (handler._success) handler._success(data); })
-            .catch(err => { if (handler._failure) handler._failure(err); });
-          }, 0);
-          return handler;
-        };
-      }
-    })
+    run: {
+      _success: null,
+      _failure: null,
+      withSuccessHandler: function(cb) { this._success = cb; return this; },
+      withFailureHandler: function(cb) { this._failure = cb; return this; }
+    }
   }
 };
+
+google.script.run = new Proxy(google.script.run, {
+  get: function(target, prop) {
+    if (prop in target) return target[prop]; 
+    return function(...args) {
+      const successCb = target._success;
+      const failureCb = target._failure;
+      
+      target._success = null;
+      target._failure = null;
+      
+      fetch(`${HOSTING_API_URL}?action=${prop}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: prop, args: args })
+      })
+      .then(res => res.json())
+      .then(data => { if (successCb) successCb(data); })
+      .catch(err => {
+        console.error("Fetch Error:", err);
+        if (failureCb) failureCb(err);
+      });
+    };
+  }
+});
 
 let user = null, gData = {}, activeExamId = null, currentQuestionsData = [], currentQIdx = 0, studentAnswers = {}, timerInt;
 
