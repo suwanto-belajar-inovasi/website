@@ -67,7 +67,7 @@
         
         /* MODAL KHUSUS EDITOR */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); justify-content: center; align-items: center; }
-        .modal-content { background-color: #fff; padding: 30px; border-radius: 8px; width: 95%; max-width: 900px; max-height: 95vh; overflow-y: auto; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .modal-content { background-color: #fff; padding: 30px; border-radius: 8px; width: 95%; max-width: 1000px; max-height: 95vh; overflow-y: auto; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
 
         /* UJIAN LAYOUT (Menarik) */
         .main-container { display: flex; flex-grow: 1; padding: 20px; gap: 20px; max-width: 1300px; width: 100%; margin: auto; }
@@ -266,7 +266,7 @@
                 </div>
             </div>
 
-            <label style="margin-bottom:2px;">Teks Soal <span style="font-weight:normal; color:#666;">(Bisa Copy-Paste Word, Gambar, atau Rumus dengan ikon $ \Sigma $)</span>:</label>
+            <label style="margin-bottom:2px;">Teks Soal <span style="font-weight:normal; color:#666;">(Bisa Copy-Paste dari Word / Gambar / Rumus $math$)</span>:</label>
             <div class="img-insert-btn"><input type="file" accept="image/*" onchange="insertImage(this, 'formSoalTeks')" style="padding:0; border:none; background:transparent;"></div>
             <textarea id="formSoalTeks" name="formSoalTeks"></textarea>
             
@@ -395,7 +395,7 @@
     <footer class="footer">Support by Belajar Inovasi (MadrasahHebat)</footer>
 
     <script>
-        const API_URL = 'api.php'; // Disesuaikan ke lokasi file server
+        const API_URL = 'https://mibaiturrahmangubeng.sch.id/tka/api.php'; 
         const GAS_URL = 'https://script.google.com/macros/s/AKfycbzQ_htkGPe8eqYYpqNANfwQs8ewPtDS97GVHdoM7yXsQq0YThGSlIEafjH2pmzddsnwAg/exec';
         
         let soalData = [], jawabanSiswa = [], currentSoal = 0, detikTersisa, timerId, pingId;
@@ -428,27 +428,29 @@
             location.reload();
         }
 
-        // Initialize CKEditor MathJax + Image Upload - Diubah agar mirip Word di semua form
+        // Initialize CKEditor MathJax + Image Upload
         function initCKEditor() {
             CKEDITOR.config.allowedContent = true;
             CKEDITOR.config.extraPlugins = 'mathjax,base64image,pastefromword'; 
             CKEDITOR.config.mathJaxLib = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-MML-AM_CHTML';
             
+            // Konfigurasi Toolbar yang lengkap untuk Teks Soal & Opsi (Support MS Word Layout, Mathjax, Image)
             const tb = [
                 { name: 'document', items: [ 'Source' ] },
-                { name: 'clipboard', items: [ 'Undo', 'Redo', 'PasteFromWord' ] },
+                { name: 'clipboard', items: [ 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
                 { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript' ] },
-                { name: 'paragraph', items: [ 'NumberedList', 'BulletedList', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock' ] },
+                { name: 'paragraph', items: [ 'NumberedList', 'BulletedList', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock' ] },
                 { name: 'insert', items: [ 'Image', 'Table', 'Mathjax', 'SpecialChar' ] },
-                { name: 'styles', items: [ 'Font', 'FontSize' ] },
+                { name: 'styles', items: [ 'Format', 'Font', 'FontSize' ] },
                 { name: 'colors', items: [ 'TextColor', 'BGColor' ] }
             ];
 
+            // Sematkan toolbar kaya fitur ke semua form editor (Teks dan Opsi A, B, C, D)
             CKEDITOR.replace('formSoalTeks', { height: 150, toolbar: tb });
-            CKEDITOR.replace('formSoalOpsiA', { height: 60, toolbar: tb });
-            CKEDITOR.replace('formSoalOpsiB', { height: 60, toolbar: tb });
-            CKEDITOR.replace('formSoalOpsiC', { height: 60, toolbar: tb });
-            CKEDITOR.replace('formSoalOpsiD', { height: 60, toolbar: tb });
+            CKEDITOR.replace('formSoalOpsiA', { height: 80, toolbar: tb });
+            CKEDITOR.replace('formSoalOpsiB', { height: 80, toolbar: tb });
+            CKEDITOR.replace('formSoalOpsiC', { height: 80, toolbar: tb });
+            CKEDITOR.replace('formSoalOpsiD', { height: 80, toolbar: tb });
         }
 
         function insertImage(fileInput, editorId) {
@@ -685,7 +687,7 @@
             const data = await res.json(); tbody.innerHTML = '';
             if(!data.soal || data.soal.length === 0) { tbody.innerHTML = '<tr><td colspan="5" align="center">Soal kosong.</td></tr>'; return; }
             
-            window.adminSoalList = data.soal; 
+            window.adminSoalList = data.soal; // Simpan di global untuk modal Edit
             
             data.soal.forEach((s, i) => {
                 const hapusHtml = s.soal.replace(/<[^>]*>?/gm, ''); 
@@ -723,8 +725,12 @@
             document.getElementById('formSoalId').value = s.id; 
             document.getElementById('formSoalKode').value = kode;
             document.getElementById('formSoalTipe').value = s.tipe;
+            document.getElementById('formSoalKunci').value = s.jawabanBenarStr;
             
-            // Perbaikan untuk memastikan Editor merender dengan benar saat modal baru dibuka
+            // Tampilkan Modalnya
+            document.getElementById('modalFormSoal').style.display = 'flex';
+
+            // Eksekusi peletakan data (dengan delay agar CKEditor mendeteksi element terlihat)
             setTimeout(() => {
                 CKEDITOR.instances.formSoalTeks.setData(s.soal);
                 CKEDITOR.instances.formSoalOpsiA.setData(s.opsi[0] || '');
@@ -733,8 +739,6 @@
                 CKEDITOR.instances.formSoalOpsiD.setData(s.opsi[3] || '');
             }, 100);
             
-            document.getElementById('formSoalKunci').value = s.jawabanBenarStr;
-            document.getElementById('modalFormSoal').style.display = 'flex';
             gantiPetunjukSoal();
         }
 
@@ -865,7 +869,7 @@
             const tbody = document.querySelector('#tabelSiswaGuru tbody'); tbody.innerHTML = '<tr><td colspan="4" align="center">Memuat...</td></tr>';
             const res = await fetch(`${API_URL}?action=get_peserta_guru`, { method: 'POST', body: JSON.stringify({madrasah: globalProfile.madrasah}) });
             const data = await res.json(); tbody.innerHTML = '';
-            if(data.data.length === 0) tbody.innerHTML = '<tr><td colspan="4" align="center">Belum ada data siswa.</td></tr>';
+            if(!data || !data.data || data.data.length === 0) { tbody.innerHTML = '<tr><td colspan="4" align="center">Belum ada data siswa.</td></tr>'; return; }
             data.data.forEach(d => {
                 const btn = `<button class="btn-custom btn-secondary" style="margin:0; padding:4px 8px; font-size:0.8rem;" onclick="bukaModalEditSiswa(${d.id}, '${d.username}', '${d.nama_lengkap}', '${d.password}')">✏️ Edit Saja</button>`;
                 tbody.innerHTML += `<tr><td>${d.username}</td><td>${d.nama_lengkap}</td><td>${d.password}</td><td>${btn}</td></tr>`;
@@ -877,43 +881,32 @@
             return await res.json();
         }
 
-        // Perbaikan bypass popup blocker dengan membuka window.open sebelum await
         async function cetakKartu() {
-            const w = window.open('','_blank'); 
-            w.document.write('<h2>Memuat Data Kartu Login...</h2>');
-            try {
-                const p = await getPesertaGuru();
-                let html = `<html><head><title>Kartu Login Ujian</title><style>@media print { @page { size: A4 portrait; margin: 10mm; } } body{font-family:'Segoe UI', Arial; background:#fff; margin:0;} .container{display:flex; flex-wrap:wrap; justify-content:space-between; align-content:flex-start;} .card{width:48%; height:45mm; box-sizing:border-box; border:2px solid #00796b; padding:10px; margin-bottom:5mm; border-radius:8px; position:relative; background-color:#e0f2f1 !important; -webkit-print-color-adjust: exact;} h3{margin:0 0 5px 0; text-align:center; border-bottom: 2px solid #00796b; padding-bottom:5px; color:#004d40; text-transform:uppercase; font-size:12px;} .foto{position:absolute; right:10px; top:35px; width:50px; height:65px; border:1px solid #aaa; background:#fff; text-align:center; line-height:65px; font-size:10px; color:#aaa;} p{margin:4px 0; font-size:11px; color:#333;} .val{font-size:13px; font-weight:bold; color:#000;}</style></head><body><div class="container">`;
+            const p = await getPesertaGuru();
+            let html = `<html><head><title>Kartu Login Ujian</title><style>@media print { @page { size: A4 portrait; margin: 10mm; } } body{font-family:'Segoe UI', Arial; background:#fff; margin:0;} .container{display:flex; flex-wrap:wrap; justify-content:space-between; align-content:flex-start;} .card{width:48%; height:45mm; box-sizing:border-box; border:2px solid #00796b; padding:10px; margin-bottom:5mm; border-radius:8px; position:relative; background-color:#e0f2f1 !important; -webkit-print-color-adjust: exact;} h3{margin:0 0 5px 0; text-align:center; border-bottom: 2px solid #00796b; padding-bottom:5px; color:#004d40; text-transform:uppercase; font-size:12px;} .foto{position:absolute; right:10px; top:35px; width:50px; height:65px; border:1px solid #aaa; background:#fff; text-align:center; line-height:65px; font-size:10px; color:#aaa;} p{margin:4px 0; font-size:11px; color:#333;} .val{font-size:13px; font-weight:bold; color:#000;}</style></head><body><div class="container">`;
+            if (p.data) {
                 p.data.forEach(d => { html += `<div class="card"><h3>Kartu Tanda Peserta CBT<br><span style="font-size:9px; color:#555">KKGMI SURABAYA 10 & 11</span></h3><div style="width:75%"><p>Nama : <span class="val">${d.nama_lengkap.substring(0, 20)}</span></p><p>Asal : <span class="val">${d.madrasah}</span></p><p>Username : <span class="val">${d.username}</span></p><p>Password : <span class="val">${d.password}</span></p></div><div class="foto">Foto 3x4</div></div>`; });
-                html += `</div></body></html>`; 
-                w.document.open(); w.document.write(html); w.document.close(); w.focus();
-                setTimeout(() => { w.print(); }, 500);
-            } catch(e) {
-                w.document.write('Gagal memuat data');
             }
+            html += `</div></body></html>`; 
+            const w = window.open('','_blank'); w.document.write(html); w.document.close(); w.focus();
+            setTimeout(() => { w.print(); }, 500); // Tanpa loading screen agar lebih cepat
         }
 
         async function cetakDaftarHadir() {
-            const w = window.open('','_blank');
-            w.document.write('<h2>Memuat Daftar Hadir...</h2>');
-            try {
-                const p = await getPesertaGuru(); 
-                const eSel = document.getElementById('guruKodeUjianSelect'); const judul = eSel.options[eSel.selectedIndex]?.text || '';
-                let html = `<html><head><title>Daftar Hadir</title><style>body{font-family:Arial;} table{width:100%; border-collapse:collapse; margin-top:20px;} th,td{border:1px solid #000; padding:10px;} th{background:#e0e0e0} h2{text-align:center; margin-bottom:5px; text-transform:uppercase;} .kop{text-align:center; border-bottom:3px solid #000; padding-bottom:10px; margin-bottom:20px;} .kop h2{margin:0; font-size:20px;} .kop p{margin:2px; font-size:14px;}</style></head><body><div class="kop"><h2>KELOMPOK KERJA GURU MADRASAH IBTIDAIYAH (KKGMI)</h2><p>SURABAYA WILAYAH 10 DAN 11</p></div><h2>DAFTAR HADIR PESERTA UJIAN</h2><p style="text-align:center;"><b>Madrasah:</b> ${globalProfile.madrasah} &nbsp;&nbsp;|&nbsp;&nbsp; <b>Mata Pelajaran:</b> ${judul}</p><table><tr><th width="5%">No</th><th width="20%">NISN/Username</th><th width="50%">Nama Lengkap</th><th width="25%">Tanda Tangan</th></tr>`;
+            const p = await getPesertaGuru(); const eSel = document.getElementById('guruKodeUjianSelect'); const judul = eSel.options[eSel.selectedIndex]?.text || '';
+            let html = `<html><head><title>Daftar Hadir</title><style>body{font-family:Arial;} table{width:100%; border-collapse:collapse; margin-top:20px;} th,td{border:1px solid #000; padding:10px;} th{background:#e0e0e0} h2{text-align:center; margin-bottom:5px; text-transform:uppercase;} .kop{text-align:center; border-bottom:3px solid #000; padding-bottom:10px; margin-bottom:20px;} .kop h2{margin:0; font-size:20px;} .kop p{margin:2px; font-size:14px;}</style></head><body><div class="kop"><h2>KELOMPOK KERJA GURU MADRASAH IBTIDAIYAH (KKGMI)</h2><p>SURABAYA WILAYAH 10 DAN 11</p></div><h2>DAFTAR HADIR PESERTA UJIAN</h2><p style="text-align:center;"><b>Madrasah:</b> ${globalProfile.madrasah} &nbsp;&nbsp;|&nbsp;&nbsp; <b>Mata Pelajaran:</b> ${judul}</p><table><tr><th width="5%">No</th><th width="20%">NISN/Username</th><th width="50%">Nama Lengkap</th><th width="25%">Tanda Tangan</th></tr>`;
+            if (p.data) {
                 p.data.forEach((d, i) => { html += `<tr><td align="center">${i+1}</td><td align="center">${d.username}</td><td>${d.nama_lengkap}</td><td>${i+1}. </td></tr>`; });
-                html += `</table></body></html>`; 
-                w.document.open(); w.document.write(html); w.document.close(); w.focus();
-                setTimeout(() => { w.print(); }, 500);
-            } catch(e) {
-                w.document.write('Gagal memuat data');
             }
+            html += `</table></body></html>`; 
+            const w = window.open('','_blank'); w.document.write(html); w.document.close(); w.focus();
+            setTimeout(() => { w.print(); }, 500);
         }
 
         function cetakBeritaAcara() {
-            const w = window.open('','_blank');
             const eSel = document.getElementById('guruKodeUjianSelect'); const judul = eSel.options[eSel.selectedIndex]?.text || '';
             let html = `<html><head><title>Berita Acara</title><style>body{font-family:'Times New Roman'; line-height:1.6; font-size: 16px;} .kop{text-align:center; border-bottom:3px solid #000; padding-bottom:10px; margin-bottom:20px;} .kop h2{margin:0; font-size:22px;} .kop p{margin:2px; font-size:15px;} h3{text-align:center; text-decoration: underline; margin-bottom: 30px;}</style></head><body style="padding:20px 40px"><div class="kop"><h2>PANITIA PELAKSANA TRYOUT TKA AKBAR</h2><p>KKGMI SURABAYA WILAYAH 10 DAN 11</p></div><h3>BERITA ACARA PELAKSANAAN UJIAN</h3><p>Pada hari ini .................................. tanggal ........................................ bulan ........................................ tahun .................................. telah diselenggarakan ujian <i>Computer Based Test (CBT)</i> untuk mata pelajaran <b>${judul}</b> di ruang/lokasi <b>${globalProfile.madrasah}</b>.</p><p style="margin-left: 30px;">1. Jumlah Peserta Seharusnya &nbsp;&nbsp;: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Siswa<br>2. Jumlah Peserta Hadir &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Siswa<br>3. Jumlah Peserta Tidak Hadir &nbsp;&nbsp;: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Siswa</p><p>Catatan selama pelaksanaan ujian:<br>........................................................................................................................................................................................................................................................................................................................................................................................................................................</p><br><br><table style="width:100%; margin-top: 30px; border:none;"><tr><td style="border:none; width:60%"></td><td style="border:none; text-align:center;">Surabaya, ........................................<br>Pengawas Ruang,<br><br><br><br><br>( <b>${globalProfile.nama_lengkap}</b> )</td></tr></table></body></html>`;
-            w.document.open(); w.document.write(html); w.document.close(); w.focus();
+            const w = window.open('','_blank'); w.document.write(html); w.document.close(); w.focus();
             setTimeout(() => { w.print(); }, 500);
         }
 
@@ -922,42 +915,37 @@
             const uji = daftarUjianGlobal.find(u => u.kode_ujian === kode);
             if(!uji || uji.allow_download != 1) { Swal.fire('Akses Ditutup', 'Panitia/Admin belum membuka akses cetak PDF untuk mapel ini.', 'info'); return; }
             
-            const w = window.open('','_blank'); 
-            w.document.write('<h2>Menyusun Naskah PDF...</h2>');
+            Swal.fire({ title: 'Menyusun Naskah...', didOpen: () => { Swal.showLoading(); }});
+            const res = await fetch(`${API_URL}?action=get_soal`, { method: 'POST', body: JSON.stringify({kode_ujian: kode}) });
+            const data = await res.json();
             
-            try {
-                const res = await fetch(`${API_URL}?action=get_soal`, { method: 'POST', body: JSON.stringify({kode_ujian: kode}) });
-                const data = await res.json();
-                
-                let html = `<html><head><title>Naskah Soal - ${kode}</title>
-                <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-                <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"><\/script>
-                <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"><\/script>
-                <style>body{font-family:'Times New Roman', serif; line-height:1.5; padding:20px; font-size:14px;} .soal{margin-bottom:20px; page-break-inside: avoid;} .opsi{margin-left:25px;} .kop{text-align:center; border-bottom:3px double #000; padding-bottom:10px; margin-bottom:20px;} .kop h2{margin:0; font-size:22px;} .kop p{margin:2px; font-size:15px;} img{max-width:100%; height:auto; display:block; margin: 10px 0;} .petunjuk{background:#eee; padding:5px 10px; font-weight:bold; font-style:italic; margin-bottom:10px; border-left:4px solid #333;}</style></head><body><div class="kop"><h2>NASKAH SOAL TRYOUT TKA</h2><p>KKGMI SURABAYA 10 & 11</p></div><h3 style="text-align:center; margin-top:0; text-transform:uppercase; text-decoration:underline;">Mata Pelajaran: ${data.config.judul}</h3><br>`;
-                
-                let currTipe = '';
-                data.soal.forEach((s, i) => {
-                    if(s.tipe !== currTipe) {
-                        currTipe = s.tipe; let petunjuk = '';
-                        if(s.tipe === 'PGS') petunjuk = "Pilihlah satu jawaban yang paling tepat (A, B, C, atau D).";
-                        if(s.tipe === 'MCMA') petunjuk = "Pilihlah dua atau lebih jawaban yang benar pada opsi di bawah ini.";
-                        if(s.tipe === 'KATEGORI') petunjuk = "Tentukan nilai Benar atau Salah pada setiap pernyataan opsi di bawah ini.";
-                        html += `<div class="petunjuk">Petunjuk Khusus: ${petunjuk}</div>`;
-                    }
-                    html += `<div class="soal"><table style="border:none; width:100%"><tr style="vertical-align:top"><td style="border:none; width:25px"><b>${i+1}.</b></td><td style="border:none">${s.soal}</td></tr></table>`;
-                    if(s.tipe === 'PGS' || s.tipe === 'MCMA') { 
-                        s.opsi.forEach((o, idx) => { if(o && o.trim() !== '') html += `<div class="opsi">${String.fromCharCode(65+idx)}. ${o}</div>`; }); 
-                    } else { 
-                        s.opsi.forEach((o, idx) => { if(o && o.trim() !== '') html += `<div class="opsi">${String.fromCharCode(65+idx)}. ${o} <b>( _____ / _____ )</b></div>`; }); 
-                    }
-                    html += `</div>`;
-                });
-                html += `</body></html>`; 
-                w.document.open(); w.document.write(html); w.document.close(); w.focus();
-                setTimeout(() => { w.print(); }, 1200); 
-            } catch(e) {
-                w.document.write('Gagal memuat.');
-            }
+            let html = `<html><head><title>Naskah Soal - ${kode}</title>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"><\/script>
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"><\/script>
+            <style>body{font-family:'Times New Roman', serif; line-height:1.5; padding:20px; font-size:14px;} .soal{margin-bottom:20px; page-break-inside: avoid;} .opsi{margin-left:25px;} .kop{text-align:center; border-bottom:3px double #000; padding-bottom:10px; margin-bottom:20px;} .kop h2{margin:0; font-size:22px;} .kop p{margin:2px; font-size:15px;} img{max-width:100%; height:auto; display:block; margin: 10px 0;} .petunjuk{background:#eee; padding:5px 10px; font-weight:bold; font-style:italic; margin-bottom:10px; border-left:4px solid #333;}</style></head><body><div class="kop"><h2>NASKAH SOAL TRYOUT TKA</h2><p>KKGMI SURABAYA 10 & 11</p></div><h3 style="text-align:center; margin-top:0; text-transform:uppercase; text-decoration:underline;">Mata Pelajaran: ${data.config.judul}</h3><br>`;
+            
+            let currTipe = '';
+            data.soal.forEach((s, i) => {
+                if(s.tipe !== currTipe) {
+                    currTipe = s.tipe; let petunjuk = '';
+                    if(s.tipe === 'PGS') petunjuk = "Pilihlah satu jawaban yang paling tepat (A, B, C, atau D).";
+                    if(s.tipe === 'MCMA') petunjuk = "Pilihlah dua atau lebih jawaban yang benar pada opsi di bawah ini.";
+                    if(s.tipe === 'KATEGORI') petunjuk = "Tentukan nilai Benar atau Salah pada setiap pernyataan opsi di bawah ini.";
+                    html += `<div class="petunjuk">Petunjuk Khusus: ${petunjuk}</div>`;
+                }
+                html += `<div class="soal"><table style="border:none; width:100%"><tr style="vertical-align:top"><td style="border:none; width:25px"><b>${i+1}.</b></td><td style="border:none">${s.soal}</td></tr></table>`;
+                if(s.tipe === 'PGS' || s.tipe === 'MCMA') { 
+                    s.opsi.forEach((o, idx) => { if(o && o.trim() !== '') html += `<div class="opsi">${String.fromCharCode(65+idx)}. ${o}</div>`; }); 
+                } else { 
+                    s.opsi.forEach((o, idx) => { if(o && o.trim() !== '') html += `<div class="opsi">${String.fromCharCode(65+idx)}. ${o} <b>( _____ / _____ )</b></div>`; }); 
+                }
+                html += `</div>`;
+            });
+            html += `</body></html>`; 
+            Swal.close();
+            const w = window.open('','_blank'); w.document.write(html); w.document.close(); w.focus();
+            setTimeout(() => { w.print(); }, 1200); 
         }
 
         async function cetakHasil() {
