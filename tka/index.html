@@ -401,9 +401,9 @@
         let soalData = [], jawabanSiswa = [], currentSoal = 0, detikTersisa, timerId, pingId;
         let globalProfile = {}; let daftarUjianGlobal = []; let dataLaporanAdmin = []; let dataLaporanGuru = [];
         let isSubmitting = false; let cheatCount = 0;
+        let isEditorReady = false; // Flag untuk memastikan CKEditor hanya dipanggil saat dibutuhkan
 
         document.addEventListener('DOMContentLoaded', () => { 
-            initCKEditor();
             initAntiCheatSiswa();
             checkSession(); 
         });
@@ -428,7 +428,7 @@
             location.reload();
         }
 
-        // Initialize CKEditor MathJax + Image Upload
+        // Initialize CKEditor MathJax + Image Upload - Dipanggil SATU KALI saat Modal Pertama Terbuka
         function initCKEditor() {
             CKEDITOR.config.allowedContent = true;
             CKEDITOR.config.extraPlugins = 'mathjax,base64image,pastefromword'; 
@@ -708,13 +708,26 @@
             document.getElementById('formSoalMode').value = 'tambah';
             document.getElementById('modalSoalTitle').textContent = 'Tambah Soal Baru';
             document.getElementById('formSoalId').value = '';
-            
-            CKEDITOR.instances.formSoalTeks.setData('');
-            CKEDITOR.instances.formSoalOpsiA.setData(''); CKEDITOR.instances.formSoalOpsiB.setData('');
-            CKEDITOR.instances.formSoalOpsiC.setData(''); CKEDITOR.instances.formSoalOpsiD.setData('');
-            
             document.getElementById('formSoalKunci').value = '';
+            
+            // Tampilkan Modal SEBELUM Inisialisasi/SetData
             document.getElementById('modalFormSoal').style.display = 'flex';
+            
+            // Eksekusi inisialisasi jika belum pernah di-load
+            if (!isEditorReady) {
+                initCKEditor();
+                isEditorReady = true;
+            }
+            
+            // Jeda sejenak agar iframe CKEditor sempat me-render area pengetikan dengan sempurna
+            setTimeout(() => {
+                CKEDITOR.instances.formSoalTeks.setData('');
+                CKEDITOR.instances.formSoalOpsiA.setData('');
+                CKEDITOR.instances.formSoalOpsiB.setData('');
+                CKEDITOR.instances.formSoalOpsiC.setData('');
+                CKEDITOR.instances.formSoalOpsiD.setData('');
+            }, 250);
+            
             gantiPetunjukSoal();
         }
 
@@ -727,17 +740,23 @@
             document.getElementById('formSoalTipe').value = s.tipe;
             document.getElementById('formSoalKunci').value = s.jawabanBenarStr;
             
-            // Tampilkan Modalnya
+            // Tampilkan Modal SEBELUM Inisialisasi/SetData
             document.getElementById('modalFormSoal').style.display = 'flex';
 
-            // Eksekusi peletakan data (dengan delay agar CKEditor mendeteksi element terlihat)
+            // Eksekusi inisialisasi jika belum pernah di-load
+            if (!isEditorReady) {
+                initCKEditor();
+                isEditorReady = true;
+            }
+
+            // Jeda sejenak agar iframe CKEditor sempat me-render area pengetikan dengan sempurna
             setTimeout(() => {
                 CKEDITOR.instances.formSoalTeks.setData(s.soal);
                 CKEDITOR.instances.formSoalOpsiA.setData(s.opsi[0] || '');
                 CKEDITOR.instances.formSoalOpsiB.setData(s.opsi[1] || '');
                 CKEDITOR.instances.formSoalOpsiC.setData(s.opsi[2] || '');
                 CKEDITOR.instances.formSoalOpsiD.setData(s.opsi[3] || '');
-            }, 100);
+            }, 250);
             
             gantiPetunjukSoal();
         }
