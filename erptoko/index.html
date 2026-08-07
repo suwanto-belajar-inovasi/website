@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaharaSnack ERP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0f172a; /* Corporate Navy */
+            --primary-light: #1e293b;
+            --accent: #2563eb; /* Professional Blue */
+            --success: #10b981;
+            --danger: #ef4444;
+            --surface: #ffffff;
+            --background: #f1f5f9;
+            --text-main: #334155;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --sidebar-width: 260px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--background); color: var(--text-main); font-size: 14px; }
+
+        /* Helpers & Layout */
+        .hidden { display: none !important; }
+        .flex { display: flex; }
+        .grid { display: grid; }
+        .w-full { width: 100%; }
+
+        /* Login Screen */
+        #login-screen {
+            height: 100vh; display: flex; align-items: center; justify-content: center; background-color: var(--primary);
+        }
+        .login-card {
+            background: var(--surface); padding: 40px; border-radius: 12px; width: 100%; max-width: 400px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center;
+        }
+        .login-card h2 { margin-bottom: 24px; color: var(--primary); font-weight: 700; }
+        .form-group { margin-bottom: 16px; text-align: left; }
+        .form-group label { display: block; margin-bottom: 6px; font-weight: 500; color: var(--text-muted); }
+        .form-control { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; transition: 0.2s; }
+        .form-control:focus { outline: none; border-color: var(--accent); }
+        .btn { padding: 10px 16px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s; width: 100%; }
+        .btn-primary { background-color: var(--accent); color: white; }
+        .btn-primary:hover { background-color: #1d4ed8; }
+        .btn:disabled { opacity: 0.7; cursor: not-allowed; }
+
+        /* App Layout */
+        #app-layout { display: flex; height: 100vh; overflow: hidden; }
+        .sidebar { width: var(--sidebar-width); background: var(--primary); color: white; display: flex; flex-direction: column; }
+        .sidebar-header { padding: 20px; font-size: 18px; font-weight: bold; border-bottom: 1px solid var(--primary-light); }
+        .sidebar-menu { list-style: none; padding: 10px 0; overflow-y: auto; flex: 1; }
+        .sidebar-menu li a { display: block; padding: 12px 20px; color: #cbd5e1; text-decoration: none; transition: 0.2s; }
+        .sidebar-menu li a:hover, .sidebar-menu li a.active { background: var(--primary-light); color: white; border-left: 4px solid var(--accent); }
+        
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .topbar { height: 60px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; }
+        .content-area { flex: 1; padding: 24px; overflow-y: auto; }
+
+        /* Cards & Tables */
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 24px; }
+        .kpi-card { background: var(--surface); padding: 20px; border-radius: 8px; border: 1px solid var(--border); }
+        .kpi-title { font-size: 13px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
+        .kpi-value { font-size: 24px; font-weight: 700; color: var(--primary); margin-top: 8px; }
+
+        .data-table { width: 100%; border-collapse: collapse; background: var(--surface); border-radius: 8px; overflow: hidden; }
+        .data-table th, .data-table td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); }
+        .data-table th { background: #f8fafc; font-weight: 600; color: var(--text-main); }
+        
+        /* Toast Notification */
+        #toast { position: fixed; bottom: 24px; right: 24px; padding: 12px 24px; border-radius: 6px; color: white; font-weight: 500; opacity: 0; transition: opacity 0.3s, transform 0.3s; transform: translateY(20px); z-index: 9999; }
+        #toast.show { opacity: 1; transform: translateY(0); }
+        .toast-success { background-color: var(--success); }
+        .toast-error { background-color: var(--danger); }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar { position: fixed; left: -100%; height: 100vh; z-index: 1000; transition: left 0.3s; }
+            .sidebar.open { left: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Notification Toast -->
+    <div id="toast">Message</div>
+
+    <!-- Login Screen -->
+    <div id="login-screen">
+        <div class="login-card">
+            <h2>MaharaSnack ERP</h2>
+            <form id="form-login">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="username" class="form-control" required autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="password" class="form-control" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn btn-primary" id="btn-login">Masuk ke Sistem</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main App Layout -->
+    <div id="app-layout" class="hidden">
+        <aside class="sidebar">
+            <div class="sidebar-header">MaharaSnack</div>
+            <ul class="sidebar-menu" id="menu-container">
+                <!-- Menu injected via JS based on Role -->
+            </ul>
+        </aside>
+        
+        <main class="main-content">
+            <header class="topbar">
+                <div class="flex">
+                    <span id="page-title" style="font-weight: 600; font-size: 18px;">Dashboard</span>
+                </div>
+                <div class="flex" style="align-items: center; gap: 16px;">
+                    <span id="user-info" style="font-weight: 500;">Role User</span>
+                    <button class="btn" style="background: var(--background); color: var(--text-main); border: 1px solid var(--border);" onclick="App.logout()">Keluar</button>
+                </div>
+            </header>
+            
+            <section class="content-area" id="content-area">
+                <!-- Dinamis Konten -->
+            </section>
+        </main>
+    </div>
+
+<script>
+    // ==========================================
+    // Core Engine (API Caller & State Management)
+    // ==========================================
+    const API_URL = "https://script.google.com/macros/s/AKfycbzlB17WdPd9m1tene4nCtAzlAqs2Uj5osaKEA7Z5PD0QTXXfRUVTGJO3kU50qDiGmMZ/exec"; // Saat deployment, tidak perlu URL absolut jika dideploy sebagai WebApp yang sama, cukup google.script.run
+    const IS_DEV = true; // Set false untuk memanggil fungsi GAS asli
+
+    const App = {
+        state: { token: null, user: null },
+        
+        init: function() {
+            const savedToken = localStorage.getItem('erp_token');
+            const savedUser = localStorage.getItem('erp_user');
+            
+            if (savedToken && savedUser) {
+                this.state.token = savedToken;
+                this.state.user = JSON.parse(savedUser);
+                this.showApp();
+            } else {
+                this.showLogin();
+            }
+            this.bindEvents();
+        },
+
+        // API Wrapper
+        request: async function(action, payload = {}) {
+            const reqBody = { action: action, payload: payload, token: this.state.token };
+            
+            // Menggunakan google.script.run (Native GAS)
+            return new Promise((resolve, reject) => {
+                if(typeof google !== 'undefined') {
+                    google.script.run
+                    .withSuccessHandler(res => {
+                        const response = JSON.parse(res);
+                        if(!response.success && response.errorCode === "401") this.logout();
+                        resolve(response);
+                    })
+                    .withFailureHandler(err => reject(err))
+                    .doPost({ postData: { contents: JSON.stringify(reqBody) } });
+                } else {
+                    // Fallback dev mode simulasi
+                    console.warn("GAS Environment not found. Simulating response for:", action);
+                    setTimeout(() => resolve({success: true, data: []}), 500);
+                }
+            });
+        },
+
+        showToast: function(msg, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.className = 'toast-' + type + ' show';
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        },
+
+        showLogin: function() {
+            document.getElementById('login-screen').classList.remove('hidden');
+            document.getElementById('app-layout').classList.add('hidden');
+        },
+
+        showApp: function() {
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('app-layout').classList.remove('hidden');
+            document.getElementById('user-info').textContent = `${this.state.user.nama} (${this.state.user.role})`;
+            this.renderMenu();
+            this.loadView('dashboard');
+        },
+
+        logout: function() {
+            localStorage.removeItem('erp_token');
+            localStorage.removeItem('erp_user');
+            this.state.token = null;
+            this.state.user = null;
+            this.showLogin();
+        },
+
+        renderMenu: function() {
+            const role = this.state.user.role;
+            const menuContainer = document.getElementById('menu-container');
+            let html = `<li><a href="#" onclick="App.loadView('dashboard')" class="active">Dashboard</a></li>`;
+            
+            if (role === 'PEMILIK' || role === 'ADMIN') {
+                html += `<li><a href="#" onclick="App.loadView('master_produk')">Master Produk</a></li>`;
+                html += `<li><a href="#" onclick="App.loadView('laporan')">Reporting</a></li>`;
+            }
+            if (role === 'SALES' || role === 'PEMILIK') {
+                html += `<li><a href="#" onclick="App.loadView('penjualan')">Penjualan / Konsinyasi</a></li>`;
+            }
+            menuContainer.innerHTML = html;
+        },
+
+        loadView: async function(viewId) {
+            const contentArea = document.getElementById('content-area');
+            document.getElementById('page-title').textContent = viewId.replace('_', ' ').toUpperCase();
+            
+            if (viewId === 'dashboard') {
+                contentArea.innerHTML = `
+                    <div class="kpi-grid">
+                        <div class="kpi-card"><div class="kpi-title">Omzet Hari Ini</div><div class="kpi-value" id="kpi-omzet">Loading...</div></div>
+                        <div class="kpi-card"><div class="kpi-title">Toko Aktif</div><div class="kpi-value" id="kpi-toko">Loading...</div></div>
+                    </div>
+                `;
+                const res = await this.request('getDashboard');
+                if(res.success) {
+                    document.getElementById('kpi-omzet').textContent = `Rp ${res.data.totalOmzet.toLocaleString('id-ID')}`;
+                    document.getElementById('kpi-toko').textContent = res.data.activeToko;
+                }
+            } else if (viewId === 'penjualan') {
+                contentArea.innerHTML = `
+                    <div style="background: var(--surface); padding: 24px; border-radius: 8px;">
+                        <h3 style="margin-bottom: 16px;">Input Penjualan / Kunjungan</h3>
+                        <div class="form-group"><label>Pilih Toko</label><select id="toko_id" class="form-control"><option>Memuat...</option></select></div>
+                        <div class="form-group"><label>Total Nominal</label><input type="number" id="total_nominal" class="form-control" placeholder="0"></div>
+                        <button class="btn btn-primary" onclick="App.submitPenjualan()" id="btn-submit-jual">Simpan Transaksi</button>
+                    </div>
+                `;
+                // Simulasi Load Cache/Data Master
+                document.getElementById('toko_id').innerHTML = `<option value="TOK-001">Toko Abadi Jaya (TOK-001)</option>`;
+            }
+        },
+
+        submitPenjualan: async function() {
+            const btn = document.getElementById('btn-submit-jual');
+            btn.disabled = true;
+            btn.textContent = "Menyimpan... (Mengamankan Lock)";
+            
+            const payload = {
+                toko_id: document.getElementById('toko_id').value,
+                total: parseFloat(document.getElementById('total_nominal').value),
+                tipe: 'Penjualan Cash', details: [] // Dummy detail untuk struktur
+            };
+
+            const res = await this.request('createTransaction', payload);
+            if(res.success) {
+                this.showToast(res.message);
+                this.loadView('dashboard');
+            } else {
+                this.showToast(res.message, 'error');
+            }
+            btn.disabled = false;
+            btn.textContent = "Simpan Transaksi";
+        },
+
+        bindEvents: function() {
+            document.getElementById('form-login').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = document.getElementById('btn-login');
+                btn.disabled = true; btn.textContent = 'Memverifikasi...';
+                
+                const user = document.getElementById('username').value;
+                const pass = document.getElementById('password').value;
+                
+                const res = await this.request('login', { username: user, password: pass });
+                
+                if (res.success) {
+                    localStorage.setItem('erp_token', res.data.token);
+                    localStorage.setItem('erp_user', JSON.stringify(res.data.user));
+                    this.state.token = res.data.token;
+                    this.state.user = res.data.user;
+                    this.showApp();
+                } else {
+                    this.showToast(res.message, 'error');
+                }
+                
+                btn.disabled = false; btn.textContent = 'Masuk ke Sistem';
+            });
+        }
+    };
+
+    // Initialize App
+    window.onload = () => App.init();
+</script>
+</body>
+</html>
