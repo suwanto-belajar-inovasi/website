@@ -264,7 +264,7 @@
                         <option value="PGS">Pilihan Ganda (A, B, C, D)</option>
                         <option value="MCMA">Pilihan Kompleks (Banyak Jawaban)</option>
                         <option value="KATEGORI">Kategori (Benar / Salah)</option>
-                        <option value="SURVEY">Survey Lingkungan / Karakter (Tanpa Nilai)</option>
+                        <option value="SURVEY">Survey Lingkungan / Karakter </option>
                     </select>
                 </div>
             </div>
@@ -1035,7 +1035,7 @@
                     if(s.tipe === 'PGS') petunjuk = "Pilihlah satu jawaban yang paling tepat (A, B, C, atau D).";
                     if(s.tipe === 'MCMA') petunjuk = "Pilihlah dua atau lebih jawaban yang benar pada opsi di bawah ini.";
                     if(s.tipe === 'KATEGORI') petunjuk = "Tentukan nilai Benar atau Salah pada setiap pernyataan opsi di bawah ini.";
-                    if(s.tipe === 'SURVEY') petunjuk = "Jawablah pertanyaan berikut sesuai dengan kondisi yang sebenarnya (Tanpa Nilai).";
+                    if(s.tipe === 'SURVEY') petunjuk = "Jawablah pertanyaan berikut sesuai dengan kondisi yang sebenarnya .";
                     html += `<div class="petunjuk">Petunjuk Khusus: ${petunjuk}</div>`;
                 }
                 html += `<div class="soal"><table style="border:none; width:100%"><tr style="vertical-align:top"><td style="border:none; width:25px"><b>${i+1}.</b></td><td style="border:none">${s.soal}</td></tr></table>`;
@@ -1164,7 +1164,7 @@
                     }
                 });
             } else if (soal.tipe === 'SURVEY') {
-                html += `<div style="background:#e3f2fd; padding:10px 15px; border-left:4px solid #1976d2; border-radius:4px; font-size:0.9rem; margin-bottom:15px; font-weight:bold; color:#1565c0;">💡 Survey (Tanpa Nilai): Pilih opsi yang sesuai.</div>`;
+                html += `<div style="background:#e3f2fd; padding:10px 15px; border-left:4px solid #1976d2; border-radius:4px; font-size:0.9rem; margin-bottom:15px; font-weight:bold; color:#1565c0;">💡 Survey : Pilih opsi yang sesuai.</div>`;
                 soal.opsi.forEach((opt, oIdx) => {
                     const label = String.fromCharCode(65 + oIdx); const checked = jwbSiswa[label] ? 'checked' : '';
                     const classTerpilih = jwbSiswa[label] ? 'terpilih' : '';
