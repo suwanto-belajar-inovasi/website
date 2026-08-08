@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TRYOUT TKA MIS BAITURRAHMAN GUBENG - SERVERLESS</title>
+    <title>TRYOUT TKA BELAJAR INOVASI - SERVERLESS</title>
     
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -113,9 +113,9 @@
     <!-- LAYAR LOGIN -->
     <div id="loginScreen">
         <div class="login-box">
-            <div class="login-logo"><img src="https://lh3.googleusercontent.com/d/1OxZd6FMMYAAgryzr2jY6XOmSnYT1rm3H" class="logo-img"></div>
+            <div class="login-logo"><img src="https://lh3.googleusercontent.com/d/1cVKB34hs3aHdIr5OkNhcaZ9OmFHZKR70" class="logo-img"></div>
             <h2 style="text-align: center; color: var(--primary); margin-top: 30px; margin-bottom: 5px;">PORTAL CBT</h2>
-            <p style="text-align: center; color: #777; margin-top: 0; font-size: 0.85rem;">TKA MIS BAITURRAHMAN GUBENG</p>
+            <p style="text-align: center; color: #777; margin-top: 0; font-size: 0.85rem;">TKA BELAJAR INOVASI</p>
             
             <label>Login Sebagai</label>
             <select id="roleSelect" onchange="toggleLoginFields()">
@@ -168,6 +168,10 @@
                     <p style="margin: 0; font-weight: bold; color: #2e7d32;">✅ Serverless Cloud Database Aktif</p>
                     <p style="margin: 5px 0 0 0; color: #555;">Seluruh data sinkron secara real-time langsung ke Google Spreadsheet. Tidak diperlukan lagi proses Tarik/Push Master Manual ke Hosting luar.</p>
                 </div>
+                <div style="margin-top:20px; border-top:2px dashed #ccc; padding-top:20px;">
+                    <p><b>Fitur Khusus:</b> Tekan tombol di bawah jika Anda baru saja mengedit soal / mengganti pengaturan agar layar seluruh siswa langsung memuat ulang data baru (Auto-Refresh) tanpa mereka harus logout.</p>
+                    <button class="btn-custom btn-warning" onclick="resetCacheManual()" style="max-width:350px; margin-top:5px;">🔄 Reset Cache & Refresh Layar Siswa Massal</button>
+                </div>
             </div>
             <div id="admin_peserta" style="display: none;">
                 <!-- Konten Peserta... -->
@@ -204,9 +208,16 @@
                     </div>
                     <button class="btn-custom" onclick="simpanJadwal()" style="max-width: 200px;">Simpan Jadwal</button>
                 </div>
+                
+                <h3 style="color:var(--primary); margin-top: 30px;">Daftar Jadwal Ujian Aktif</h3>
+                <div style="overflow-x:auto; margin-top:15px;">
+                    <table id="tabelJadwalAdmin">
+                        <thead><tr><th>Kode</th><th>Judul</th><th>Sheet Soal</th><th>Durasi</th><th>Mulai</th><th>Selesai</th><th>Aksi</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
             </div>
             
-            <!-- UPDATE BANK SOAL ADA PREVIEW DAN HAPUS -->
             <div id="admin_soal" style="display: none;">
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap: wrap;">
                     <h3 style="color:var(--primary); margin: 0;">Bank Soal Ujian</h3>
@@ -264,7 +275,7 @@
                         <option value="PGS">Pilihan Ganda (A, B, C, D)</option>
                         <option value="MCMA">Pilihan Kompleks (Banyak Jawaban)</option>
                         <option value="KATEGORI">Kategori (Benar / Salah)</option>
-                        <option value="SURVEY">Survey Lingkungan / Karakter </option>
+                        <option value="SURVEY">Survey Lingkungan / Karakter (Tanpa Nilai)</option>
                     </select>
                 </div>
             </div>
@@ -409,12 +420,13 @@
     
     <script>
         // MASUKKAN LINK APPS SCRIPT ANDA DI SINI
-        const API_URL = 'https://script.google.com/macros/s/AKfycbwR9hbpgMIN6qqAh1Fqqb2NaNiGxvP0byHYOfJnzpsflTvtZCns84t56SiTZYtZyHPJ3A/exec'; 
+        const API_URL = 'https://script.google.com/macros/s/AKfycbxf1-x6MB6jjxIq29bGhv9Z4Bnb5X86s78E1KCAkLxLZNR80H9Y4uay84MGNUL_3z_P/exec'; 
         
         let soalData = [], jawabanSiswa = [], currentSoal = 0, detikTersisa, timerId, pingId;
         let globalProfile = {}; let daftarUjianGlobal = []; let dataLaporanAdmin = []; let dataLaporanGuru = [];
         let isSubmitting = false; let cheatCount = 0; let lastPingTime = 0; 
         let isEditorReady = false; 
+        let systemVersion = localStorage.getItem('cbt_sys_version') || '0';
         
         async function fetchGAS(payload) {
             const response = await fetch(API_URL, {
@@ -497,9 +509,12 @@
                 const sel = document.getElementById('kodeUjianSelect'); const selGuru = document.getElementById('guruKodeUjianSelect');
                 const formSoalKode = document.getElementById('formSoalKode'); const selAdmin = document.getElementById('adminSoalSelect');
                 const filterAdmin = document.getElementById('filterUjianAdmin');
+                const tbJadwal = document.querySelector('#tabelJadwalAdmin tbody');
                 
                 if(sel) sel.innerHTML = ''; if(selGuru) selGuru.innerHTML = ''; if(selAdmin) selAdmin.innerHTML = ''; if(formSoalKode) formSoalKode.innerHTML = '';
                 if(filterAdmin) filterAdmin.innerHTML = '<option value="ALL">Semua Ujian</option>';
+                if(tbJadwal) tbJadwal.innerHTML = '';
+                
                 if(data.status === 'ok' && data.daftar.length > 0){
                     daftarUjianGlobal = data.daftar;
                     data.daftar.forEach(u => { 
@@ -508,9 +523,21 @@
                         if(selAdmin) selAdmin.innerHTML += `<option value="${u.kode_ujian}">${u.judul}</option>`;
                         if(formSoalKode) formSoalKode.innerHTML += `<option value="${u.kode_ujian}">${u.judul}</option>`;
                         if(filterAdmin) filterAdmin.innerHTML += `<option value="${u.kode_ujian}">${u.judul}</option>`;
+                        
+                        if(tbJadwal) {
+                            const btn = `<button class="btn-custom btn-secondary" style="margin:0 5px 0 0; padding:4px 8px; font-size:0.8rem;" onclick="editJadwal('${u.kode_ujian}')">✏️ Edit</button>
+                                         <button class="btn-custom btn-danger" style="margin:0; padding:4px 8px; font-size:0.8rem;" onclick="hapusJadwal('${u.kode_ujian}')">🗑️ Hapus</button>`;
+                            tbJadwal.innerHTML += `<tr><td>${u.kode_ujian}</td><td>${u.judul}</td><td>${u.sheet_soal}</td><td>${u.durasi} Mnt</td><td>${new Date(u.waktu_mulai).toLocaleString('id-ID')}</td><td>${new Date(u.waktu_selesai).toLocaleString('id-ID')}</td><td>${btn}</td></tr>`;
+                        }
                     });
-                } else { if(sel) sel.innerHTML = '<option value="">(Tidak ada ujian)</option>'; }
+                } else { if(sel) sel.innerHTML = '<option value="">(Tidak ada ujian)</option>'; if(tbJadwal) tbJadwal.innerHTML = '<tr><td colspan="7" align="center">Tidak ada jadwal aktif</td></tr>'; }
             } catch (e) {}
+        }
+        
+        async function resetCacheManual() {
+            Swal.fire({ title: 'Menyegarkan Server...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); }});
+            const data = await fetchGAS({ action: 'clear_cache' });
+            if(data.status === 'success') { Swal.fire('Sukses', data.msg, 'success'); } else Swal.fire('Gagal', data.message, 'error');
         }
         
         async function prosesLogin() {
@@ -651,6 +678,33 @@
             Swal.fire({ title: 'Menyimpan...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); }});
             const data = await fetchGAS(payload);
             if(data.status === 'success') { Swal.fire('Sukses', 'Jadwal tersimpan.', 'success'); loadDaftarUjian(); muatDashboardAdmin();} else Swal.fire('Gagal', data.msg, 'error');
+        }
+
+        function editJadwal(kode) {
+            const u = daftarUjianGlobal.find(x => x.kode_ujian === kode);
+            if(u) {
+                document.getElementById('jdw_kode').value = u.kode_ujian;
+                document.getElementById('jdw_judul').value = u.judul;
+                document.getElementById('jdw_sheet').value = u.sheet_soal;
+                
+                const fm = (d) => { if(!d) return ''; try { return new Date(d).toISOString().slice(0,16); } catch(e){return d;} };
+                
+                document.getElementById('jdw_mulai').value = fm(u.waktu_mulai);
+                document.getElementById('jdw_selesai').value = fm(u.waktu_selesai);
+                document.getElementById('jdw_durasi').value = u.durasi;
+                document.getElementById('jdw_batas').value = u.batas_kesempatan;
+                window.scrollTo(0, 0);
+            }
+        }
+        
+        function hapusJadwal(kode) {
+            Swal.fire({ title: 'Hapus Jadwal?', icon: 'warning', showCancelButton: true, confirmButtonText: 'Ya, Hapus' }).then(async (result) => {
+                if(result.isConfirmed) {
+                    Swal.fire({ title: 'Menghapus...', didOpen: () => { Swal.showLoading(); }});
+                    const data = await fetchGAS({ action: 'hapus_jadwal', kode: kode });
+                    if(data.status === 'success') { Swal.fire('Terhapus', '', 'success'); loadDaftarUjian(); } else Swal.fire('Gagal', data.msg, 'error');
+                }
+            });
         }
         
         // --- PREVIEW DAN HAPUS SOAL ---
@@ -967,7 +1021,18 @@
                 } 
                 body { font-family:'Segoe UI', Arial; background:#fff; margin:0; } 
                 .container { display:flex; flex-wrap:wrap; justify-content:space-between; align-content:flex-start; } 
-                .card { width:48%; min-height:55mm; box-sizing:border-box; border:2px solid #00796b; padding:10px; margin-bottom:5mm; border-radius:8px; position:relative; background-color:#e0f2f1 !important; -webkit-print-color-adjust: exact; page-break-inside: avoid; } 
+                .card { 
+                    width:48%; min-height:55mm; box-sizing:border-box; border:2px solid #00796b; 
+                    padding:10px; margin-bottom:5mm; border-radius:8px; position:relative; 
+                    background-color:#ffffff !important; -webkit-print-color-adjust: exact; 
+                    page-break-inside: avoid; z-index: 1; overflow: hidden;
+                }
+                .card::before {
+                    content: ""; position:absolute; top:0; left:0; right:0; bottom:0;
+                    background-image: url('https://lh3.googleusercontent.com/d/1cVKB34hs3aHdIr5OkNhcaZ9OmFHZKR70');
+                    background-size: 60%; background-position: center; background-repeat: no-repeat;
+                    opacity: 0.15; z-index: -1;
+                }
                 h3 { margin:0 0 5px 0; text-align:center; border-bottom: 2px solid #00796b; padding-bottom:5px; color:#004d40; text-transform:uppercase; font-size:12px; } 
                 .foto { position:absolute; right:10px; top:35px; width:50px; height:65px; border:1px solid #aaa; background:#fff; text-align:center; line-height:65px; font-size:10px; color:#aaa; } 
                 p { margin:4px 0; font-size:11px; color:#333; } 
@@ -978,8 +1043,17 @@
             if (p.data) {
                 p.data.forEach(d => { 
                     let tgl = d.tgl_lahir ? d.tgl_lahir : '-';
+                    if (tgl !== '-' && tgl !== '') {
+                        try {
+                            const dateObj = new Date(tgl);
+                            if (!isNaN(dateObj.getTime())) {
+                                tgl = dateObj.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
+                            }
+                        } catch(e) {}
+                    }
+
                     html += `<div class="card">
-                        <h3>Kartu Tanda Peserta CBT<br><span style="font-size:9px; color:#555">MIS BAITURRAHMAN GUBENG</span></h3>
+                        <h3>Kartu Tanda Peserta CBT<br><span style="font-size:9px; color:#555">BELAJAR INOVASI</span></h3>
                         <div style="width:75%">
                             <p>Nama : <span class="val">${d.nama_lengkap.substring(0, 22)}</span></p>
                             <p>Asal : <span class="val">${d.madrasah}</span></p>
@@ -993,25 +1067,37 @@
             }
             html += `</div></body></html>`; 
             const w = window.open('','_blank'); w.document.write(html); w.document.close(); w.focus();
-            setTimeout(() => { w.print(); }, 500); 
+            setTimeout(() => { w.print(); }, 800); 
         }
         
         async function cetakDaftarHadir() {
             const p = await getPesertaGuru(); const eSel = document.getElementById('guruKodeUjianSelect'); const judul = eSel.options[eSel.selectedIndex]?.text || '';
-            let html = `<html><head><title>Daftar Hadir</title><style>body{font-family:Arial;} table{width:100%; border-collapse:collapse; margin-top:20px;} th,td{border:1px solid #000; padding:10px;} th{background:#e0e0e0} h2{text-align:center; margin-bottom:5px; text-transform:uppercase;} .kop{text-align:center; border-bottom:3px solid #000; padding-bottom:10px; margin-bottom:20px;} .kop h2{margin:0; font-size:20px;} .kop p{margin:2px; font-size:14px;}</style></head><body><div class="kop"><h2>KELOMPOK KERJA GURU MADRASAH IBTIDAIYAH (KKGMI)</h2><p>SURABAYA WILAYAH 10</p></div><h2>DAFTAR HADIR PESERTA UJIAN</h2><p style="text-align:center;"><b>Madrasah:</b> ${globalProfile.madrasah} &nbsp;&nbsp;|&nbsp;&nbsp; <b>Mata Pelajaran:</b> ${judul}</p><table><tr><th width="5%">No</th><th width="20%">NISN/Username</th><th width="50%">Nama Lengkap</th><th width="25%">Tanda Tangan</th></tr>`;
+            let html = `<html><head><title>Daftar Hadir</title><style>body{font-family:Arial;} table{width:100%; border-collapse:collapse; margin-top:20px;} th,td{border:1px solid #000; padding:10px;} th{background:#e0e0e0} h2{text-align:center; margin-bottom:5px; text-transform:uppercase;} .kop{display:flex; align-items:center; border-bottom:3px solid #000; padding-bottom:10px; margin-bottom:20px;} .kop img{width:70px; height:70px; margin-right:15px;} .kop .text-center{flex-grow:1; text-align:center;} .kop h2{margin:0; font-size:20px;} .kop p{margin:2px; font-size:14px;}</style></head><body>
+            <div class="kop">
+                <img src="https://lh3.googleusercontent.com/d/1cVKB34hs3aHdIr5OkNhcaZ9OmFHZKR70">
+                <div class="text-center"><h2>KELOMPOK KERJA GURU MADRASAH IBTIDAIYAH (KKGMI)</h2><p>SURABAYA WILAYAH 10</p></div>
+                <div style="width:85px;"></div>
+            </div>
+            <h2>DAFTAR HADIR PESERTA UJIAN</h2><p style="text-align:center;"><b>Madrasah:</b> ${globalProfile.madrasah} &nbsp;&nbsp;|&nbsp;&nbsp; <b>Mata Pelajaran:</b> ${judul}</p><table><tr><th width="5%">No</th><th width="20%">NISN/Username</th><th width="50%">Nama Lengkap</th><th width="25%">Tanda Tangan</th></tr>`;
             if (p.data) {
                 p.data.forEach((d, i) => { html += `<tr><td align="center">${i+1}</td><td align="center">${d.username}</td><td>${d.nama_lengkap}</td><td>${i+1}. </td></tr>`; });
             }
             html += `</table></body></html>`; 
             const w = window.open('','_blank'); w.document.write(html); w.document.close(); w.focus();
-            setTimeout(() => { w.print(); }, 500);
+            setTimeout(() => { w.print(); }, 800);
         }
         
         function cetakBeritaAcara() {
             const eSel = document.getElementById('guruKodeUjianSelect'); const judul = eSel.options[eSel.selectedIndex]?.text || '';
-            let html = `<html><head><title>Berita Acara</title><style>body{font-family:'Times New Roman'; line-height:1.6; font-size: 16px;} .kop{text-align:center; border-bottom:3px solid #000; padding-bottom:10px; margin-bottom:20px;} .kop h2{margin:0; font-size:22px;} .kop p{margin:2px; font-size:15px;} h3{text-align:center; text-decoration: underline; margin-bottom: 30px;}</style></head><body style="padding:20px 40px"><div class="kop"><h2>PANITIA PELAKSANA TRYOUT TKA AKBAR</h2><p>MIS BAITURRAHMAN GUBENG</p></div><h3>BERITA ACARA PELAKSANAAN UJIAN</h3><p>Pada hari ini .................................. tanggal ........................................ bulan ........................................ tahun .................................. telah diselenggarakan ujian <i>Computer Based Test (CBT)</i> untuk mata pelajaran <b>${judul}</b> di ruang/lokasi <b>${globalProfile.madrasah}</b>.</p><p style="margin-left: 30px;">1. Jumlah Peserta Seharusnya &nbsp;&nbsp;: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Siswa<br>2. Jumlah Peserta Hadir &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Siswa<br>3. Jumlah Peserta Tidak Hadir &nbsp;&nbsp;: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Siswa</p><p>Catatan selama pelaksanaan ujian:<br>........................................................................................................................................................................................................................................................................................................................................................................................................................................</p><br><br><table style="width:100%; margin-top: 30px; border:none;"><tr><td style="border:none; width:60%"></td><td style="border:none; text-align:center;">Surabaya, ........................................<br>Pengawas Ruang,<br><br><br><br><br>( <b>${globalProfile.nama_lengkap}</b> )</td></tr></table></body></html>`;
+            let html = `<html><head><title>Berita Acara</title><style>body{font-family:'Times New Roman'; line-height:1.6; font-size: 16px;} .kop{display:flex; align-items:center; border-bottom:3px solid #000; padding-bottom:10px; margin-bottom:20px;} .kop img{width:70px; height:70px; margin-right:15px;} .kop .text-center{flex-grow:1; text-align:center;} .kop h2{margin:0; font-size:22px;} .kop p{margin:2px; font-size:15px;} h3{text-align:center; text-decoration: underline; margin-bottom: 30px;}</style></head><body style="padding:20px 40px">
+            <div class="kop">
+                <img src="https://lh3.googleusercontent.com/d/1cVKB34hs3aHdIr5OkNhcaZ9OmFHZKR70">
+                <div class="text-center"><h2>PANITIA PELAKSANA TRYOUT TKA AKBAR</h2><p>BELAJAR INOVASI</p></div>
+                <div style="width:85px;"></div>
+            </div>
+            <h3>BERITA ACARA PELAKSANAAN UJIAN</h3><p>Pada hari ini .................................. tanggal ........................................ bulan ........................................ tahun .................................. telah diselenggarakan ujian <i>Computer Based Test (CBT)</i> untuk mata pelajaran <b>${judul}</b> di ruang/lokasi <b>${globalProfile.madrasah}</b>.</p><p style="margin-left: 30px;">1. Jumlah Peserta Seharusnya &nbsp;&nbsp;: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Siswa<br>2. Jumlah Peserta Hadir &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Siswa<br>3. Jumlah Peserta Tidak Hadir &nbsp;&nbsp;: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Siswa</p><p>Catatan selama pelaksanaan ujian:<br>........................................................................................................................................................................................................................................................................................................................................................................................................................................</p><p>Demikian Berita Acara ini dibuat dengan sesungguhnya.</p><br><table style="width:100%; margin-top: 10px; border:none;"><tr><td style="border:none; width:60%"></td><td style="border:none; text-align:center;">Surabaya, ........................................<br>Pengawas Ruang,<br><br><br><br><br>( <b>${globalProfile.nama_lengkap}</b> )</td></tr></table></body></html>`;
             const w = window.open('','_blank'); w.document.write(html); w.document.close(); w.focus();
-            setTimeout(() => { w.print(); }, 500);
+            setTimeout(() => { w.print(); }, 800);
         }
         
         async function guruDownloadSoal() {
@@ -1026,7 +1112,7 @@
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
             <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"><\/script>
             <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"><\/script>
-            <style>body{font-family:'Times New Roman', serif; line-height:1.5; padding:20px; font-size:14px;} .soal{margin-bottom:20px; page-break-inside: avoid;} .opsi{margin-left:25px;} .kop{text-align:center; border-bottom:3px double #000; padding-bottom:10px; margin-bottom:20px;} .kop h2{margin:0; font-size:22px;} .kop p{margin:2px; font-size:15px;} img{max-width:100%; height:auto; display:block; margin: 10px 0;} .petunjuk{background:#eee; padding:5px 10px; font-weight:bold; font-style:italic; margin-bottom:10px; border-left:4px solid #333;}</style></head><body><div class="kop"><h2>NASKAH SOAL TRYOUT TKA</h2><p>MIS BAITURRAHMAN GUBENG</p></div><h3 style="text-align:center; margin-top:0; text-transform:uppercase; text-decoration:underline;">Mata Pelajaran: ${data.config.judul}</h3><br>`;
+            <style>body{font-family:'Times New Roman', serif; line-height:1.5; padding:20px; font-size:14px;} .soal{margin-bottom:20px; page-break-inside: avoid;} .opsi{margin-left:25px;} .kop{text-align:center; border-bottom:3px double #000; padding-bottom:10px; margin-bottom:20px;} .kop h2{margin:0; font-size:22px;} .kop p{margin:2px; font-size:15px;} img{max-width:100%; height:auto; display:block; margin: 10px 0;} .petunjuk{background:#eee; padding:5px 10px; font-weight:bold; font-style:italic; margin-bottom:10px; border-left:4px solid #333;}</style></head><body><div class="kop"><h2>NASKAH SOAL TRYOUT TKA</h2><p>BELAJAR INOVASI</p></div><h3 style="text-align:center; margin-top:0; text-transform:uppercase; text-decoration:underline;">Mata Pelajaran: ${data.config.judul}</h3><br>`;
             
             let currTipe = '';
             data.soal.forEach((s, i) => {
@@ -1035,7 +1121,7 @@
                     if(s.tipe === 'PGS') petunjuk = "Pilihlah satu jawaban yang paling tepat (A, B, C, atau D).";
                     if(s.tipe === 'MCMA') petunjuk = "Pilihlah dua atau lebih jawaban yang benar pada opsi di bawah ini.";
                     if(s.tipe === 'KATEGORI') petunjuk = "Tentukan nilai Benar atau Salah pada setiap pernyataan opsi di bawah ini.";
-                    if(s.tipe === 'SURVEY') petunjuk = "Jawablah pertanyaan berikut sesuai dengan kondisi yang sebenarnya .";
+                    if(s.tipe === 'SURVEY') petunjuk = "Jawablah pertanyaan berikut sesuai dengan kondisi yang sebenarnya (Tanpa Nilai).";
                     html += `<div class="petunjuk">Petunjuk Khusus: ${petunjuk}</div>`;
                 }
                 html += `<div class="soal"><table style="border:none; width:100%"><tr style="vertical-align:top"><td style="border:none; width:25px"><b>${i+1}.</b></td><td style="border:none">${s.soal}</td></tr></table>`;
@@ -1080,9 +1166,20 @@
         
         function sendPing() {
             const now = Date.now();
-            if (now - lastPingTime > 10000) { 
+            if (now - lastPingTime > 15000) { 
                 lastPingTime = now;
-                fetchGAS({ action: 'ping_monitoring', nisn: globalProfile.username, nama: globalProfile.nama_lengkap, madrasah: globalProfile.madrasah, kode: globalProfile.kodeUjian }).catch(e=>{});
+                fetchGAS({ action: 'ping_monitoring', nisn: globalProfile.username, nama: globalProfile.nama_lengkap, madrasah: globalProfile.madrasah, kode: globalProfile.kodeUjian }).then(res => {
+                    if(res.version && res.version !== systemVersion && systemVersion !== '0') {
+                        systemVersion = res.version;
+                        localStorage.setItem('cbt_sys_version', systemVersion);
+                        Swal.fire({title: 'Memperbarui Server...', text: 'Sistem mendeteksi pembaruan data/soal. Halaman akan dimuat ulang otomatis tanpa menghilangkan jawaban.', timer: 2000, showConfirmButton: false}).then(() => {
+                            location.reload();
+                        });
+                    } else if (res.version && systemVersion === '0') {
+                        systemVersion = res.version;
+                        localStorage.setItem('cbt_sys_version', systemVersion);
+                    }
+                }).catch(e=>{});
             }
         }
         
@@ -1112,7 +1209,7 @@
                 
                 tampilkanSoal(currentSoal); renderNavigasi();
                 
-                pingId = setInterval(sendPing, 300000); 
+                pingId = setInterval(sendPing, 15000); // Ping interval dibuat lebih cepat (15dtk) agar resnponsif menangkap reset cache.
                 sendPing(); 
                 
                 timerId = setInterval(() => { 
@@ -1139,7 +1236,6 @@
         function tampilkanSoal(idx) {
             currentSoal = idx; 
             localStorage.setItem('cbt_nav_' + globalProfile.kodeUjian, currentSoal);
-            sendPing();
             
             const soal = soalData[idx];
             document.getElementById('nomorSoalDisplay').textContent = `Soal No. ${idx + 1} / ${soalData.length}`;
@@ -1164,7 +1260,7 @@
                     }
                 });
             } else if (soal.tipe === 'SURVEY') {
-                html += `<div style="background:#e3f2fd; padding:10px 15px; border-left:4px solid #1976d2; border-radius:4px; font-size:0.9rem; margin-bottom:15px; font-weight:bold; color:#1565c0;">💡 Survey : Pilih opsi yang sesuai.</div>`;
+                html += `<div style="background:#e3f2fd; padding:10px 15px; border-left:4px solid #1976d2; border-radius:4px; font-size:0.9rem; margin-bottom:15px; font-weight:bold; color:#1565c0;">💡 Survey (Tanpa Nilai): Pilih opsi yang sesuai.</div>`;
                 soal.opsi.forEach((opt, oIdx) => {
                     const label = String.fromCharCode(65 + oIdx); const checked = jwbSiswa[label] ? 'checked' : '';
                     const classTerpilih = jwbSiswa[label] ? 'terpilih' : '';
