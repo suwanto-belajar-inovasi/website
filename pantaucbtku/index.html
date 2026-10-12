@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Monitoring Aktivitas CBT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <style>
+        .loader { border-top-color: #3498db; -webkit-animation: spinner 1.5s linear infinite; animation: spinner 1.5s linear infinite; }
+        @keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans leading-normal tracking-normal">
+
+    <nav class="bg-indigo-600 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-white"><i class="fas fa-desktop mr-2"></i> Dashboard Monitoring CBT</h1>
+            <span class="text-indigo-200 text-sm">Real-time Tracker</span>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 mt-8">
+        <!-- Statistik -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow p-6 border-l-4 border-indigo-500">
+                <h3 class="text-gray-500 text-sm font-bold uppercase">Total Klien CBT</h3>
+                <p class="text-3xl font-bold text-gray-800 mt-2" id="totalKlien">-</p>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6 border-l-4 border-green-500">
+                <h3 class="text-gray-500 text-sm font-bold uppercase">Aktivitas Tertinggi</h3>
+                <p class="text-lg font-bold text-gray-800 mt-2 truncate" id="topActive">-</p>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6 border-l-4 border-red-500">
+                <h3 class="text-gray-500 text-sm font-bold uppercase">Aktivitas Terendah (Pasif)</h3>
+                <p class="text-lg font-bold text-gray-800 mt-2 truncate" id="lowActive">-</p>
+            </div>
+        </div>
+
+        <!-- Tabel Data -->
+        <div class="bg-white rounded-lg shadow overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                <h2 class="text-lg font-semibold text-gray-800">Peringkat Aktivitas Penggunaan</h2>
+                <button onclick="fetchData()" class="text-sm bg-indigo-100 text-indigo-700 px-3 py-1 rounded hover:bg-indigo-200 transition"><i class="fas fa-sync-alt mr-1"></i> Refresh</button>
+            </div>
+            
+            <!-- Loader -->
+            <div id="loader" class="flex justify-center items-center py-12">
+                <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
+            </div>
+
+            <div class="overflow-x-auto hidden" id="tableContainer">
+                <table class="min-w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-50 text-gray-700 text-sm uppercase">
+                            <th class="py-3 px-6 border-b">Peringkat</th>
+                            <th class="py-3 px-6 border-b">Nama Sekolah / Klien</th>
+                            <th class="py-3 px-6 border-b">Aktivitas Terakhir</th>
+                            <th class="py-3 px-6 border-b">Status</th>
+                            <th class="py-3 px-6 border-b text-center">Tindakan</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody" class="text-gray-600 text-sm">
+                        <!-- Data akan di-render di sini -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // GANTI URL INI DENGAN URL WEB APP APPS SCRIPT ANDA
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby8K_paLuHOkxou0-DSk3sYRZIou8i08bzGHG4rNZbL_n44Z7KzZl6PkIR9nlGxajhrfQ/exec';
+
+        async function fetchData() {
+            document.getElementById('loader').classList.remove('hidden');
+            document.getElementById('tableContainer').classList.add('hidden');
+            
+            try {
+                const response = await fetch(APPS_SCRIPT_URL);
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    renderTable(result.data);
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                alert("Gagal mengambil data dari server.");
+            }
+        }
+
+        function renderTable(data) {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            
+            if (data.length > 0) {
+                document.getElementById('totalKlien').innerText = data.length;
+                document.getElementById('topActive').innerText = data[0].sekolah;
+                document.getElementById('lowActive').innerText = data[data.length - 1].sekolah;
+            }
+
+            data.forEach((row, index) => {
+                // Tentukan warna peringkat
+                let rankBadge = 'bg-gray-200 text-gray-700';
+                if (index === 0) rankBadge = 'bg-yellow-400 text-white shadow-md'; // Juara 1
+                else if (index === 1) rankBadge = 'bg-gray-300 text-gray-800 shadow'; // Juara 2
+                else if (index === 2) rankBadge = 'bg-amber-600 text-white shadow'; // Juara 3
+
+                // Pesan WhatsApp otomatis
+                const waMessage = encodeURIComponent(`Halo admin ${row.sekolah}, perkenalkan saya admin penyedia aplikasi CBT. Izin menanyakan bagaimana progres penggunaan aplikasi CBT-nya saat ini? Apakah ada kendala yang dialami atau mungkin ingin melakukan update ke versi terbaru? Terima kasih.`);
+                const waLink = `https://wa.me/${row.contact}?text=${waMessage}`;
+
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-gray-50 border-b border-gray-100 transition';
+                
+                tr.innerHTML = `
+                    <td class="py-4 px-6">
+                        <span class="${rankBadge} font-bold py-1 px-3 rounded-full text-xs">${row.peringkat}</span>
+                    </td>
+                    <td class="py-4 px-6 font-medium text-gray-900">${row.sekolah}</td>
+                    <td class="py-4 px-6">
+                        <div class="flex items-center">
+                            <i class="far fa-clock text-gray-400 mr-2"></i> ${row.lastUpdated}
+                        </div>
+                    </td>
+                    <td class="py-4 px-6">
+                        <span class="bg-green-100 text-green-700 py-1 px-3 rounded text-xs font-semibold">${row.status}</span>
+                    </td>
+                    <td class="py-4 px-6 text-center">
+                        <a href="${waLink}" target="_blank" class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded shadow inline-flex items-center transition">
+                            <i class="fab fa-whatsapp mr-2"></i> Follow Up
+                        </a>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('loader').classList.add('hidden');
+            document.getElementById('tableContainer').classList.remove('hidden');
+        }
+
+        // Panggil fungsi saat halaman dimuat
+        window.onload = fetchData;
+    </script>
+</body>
+</html>
